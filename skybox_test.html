@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head><title>SkyBox Test</title></head>
+<body style="margin:0;overflow:hidden">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer();
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+// CubeTextureLoader: px, nx, py, ny, pz, nz
+const loader = new THREE.CubeTextureLoader();
+loader.setPath('img/skybox/');
+loader.load(['px.png','nx.png','py.png','ny.png','pz.png','nz.png'], function(tex) {
+    scene.background = tex;
+    console.log('Skybox loaded!');
+});
+
+// OrbitControls (inline minimal)
+let isDown = false, prevX = 0, prevY = 0;
+let rotY = 0, rotX = 0;
+document.addEventListener('mousedown', e => { isDown = true; prevX = e.clientX; prevY = e.clientY; });
+document.addEventListener('mouseup', () => isDown = false);
+document.addEventListener('mousemove', e => {
+    if (!isDown) return;
+    rotY += (e.clientX - prevX) * 0.005;
+    rotX += (e.clientY - prevY) * 0.005;
+    rotX = Math.max(-Math.PI/2, Math.min(Math.PI/2, rotX));
+    prevX = e.clientX; prevY = e.clientY;
+});
+
+function animate() {
+    requestAnimationFrame(animate);
+    camera.rotation.order = 'YXZ';
+    camera.rotation.y = -rotY;
+    camera.rotation.x = -rotX;
+    renderer.render(scene, camera);
+}
+animate();
+</script>
+</body>
+</html>

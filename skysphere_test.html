@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head><title>SkySphere Test</title></head>
+<body style="margin:0;overflow:hidden;background:#f00">
+<script src="js/libs/three.min.js"></script>
+<script>
+var renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(816, 624);
+document.body.appendChild(renderer.domElement);
+
+var scene = new THREE.Scene();
+var camera = new THREE.PerspectiveCamera(60, 816/624, 0.1, 2000);
+camera.position.set(0, 0, 0);
+camera.rotation.order = 'XYZ';
+camera.rotation.set(-0.5236, 0, 0);  // -30도 (위에서 내려다봄)
+
+var loader = new THREE.TextureLoader();
+loader.load('img/skybox/sky_panorama.png', function(texture) {
+    document.title = 'Loaded: ' + texture.image.width + 'x' + texture.image.height;
+
+    // scene.background 방식 - Three.js가 자동으로 환경맵 셰이더 적용
+    texture.mapping = THREE.EquirectangularReflectionMapping;
+    texture.colorSpace = THREE.SRGBColorSpace;
+    scene.background = texture;
+
+    function animate() {
+        requestAnimationFrame(animate);
+        renderer.render(scene, camera);
+    }
+    animate();
+}, null, function(err) {
+    document.title = 'ERROR: ' + err;
+});
+</script>
+</body>
+</html>

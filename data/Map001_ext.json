@@ -1,0 +1,468 @@
+{
+  "editorLights": {
+    "ambient": {
+      "color": "#667788",
+      "intensity": 0.35
+    },
+    "directional": {
+      "color": "#fff8ee",
+      "intensity": 0.45,
+      "direction": [
+        0.9550199444571866,
+        0.29654157497557093,
+        1.754343177152065e-16
+      ],
+      "enabled": false,
+      "castShadow": true,
+      "shadowMapSize": 2048,
+      "shadowBias": -0.001
+    },
+    "points": [
+      {
+        "id": 1,
+        "x": 26,
+        "y": 33,
+        "z": 63,
+        "color": "#ffcc88",
+        "intensity": 1,
+        "distance": 150,
+        "decay": 0
+      }
+    ]
+  },
+  "objects": [
+    {
+      "id": 1,
+      "name": "OBJ1",
+      "x": 31,
+      "y": 35,
+      "tileIds": [
+        [
+          112
+        ],
+        [
+          120
+        ]
+      ],
+      "width": 1,
+      "height": 2,
+      "zHeight": 0,
+      "passability": [
+        [
+          true
+        ],
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 2,
+      "name": "OBJ2",
+      "x": 26,
+      "y": 41,
+      "tileIds": [
+        [
+          436
+        ],
+        [
+          444
+        ]
+      ],
+      "width": 1,
+      "height": 2,
+      "zHeight": 0,
+      "passability": [
+        [
+          true
+        ],
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 3,
+      "name": "OBJ3",
+      "x": 32,
+      "y": 41,
+      "tileIds": [
+        [
+          113
+        ],
+        [
+          121
+        ]
+      ],
+      "width": 1,
+      "height": 2,
+      "zHeight": 0,
+      "passability": [
+        [
+          true
+        ],
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 4,
+      "name": "OBJ4",
+      "x": 32,
+      "y": 30,
+      "tileIds": [
+        [
+          115
+        ],
+        [
+          123
+        ]
+      ],
+      "width": 1,
+      "height": 2,
+      "zHeight": 0,
+      "passability": [
+        [
+          true
+        ],
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 5,
+      "name": "OBJ5",
+      "x": 31,
+      "y": 30,
+      "tileIds": [
+        [
+          115
+        ],
+        [
+          123
+        ]
+      ],
+      "width": 1,
+      "height": 2,
+      "zHeight": 0,
+      "passability": [
+        [
+          true
+        ],
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 6,
+      "name": "OBJ6",
+      "x": 30,
+      "y": 30,
+      "tileIds": [
+        [
+          115
+        ],
+        [
+          123
+        ]
+      ],
+      "width": 1,
+      "height": 2,
+      "zHeight": 0,
+      "passability": [
+        [
+          true
+        ],
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 7,
+      "name": "OBJ7",
+      "x": 28,
+      "y": 30,
+      "tileIds": [
+        [
+          115
+        ],
+        [
+          123
+        ]
+      ],
+      "width": 1,
+      "height": 2,
+      "zHeight": 0,
+      "passability": [
+        [
+          true
+        ],
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 8,
+      "name": "OBJ8",
+      "x": 29,
+      "y": 30,
+      "tileIds": [
+        [
+          115
+        ],
+        [
+          123
+        ]
+      ],
+      "width": 1,
+      "height": 2,
+      "zHeight": 0,
+      "passability": [
+        [
+          true
+        ],
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 9,
+      "name": "OBJ9",
+      "x": 27,
+      "y": 30,
+      "tileIds": [
+        [
+          115
+        ],
+        [
+          123
+        ]
+      ],
+      "width": 1,
+      "height": 2,
+      "zHeight": 0,
+      "passability": [
+        [
+          true
+        ],
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 10,
+      "name": "OBJ10",
+      "x": 26,
+      "y": 30,
+      "tileIds": [
+        [
+          115
+        ],
+        [
+          123
+        ]
+      ],
+      "width": 1,
+      "height": 2,
+      "zHeight": 0,
+      "passability": [
+        [
+          true
+        ],
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 11,
+      "name": "OBJ11",
+      "x": 25,
+      "y": 30,
+      "tileIds": [
+        [
+          115
+        ],
+        [
+          123
+        ]
+      ],
+      "width": 1,
+      "height": 2,
+      "zHeight": 0,
+      "passability": [
+        [
+          true
+        ],
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 12,
+      "name": "OBJ12",
+      "x": 33,
+      "y": 41,
+      "tileIds": [
+        [
+          232,
+          233
+        ]
+      ],
+      "width": 2,
+      "height": 1,
+      "zHeight": 0,
+      "passability": [
+        [
+          false,
+          false
+        ]
+      ]
+    },
+    {
+      "id": 13,
+      "name": "OBJ13",
+      "x": 36,
+      "y": 41,
+      "tileIds": [
+        [
+          232,
+          233
+        ]
+      ],
+      "width": 2,
+      "height": 1,
+      "zHeight": 0,
+      "passability": [
+        [
+          false,
+          false
+        ]
+      ]
+    },
+    {
+      "id": 14,
+      "name": "OBJ14",
+      "x": 24,
+      "y": 41,
+      "tileIds": [
+        [
+          232,
+          233
+        ]
+      ],
+      "width": 2,
+      "height": 1,
+      "zHeight": 0,
+      "passability": [
+        [
+          false,
+          false
+        ]
+      ]
+    },
+    {
+      "id": 15,
+      "name": "OBJ15",
+      "x": 21,
+      "y": 41,
+      "tileIds": [
+        [
+          232,
+          233
+        ]
+      ],
+      "width": 2,
+      "height": 1,
+      "zHeight": 0,
+      "passability": [
+        [
+          false,
+          false
+        ]
+      ]
+    },
+    {
+      "id": 16,
+      "name": "OBJ16",
+      "x": 28,
+      "y": 41,
+      "tileIds": [
+        [
+          232,
+          233
+        ]
+      ],
+      "width": 2,
+      "height": 1,
+      "zHeight": 0,
+      "passability": [
+        [
+          false,
+          false
+        ]
+      ]
+    }
+  ],
+  "cameraZones": [
+    {
+      "id": 1,
+      "name": "Zone1",
+      "x": 21,
+      "y": 29,
+      "width": 32,
+      "height": 13,
+      "zoom": 1,
+      "tilt": 70,
+      "yaw": 0,
+      "transitionSpeed": 1,
+      "priority": 0,
+      "enabled": true,
+      "dofEnabled": false,
+      "ambientIntensity": 0.3,
+      "ambientColor": "#5e91c5"
+    },
+    {
+      "id": 3,
+      "name": "Zone3",
+      "x": 36,
+      "y": 29,
+      "width": 19,
+      "height": 19,
+      "zoom": 1,
+      "tilt": 85,
+      "yaw": 0,
+      "transitionSpeed": 1,
+      "priority": 0,
+      "enabled": true,
+      "ambientIntensity": 0.85,
+      "ambientColor": "#d27b41"
+    }
+  ],
+  "skyBackground": {
+    "type": "skysphere",
+    "skyImage": "Panorama_Sky_15-512x512.png",
+    "rotationSpeed": 1.4,
+    "sunLights": [
+      {
+        "position": [
+          0.75,
+          0.4041666666666667
+        ],
+        "color": "#fff8ee",
+        "intensity": 0.45,
+        "castShadow": true,
+        "shadowMapSize": 2048,
+        "shadowBias": -0.001
+      }
+    ]
+  }
+}

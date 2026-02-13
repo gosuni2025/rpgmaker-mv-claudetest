@@ -1,0 +1,96 @@
+key,ts,deleted,ko,ko_ts,en,en_ts
+basic.0,1770801771,,레벨,1770801771,Level,1770801771
+basic.1,1770801771,,Lv,1770801771,Lv,1770801771
+basic.2,1770801771,,HP,1770801771,HP,1770801771
+basic.3,1770801771,,HP,1770801771,HP,1770801771
+basic.4,1770801771,,MP,1770801771,MP,1770801771
+basic.5,1770801771,,MP,1770801771,MP,1770801771
+basic.6,1770801771,,TP,1770801771,TP,1770801771
+basic.7,1770801771,,TP,1770801771,TP,1770801771
+basic.8,1770801771,,EXP,1770801771,EXP,1770801771
+basic.9,1770801771,,EXP,1770801771,EXP,1770801771
+commands.0,1770801771,,싸우기,1770801771,Fight,1770801771
+commands.1,1770801771,,도망,1770801771,Escape,1770801771
+commands.2,1770801771,,공격,1770801771,Attack,1770801771
+commands.3,1770801771,,보호,1770801771,Guard,1770801771
+commands.4,1770801771,,아이템,1770801771,Items,1770801771
+commands.5,1770801771,,스킬,1770801771,Skills,1770801771
+commands.6,1770801771,,장착,1770801771,Equip,1770801771
+commands.7,1770801771,,스탯,1770801771,Status,1770801771
+commands.8,1770801771,,진형,1770801771,Formation,1770801771
+commands.9,1770801771,,저장,1770801771,Save,1770801771
+commands.10,1770801771,,게임 종료,1770801771,Game End,1770801771
+commands.11,1770801771,,옵션,1770801771,Options,1770801771
+commands.12,1770801771,,무기,1770801771,Weapons,1770801771
+commands.13,1770801771,,방어구,1770801771,Armor,1770801771
+commands.14,1770801771,,핵심 아이템,1770801771,Key Items,1770801771
+commands.15,1770801771,,장착,1770801771,Equip,1770801771
+commands.16,1770801771,,최적화,1770801771,Optimize,1770801771
+commands.17,1770801771,,모두 탈착,1770801771,Clear All,1770801771
+commands.18,1770801771,,새 게임,1770801771,New Game,1770801771
+commands.19,1770801771,,계속,1770801771,Continue,1770801771
+commands.21,1770801771,,타이틀로,1770801771,To Title,1770801771
+commands.22,1770801771,,취소,1770801771,Cancel,1770801771
+commands.24,1770801771,,구매,1770801771,Buy,1770801771
+commands.25,1770801771,,판매,1770801771,Sell,1770801771
+params.0,1770801771,,Max MP,1770801771,Max HP,1770801771
+params.1,1770801771,,Max MP,1770801771,Max MP,1770801771
+params.2,1770801771,,공격,1770801771,Attack,1770801771
+params.3,1770801771,,방어,1770801771,Defense,1770801771
+params.4,1770801771,,마법 공격,1770801771,M.Attack,1770801771
+params.5,1770801771,,마법 방어,1770801771,M.Defense,1770801771
+params.6,1770801771,,민첩성,1770801771,Agility,1770801771
+params.7,1770801771,,운,1770801771,Luck,1770801771
+params.8,1770801771,,타격,1770801771,Hit Rate,1770801771
+params.9,1770801771,,회피율,1770801771,Evasion,1770801771
+messages.actionFailure,1770801771,,%1에는 아무 영향이 없었습니다!,1770801771,There was no effect on %1!,1770801771
+messages.actorDamage,1770801771,,%1가 %2에게 손상를 입혔습니다!,1770801771,%1 took %2 damage!,1770801771
+messages.actorDrain,1770801771,,%1이 %2 %3를 소모했습니다!,1770801771,%1 was drained of %2 %3!,1770801771
+messages.actorGain,1770801771,,%1이 %2 %3을 획득했습니다!,1770801771,%1 gained %2 %3!,1770801771
+messages.actorLoss,1770801771,,%1이 %2 %3을 잃었습니다!,1770801771,%1 lost %2 %3!,1770801771
+messages.actorNoDamage,1770801771,,%1이 손상을 입지 않았습니다!,1770801771,%1 took no damage!,1770801771
+messages.actorNoHit,1770801771,,빗나갔습니다! %1이 손상을 입지 않았습니다!,1770801771,Miss! %1 took no damage!,1770801771
+messages.actorRecovery,1770801771,,%1이 %2 %3을 회복했습니다!,1770801771,%1 recovered %2 %3!,1770801771
+messages.alwaysDash,1770801771,,항상 대쉬,1770801771,Always Dash,1770801771
+messages.bgmVolume,1770801771,,BGM 볼륨,1770801771,BGM Volume,1770801771
+messages.bgsVolume,1770801771,,BGS 볼륨,1770801771,BGS Volume,1770801771
+messages.buffAdd,1770801771,,%1의 %2가 상승했습니다!,1770801771,%1's %2 went up!,1770801771
+messages.buffRemove,1770801771,,%1의 %2가 정상으로 돌아왔습니다!,1770801771,%1's %2 returned to normal!,1770801771
+messages.commandRemember,1770801771,,명령 기억,1770801771,Command Remember,1770801771
+messages.counterAttack,1770801771,,%1이 반격했습니다!,1770801771,%1 counterattacked!,1770801771
+messages.criticalToActor,1770801771,,피눈물나는 강타!! ,1770801771,A painful blow!!,1770801771
+messages.criticalToEnemy,1770801771,,회심의 일격!!,1770801771,An excellent hit!!,1770801771
+messages.debuffAdd,1770801771,,%1의 %2가 감소했습니다!,1770801771,%1's %2 went down!,1770801771
+messages.defeat,1770801771,,%1 이 패배했습니다.,1770801771,%1 was defeated.,1770801771
+messages.emerge,1770801771,,%1 이 나타났습니다!,1770801771,%1 emerged!,1770801771
+messages.enemyDamage,1770801771,,%1가 %2에게 손상를 입혔습니다!,1770801771,%1 took %2 damage!,1770801771
+messages.enemyDrain,1770801771,,%1이 %2 %3를 소모했습니다!,1770801771,%1 was drained of %2 %3!,1770801771
+messages.enemyGain,1770801771,,%1이 %2 %3을 획득했습니다!,1770801771,%1 gained %2 %3!,1770801771
+messages.enemyLoss,1770801771,,%1이 %2 %3을 잃었습니다!,1770801771,%1 lost %2 %3!,1770801771
+messages.enemyNoDamage,1770801771,,%1이 손상을 입지 않았습니다!,1770801771,%1 took no damage!,1770801771
+messages.enemyNoHit,1770801771,,빗나갔습니다! %1이 손상을 입지 않았습니다!,1770801771,Miss! %1 took no damage!,1770801771
+messages.enemyRecovery,1770801771,,%1이 %2 %3을 회복했습니다!,1770801771,%1 recovered %2 %3!,1770801771
+messages.escapeFailure,1770801771,,"그러나, 탈출할 수 없었습니다!",1770801771,"However, it was not possible to escape!",1770801771
+messages.escapeStart,1770801771,,%1이 도망가기 시작했습니다!,1770801771,%1 has started to flee!,1770801771
+messages.evasion,1770801771,,%1이 공격을 회피했습니다!,1770801771,%1 evaded the attack!,1770801771
+messages.expNext,1770801771,,다음 %1까지,1770801771,To Next %1,1770801771
+messages.expTotal,1770801771,,현재 %1,1770801771,Current %1,1770801771
+messages.file,1770801771,,파일,1770801771,File,1770801771
+messages.levelUp,1770801771,,%1이 이제 %2 %3입니다!,1770801771,%1 is now %2 %3!,1770801771
+messages.loadMessage,1770801771,,어떤 파일을 로드할까요?,1770801771,Which file would you like to load?,1770801771
+messages.magicEvasion,1770801771,,%1이 마법을 무효화했습니다!,1770801771,%1 nullified the magic!,1770801771
+messages.magicReflection,1770801771,,%1이 마법을 반사했습니다!,1770801771,%1 reflected the magic!,1770801771
+messages.meVolume,1770801771,,ME 볼륨,1770801771,ME Volume,1770801771
+messages.obtainExp,1770801771,,%1 %2 받았습니다!,1770801771,%1 %2 received!,1770801771
+messages.obtainGold,1770801771,,%1\G를 발견하였습니다!,1770801771,%1\G was found!,1770801771
+messages.obtainItem,1770801771,,%1를 발견하였습니다!,1770801771,%1 was found!,1770801771
+messages.obtainSkill,1770801771,,%1을 습득하였습니다!,1770801771,%1 was learned!,1770801771
+messages.partyName,1770801771,,%1 파티,1770801771,%1's Party,1770801771
+messages.possession,1770801771,,갖고 있는 수,1770801771,Possession,1770801771
+messages.preemptive,1770801771,,%1 이 우위를 점했습니다!,1770801771,%1 got the upper hand!,1770801771
+messages.saveMessage,1770801771,,어느 파일에 저장할까요?,1770801771,Which file would you like to save to?,1770801771
+messages.seVolume,1770801771,,SE 볼륨,1770801771,SE Volume,1770801771
+messages.substitute,1770801771,,%1이 %2를 보호했습니다!,1770801771,%1 protected %2!,1770801771
+messages.surprise,1770801771,,%1 이 습격당했습니다!,1770801771,%1 was ambushed!,1770801771
+messages.useItem,1770801771,,%1이 %2를 이용합니다!,1770801771,%1 uses %2!,1770801771
+messages.victory,1770801771,,%1 이 승리했습니다!,1770801771,%1 was victorious!,1770801771
