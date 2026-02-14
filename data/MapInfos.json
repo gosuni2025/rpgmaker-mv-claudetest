@@ -9,5 +9,31 @@
     "scrollX": 1092,
     "scrollY": 712
   },
-  null
+  {
+    "id": 2,
+    "expanded": false,
+    "name": "MAP002",
+    "order": 2,
+    "parentId": 1,
+    "scrollX": 0,
+    "scrollY": 0
+  },
+  {
+    "id": 3,
+    "expanded": false,
+    "name": "Small Town",
+    "order": 3,
+    "parentId": 1,
+    "scrollX": 0,
+    "scrollY": 0
+  },
+  {
+    "id": 4,
+    "expanded": false,
+    "name": "Lava Cave",
+    "order": 4,
+    "parentId": 3,
+    "scrollX": 0,
+    "scrollY": 0
+  }
 ]

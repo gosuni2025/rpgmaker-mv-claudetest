@@ -1,294 +1,1012 @@
 //=============================================================================
-// ThreeTilemap.js - Canvas-based tilemap rendering for Three.js backend
+// ThreeTilemap.js - GPU-native tilemap rendering for Three.js backend
+//=============================================================================
+// ShaderTilemap의 addRect() API를 Three.js로 네이티브 구현.
+// Canvas 2D 중간 단계 없이 타일을 직접 GPU 메시로 렌더링.
+//
+// 구조:
+//   ThreeTilemapZLayer (ThreeContainer)
+//     └── ThreeTilemapCompositeLayer
+//           └── ThreeTilemapRectLayer (addRect 호출 수신)
+//                 └── setNumber별 THREE.Mesh (BufferGeometry)
 //=============================================================================
 
-/**
- * A canvas-based tilemap layer for the Three.js renderer.
- * Since ShaderTilemap (pixi-tilemap) is not available in Three.js,
- * this provides a fallback that renders tiles to a canvas and displays
- * the result as a textured plane.
- *
- * This is used by the base Tilemap class (not ShaderTilemap) when the
- * Three.js backend is active.
- *
- * @class ThreeTilemapLayer
- * @constructor
- * @param {Number} width - Layer width in pixels
- * @param {Number} height - Layer height in pixels
- */
-function ThreeTilemapLayer(width, height) {
+//=============================================================================
+// ThreeTilemapRectLayer - 핵심 렌더링 클래스
+// addRect()로 쿼드 데이터를 축적, syncTransform 시 메시 빌드
+//=============================================================================
+
+function ThreeTilemapRectLayer() {
     this._threeObj = new THREE.Group();
     this._threeObj._wrapper = this;
 
-    // Position
     this._x = 0;
     this._y = 0;
-
-    // Scale
     this._scaleX = 1;
     this._scaleY = 1;
-    this.scale = this._createScaleProxy();
-
-    // Rotation
     this._rotation = 0;
-
-    // Pivot
     this._pivotX = 0;
     this._pivotY = 0;
-    this.pivot = this._createPivotProxy();
-
-    // Alpha / visibility
     this._alpha = 1;
     this._visible = true;
-
-    // World values
+    this._zIndex = 0;
     this.worldAlpha = 1;
     this.worldVisible = true;
-
-    // Parent
     this.parent = null;
-
-    // Children
     this.children = [];
-
-    // Filters
     this._filters = null;
-
-    // Z-index
-    this._zIndex = 0;
-
-    // Canvas for tile rendering
-    this._layerWidth = Math.max(width || 816, 1);
-    this._layerHeight = Math.max(height || 624, 1);
-    this._canvas = document.createElement('canvas');
-    this._canvas.width = this._layerWidth;
-    this._canvas.height = this._layerHeight;
-    this._context = this._canvas.getContext('2d');
-
-    // Three.js texture and mesh from the canvas
-    this._canvasTexture = new THREE.CanvasTexture(this._canvas);
-    this._canvasTexture.magFilter = THREE.NearestFilter;
-    this._canvasTexture.minFilter = THREE.NearestFilter;
-    this._canvasTexture.generateMipmaps = false;
-
-    this._material = new THREE.MeshBasicMaterial({
-        map: this._canvasTexture,
-        transparent: true,
-        depthTest: false,
-        depthWrite: false
-    });
-
-    this._geometry = new THREE.PlaneGeometry(1, 1);
-
-    // Adjust UV to map correctly (Y-down)
-    var uvAttr = this._geometry.attributes.uv;
-    if (uvAttr) {
-        uvAttr.setXY(0, 0, 0); // top-left
-        uvAttr.setXY(1, 1, 0); // top-right
-        uvAttr.setXY(2, 0, 1); // bottom-left
-        uvAttr.setXY(3, 1, 1); // bottom-right
-        uvAttr.needsUpdate = true;
-    }
-
-    this._mesh = new THREE.Mesh(this._geometry, this._material);
-    // Position so top-left corner is at origin
-    this._mesh.position.x = this._layerWidth / 2;
-    this._mesh.position.y = this._layerHeight / 2;
-    this._mesh.scale.x = this._layerWidth;
-    this._mesh.scale.y = this._layerHeight;
-    this._threeObj.add(this._mesh);
-
-    // Dirty flag for canvas content
-    this._dirty = true;
-
-    // Transform dirty
     this._transformDirty = true;
+
+    this.scale = { x: 1, y: 1 };
+    this.pivot = { x: 0, y: 0 };
+
+    // setNumber → rect data 배열 (-1 = 그림자, 0~13 = 타일셋)
+    this._rectData = {};   // { setNumber: { positions: [], uvs: [], count: 0 } }
+    this._bitmaps = [];    // 타일셋 텍스처 배열
+    this._meshes = {};     // setNumber → THREE.Mesh (캐싱)
+    this._needsRebuild = false;
+    this._shadowColor = new Float32Array([0, 0, 0, 0.5]);
+
+    // 애니메이션 오프셋 (ShaderTilemap._hackRenderer에서 설정)
+    this._tileAnimX = 0;
+    this._tileAnimY = 0;
+    // 이전 프레임의 애니메이션 값 (변경 감지용)
+    this._lastTileAnimX = 0;
+    this._lastTileAnimY = 0;
+
+    // animOffset 데이터 (setNumber별)
+    this._animData = {};   // { setNumber: [] }  animX, animY per rect
 }
 
-// ---------------------------------------------------------------------------
-// Property definitions
-// ---------------------------------------------------------------------------
-
-Object.defineProperties(ThreeTilemapLayer.prototype, {
+Object.defineProperties(ThreeTilemapRectLayer.prototype, {
     x: {
         get: function() { return this._x; },
-        set: function(value) { this._x = value; this._transformDirty = true; },
+        set: function(v) { this._x = v; },
         configurable: true
     },
     y: {
         get: function() { return this._y; },
-        set: function(value) { this._y = value; this._transformDirty = true; },
-        configurable: true
-    },
-    rotation: {
-        get: function() { return this._rotation; },
-        set: function(value) { this._rotation = value; this._transformDirty = true; },
+        set: function(v) { this._y = v; },
         configurable: true
     },
     alpha: {
         get: function() { return this._alpha; },
-        set: function(value) { this._alpha = value; },
+        set: function(v) { this._alpha = v; },
         configurable: true
     },
     visible: {
         get: function() { return this._visible; },
-        set: function(value) {
-            this._visible = value;
-            this._threeObj.visible = value;
-        },
-        configurable: true
-    },
-    filters: {
-        get: function() { return this._filters; },
-        set: function(value) { this._filters = value; },
+        set: function(v) { this._visible = v; this._threeObj.visible = v; },
         configurable: true
     },
     zIndex: {
         get: function() { return this._zIndex; },
-        set: function(value) { this._zIndex = value; this._transformDirty = true; },
-        configurable: true
-    },
-    width: {
-        get: function() { return this._layerWidth; },
-        configurable: true
-    },
-    height: {
-        get: function() { return this._layerHeight; },
+        set: function(v) { this._zIndex = v; },
         configurable: true
     }
 });
 
-// ---------------------------------------------------------------------------
-// Proxy creators
-// ---------------------------------------------------------------------------
+/**
+ * 타일셋 텍스처 바인딩
+ */
+ThreeTilemapRectLayer.prototype.setBitmaps = function(bitmaps) {
+    this._bitmaps = bitmaps || [];
+};
 
-ThreeTilemapLayer.prototype._createScaleProxy = function() {
-    var self = this;
-    return {
-        get x() { return self._scaleX; },
-        set x(v) { self._scaleX = v; self._transformDirty = true; },
-        get y() { return self._scaleY; },
-        set y(v) { self._scaleY = v; self._transformDirty = true; },
-        set: function(x, y) {
-            self._scaleX = x;
-            self._scaleY = (y !== undefined) ? y : x;
-            self._transformDirty = true;
+/**
+ * 모든 쿼드 데이터 초기화
+ */
+ThreeTilemapRectLayer.prototype.clear = function() {
+    for (var key in this._rectData) {
+        this._rectData[key].count = 0;
+    }
+    for (var key in this._animData) {
+        this._animData[key].length = 0;
+    }
+    this._needsRebuild = true;
+};
+
+/**
+ * 쿼드 추가 (ShaderTilemap API 호환)
+ * @param {Number} setNumber - 타일셋 인덱스 (-1 = 그림자)
+ * @param {Number} u - 소스 X (픽셀)
+ * @param {Number} v - 소스 Y (픽셀)
+ * @param {Number} x - 대상 X (픽셀)
+ * @param {Number} y - 대상 Y (픽셀)
+ * @param {Number} w - 너비
+ * @param {Number} h - 높이
+ * @param {Number} [animX=0] - 애니메이션 X 배율
+ * @param {Number} [animY=0] - 애니메이션 Y 배율
+ */
+ThreeTilemapRectLayer.prototype.addRect = function(setNumber, u, v, x, y, w, h, animX, animY) {
+    if (!this._rectData[setNumber]) {
+        this._rectData[setNumber] = {
+            positions: new Float32Array(1000 * 12),  // 1000 quads * 6 vertices * 2 components
+            uvs: new Float32Array(1000 * 12),
+            count: 0,
+            capacity: 1000
+        };
+        this._animData[setNumber] = [];
+    }
+
+    var data = this._rectData[setNumber];
+    var idx = data.count;
+
+    // 용량 확장
+    if (idx >= data.capacity) {
+        var newCapacity = data.capacity * 2;
+        var newPositions = new Float32Array(newCapacity * 6 * 2);
+        newPositions.set(data.positions);
+        data.positions = newPositions;
+        var newUvs = new Float32Array(newCapacity * 6 * 2);
+        newUvs.set(data.uvs);
+        data.uvs = newUvs;
+        data.capacity = newCapacity;
+    }
+
+    // 6 vertices (2 triangles) 위치 데이터
+    var pi = idx * 12; // 6 vertices * 2 components
+    // Triangle 1: top-left, top-right, bottom-left
+    data.positions[pi]     = x;
+    data.positions[pi + 1] = y;
+    data.positions[pi + 2] = x + w;
+    data.positions[pi + 3] = y;
+    data.positions[pi + 4] = x;
+    data.positions[pi + 5] = y + h;
+    // Triangle 2: top-right, bottom-right, bottom-left
+    data.positions[pi + 6]  = x + w;
+    data.positions[pi + 7]  = y;
+    data.positions[pi + 8]  = x + w;
+    data.positions[pi + 9]  = y + h;
+    data.positions[pi + 10] = x;
+    data.positions[pi + 11] = y + h;
+
+    // UV 데이터 (픽셀 좌표, 나중에 정규화)
+    data.uvs[pi]     = u;
+    data.uvs[pi + 1] = v;
+    data.uvs[pi + 2] = u + w;
+    data.uvs[pi + 3] = v;
+    data.uvs[pi + 4] = u;
+    data.uvs[pi + 5] = v + h;
+    data.uvs[pi + 6]  = u + w;
+    data.uvs[pi + 7]  = v;
+    data.uvs[pi + 8]  = u + w;
+    data.uvs[pi + 9]  = v + h;
+    data.uvs[pi + 10] = u;
+    data.uvs[pi + 11] = v + h;
+
+    // 애니메이션 오프셋
+    this._animData[setNumber].push(animX || 0, animY || 0);
+
+    data.count++;
+    this._needsRebuild = true;
+};
+
+/**
+ * 축적된 쿼드 데이터로 Three.js 메시 빌드
+ */
+ThreeTilemapRectLayer.prototype._flush = function() {
+    var tileAnimX = this._tileAnimX;
+    var tileAnimY = this._tileAnimY;
+    var animChanged = (tileAnimX !== this._lastTileAnimX || tileAnimY !== this._lastTileAnimY);
+
+    // 물 메시 uTime은 매 프레임 갱신 (wave 연속 애니메이션)
+    if (typeof ThreeWaterShader !== 'undefined') {
+        for (var wk in this._meshes) {
+            var wm = this._meshes[wk];
+            if (wm && wm.userData && wm.userData.isWaterMesh) {
+                ThreeWaterShader.updateTime(wm, ThreeWaterShader._time);
+            }
         }
-    };
-};
+    }
 
-ThreeTilemapLayer.prototype._createPivotProxy = function() {
-    var self = this;
-    return {
-        get x() { return self._pivotX; },
-        set x(v) { self._pivotX = v; self._transformDirty = true; },
-        get y() { return self._pivotY; },
-        set y(v) { self._pivotY = v; self._transformDirty = true; },
-        set: function(x, y) {
-            self._pivotX = x;
-            self._pivotY = (y !== undefined) ? y : x;
-            self._transformDirty = true;
+    if (!this._needsRebuild && animChanged) {
+        // 빠른 경로: 애니메이션 오프셋만 변경 → UV만 갱신
+        this._lastTileAnimX = tileAnimX;
+        this._lastTileAnimY = tileAnimY;
+        this._updateAnimUVs(tileAnimX, tileAnimY);
+        return;
+    }
+
+    if (!this._needsRebuild) return;
+    this._needsRebuild = false;
+    this._lastTileAnimX = tileAnimX;
+    this._lastTileAnimY = tileAnimY;
+
+    // 기존 메시 숨기기
+    for (var key in this._meshes) {
+        this._meshes[key].visible = false;
+    }
+
+    for (var setNumber in this._rectData) {
+        var data = this._rectData[setNumber];
+        if (data.count === 0) continue;
+
+        var sn = parseInt(setNumber);
+        var isShadow = (sn === -1);
+
+        // 텍스처 가져오기
+        var texture = null;
+        var texW = 1, texH = 1;
+        if (!isShadow && this._bitmaps[sn]) {
+            var bmp = this._bitmaps[sn];
+            // PIXI 호환 텍스처 래퍼에서 Three.js 텍스처 추출
+            if (bmp.baseTexture && bmp.baseTexture._threeTexture) {
+                texture = bmp.baseTexture._threeTexture;
+            } else if (bmp._threeTexture) {
+                texture = bmp._threeTexture;
+            } else if (bmp instanceof THREE.Texture) {
+                texture = bmp;
+            }
+            if (texture && texture.image) {
+                texW = texture.image.width || 1;
+                texH = texture.image.height || 1;
+            }
         }
-    };
+
+        if (!isShadow && !texture) continue;
+
+        // NearestFilter 매 프레임 강제 (다른 곳에서 리셋될 수 있으므로)
+        if (!isShadow && texture) {
+            if (texture.minFilter !== THREE.NearestFilter ||
+                texture.magFilter !== THREE.NearestFilter) {
+                texture.minFilter = THREE.NearestFilter;
+                texture.magFilter = THREE.NearestFilter;
+                texture.generateMipmaps = false;
+                texture.anisotropy = 1;
+                texture.needsUpdate = true;
+            }
+        }
+
+        // 물 rect와 일반 rect 분리
+        var animOffsets = this._animData[setNumber] || [];
+        var hasWater = false;
+        var hasNormal = false;
+
+        if (!isShadow && sn === 0 && typeof ThreeWaterShader !== 'undefined') {
+            for (var ci = 0; ci < data.count; ci++) {
+                var cAnimX = animOffsets[ci * 2] || 0;
+                var cAnimY = animOffsets[ci * 2 + 1] || 0;
+                if (ThreeWaterShader.isWaterRect(cAnimX, cAnimY)) {
+                    hasWater = true;
+                } else {
+                    hasNormal = true;
+                }
+            }
+        } else {
+            hasNormal = true;
+        }
+
+        // --- 일반 타일 메시 빌드 ---
+        if (hasNormal) {
+            this._buildNormalMesh(setNumber, data, animOffsets, texture, texW, texH,
+                                  tileAnimX, tileAnimY, isShadow, hasWater);
+        }
+
+        // --- 물 타일 메시 빌드 ---
+        if (hasWater) {
+            this._buildWaterMesh(setNumber, data, animOffsets, texture, texW, texH,
+                                  tileAnimX, tileAnimY);
+        }
+    }
 };
 
-// ---------------------------------------------------------------------------
-// Canvas drawing API (for Tilemap._paintTiles)
-// ---------------------------------------------------------------------------
-
 /**
- * Clears the layer canvas.
+ * 일반(비물) 타일 메시 빌드
  */
-ThreeTilemapLayer.prototype.clear = function() {
-    this._context.clearRect(0, 0, this._layerWidth, this._layerHeight);
-    this._dirty = true;
-};
+ThreeTilemapRectLayer.prototype._buildNormalMesh = function(setNumber, data, animOffsets,
+        texture, texW, texH, tileAnimX, tileAnimY, isShadow, hasWater) {
+    var sn = parseInt(setNumber);
 
-/**
- * Resizes the layer canvas.
- * @param {Number} width
- * @param {Number} height
- */
-ThreeTilemapLayer.prototype.resize = function(width, height) {
-    this._layerWidth = Math.max(width || 1, 1);
-    this._layerHeight = Math.max(height || 1, 1);
-    this._canvas.width = this._layerWidth;
-    this._canvas.height = this._layerHeight;
-
-    // Update mesh size
-    this._mesh.position.x = this._layerWidth / 2;
-    this._mesh.position.y = this._layerHeight / 2;
-    this._mesh.scale.x = this._layerWidth;
-    this._mesh.scale.y = this._layerHeight;
-
-    this._dirty = true;
-};
-
-/**
- * Draws a tile from a source bitmap/canvas onto the layer.
- * @param {HTMLCanvasElement|HTMLImageElement} source - Source image/canvas
- * @param {Number} sx - Source x
- * @param {Number} sy - Source y
- * @param {Number} sw - Source width
- * @param {Number} sh - Source height
- * @param {Number} dx - Destination x
- * @param {Number} dy - Destination y
- * @param {Number} dw - Destination width
- * @param {Number} dh - Destination height
- */
-ThreeTilemapLayer.prototype.drawImage = function(source, sx, sy, sw, sh, dx, dy, dw, dh) {
-    if (dw === undefined) {
-        // 5-argument form: drawImage(source, dx, dy, dw, dh)
-        this._context.drawImage(source, sx, sy, sw, sh);
+    // 물 rect를 제외한 일반 rect만 수집
+    var normalIndices = [];
+    if (hasWater) {
+        for (var ci = 0; ci < data.count; ci++) {
+            var cAnimX = animOffsets[ci * 2] || 0;
+            var cAnimY = animOffsets[ci * 2 + 1] || 0;
+            if (!ThreeWaterShader.isWaterRect(cAnimX, cAnimY)) {
+                normalIndices.push(ci);
+            }
+        }
     } else {
-        // 9-argument form
-        this._context.drawImage(source, sx, sy, sw, sh, dx, dy, dw, dh);
+        for (var ci = 0; ci < data.count; ci++) {
+            normalIndices.push(ci);
+        }
     }
-    this._dirty = true;
-};
 
-/**
- * Gets the 2D rendering context of the layer canvas.
- * @return {CanvasRenderingContext2D}
- */
-ThreeTilemapLayer.prototype.getContext = function() {
-    return this._context;
-};
+    var normalCount = normalIndices.length;
+    if (normalCount === 0) return;
 
-/**
- * Marks the canvas texture as needing update.
- */
-ThreeTilemapLayer.prototype.updateTexture = function() {
-    if (this._dirty) {
-        this._canvasTexture.needsUpdate = true;
-        this._dirty = false;
+    var vertCount = normalCount * 6;
+    var posArray = new Float32Array(vertCount * 3);
+    var normalArray = new Float32Array(vertCount * 3);
+    var uvArray = new Float32Array(vertCount * 2);
+
+    for (var ni = 0; ni < normalCount; ni++) {
+        var i = normalIndices[ni];
+        var srcOff = i * 12;
+        var posOff = ni * 18;
+        var uvOff = ni * 12;
+
+        var ax = (animOffsets[i * 2] || 0) * tileAnimX;
+        var ay = (animOffsets[i * 2 + 1] || 0) * tileAnimY;
+
+        for (var j = 0; j < 6; j++) {
+            posArray[posOff + j * 3]     = data.positions[srcOff + j * 2];
+            posArray[posOff + j * 3 + 1] = data.positions[srcOff + j * 2 + 1];
+            posArray[posOff + j * 3 + 2] = 0;
+
+            normalArray[posOff + j * 3]     = 0;
+            normalArray[posOff + j * 3 + 1] = 0;
+            normalArray[posOff + j * 3 + 2] = -1;
+
+            if (!isShadow) {
+                uvArray[uvOff + j * 2]     = (data.uvs[srcOff + j * 2] + ax) / texW;
+                uvArray[uvOff + j * 2 + 1] = 1.0 - (data.uvs[srcOff + j * 2 + 1] + ay) / texH;
+            }
+        }
+    }
+
+    var needsPhong = !isShadow && (window.ShadowLight && window.ShadowLight._active);
+    var mesh = this._meshes[setNumber];
+
+    if (mesh) {
+        var geometry = mesh.geometry;
+        var posAttr = geometry.attributes.position;
+        if (posAttr && posAttr.array.length === posArray.length) {
+            posAttr.array.set(posArray);
+            posAttr.needsUpdate = true;
+        } else {
+            geometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        }
+        var normAttr = geometry.attributes.normal;
+        if (normAttr && normAttr.array.length === normalArray.length) {
+            normAttr.array.set(normalArray);
+            normAttr.needsUpdate = true;
+        } else {
+            geometry.setAttribute('normal', new THREE.BufferAttribute(normalArray, 3));
+        }
+        if (!isShadow) {
+            var uvAttr = geometry.attributes.uv;
+            if (uvAttr && uvAttr.array.length === uvArray.length) {
+                uvAttr.array.set(uvArray);
+                uvAttr.needsUpdate = true;
+            } else {
+                geometry.setAttribute('uv', new THREE.BufferAttribute(uvArray, 2));
+            }
+        }
+        // material 타입 전환
+        if (!isShadow) {
+            var isPhong = mesh.material.isMeshPhongMaterial;
+            if (needsPhong && !isPhong) {
+                mesh.material.dispose();
+                mesh.material = new THREE.MeshPhongMaterial({
+                    map: texture, transparent: true, depthTest: true, depthWrite: true,
+                    side: THREE.DoubleSide,
+                    emissive: new THREE.Color(0x000000),
+                    specular: new THREE.Color(0x000000), shininess: 0,
+                });
+                mesh.material.needsUpdate = true;
+            } else if (!needsPhong && isPhong) {
+                mesh.material.dispose();
+                mesh.material = new THREE.MeshBasicMaterial({
+                    map: texture, transparent: true, depthTest: false, depthWrite: false,
+                    side: THREE.DoubleSide,
+                });
+                mesh.material.needsUpdate = true;
+            } else if (!needsPhong && mesh.material.depthTest !== false) {
+                mesh.material.depthTest = false;
+                mesh.material.depthWrite = false;
+                mesh.material.needsUpdate = true;
+            }
+        }
+        mesh.visible = true;
+    } else {
+        var geometry = new THREE.BufferGeometry();
+        geometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        geometry.setAttribute('normal', new THREE.BufferAttribute(normalArray, 3));
+        if (!isShadow) {
+            geometry.setAttribute('uv', new THREE.BufferAttribute(uvArray, 2));
+        }
+
+        var material;
+        if (isShadow) {
+            var sc = this._shadowColor;
+            material = new THREE.MeshBasicMaterial({
+                color: new THREE.Color(sc[0], sc[1], sc[2]),
+                transparent: true, opacity: sc[3],
+                depthTest: false, depthWrite: false, side: THREE.DoubleSide,
+            });
+        } else {
+            texture.minFilter = THREE.NearestFilter;
+            texture.magFilter = THREE.NearestFilter;
+            texture.generateMipmaps = false;
+            texture.anisotropy = 1;
+            if (needsPhong) {
+                material = new THREE.MeshPhongMaterial({
+                    map: texture, transparent: true, depthTest: true, depthWrite: true,
+                    side: THREE.DoubleSide,
+                    emissive: new THREE.Color(0x000000),
+                    specular: new THREE.Color(0x000000), shininess: 0,
+                });
+            } else {
+                material = new THREE.MeshBasicMaterial({
+                    map: texture, transparent: true, depthTest: false, depthWrite: false,
+                    side: THREE.DoubleSide,
+                });
+            }
+        }
+
+        mesh = new THREE.Mesh(geometry, material);
+        mesh.frustumCulled = false;
+        if (window.ShadowLight && window.ShadowLight._active && !isShadow) {
+            mesh.receiveShadow = true;
+            var parentZLayer = this.parent && this.parent.parent;
+            if (parentZLayer && parentZLayer.z === 4) {
+                mesh.castShadow = true;
+                if (texture) {
+                    mesh.customDepthMaterial = new THREE.MeshDepthMaterial({
+                        depthPacking: THREE.RGBADepthPacking,
+                        map: texture, alphaTest: 0.5, side: THREE.DoubleSide,
+                    });
+                }
+            }
+        }
+        this._meshes[setNumber] = mesh;
+        this._threeObj.add(mesh);
+    }
+
+    // 텍스처 교체 (타일셋 로딩 완료 후 바뀔 수 있음)
+    if (!isShadow && mesh.material.map !== texture) {
+        texture.minFilter = THREE.NearestFilter;
+        texture.magFilter = THREE.NearestFilter;
+        texture.generateMipmaps = false;
+        texture.anisotropy = 1;
+        mesh.material.map = texture;
+        mesh.material.needsUpdate = true;
     }
 };
 
-// ---------------------------------------------------------------------------
-// PIXI.tilemap.RectTileLayer-compatible API stubs
-// (Used by Tilemap._createLayers for canvas tilemap)
-// ---------------------------------------------------------------------------
-
 /**
- * PIXI tilemap compat: addRect
+ * 물 타일 메시 빌드 (wave UV 왜곡 셰이더 적용)
  */
-ThreeTilemapLayer.prototype.addRect = function(textureId, u, v, x, y, tileWidth, tileHeight) {
-    // Canvas tilemap draws directly; this is a stub for API compat
+ThreeTilemapRectLayer.prototype._buildWaterMesh = function(setNumber, data, animOffsets,
+        texture, texW, texH, tileAnimX, tileAnimY) {
+    // 물 rect와 폭포 rect 분리
+    var waterIndices = [];
+    var waterfallIndices = [];
+    for (var ci = 0; ci < data.count; ci++) {
+        var cAnimX = animOffsets[ci * 2] || 0;
+        var cAnimY = animOffsets[ci * 2 + 1] || 0;
+        if (ThreeWaterShader.isWaterfallRect(cAnimX, cAnimY)) {
+            waterfallIndices.push(ci);
+        } else if (ThreeWaterShader.isWaterRect(cAnimX, cAnimY)) {
+            waterIndices.push(ci);
+        }
+    }
+
+    if (waterIndices.length > 0) {
+        this._buildWaterTypeMesh(setNumber + '_water', waterIndices, data, animOffsets,
+                                  texture, texW, texH, tileAnimX, tileAnimY, false);
+    }
+    if (waterfallIndices.length > 0) {
+        this._buildWaterTypeMesh(setNumber + '_waterfall', waterfallIndices, data, animOffsets,
+                                  texture, texW, texH, tileAnimX, tileAnimY, true);
+    }
 };
 
 /**
- * PIXI tilemap compat: clear (alias)
+ * 물/폭포 타일 메시 빌드 (공통)
  */
-ThreeTilemapLayer.prototype.clearRects = function() {
-    this.clear();
+ThreeTilemapRectLayer.prototype._buildWaterTypeMesh = function(meshKey, indices, data, animOffsets,
+        texture, texW, texH, tileAnimX, tileAnimY, isWaterfall) {
+    var count = indices.length;
+    var vertCount = count * 6;
+    var posArray = new Float32Array(vertCount * 3);
+    var normalArray = new Float32Array(vertCount * 3);
+    var uvArray = new Float32Array(vertCount * 2);
+
+    for (var ni = 0; ni < count; ni++) {
+        var i = indices[ni];
+        var srcOff = i * 12;
+        var posOff = ni * 18;
+        var uvOff = ni * 12;
+
+        var ax = (animOffsets[i * 2] || 0) * tileAnimX;
+        var ay = (animOffsets[i * 2 + 1] || 0) * tileAnimY;
+
+        for (var j = 0; j < 6; j++) {
+            posArray[posOff + j * 3]     = data.positions[srcOff + j * 2];
+            posArray[posOff + j * 3 + 1] = data.positions[srcOff + j * 2 + 1];
+            posArray[posOff + j * 3 + 2] = 0;
+
+            normalArray[posOff + j * 3]     = 0;
+            normalArray[posOff + j * 3 + 1] = 0;
+            normalArray[posOff + j * 3 + 2] = -1;
+
+            uvArray[uvOff + j * 2]     = (data.uvs[srcOff + j * 2] + ax) / texW;
+            uvArray[uvOff + j * 2 + 1] = 1.0 - (data.uvs[srcOff + j * 2 + 1] + ay) / texH;
+        }
+    }
+
+    var needsPhong = (window.ShadowLight && window.ShadowLight._active);
+    var mesh = this._meshes[meshKey];
+
+    if (mesh) {
+        var geometry = mesh.geometry;
+        // geometry attribute 갱신
+        var posAttr = geometry.attributes.position;
+        if (posAttr && posAttr.array.length === posArray.length) {
+            posAttr.array.set(posArray);
+            posAttr.needsUpdate = true;
+        } else {
+            geometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        }
+        var normAttr = geometry.attributes.normal;
+        if (normAttr && normAttr.array.length === normalArray.length) {
+            normAttr.array.set(normalArray);
+            normAttr.needsUpdate = true;
+        } else {
+            geometry.setAttribute('normal', new THREE.BufferAttribute(normalArray, 3));
+        }
+        var uvAttr = geometry.attributes.uv;
+        if (uvAttr && uvAttr.array.length === uvArray.length) {
+            uvAttr.array.set(uvArray);
+            uvAttr.needsUpdate = true;
+        } else {
+            geometry.setAttribute('uv', new THREE.BufferAttribute(uvArray, 2));
+        }
+
+        // material 타입 전환 (ShadowLight 상태에 따라)
+        var isPhong = mesh.material.isMeshPhongMaterial;
+        var isShader = mesh.material.isShaderMaterial;
+        if (needsPhong && !isPhong) {
+            mesh.material.dispose();
+            var mat = new THREE.MeshPhongMaterial({
+                map: texture, transparent: true, depthTest: true, depthWrite: false,
+                side: THREE.DoubleSide,
+                emissive: new THREE.Color(0x000000),
+                specular: new THREE.Color(0x000000), shininess: 0,
+            });
+            ThreeWaterShader.applyToPhongMaterial(mat, isWaterfall);
+            mesh.material = mat;
+            mesh.material.needsUpdate = true;
+        } else if (!needsPhong && (isPhong || !isShader)) {
+            mesh.material.dispose();
+            mesh.material = ThreeWaterShader.createStandaloneMaterial(texture, isWaterfall);
+            mesh.material.needsUpdate = true;
+        }
+
+        mesh.visible = true;
+    } else {
+        var geometry = new THREE.BufferGeometry();
+        geometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        geometry.setAttribute('normal', new THREE.BufferAttribute(normalArray, 3));
+        geometry.setAttribute('uv', new THREE.BufferAttribute(uvArray, 2));
+
+        var material;
+        texture.minFilter = THREE.NearestFilter;
+        texture.magFilter = THREE.NearestFilter;
+        texture.generateMipmaps = false;
+        texture.anisotropy = 1;
+
+        if (needsPhong) {
+            material = new THREE.MeshPhongMaterial({
+                map: texture, transparent: true, depthTest: true, depthWrite: false,
+                side: THREE.DoubleSide,
+                emissive: new THREE.Color(0x000000),
+                specular: new THREE.Color(0x000000), shininess: 0,
+            });
+            ThreeWaterShader.applyToPhongMaterial(material, isWaterfall);
+        } else {
+            material = ThreeWaterShader.createStandaloneMaterial(texture, isWaterfall);
+        }
+
+        mesh = new THREE.Mesh(geometry, material);
+        mesh.frustumCulled = false;
+        mesh.renderOrder = -1;  // 물은 다른 타일보다 먼저 렌더 (투명도 때문)
+        // 물 타일은 receiveShadow 비활성 (shadow acne로 검은 구멍 아티팩트 방지)
+        this._meshes[meshKey] = mesh;
+        this._threeObj.add(mesh);
+    }
+
+    // 텍스처 교체
+    if (mesh.material.isShaderMaterial) {
+        if (mesh.material.uniforms.map && mesh.material.uniforms.map.value !== texture) {
+            mesh.material.uniforms.map.value = texture;
+            mesh.material.needsUpdate = true;
+        }
+    } else if (mesh.material.map !== texture) {
+        texture.minFilter = THREE.NearestFilter;
+        texture.magFilter = THREE.NearestFilter;
+        texture.generateMipmaps = false;
+        texture.anisotropy = 1;
+        mesh.material.map = texture;
+        mesh.material.needsUpdate = true;
+    }
+
+    // uTime uniform 업데이트
+    ThreeWaterShader.updateTime(mesh, ThreeWaterShader._time);
+    // 물 메시 키 저장 (renderLoop에서 time 업데이트용)
+    mesh.userData.isWaterMesh = true;
+    mesh.userData.isWaterfall = isWaterfall;
+    ThreeWaterShader._hasWaterMesh = true;
 };
 
-// ---------------------------------------------------------------------------
-// Transform synchronization
-// ---------------------------------------------------------------------------
+/**
+ * 애니메이션 오프셋 변경 시 UV attribute만 갱신 (전체 재빌드 없이)
+ */
+ThreeTilemapRectLayer.prototype._updateAnimUVs = function(tileAnimX, tileAnimY) {
+    for (var setNumber in this._rectData) {
+        var data = this._rectData[setNumber];
+        if (data.count === 0) continue;
 
-ThreeTilemapLayer.prototype.syncTransform = function() {
+        var sn = parseInt(setNumber);
+        if (sn === -1) continue; // 그림자는 애니메이션 없음
+
+        var animOffsets = this._animData[setNumber] || [];
+
+        // 물 rect가 있는 경우 분리 처리
+        var hasWater = false;
+        if (sn === 0 && typeof ThreeWaterShader !== 'undefined') {
+            for (var ci = 0; ci < data.count; ci++) {
+                if (ThreeWaterShader.isWaterRect(animOffsets[ci * 2] || 0, animOffsets[ci * 2 + 1] || 0)) {
+                    hasWater = true;
+                    break;
+                }
+            }
+        }
+
+        // 텍스처 크기 가져오기 (일반 메시에서)
+        var texW = 1, texH = 1;
+        var normalMesh = this._meshes[setNumber];
+        if (normalMesh && normalMesh.material) {
+            var tex = normalMesh.material.map || (normalMesh.material.uniforms && normalMesh.material.uniforms.map && normalMesh.material.uniforms.map.value);
+            if (tex && tex.image) {
+                texW = tex.image.width || 1;
+                texH = tex.image.height || 1;
+            }
+        }
+
+        // 일반 메시 UV 업데이트
+        if (normalMesh && normalMesh.geometry) {
+            var uvAttr = normalMesh.geometry.attributes.uv;
+            if (uvAttr) {
+                var uvArray = uvAttr.array;
+                if (hasWater) {
+                    // 물 rect를 제외한 인덱스로 UV 갱신
+                    var ni = 0;
+                    for (var i = 0; i < data.count; i++) {
+                        if (ThreeWaterShader.isWaterRect(animOffsets[i * 2] || 0, animOffsets[i * 2 + 1] || 0)) continue;
+                        var srcOff = i * 12;
+                        var uvOff = ni * 12;
+                        var ax = (animOffsets[i * 2] || 0) * tileAnimX;
+                        var ay = (animOffsets[i * 2 + 1] || 0) * tileAnimY;
+                        for (var j = 0; j < 6; j++) {
+                            uvArray[uvOff + j * 2]     = (data.uvs[srcOff + j * 2] + ax) / texW;
+                            uvArray[uvOff + j * 2 + 1] = 1.0 - (data.uvs[srcOff + j * 2 + 1] + ay) / texH;
+                        }
+                        ni++;
+                    }
+                } else {
+                    for (var i = 0; i < data.count; i++) {
+                        var srcOff = i * 12;
+                        var uvOff = i * 12;
+                        var ax = (animOffsets[i * 2] || 0) * tileAnimX;
+                        var ay = (animOffsets[i * 2 + 1] || 0) * tileAnimY;
+                        for (var j = 0; j < 6; j++) {
+                            uvArray[uvOff + j * 2]     = (data.uvs[srcOff + j * 2] + ax) / texW;
+                            uvArray[uvOff + j * 2 + 1] = 1.0 - (data.uvs[srcOff + j * 2 + 1] + ay) / texH;
+                        }
+                    }
+                }
+                uvAttr.needsUpdate = true;
+            }
+        }
+
+        // 물 메시 UV 업데이트 (물/폭포 분리)
+        if (hasWater) {
+            var waterKeys = [setNumber + '_water', setNumber + '_waterfall'];
+            for (var wk = 0; wk < waterKeys.length; wk++) {
+                var wMesh = this._meshes[waterKeys[wk]];
+                if (!wMesh || !wMesh.geometry) continue;
+                var wUvAttr = wMesh.geometry.attributes.uv;
+                if (!wUvAttr) continue;
+
+                var wTex = wMesh.material.map || (wMesh.material.uniforms && wMesh.material.uniforms.map && wMesh.material.uniforms.map.value);
+                if (wTex && wTex.image) {
+                    texW = wTex.image.width || 1;
+                    texH = wTex.image.height || 1;
+                }
+
+                var isWF = waterKeys[wk].indexOf('waterfall') >= 0;
+                var wUvArray = wUvAttr.array;
+                var wi = 0;
+                for (var i = 0; i < data.count; i++) {
+                    var cAx = animOffsets[i * 2] || 0;
+                    var cAy = animOffsets[i * 2 + 1] || 0;
+                    var isThisWF = ThreeWaterShader.isWaterfallRect(cAx, cAy);
+                    var isThisWater = ThreeWaterShader.isWaterRect(cAx, cAy) && !isThisWF;
+                    if ((isWF && !isThisWF) || (!isWF && !isThisWater)) continue;
+
+                    var srcOff = i * 12;
+                    var uvOff = wi * 12;
+                    var ax = cAx * tileAnimX;
+                    var ay = cAy * tileAnimY;
+                    for (var j = 0; j < 6; j++) {
+                        wUvArray[uvOff + j * 2]     = (data.uvs[srcOff + j * 2] + ax) / texW;
+                        wUvArray[uvOff + j * 2 + 1] = 1.0 - (data.uvs[srcOff + j * 2 + 1] + ay) / texH;
+                    }
+                    wi++;
+                }
+                wUvAttr.needsUpdate = true;
+
+                // uTime 업데이트
+                ThreeWaterShader.updateTime(wMesh, ThreeWaterShader._time);
+            }
+        }
+    }
+};
+
+ThreeTilemapRectLayer.prototype.syncTransform = function() {
+    var obj = this._threeObj;
+    obj.position.x = this._x;
+    obj.position.y = this._y;
+    obj.position.z = this._zIndex;
+    obj.visible = this._visible;
+    this._flush();
+};
+
+ThreeTilemapRectLayer.prototype.updateTransform = function(parentAlpha) {
+    if (parentAlpha === undefined) parentAlpha = 1;
+    this.worldAlpha = this._alpha * parentAlpha;
+    this.worldVisible = this._visible;
+    this.syncTransform();
+};
+
+// PIXI compat stubs
+ThreeTilemapRectLayer.prototype.addChild = function() {};
+ThreeTilemapRectLayer.prototype.removeChild = function() {};
+ThreeTilemapRectLayer.prototype.removeChildren = function() { return []; };
+ThreeTilemapRectLayer.prototype.getBounds = function() { return { x: 0, y: 0, width: 0, height: 0 }; };
+ThreeTilemapRectLayer.prototype.renderWebGL = function() {};
+ThreeTilemapRectLayer.prototype.renderCanvas = function() {};
+ThreeTilemapRectLayer.prototype.destroy = function() {
+    for (var key in this._meshes) {
+        var m = this._meshes[key];
+        if (m.geometry) m.geometry.dispose();
+        if (m.material) m.material.dispose();
+    }
+    this._meshes = {};
+    this._rectData = {};
+    this._threeObj = null;
+};
+
+
+//=============================================================================
+// ThreeTilemapCompositeLayer - CompositeRectTileLayer 호환
+// children[0] = RectLayer, setBitmaps/shadowColor 관리
+//=============================================================================
+
+function ThreeTilemapCompositeLayer() {
+    this._threeObj = new THREE.Group();
+    this._threeObj._wrapper = this;
+
+    this._x = 0;
+    this._y = 0;
+    this._alpha = 1;
+    this._visible = true;
+    this._zIndex = 0;
+    this.worldAlpha = 1;
+    this.worldVisible = true;
+    this.parent = null;
+    this._transformDirty = true;
+    this._filters = null;
+
+    this.scale = { x: 1, y: 1 };
+    this.pivot = { x: 0, y: 0 };
+
+    // RectLayer를 children[0]으로
+    var rectLayer = new ThreeTilemapRectLayer();
+    this.children = [rectLayer];
+    rectLayer.parent = this;
+    this._threeObj.add(rectLayer._threeObj);
+}
+
+Object.defineProperties(ThreeTilemapCompositeLayer.prototype, {
+    x: {
+        get: function() { return this._x; },
+        set: function(v) { this._x = v; },
+        configurable: true
+    },
+    y: {
+        get: function() { return this._y; },
+        set: function(v) { this._y = v; },
+        configurable: true
+    },
+    alpha: {
+        get: function() { return this._alpha; },
+        set: function(v) { this._alpha = v; },
+        configurable: true
+    },
+    visible: {
+        get: function() { return this._visible; },
+        set: function(v) { this._visible = v; this._threeObj.visible = v; },
+        configurable: true
+    },
+    zIndex: {
+        get: function() { return this._zIndex; },
+        set: function(v) { this._zIndex = v; },
+        configurable: true
+    },
+    shadowColor: {
+        get: function() { return this.children[0]._shadowColor; },
+        set: function(v) { this.children[0]._shadowColor = v; },
+        configurable: true
+    }
+});
+
+ThreeTilemapCompositeLayer.prototype.setBitmaps = function(bitmaps) {
+    this.children[0].setBitmaps(bitmaps);
+};
+
+ThreeTilemapCompositeLayer.prototype.clear = function() {
+    this.children[0].clear();
+};
+
+ThreeTilemapCompositeLayer.prototype.syncTransform = function() {
+    var obj = this._threeObj;
+    obj.position.x = this._x;
+    obj.position.y = this._y;
+    obj.position.z = this._zIndex;
+    obj.visible = this._visible;
+};
+
+ThreeTilemapCompositeLayer.prototype.updateTransform = function(parentAlpha) {
+    if (parentAlpha === undefined) parentAlpha = 1;
+    this.worldAlpha = this._alpha * parentAlpha;
+    this.worldVisible = this._visible;
+    this.syncTransform();
+    for (var i = 0; i < this.children.length; i++) {
+        if (this.children[i].updateTransform) {
+            this.children[i].updateTransform(this.worldAlpha);
+        }
+    }
+};
+
+// Stubs
+ThreeTilemapCompositeLayer.prototype.addChild = function(child) {
+    child.parent = this;
+    this.children.push(child);
+    if (child._threeObj) this._threeObj.add(child._threeObj);
+    return child;
+};
+ThreeTilemapCompositeLayer.prototype.removeChild = function(child) {
+    var idx = this.children.indexOf(child);
+    if (idx >= 0) {
+        this.children.splice(idx, 1);
+        child.parent = null;
+        if (child._threeObj) this._threeObj.remove(child._threeObj);
+    }
+    return child;
+};
+ThreeTilemapCompositeLayer.prototype.removeChildren = function() {
+    var removed = this.children.slice();
+    for (var i = 0; i < removed.length; i++) {
+        removed[i].parent = null;
+        if (removed[i]._threeObj) this._threeObj.remove(removed[i]._threeObj);
+    }
+    this.children.length = 0;
+    return removed;
+};
+ThreeTilemapCompositeLayer.prototype.getBounds = function() { return { x: 0, y: 0, width: 0, height: 0 }; };
+ThreeTilemapCompositeLayer.prototype.renderWebGL = function() {};
+ThreeTilemapCompositeLayer.prototype.renderCanvas = function() {};
+ThreeTilemapCompositeLayer.prototype.destroy = function() {
+    for (var i = 0; i < this.children.length; i++) {
+        if (this.children[i].destroy) this.children[i].destroy();
+    }
+    this.children.length = 0;
+    this._threeObj = null;
+};
+
+
+//=============================================================================
+// ThreeTilemapZLayer - ZLayer 호환 (ThreeContainer 기반)
+// position.x/y로 스크롤 오프셋, z로 레이어 순서
+//=============================================================================
+
+function ThreeTilemapZLayer(zIndex) {
+    this._threeObj = new THREE.Group();
+    this._threeObj._wrapper = this;
+
+    this._x = 0;
+    this._y = 0;
+    this._scaleX = 1;
+    this._scaleY = 1;
+    this._rotation = 0;
+    this._pivotX = 0;
+    this._pivotY = 0;
+    this._alpha = 1;
+    this._visible = true;
+    this._zIndex = zIndex || 0;
+    this.z = zIndex || 0;
+    this.worldAlpha = 1;
+    this.worldVisible = true;
+    this.parent = null;
+    this.children = [];
+    this._filters = null;
+    this._transformDirty = true;
+    this.interactive = false;
+
+    this.scale = this._createScaleProxy();
+    this.pivot = this._createPivotProxy();
+
+    // CompositeLayer 생성
+    this._compositeLayer = new ThreeTilemapCompositeLayer();
+    this.addChild(this._compositeLayer);
+}
+
+ThreeTilemapZLayer.prototype._createScaleProxy = ThreeContainer.prototype._createScaleProxy;
+ThreeTilemapZLayer.prototype._createPivotProxy = ThreeContainer.prototype._createPivotProxy;
+
+Object.defineProperties(ThreeTilemapZLayer.prototype, {
+    x: {
+        get: function() { return this._x; },
+        set: function(v) { this._x = v; this._transformDirty = true; },
+        configurable: true
+    },
+    y: {
+        get: function() { return this._y; },
+        set: function(v) { this._y = v; this._transformDirty = true; },
+        configurable: true
+    },
+    rotation: {
+        get: function() { return this._rotation; },
+        set: function(v) { this._rotation = v; this._transformDirty = true; },
+        configurable: true
+    },
+    alpha: {
+        get: function() { return this._alpha; },
+        set: function(v) { this._alpha = v; },
+        configurable: true
+    },
+    visible: {
+        get: function() { return this._visible; },
+        set: function(v) { this._visible = v; this._threeObj.visible = v; },
+        configurable: true
+    },
+    zIndex: {
+        get: function() { return this._zIndex; },
+        set: function(v) { this._zIndex = v; this._transformDirty = true; },
+        configurable: true
+    },
+    filters: {
+        get: function() { return this._filters; },
+        set: function(v) { this._filters = v; },
+        configurable: true
+    }
+});
+
+// position proxy (ShaderTilemap이 zLayer.position.x = ... 으로 접근)
+Object.defineProperty(ThreeTilemapZLayer.prototype, 'position', {
+    get: function() {
+        var self = this;
+        return {
+            get x() { return self._x; },
+            set x(v) { self._x = v; self._transformDirty = true; },
+            get y() { return self._y; },
+            set y(v) { self._y = v; self._transformDirty = true; }
+        };
+    },
+    configurable: true
+});
+
+ThreeTilemapZLayer.prototype.clear = function() {
+    this._compositeLayer.clear();
+};
+
+ThreeTilemapZLayer.prototype.syncTransform = function() {
     var obj = this._threeObj;
     obj.position.x = this._x - this._pivotX;
     obj.position.y = this._y - this._pivotY;
@@ -297,33 +1015,22 @@ ThreeTilemapLayer.prototype.syncTransform = function() {
     obj.scale.y = this._scaleY;
     obj.rotation.z = -this._rotation;
     obj.visible = this._visible;
-
-    // Update material alpha
-    this._material.opacity = this.worldAlpha;
-
-    // Flush canvas texture if dirty
-    this.updateTexture();
 };
 
-ThreeTilemapLayer.prototype.updateTransform = function(parentAlpha) {
+ThreeTilemapZLayer.prototype.updateTransform = function(parentAlpha) {
     if (parentAlpha === undefined) parentAlpha = 1;
     this.worldAlpha = this._alpha * parentAlpha;
     this.worldVisible = this._visible;
     this.syncTransform();
-
     for (var i = 0; i < this.children.length; i++) {
-        var child = this.children[i];
-        if (child.updateTransform) {
-            child.updateTransform(this.worldAlpha);
+        if (this.children[i].updateTransform) {
+            this.children[i].updateTransform(this.worldAlpha);
         }
     }
 };
 
-// ---------------------------------------------------------------------------
-// Child management
-// ---------------------------------------------------------------------------
-
-ThreeTilemapLayer.prototype.addChild = function(child) {
+// Child management (ThreeContainer 호환)
+ThreeTilemapZLayer.prototype.addChild = function(child) {
     if (child.parent) child.parent.removeChild(child);
     child.parent = this;
     this.children.push(child);
@@ -331,7 +1038,7 @@ ThreeTilemapLayer.prototype.addChild = function(child) {
     return child;
 };
 
-ThreeTilemapLayer.prototype.addChildAt = function(child, index) {
+ThreeTilemapZLayer.prototype.addChildAt = function(child, index) {
     if (child.parent) child.parent.removeChild(child);
     child.parent = this;
     this.children.splice(index, 0, child);
@@ -339,17 +1046,17 @@ ThreeTilemapLayer.prototype.addChildAt = function(child, index) {
     return child;
 };
 
-ThreeTilemapLayer.prototype.removeChild = function(child) {
-    var index = this.children.indexOf(child);
-    if (index >= 0) {
-        this.children.splice(index, 1);
+ThreeTilemapZLayer.prototype.removeChild = function(child) {
+    var idx = this.children.indexOf(child);
+    if (idx >= 0) {
+        this.children.splice(idx, 1);
         child.parent = null;
         if (child._threeObj) this._threeObj.remove(child._threeObj);
     }
     return child;
 };
 
-ThreeTilemapLayer.prototype.removeChildren = function() {
+ThreeTilemapZLayer.prototype.removeChildren = function() {
     var removed = this.children.slice();
     for (var i = 0; i < removed.length; i++) {
         removed[i].parent = null;
@@ -359,24 +1066,30 @@ ThreeTilemapLayer.prototype.removeChildren = function() {
     return removed;
 };
 
-// ---------------------------------------------------------------------------
-// Stubs
-// ---------------------------------------------------------------------------
-
-ThreeTilemapLayer.prototype.getBounds = function() {
-    return { x: this._x, y: this._y, width: this._layerWidth, height: this._layerHeight };
+ThreeTilemapZLayer.prototype.getChildIndex = function(child) {
+    return this.children.indexOf(child);
 };
 
-ThreeTilemapLayer.prototype.renderWebGL = function(renderer) {};
-ThreeTilemapLayer.prototype.renderCanvas = function(renderer) {};
+ThreeTilemapZLayer.prototype.setChildIndex = function(child, index) {
+    var cur = this.children.indexOf(child);
+    if (cur >= 0) {
+        this.children.splice(cur, 1);
+        this.children.splice(index, 0, child);
+    }
+};
 
-ThreeTilemapLayer.prototype.destroy = function() {
+ThreeTilemapZLayer.prototype.getBounds = function() {
+    return { x: this._x, y: this._y, width: 0, height: 0 };
+};
+
+ThreeTilemapZLayer.prototype.renderWebGL = function() {};
+ThreeTilemapZLayer.prototype.renderCanvas = function() {};
+
+ThreeTilemapZLayer.prototype.destroy = function() {
     if (this.parent) this.parent.removeChild(this);
-    this.removeChildren();
-    if (this._geometry) this._geometry.dispose();
-    if (this._material) this._material.dispose();
-    if (this._canvasTexture) this._canvasTexture.dispose();
-    this._canvas = null;
-    this._context = null;
+    for (var i = 0; i < this.children.length; i++) {
+        if (this.children[i].destroy) this.children[i].destroy();
+    }
+    this.children.length = 0;
     this._threeObj = null;
 };

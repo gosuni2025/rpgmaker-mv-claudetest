@@ -3038,8 +3038,12 @@ Input.keyMapper = {
     39: 'right',    // right arrow
     40: 'down',     // down arrow
     45: 'escape',   // insert
+    65: 'left',     // A
+    68: 'right',    // D
+    69: 'pagedown', // E
     81: 'pageup',   // Q
-    87: 'pagedown', // W
+    83: 'down',     // S
+    87: 'up',       // W
     88: 'escape',   // X
     90: 'ok',       // Z
     96: 'escape',   // numpad 0
@@ -5465,8 +5469,10 @@ ShaderTilemap.prototype.constructor = ShaderTilemap;
 ShaderTilemap.prototype._hackRenderer = function(renderer) {
     var af = this.animationFrame % 4;
     if (af==3) af = 1;
-    renderer.plugins.tilemap.tileAnim[0] = af * this._tileWidth;
-    renderer.plugins.tilemap.tileAnim[1] = (this.animationFrame % 3) * this._tileHeight;
+    if (renderer.plugins && renderer.plugins.tilemap) {
+        renderer.plugins.tilemap.tileAnim[0] = af * this._tileWidth;
+        renderer.plugins.tilemap.tileAnim[1] = (this.animationFrame % 3) * this._tileHeight;
+    }
     return renderer;
 };
 
@@ -5539,8 +5545,41 @@ ShaderTilemap.prototype.updateTransform = function() {
         this._paintAllTiles(startX, startY);
         this._needsRepaint = false;
     }
+    // Three.js 백엔드: renderWebGL/renderCanvas가 호출되지 않으므로
+    // updateTransform에서 tileAnim을 RectLayer에 직접 전파
+    this._updateTileAnimForThree();
+    // 물 셰이더 시간 갱신 + 라이트 방향 동기화 (매 프레임)
+    if (typeof ThreeWaterShader !== 'undefined') {
+        ThreeWaterShader._time += 1 / 60;
+        ThreeWaterShader.updateAllWaterMeshes(this, ThreeWaterShader._time);
+        ThreeWaterShader.syncLightDirection(this);
+    }
     this._sortChildren();
     ThreeContainer.prototype.updateTransform.call(this);
+};
+
+/**
+ * Three.js 백엔드용: 물 타일 애니메이션 오프셋을 RectLayer에 전파
+ * (PIXI에서는 _hackRenderer → renderer.plugins.tilemap.tileAnim으로 처리)
+ */
+ShaderTilemap.prototype._updateTileAnimForThree = function() {
+    var af = this.animationFrame % 4;
+    if (af === 3) af = 1;
+    var tileAnimX = af * this._tileWidth;
+    var tileAnimY = (this.animationFrame % 3) * this._tileHeight;
+    var layers = [this.lowerLayer, this.upperLayer];
+    for (var i = 0; i < layers.length; i++) {
+        var layer = layers[i];
+        if (layer && layer.children) {
+            for (var j = 0; j < layer.children.length; j++) {
+                var rect = layer.children[j];
+                if (rect && rect._tileAnimX !== undefined) {
+                    rect._tileAnimX = tileAnimX;
+                    rect._tileAnimY = tileAnimY;
+                }
+            }
+        }
+    }
 };
 
 /**
@@ -6013,7 +6052,43 @@ TilingSprite.prototype.setFrame = function(x, y, width, height) {
 TilingSprite.prototype.updateTransform = function() {
     this._tileOriginX = Math.round(-this.origin.x);
     this._tileOriginY = Math.round(-this.origin.y);
+    this._tilePosition.x = this._tileOriginX;
+    this._tilePosition.y = this._tileOriginY;
     ThreeSprite.prototype.updateTransform.call(this);
+};
+
+/**
+ * Override _updateTexture to apply RepeatWrapping for tiling.
+ */
+TilingSprite.prototype._updateTexture = function() {
+    ThreeSprite.prototype._updateTexture.call(this);
+    if (this._threeTexture) {
+        this._threeTexture.wrapS = THREE.RepeatWrapping;
+        this._threeTexture.wrapT = THREE.RepeatWrapping;
+        this._threeTexture.needsUpdate = true;
+    }
+};
+
+/**
+ * Override syncTransform to handle tile offset and repeat via UV manipulation.
+ */
+TilingSprite.prototype.syncTransform = function() {
+    ThreeSprite.prototype.syncTransform.call(this);
+
+    if (this._threeTexture && this._frameWidth > 0 && this._frameHeight > 0) {
+        var tw = this._threeTexture.image ? this._threeTexture.image.width : this._frameWidth;
+        var th = this._threeTexture.image ? this._threeTexture.image.height : this._frameHeight;
+
+        if (tw > 0 && th > 0) {
+            var offsetX = (this._tilePosition.x / tw) || 0;
+            var offsetY = (this._tilePosition.y / th) || 0;
+            var repeatX = (this._frameWidth / (tw * this._tileScale.x)) || 1;
+            var repeatY = (this._frameHeight / (th * this._tileScale.y)) || 1;
+
+            this._threeTexture.offset.set(-offsetX, -offsetY);
+            this._threeTexture.repeat.set(repeatX, repeatY);
+        }
+    }
 };
 
 /**

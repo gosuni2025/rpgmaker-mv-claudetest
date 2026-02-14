@@ -1,0 +1,25 @@
+{
+  "cameraZones": [],
+  "animTileSettings": {
+    "1": {
+      "enabled": true,
+      "waveAmplitude": 0.006,
+      "waveFrequency": 4,
+      "waveSpeed": 2,
+      "waterAlpha": 0.85,
+      "specularStrength": 0.8,
+      "emissive": 0,
+      "emissiveColor": "#ffffff"
+    },
+    "4": {
+      "enabled": true,
+      "waveAmplitude": 0.006,
+      "waveFrequency": 4,
+      "waveSpeed": 2,
+      "waterAlpha": 0.85,
+      "specularStrength": 0.8,
+      "emissive": 0.8,
+      "emissiveColor": "#ffffff"
+    }
+  }
+}

@@ -5604,8 +5604,12 @@ Game_Map.prototype.setupBattleback = function() {
 };
 
 Game_Map.prototype.setDisplayPos = function(x, y) {
+    var hasCZ = this._hasCameraZones();
     if (this.isLoopHorizontal()) {
         this._displayX = x.mod(this.width());
+        this._parallaxX = x;
+    } else if (hasCZ) {
+        this._displayX = x;
         this._parallaxX = x;
     } else {
         var endX = this.width() - this.screenTileX();
@@ -5615,11 +5619,16 @@ Game_Map.prototype.setDisplayPos = function(x, y) {
     if (this.isLoopVertical()) {
         this._displayY = y.mod(this.height());
         this._parallaxY = y;
+    } else if (hasCZ) {
+        this._displayY = y;
+        this._parallaxY = y;
     } else {
         var endY = this.height() - this.screenTileY();
         this._displayY = endY < 0 ? endY / 2 : y.clamp(0, endY);
         this._parallaxY = this._displayY;
     }
+    // 카메라존 상태 리셋
+    this._cameraZoneTargetX = undefined;
 };
 
 Game_Map.prototype.parallaxOx = function() {
@@ -5855,8 +5864,12 @@ Game_Map.prototype.scrollDown = function(distance) {
         }
     } else if (this.height() >= this.screenTileY()) {
         var lastY = this._displayY;
-        this._displayY = Math.min(this._displayY + distance,
-            this.height() - this.screenTileY());
+        if (this._hasCameraZones()) {
+            this._displayY += distance;
+        } else {
+            this._displayY = Math.min(this._displayY + distance,
+                this.height() - this.screenTileY());
+        }
         this._parallaxY += this._displayY - lastY;
     }
 };
@@ -5870,7 +5883,11 @@ Game_Map.prototype.scrollLeft = function(distance) {
         }
     } else if (this.width() >= this.screenTileX()) {
         var lastX = this._displayX;
-        this._displayX = Math.max(this._displayX - distance, 0);
+        if (this._hasCameraZones()) {
+            this._displayX -= distance;
+        } else {
+            this._displayX = Math.max(this._displayX - distance, 0);
+        }
         this._parallaxX += this._displayX - lastX;
     }
 };
@@ -5884,8 +5901,12 @@ Game_Map.prototype.scrollRight = function(distance) {
         }
     } else if (this.width() >= this.screenTileX()) {
         var lastX = this._displayX;
-        this._displayX = Math.min(this._displayX + distance,
-            this.width() - this.screenTileX());
+        if (this._hasCameraZones()) {
+            this._displayX += distance;
+        } else {
+            this._displayX = Math.min(this._displayX + distance,
+                this.width() - this.screenTileX());
+        }
         this._parallaxX += this._displayX - lastX;
     }
 };
@@ -5899,7 +5920,11 @@ Game_Map.prototype.scrollUp = function(distance) {
         }
     } else if (this.height() >= this.screenTileY()) {
         var lastY = this._displayY;
-        this._displayY = Math.max(this._displayY - distance, 0);
+        if (this._hasCameraZones()) {
+            this._displayY -= distance;
+        } else {
+            this._displayY = Math.max(this._displayY - distance, 0);
+        }
         this._parallaxY += this._displayY - lastY;
     }
 };
@@ -5950,7 +5975,22 @@ Game_Map.prototype.autotileType = function(x, y, z) {
 };
 
 Game_Map.prototype.isPassable = function(x, y, d) {
-    return this.checkPassage(x, y, (1 << (d / 2 - 1)) & 0x0f);
+    if (!this.checkPassage(x, y, (1 << (d / 2 - 1)) & 0x0f)) return false;
+    var objects = $dataMap.objects;
+    if (objects) {
+        for (var i = 0; i < objects.length; i++) {
+            var obj = objects[i];
+            if (!obj || !obj.passability) continue;
+            var col = x - obj.x;
+            var row = y - (obj.y - obj.height + 1);
+            if (col >= 0 && col < obj.width && row >= 0 && row < obj.height) {
+                if (obj.passability[row] && obj.passability[row][col] === false) {
+                    return false;
+                }
+            }
+        }
+    }
+    return true;
 };
 
 Game_Map.prototype.isBoatPassable = function(x, y) {
@@ -6025,6 +6065,7 @@ Game_Map.prototype.update = function(sceneActive) {
     this.updateEvents();
     this.updateVehicles();
     this.updateParallax();
+    this.updateCameraZone();
 };
 
 Game_Map.prototype.updateScroll = function() {
@@ -6083,6 +6124,151 @@ Game_Map.prototype.updateParallax = function() {
     if (this._parallaxLoopY) {
         this._parallaxY += this._parallaxSy / this.tileHeight() / 2;
     }
+};
+
+// === Camera Zone ===
+
+Game_Map.prototype.findCameraZonesAt = function(tx, ty) {
+    var zones = $dataMap && $dataMap.cameraZones;
+    if (!zones) return [];
+    var result = [];
+    for (var i = 0; i < zones.length; i++) {
+        var z = zones[i];
+        if (!z.enabled) continue;
+        if (tx >= z.x && tx < z.x + z.width && ty >= z.y && ty < z.y + z.height) {
+            result.push(z);
+        }
+    }
+    return result;
+};
+
+Game_Map.prototype.getCameraZoneById = function(id) {
+    var zones = $dataMap && $dataMap.cameraZones;
+    if (!zones) return null;
+    for (var i = 0; i < zones.length; i++) {
+        if (zones[i].id === id) return zones[i];
+    }
+    return null;
+};
+
+Game_Map.prototype._hasCameraZones = function() {
+    var zones = $dataMap && $dataMap.cameraZones;
+    return !!(zones && zones.length > 0);
+};
+
+Game_Map.prototype.updateCameraZone = function() {
+    var zones = $dataMap && $dataMap.cameraZones;
+    if (!zones || zones.length === 0) return;
+
+    var halfScreenX = this.screenTileX() / 2;
+    var halfScreenY = this.screenTileY() / 2;
+
+    // 초기화
+    if (this._cameraZoneTargetX === undefined) {
+        this._cameraZoneTargetX = this._displayX + halfScreenX;
+        this._cameraZoneTargetY = this._displayY + halfScreenY;
+        this._activeCameraZoneId = null;
+        this._prevCameraZoneId = null;
+        this._cameraZoneLerping = false;
+    }
+
+    // 존 판정: 플레이어 위치 기준, 겹치는 모든 존의 합집합
+    var playerX = $gamePlayer ? $gamePlayer._realX : this._displayX + halfScreenX;
+    var playerY = $gamePlayer ? $gamePlayer._realY : this._displayY + halfScreenY;
+    var activeZones = this.findCameraZonesAt(playerX, playerY);
+    var activeZoneIds = [];
+    for (var i = 0; i < activeZones.length; i++) activeZoneIds.push(activeZones[i].id);
+    activeZoneIds.sort();
+    this._activeCameraZoneId = activeZoneIds.length > 0 ? activeZoneIds[0] : null;
+    this._activeCameraZoneIds = activeZoneIds;
+
+    // 카메라 중심 타겟: 플레이어 위치를 존 합집합 경계 또는 맵 경계로 클램핑
+    var targetX = playerX;
+    var targetY = playerY;
+
+    if (activeZones.length > 0) {
+        // 합집합: 모든 존의 카메라 이동 가능 범위를 합쳐서 가장 넓은 범위 사용
+        var unionMinX = Infinity, unionMaxX = -Infinity;
+        var unionMinY = Infinity, unionMaxY = -Infinity;
+        for (var i = 0; i < activeZones.length; i++) {
+            var z = activeZones[i];
+            var zMinX = z.x + halfScreenX;
+            var zMaxX = z.x + z.width - halfScreenX;
+            var zMinY = z.y + halfScreenY;
+            var zMaxY = z.y + z.height - halfScreenY;
+            if (zMinX > zMaxX) { zMinX = zMaxX = z.x + z.width / 2; }
+            if (zMinY > zMaxY) { zMinY = zMaxY = z.y + z.height / 2; }
+            unionMinX = Math.min(unionMinX, zMinX);
+            unionMaxX = Math.max(unionMaxX, zMaxX);
+            unionMinY = Math.min(unionMinY, zMinY);
+            unionMaxY = Math.max(unionMaxY, zMaxY);
+        }
+        targetX = targetX.clamp(unionMinX, unionMaxX);
+        targetY = targetY.clamp(unionMinY, unionMaxY);
+    } else {
+        // 존 밖: 맵 경계 클램핑
+        if (!this.isLoopHorizontal()) {
+            var endX = this.width() - this.screenTileX();
+            if (endX < 0) {
+                targetX = this.width() / 2;
+            } else {
+                targetX = targetX.clamp(halfScreenX, endX + halfScreenX);
+            }
+        }
+        if (!this.isLoopVertical()) {
+            var endY = this.height() - this.screenTileY();
+            if (endY < 0) {
+                targetY = this.height() / 2;
+            } else {
+                targetY = targetY.clamp(halfScreenY, endY + halfScreenY);
+            }
+        }
+    }
+
+    // 존 전환 시 lerp 시작
+    var prevIds = this._prevCameraZoneIds || [];
+    var idsChanged = activeZoneIds.length !== prevIds.length;
+    if (!idsChanged) {
+        for (var i = 0; i < activeZoneIds.length; i++) {
+            if (activeZoneIds[i] !== prevIds[i]) { idsChanged = true; break; }
+        }
+    }
+    if (idsChanged && activeZoneIds.length > 0) {
+        this._cameraZoneLerping = true;
+    }
+    this._prevCameraZoneIds = activeZoneIds;
+
+    if (this._cameraZoneLerping) {
+        var speed = 0.1;
+        if (activeZones.length > 0) {
+            // 가장 높은 transitionSpeed 사용
+            var maxSpeed = activeZones[0].transitionSpeed || 1;
+            for (var i = 1; i < activeZones.length; i++) {
+                if (activeZones[i].transitionSpeed > maxSpeed) maxSpeed = activeZones[i].transitionSpeed;
+            }
+            speed = 0.1 * maxSpeed;
+        }
+        this._cameraZoneTargetX += (targetX - this._cameraZoneTargetX) * speed;
+        this._cameraZoneTargetY += (targetY - this._cameraZoneTargetY) * speed;
+        var dx = Math.abs(targetX - this._cameraZoneTargetX);
+        var dy = Math.abs(targetY - this._cameraZoneTargetY);
+        if (dx < 0.01 && dy < 0.01) {
+            this._cameraZoneTargetX = targetX;
+            this._cameraZoneTargetY = targetY;
+            this._cameraZoneLerping = false;
+        }
+    } else {
+        this._cameraZoneTargetX = targetX;
+        this._cameraZoneTargetY = targetY;
+    }
+
+    // displayX/displayY 보정 + parallax 동기화
+    var oldDisplayX = this._displayX;
+    var oldDisplayY = this._displayY;
+    this._displayX = this._cameraZoneTargetX - halfScreenX;
+    this._displayY = this._cameraZoneTargetY - halfScreenY;
+    this._parallaxX += this._displayX - oldDisplayX;
+    this._parallaxY += this._displayY - oldDisplayY;
 };
 
 Game_Map.prototype.changeTileset = function(tilesetId) {

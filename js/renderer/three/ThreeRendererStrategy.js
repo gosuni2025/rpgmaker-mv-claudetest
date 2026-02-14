@@ -38,14 +38,18 @@
         var rendererOptions = {
             canvas: options.view || undefined,
             antialias: false,
-            alpha: false,
+            alpha: true,
             preserveDrawingBuffer: false,
             powerPreference: 'high-performance'
         };
 
         var renderer = new THREE.WebGLRenderer(rendererOptions);
         renderer.setSize(width, height);
-        renderer.setClearColor(0x000000, 1);
+        renderer.setClearColor(0x000000, 0);
+
+        // Enable shadow map for real-time shadow casting
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFShadowMap;
 
         // Disable auto-sorting; we control render order via z-position
         renderer.sortObjects = true;
@@ -88,8 +92,12 @@
                 run: function() {}
             },
 
-            // PIXI compat: plugins stub
-            plugins: {},
+            // PIXI compat: plugins stub (tileAnim used by ShaderTilemap._hackRenderer)
+            plugins: {
+                tilemap: {
+                    tileAnim: [0, 0]
+                }
+            },
 
             // Draw order counter (incremented per-object per frame)
             _drawOrderCounter: 0
@@ -124,11 +132,12 @@
 
         // Ensure the stage's Three.js object is in the scene
         if (stage._threeObj && stage._threeObj.parent !== scene) {
-            // Clear previous scene children
-            while (scene.children.length > 0) {
-                scene.remove(scene.children[0]);
+            // 기존 stage만 제거 (라이트 등 다른 children 보존)
+            if (scene._stageObj) {
+                scene.remove(scene._stageObj);
             }
             scene.add(stage._threeObj);
+            scene._stageObj = stage._threeObj;
         }
 
         // Call updateTransform on the stage hierarchy first.
@@ -319,10 +328,11 @@
         if (stage) {
             rendererObj._drawOrderCounter = 0;
             if (stage._threeObj && stage._threeObj.parent !== scene) {
-                while (scene.children.length > 0) {
-                    scene.remove(scene.children[0]);
+                if (scene._stageObj) {
+                    scene.remove(scene._stageObj);
                 }
                 scene.add(stage._threeObj);
+                scene._stageObj = stage._threeObj;
             }
             if (stage.updateTransform) {
                 stage.updateTransform();
@@ -330,9 +340,56 @@
             this._syncHierarchy(rendererObj, stage);
         }
 
-        // Render to the render target
+        // Render to the render target (3D 2-pass or 2D single-pass)
         renderer.setRenderTarget(renderTarget);
-        renderer.render(scene, camera);
+        var is3D = typeof ConfigManager !== 'undefined' && ConfigManager.mode3d &&
+            typeof Mode3D !== 'undefined' && Mode3D._spriteset && Mode3D._perspCamera;
+        if (is3D) {
+            Mode3D._positionCamera(Mode3D._perspCamera, width, height);
+            Mode3D._applyBillboards();
+
+            // Shadow Map: multi-pass에서 Pass 2(UI)가 shadow map을 비우지 않도록
+            var prevShadowAutoUpdate = renderer.shadowMap.autoUpdate;
+            renderer.shadowMap.autoUpdate = false;
+            renderer.shadowMap.needsUpdate = true;
+
+            // Pass 1: PerspectiveCamera로 맵만 렌더
+            var stageObj = stage._threeObj;
+            var childVis = [];
+            if (stageObj) {
+                for (var ci = 0; ci < stageObj.children.length; ci++) {
+                    childVis.push(stageObj.children[ci].visible);
+                }
+                var spritesetObj = Mode3D._spriteset._threeObj;
+                for (var ci = 0; ci < stageObj.children.length; ci++) {
+                    stageObj.children[ci].visible = (stageObj.children[ci] === spritesetObj);
+                }
+            }
+            renderer.autoClear = true;
+            renderer.render(scene, Mode3D._perspCamera);
+
+            // Pass 2: OrthographicCamera로 UI 합성
+            if (stageObj) {
+                for (var ci = 0; ci < stageObj.children.length; ci++) {
+                    var child = stageObj.children[ci];
+                    child.visible = childVis[ci];
+                    if (child === spritesetObj) child.visible = false;
+                }
+            }
+            renderer.autoClear = false;
+            renderer.render(scene, camera);
+
+            // 가시성 복원
+            if (stageObj) {
+                for (var ci = 0; ci < stageObj.children.length; ci++) {
+                    stageObj.children[ci].visible = childVis[ci];
+                }
+            }
+            renderer.autoClear = true;
+            renderer.shadowMap.autoUpdate = prevShadowAutoUpdate;
+        } else {
+            renderer.render(scene, camera);
+        }
         renderer.setRenderTarget(null);
 
         // Read pixels from the render target

@@ -1,0 +1,747 @@
+//=============================================================================
+// Mode3D.js - 3D 보기 모드 (파판6 스타일 기울임 + 빌보드 캐릭터)
+//=============================================================================
+// 게임 옵션에서 ON/OFF 가능
+// - PerspectiveCamera로 맵을 기울여서 원근감 부여
+// - UI는 별도 OrthographicCamera로 렌더링하여 합성
+// - 캐릭터/이벤트는 빌보드로 항상 카메라를 향함
+// - 텍스처는 NearestFilter + anisotropy=1로 crispy 유지
+//=============================================================================
+
+(function() {
+
+    //=========================================================================
+    // ConfigManager - mode3d 설정 추가
+    //=========================================================================
+
+    ConfigManager.mode3d = false;
+
+    var _ConfigManager_makeData = ConfigManager.makeData;
+    ConfigManager.makeData = function() {
+        var config = _ConfigManager_makeData.call(this);
+        config.mode3d = this.mode3d;
+        return config;
+    };
+
+    var _ConfigManager_applyData = ConfigManager.applyData;
+    ConfigManager.applyData = function(config) {
+        _ConfigManager_applyData.call(this, config);
+        this.mode3d = this.readFlag(config, 'mode3d');
+    };
+
+    //=========================================================================
+    // Window_Options - "3D 보기" 옵션 추가
+    //=========================================================================
+
+    var _Window_Options_addGeneralOptions = Window_Options.prototype.addGeneralOptions;
+    Window_Options.prototype.addGeneralOptions = function() {
+        _Window_Options_addGeneralOptions.call(this);
+        this.addCommand('3D 보기', 'mode3d');
+    };
+
+    //=========================================================================
+    // Mode3D 상태 관리
+    //=========================================================================
+
+    var Mode3D = {};
+    Mode3D._active = false;
+    Mode3D._tiltDeg = 60;
+    Mode3D._tiltRad = Mode3D._tiltDeg * Math.PI / 180;
+    Mode3D._yawDeg = 0;
+    Mode3D._yawRad = 0;
+    Mode3D._billboardTargets = [];
+    Mode3D._spriteset = null;
+    Mode3D._perspCamera = null;
+    Mode3D._extraRows = 6;  // 에디터에서 참조
+    Mode3D._extraCols = 4;  // 에디터에서 참조
+    window.Mode3D = Mode3D;
+
+    //=========================================================================
+    // ShaderTilemap._hackRenderer 오버라이드
+    // renderer.plugins.tilemap 대신 인스턴스에 직접 저장
+    //=========================================================================
+
+    ShaderTilemap.prototype._hackRenderer = function(renderer) {
+        var af = this.animationFrame % 4;
+        if (af == 3) af = 1;
+        this._tileAnimX = af * this._tileWidth;
+        this._tileAnimY = (this.animationFrame % 3) * this._tileHeight;
+        return renderer;
+    };
+
+    //=========================================================================
+    // ShaderTilemap.updateTransform 오버라이드
+    // Three.js 경로에서는 renderWebGL/renderCanvas가 호출되지 않아
+    // _hackRenderer가 실행 안됨 → updateTransform에서 애니메이션 갱신
+    //=========================================================================
+
+    var _ShaderTilemap_updateTransform = ShaderTilemap.prototype.updateTransform;
+    ShaderTilemap.prototype.updateTransform = function() {
+        this._hackRenderer(null);
+        _ShaderTilemap_updateTransform.call(this);
+    };
+
+    //=========================================================================
+    // ShaderTilemap margin/size 확장
+    // 3D perspective에서 화면 가장자리가 매우 먼 월드 좌표를 보므로
+    // 타일맵의 margin을 대폭 늘려 더 넓은 영역의 타일을 렌더링
+    //=========================================================================
+
+    var _3D_MARGIN = 48 * 40; // 40타일분의 여유 (1920px)
+
+    var _ShaderTilemap_updateTransform2 = ShaderTilemap.prototype.updateTransform;
+    ShaderTilemap.prototype.updateTransform = function() {
+        // 에디터 모드에서는 margin을 직접 관리하므로 건드리지 않음
+        if (!window.__editorMode) {
+            // 3D 모드 전환 시 margin 동적 조정
+            if (ConfigManager.mode3d) {
+                if (this._margin !== _3D_MARGIN) {
+                    this._margin = _3D_MARGIN;
+                    this._width = Graphics.width + this._margin * 2;
+                    this._height = Graphics.height + this._margin * 2;
+                    this._needsRepaint = true;
+                }
+            } else {
+                if (this._margin !== 20) {
+                    this._margin = 20;
+                    this._width = Graphics.width + this._margin * 2;
+                    this._height = Graphics.height + this._margin * 2;
+                    this._needsRepaint = true;
+                }
+            }
+        }
+        _ShaderTilemap_updateTransform2.call(this);
+    };
+
+    //=========================================================================
+    // Spriteset_Map 참조 저장
+    //=========================================================================
+
+    var _Spriteset_Map_initialize = Spriteset_Map.prototype.initialize;
+    Spriteset_Map.prototype.initialize = function() {
+        _Spriteset_Map_initialize.call(this);
+        Mode3D._spriteset = this;
+    };
+
+    //=========================================================================
+    // PerspectiveCamera 생성
+    // dist = (h/2) / tan(fov/2)로 OrthographicCamera와 같은 영역 커버
+    //=========================================================================
+
+    Mode3D._createPerspCamera = function(w, h) {
+        var fovDeg = 60;
+        var fovRad = fovDeg * Math.PI / 180;
+        var aspect = w / h;
+        var dist = (h / 2) / Math.tan(fovRad / 2);
+
+        var camera = new THREE.PerspectiveCamera(fovDeg, aspect, 1, dist * 4);
+        return camera;
+    };
+
+    //=========================================================================
+    // 카메라 위치 설정
+    // 화면 중심에서 tilt 각도만큼 위에서 내려다봄
+    // projectionMatrix의 m[5]를 반전하여 Y-down 좌표계 대응
+    //=========================================================================
+
+    Mode3D._positionCamera = function(camera, w, h) {
+        var fovRad = camera.fov * Math.PI / 180;
+        var halfFov = fovRad / 2;
+        var aspect = w / h;
+        var tilt = this._tiltRad;
+        var yaw = this._yawRad || 0;
+
+        // 높이 기준 거리
+        var distH = (h / 2) / Math.tan(halfFov);
+        // 너비 기준 거리 (수평 FOV 고려)
+        var hFovHalf = Math.atan(Math.tan(halfFov) * aspect);
+        var distW = (w / 2) / Math.tan(hFovHalf);
+        // 에디터 모드: tilt 시 Z=0 평면에서 수평 가시 영역이 줄어드므로
+        // 너비 기준 거리에 tilt 보정 (cos(tilt)만큼 유효 거리 감소)
+        var dist = distH;
+        if (window.__editorMode && tilt > 0) {
+            var distWCorrected = distW / Math.cos(tilt);
+            dist = Math.max(distH, distWCorrected);
+        }
+
+        // zoom 적용: 카메라 거리를 줄여서 확대 효과
+        var zoom = this._zoomScale || 1.0;
+        if (zoom !== 1.0) {
+            dist = dist / zoom;
+        }
+
+        var cx = w / 2;
+        var cy = h / 2;
+
+        // yaw 회전: 카메라를 맵 중심(cx, cy, 0) 주위로 Y축 회전
+        var offX = dist * Math.cos(tilt) * Math.sin(yaw);
+        var offY = dist * Math.sin(tilt);
+        var offZ = dist * Math.cos(tilt) * Math.cos(yaw);
+
+        camera.position.set(
+            cx + offX,
+            cy + offY,
+            offZ
+        );
+
+        // far plane도 충분히 넓게
+        camera.far = dist * 4;
+        camera.up.set(0, 1, 0);
+        camera.lookAt(new THREE.Vector3(cx, cy, 0));
+        camera.updateProjectionMatrix();
+
+        // Y-down 좌표계: projectionMatrix의 Y축 반전
+        var m = camera.projectionMatrix.elements;
+        m[5] = -m[5];
+        camera.projectionMatrixInverse.copy(camera.projectionMatrix).invert();
+    };
+
+    //=========================================================================
+    // 프러스텀 월드 바운드 계산
+    // 카메라 프러스텀 8꼭짓점의 월드 좌표 X,Y 범위 반환 (픽셀 단위)
+    // 카메라 존 클램핑에 사용
+    //=========================================================================
+
+    Mode3D._frustumBoundsCache = null;
+    Mode3D._frustumBoundsCacheTilt = -1;
+    Mode3D._frustumBoundsCacheYaw = -1;
+    Mode3D._frustumBoundsCacheW = -1;
+    Mode3D._frustumBoundsCacheH = -1;
+
+    Mode3D.getFrustumWorldBounds = function() {
+        var camera = this._perspCamera;
+        if (!camera) return null;
+
+        var w = Graphics.width;
+        var h = Graphics.height;
+        var tilt = this._tiltRad;
+        var yaw = this._yawRad || 0;
+
+        // 캐시: tilt, yaw, 화면 크기가 같으면 재사용
+        if (this._frustumBoundsCache &&
+            this._frustumBoundsCacheTilt === tilt &&
+            this._frustumBoundsCacheYaw === yaw &&
+            this._frustumBoundsCacheW === w &&
+            this._frustumBoundsCacheH === h) {
+            return this._frustumBoundsCache;
+        }
+
+        // matrixWorld 최신화
+        camera.updateMatrixWorld(true);
+
+        var invProj = camera.projectionMatrixInverse;
+        var matWorld = camera.matrixWorld;
+
+        // NDC 꼭짓점 8개 (near z=-1, far z=1)
+        var ndcCorners = [
+            [-1, -1, -1], [ 1, -1, -1], [-1,  1, -1], [ 1,  1, -1],
+            [-1, -1,  1], [ 1, -1,  1], [-1,  1,  1], [ 1,  1,  1]
+        ];
+
+        var minX = Infinity, maxX = -Infinity;
+        var minY = Infinity, maxY = -Infinity;
+        var v = new THREE.Vector3();
+
+        for (var i = 0; i < 8; i++) {
+            var c = ndcCorners[i];
+            v.set(c[0], c[1], c[2]);
+            v.applyMatrix4(invProj);
+            v.applyMatrix4(matWorld);
+            // X, Y가 맵 좌표 (Z는 높이축, 무시)
+            if (v.x < minX) minX = v.x;
+            if (v.x > maxX) maxX = v.x;
+            if (v.y < minY) minY = v.y;
+            if (v.y > maxY) maxY = v.y;
+        }
+
+        var bounds = { minX: minX, maxX: maxX, minY: minY, maxY: maxY };
+        this._frustumBoundsCache = bounds;
+        this._frustumBoundsCacheTilt = tilt;
+        this._frustumBoundsCacheYaw = yaw;
+        this._frustumBoundsCacheW = w;
+        this._frustumBoundsCacheH = h;
+        return bounds;
+    };
+
+    //=========================================================================
+    // 텍스처 crispy - NearestFilter + anisotropy=1 강제
+    //=========================================================================
+
+    Mode3D._enforceNearestFilter = function(scene) {
+        scene.traverse(function(obj) {
+            if (obj.material && obj.material.map) {
+                var tex = obj.material.map;
+                if (tex.minFilter !== THREE.NearestFilter ||
+                    tex.anisotropy !== 1) {
+                    tex.minFilter = THREE.NearestFilter;
+                    tex.magFilter = THREE.NearestFilter;
+                    tex.generateMipmaps = false;
+                    tex.anisotropy = 1;
+                    tex.needsUpdate = true;
+                }
+            }
+        });
+    };
+
+    //=========================================================================
+    // 빌보드 - 캐릭터를 카메라 방향으로 세움
+    //=========================================================================
+
+    Mode3D.registerBillboard = function(sprite) {
+        if (this._billboardTargets.indexOf(sprite) === -1) {
+            this._billboardTargets.push(sprite);
+        }
+    };
+
+    Mode3D._applyBillboards = function() {
+        // 카메라가 위에서 내려다보므로 스프라이트를 -tilt만큼 역회전
+        var tilt = -this._tiltRad;
+        for (var i = 0; i < this._billboardTargets.length; i++) {
+            var sprite = this._billboardTargets[i];
+            if (sprite._threeObj && sprite._visible !== false) {
+                sprite._threeObj.rotation.x = tilt;
+            }
+        }
+    };
+
+    /**
+     * SpotLight 방향 기준 빌보드: shadow pass에서 캐릭터가 SpotLight를 향하도록 회전
+     * SpotLight는 위(z=spotLightZ)에서 앞(direction)을 비추므로,
+     * shadow camera 시점에서 캐릭터가 정면으로 보이도록 rotation.x를 조정
+     */
+    Mode3D._applyBillboardsForShadow = function() {
+        if (!window.ShadowLight || !ShadowLight._playerSpotLight || !ShadowLight.config.spotLightEnabled) {
+            return;
+        }
+        var spot = ShadowLight._playerSpotLight;
+        var target = ShadowLight._playerSpotTarget;
+        if (!spot || !target) return;
+
+        // SpotLight에서 target까지의 방향으로 빌보드 회전 (shadow map 렌더링용)
+        var dx = target.position.x - spot.position.x;
+        var dy = target.position.y - spot.position.y;
+        var dz = (target.position.z || 0) - (spot.position.z || 0);
+        var lenXY = Math.sqrt(dx * dx + dy * dy);
+        var shadowTilt = -Math.atan2(dz, lenXY);
+
+        for (var i = 0; i < this._billboardTargets.length; i++) {
+            var sprite = this._billboardTargets[i];
+            if (sprite._threeObj && sprite._visible !== false) {
+                sprite._threeObj.rotation.x = shadowTilt;
+            }
+        }
+    };
+
+    Mode3D._resetBillboards = function() {
+        for (var i = 0; i < this._billboardTargets.length; i++) {
+            var sprite = this._billboardTargets[i];
+            if (sprite._threeObj) {
+                sprite._threeObj.rotation.x = 0;
+            }
+        }
+    };
+
+    //=========================================================================
+    // ThreeRendererStrategy.render 오버라이드
+    // 3D 모드: 2-pass 렌더링 (SSAA 없음, 직접 렌더)
+    //   1) PerspectiveCamera로 Spriteset_Map (맵+캐릭터) 렌더
+    //   2) OrthographicCamera로 나머지 UI 렌더 (합성)
+    //=========================================================================
+
+    var _ThreeStrategy = RendererStrategy._strategies['threejs'];
+
+    _ThreeStrategy.render = function(rendererObj, stage) {
+        if (!rendererObj || !stage) return;
+
+        var scene = rendererObj.scene;
+        var renderer = rendererObj.renderer;
+        var camera = rendererObj.camera;
+        var w = rendererObj._width;
+        var h = rendererObj._height;
+        var is3D = ConfigManager.mode3d && Mode3D._spriteset;
+
+        rendererObj._drawOrderCounter = 0;
+
+        // stage를 scene에 연결 (라이트 등 다른 scene children 보존)
+        if (stage._threeObj && stage._threeObj.parent !== scene) {
+            // 기존 stage._threeObj (있다면) 만 제거하고 새 것을 추가
+            // 라이트, 라이트 타겟 등 다른 children은 보존
+            if (scene._stageObj) {
+                scene.remove(scene._stageObj);
+            }
+            scene.add(stage._threeObj);
+            scene._stageObj = stage._threeObj;
+        }
+
+        // updateTransform + hierarchy sync
+        if (stage.updateTransform) {
+            stage.updateTransform();
+        }
+        this._syncHierarchy(rendererObj, stage);
+
+        if (is3D) {
+            // PerspectiveCamera 준비
+            if (!Mode3D._perspCamera) {
+                Mode3D._perspCamera = Mode3D._createPerspCamera(w, h);
+            }
+
+            Mode3D._updateCameraZoneParams();
+            Mode3D._positionCamera(Mode3D._perspCamera, w, h);
+            Mode3D._applyBillboards();
+            Mode3D._enforceNearestFilter(scene);
+
+            // Find parallax sky mesh in scene
+            var skyMesh = null;
+            for (var si = 0; si < scene.children.length; si++) {
+                if (scene.children[si]._isParallaxSky) {
+                    skyMesh = scene.children[si];
+                    break;
+                }
+            }
+
+            var stageObj = stage._threeObj;
+
+            // Shadow Map: multi-pass 렌더링에서 shadow map은 별도 패스에서 갱신
+            var prevShadowAutoUpdate = renderer.shadowMap.autoUpdate;
+            renderer.shadowMap.autoUpdate = false;
+
+            // --- Shadow Pass: SpotLight shadow용 빌보드 회전 → shadow map 갱신 ---
+            if (window.ShadowLight && ShadowLight._playerSpotLight &&
+                ShadowLight.config.spotLightEnabled && ShadowLight._active) {
+                Mode3D._applyBillboardsForShadow();
+                renderer.shadowMap.needsUpdate = true;
+                var gl = renderer.getContext();
+                gl.colorMask(false, false, false, false);
+                gl.depthMask(false);
+                renderer.render(scene, Mode3D._perspCamera);
+                gl.colorMask(true, true, true, true);
+                gl.depthMask(true);
+                Mode3D._applyBillboards();
+            } else {
+                renderer.shadowMap.needsUpdate = true;
+            }
+
+            // --- Pass 0: Sky background (PerspectiveCamera) ---
+            if (skyMesh) {
+                // Hide everything except sky
+                if (stageObj) stageObj.visible = false;
+                skyMesh.visible = true;
+                renderer.autoClear = true;
+                renderer.render(scene, Mode3D._perspCamera);
+                skyMesh.visible = false;
+                if (stageObj) stageObj.visible = true;
+            }
+
+            // --- Pass 1: PerspectiveCamera로 맵(Spriteset_Map)만 렌더 ---
+            // Hide _blackScreen so parallax sky shows through map edges
+            var blackScreenObj = Mode3D._spriteset._blackScreen &&
+                                 Mode3D._spriteset._blackScreen._threeObj;
+            var blackScreenWasVisible = blackScreenObj ? blackScreenObj.visible : false;
+            if (skyMesh && blackScreenObj) {
+                blackScreenObj.visible = false;
+            }
+
+            var childVisibility = [];
+            if (stageObj) {
+                for (var i = 0; i < stageObj.children.length; i++) {
+                    childVisibility.push(stageObj.children[i].visible);
+                }
+                var spritesetObj = Mode3D._spriteset._threeObj;
+                for (var i = 0; i < stageObj.children.length; i++) {
+                    stageObj.children[i].visible =
+                        (stageObj.children[i] === spritesetObj);
+                }
+            }
+
+            // Editor overlay visibility for Pass 1 (PerspectiveCamera)
+            // - editorGrid: SHOW in Pass 1 (3D perspective grid)
+            // - other overlays (renderOrder >= 9998): HIDE in Pass 1
+            var overlayVisibility = [];
+            var gridVisibility = [];
+            for (var oi = 0; oi < scene.children.length; oi++) {
+                var obj = scene.children[oi];
+                if (obj === stageObj) continue;
+                if (obj.userData && obj.userData.editorGrid) {
+                    // Grid: save state, keep visible for Pass 1
+                    gridVisibility.push({ idx: oi, visible: obj.visible });
+                } else if (obj.renderOrder >= 9998) {
+                    // Other overlays: hide for Pass 1
+                    overlayVisibility.push({ idx: oi, visible: obj.visible });
+                    obj.visible = false;
+                }
+            }
+
+            renderer.autoClear = !skyMesh;  // Don't clear if sky was drawn
+            renderer.render(scene, Mode3D._perspCamera);
+
+            // Restore _blackScreen
+            if (blackScreenObj) {
+                blackScreenObj.visible = blackScreenWasVisible;
+            }
+
+            // Pass 2 prep: hide grid, restore other overlays
+            for (var oi = 0; oi < gridVisibility.length; oi++) {
+                scene.children[gridVisibility[oi].idx].visible = false;
+            }
+            for (var oi = 0; oi < overlayVisibility.length; oi++) {
+                scene.children[overlayVisibility[oi].idx].visible =
+                    overlayVisibility[oi].visible;
+            }
+
+            // --- Pass 2: OrthographicCamera로 UI 렌더 (합성) ---
+            if (stageObj) {
+                for (var i = 0; i < stageObj.children.length; i++) {
+                    var child = stageObj.children[i];
+                    child.visible = childVisibility[i];
+                    if (child === spritesetObj) {
+                        child.visible = false;
+                    }
+                }
+            }
+
+            renderer.autoClear = false;
+            renderer.render(scene, camera);
+
+            // 가시성 복원
+            if (stageObj) {
+                for (var i = 0; i < stageObj.children.length; i++) {
+                    stageObj.children[i].visible = childVisibility[i];
+                }
+            }
+            // Restore grid visibility after Pass 2
+            for (var oi = 0; oi < gridVisibility.length; oi++) {
+                scene.children[gridVisibility[oi].idx].visible =
+                    gridVisibility[oi].visible;
+            }
+            renderer.autoClear = true;
+            renderer.shadowMap.autoUpdate = prevShadowAutoUpdate;
+
+        } else {
+            // 3D 해제
+            if (Mode3D._active) {
+                Mode3D._resetBillboards();
+                Mode3D._perspCamera = null;
+            }
+            renderer.render(scene, camera);
+        }
+
+        Mode3D._active = is3D;
+    };
+
+    //=========================================================================
+    // ThreeRendererStrategy.resize
+    //=========================================================================
+
+    var _ThreeStrategy_resize = _ThreeStrategy.resize;
+    _ThreeStrategy.resize = function(rendererObj, width, height) {
+        _ThreeStrategy_resize.call(this, rendererObj, width, height);
+        if (Mode3D._perspCamera) {
+            Mode3D._perspCamera = Mode3D._createPerspCamera(width, height);
+        }
+    };
+
+    //=========================================================================
+    // Spriteset_Map.update - 상태 전환 감지
+    //=========================================================================
+
+    var _Spriteset_Map_update = Spriteset_Map.prototype.update;
+    Spriteset_Map.prototype.update = function() {
+        _Spriteset_Map_update.call(this);
+        if (!ConfigManager.mode3d && Mode3D._active) {
+            Mode3D._resetBillboards();
+        }
+    };
+
+    //=========================================================================
+    // Sprite_Character - 빌보드 등록
+    //=========================================================================
+
+    var _Sprite_Character_initialize = Sprite_Character.prototype.initialize;
+    Sprite_Character.prototype.initialize = function(character) {
+        _Sprite_Character_initialize.call(this, character);
+        Mode3D.registerBillboard(this);
+    };
+
+    var _Spriteset_Map_createCharacters = Spriteset_Map.prototype.createCharacters;
+    Spriteset_Map.prototype.createCharacters = function() {
+        Mode3D._billboardTargets = [];
+        _Spriteset_Map_createCharacters.call(this);
+    };
+
+    var _Spriteset_Map_createShadow = Spriteset_Map.prototype.createShadow;
+    Spriteset_Map.prototype.createShadow = function() {
+        _Spriteset_Map_createShadow.call(this);
+        Mode3D.registerBillboard(this._shadowSprite);
+    };
+
+    var _Spriteset_Map_createDestination = Spriteset_Map.prototype.createDestination;
+    Spriteset_Map.prototype.createDestination = function() {
+        _Spriteset_Map_createDestination.call(this);
+        Mode3D.registerBillboard(this._destinationSprite);
+    };
+
+    //=========================================================================
+    // 화면 좌표 → 월드 좌표 변환 (3D 모드용)
+    // PerspectiveCamera의 역투영으로 Z=0 평면 교점 계산
+    //=========================================================================
+
+    Mode3D._lastScreenToWorld = null;
+    Mode3D._lastScreenX = -1;
+    Mode3D._lastScreenY = -1;
+
+    Mode3D.screenToWorld = function(screenX, screenY) {
+        // 같은 좌표에 대해 캐시 반환 (canvasToMapX/Y가 별도 호출되므로)
+        if (this._lastScreenX === screenX && this._lastScreenY === screenY &&
+            this._lastScreenToWorld) {
+            return this._lastScreenToWorld;
+        }
+
+        var camera = this._perspCamera;
+        if (!camera) return null;
+
+        // matrixWorld 최신화 (렌더 루프 밖에서 호출될 수 있으므로)
+        camera.updateMatrixWorld(true);
+
+        var w = Graphics.width;
+        var h = Graphics.height;
+
+        // NDC 좌표 (-1 ~ 1)
+        // 화면 Y-down → NDC Y-up 변환
+        var ndcX = (screenX / w) * 2 - 1;
+        var ndcY = -((screenY / h) * 2 - 1);
+
+        // near/far 두 점을 unproject
+        var near = new THREE.Vector3(ndcX, ndcY, -1);
+        var far  = new THREE.Vector3(ndcX, ndcY,  1);
+        near.applyMatrix4(camera.projectionMatrixInverse);
+        near.applyMatrix4(camera.matrixWorld);
+        far.applyMatrix4(camera.projectionMatrixInverse);
+        far.applyMatrix4(camera.matrixWorld);
+
+        // ray direction
+        var dir = new THREE.Vector3().subVectors(far, near).normalize();
+
+        // Z=0 평면과의 교점: near.z + t * dir.z = 0
+        if (Math.abs(dir.z) < 1e-6) return null;
+        var t = -near.z / dir.z;
+
+        var result = {
+            x: near.x + t * dir.x,
+            y: near.y + t * dir.y
+        };
+
+        this._lastScreenX = screenX;
+        this._lastScreenY = screenY;
+        this._lastScreenToWorld = result;
+        return result;
+    };
+
+    //=========================================================================
+    // Game_Map.canvasToMapX/Y 오버라이드
+    // 3D 모드 활성 시 screenToWorld로 올바른 타일 좌표 계산
+    // 원본: canvasToMapX(x) → (displayX * 48 + x) / 48
+    // screenToWorld의 결과 world.x는 카메라 월드 공간의 X좌표이며,
+    // 이는 2D OrthographicCamera에서의 screen pixel X와 동일한 좌표계
+    //=========================================================================
+
+    var _Game_Map_canvasToMapX = Game_Map.prototype.canvasToMapX;
+    Game_Map.prototype.canvasToMapX = function(x) {
+        if (ConfigManager.mode3d && Mode3D._active && Mode3D._perspCamera) {
+            var world = Mode3D.screenToWorld(x, TouchInput.y);
+            if (world) {
+                var tileWidth = this.tileWidth();
+                var originX = this._displayX * tileWidth;
+                return this.roundX(Math.floor((originX + world.x) / tileWidth));
+            }
+        }
+        return _Game_Map_canvasToMapX.call(this, x);
+    };
+
+    var _Game_Map_canvasToMapY = Game_Map.prototype.canvasToMapY;
+    Game_Map.prototype.canvasToMapY = function(y) {
+        if (ConfigManager.mode3d && Mode3D._active && Mode3D._perspCamera) {
+            var world = Mode3D.screenToWorld(TouchInput.x, y);
+            if (world) {
+                var tileHeight = this.tileHeight();
+                var originY = this._displayY * tileHeight;
+                return this.roundY(Math.floor((originY + world.y) / tileHeight));
+            }
+        }
+        return _Game_Map_canvasToMapY.call(this, y);
+    };
+
+    //=========================================================================
+    // 카메라 존 → tilt / fov / yaw / zoom lerp 보간
+    // 매 프레임 렌더 직전에 호출하여 Mode3D 전역 값을
+    // 활성 카메라 존의 값으로 부드럽게 전환
+    //=========================================================================
+
+    Mode3D._currentTilt = null;   // lerp 중인 현재 tilt
+    Mode3D._currentFov = null;    // lerp 중인 현재 fov
+    Mode3D._currentYaw = null;    // lerp 중인 현재 yaw (rad)
+    Mode3D._currentZoom = null;   // lerp 중인 현재 zoom
+
+    Mode3D._updateCameraZoneParams = function() {
+        if (!this._perspCamera) return;
+        if (window.__editorMode) return; // 에디터에서는 적용하지 않음
+
+        // 타겟 값 결정: 활성 카메라존 → 글로벌 기본값
+        var targetTilt = 60;  // 글로벌 기본
+        var targetFov = 60;
+        var targetYaw = 0;
+        var targetZoom = 1.0;
+        var transitionSpeed = 1.0;
+
+        if ($gameMap && $gameMap._activeCameraZoneId != null) {
+            var zone = $gameMap.getCameraZoneById($gameMap._activeCameraZoneId);
+            if (zone) {
+                targetTilt = zone.tilt != null ? zone.tilt : 60;
+                targetFov = zone.fov != null ? zone.fov : 60;
+                targetYaw = zone.yaw != null ? zone.yaw : 0;
+                targetZoom = zone.zoom != null ? zone.zoom : 1.0;
+                transitionSpeed = zone.transitionSpeed || 1.0;
+            }
+        }
+
+        // 초기화 (최초 호출 시)
+        if (this._currentTilt === null) {
+            this._currentTilt = targetTilt;
+            this._currentFov = targetFov;
+            this._currentYaw = targetYaw;
+            this._currentZoom = targetZoom;
+        }
+
+        // lerp로 부드럽게 전환
+        var lerpRate = 0.1 * transitionSpeed;
+        lerpRate = Math.min(lerpRate, 1.0);
+
+        this._currentTilt += (targetTilt - this._currentTilt) * lerpRate;
+        this._currentFov += (targetFov - this._currentFov) * lerpRate;
+        this._currentYaw += (targetYaw - this._currentYaw) * lerpRate;
+        this._currentZoom += (targetZoom - this._currentZoom) * lerpRate;
+
+        // 수렴 체크 (0.01 이하면 스냅)
+        if (Math.abs(targetTilt - this._currentTilt) < 0.01) this._currentTilt = targetTilt;
+        if (Math.abs(targetFov - this._currentFov) < 0.01) this._currentFov = targetFov;
+        if (Math.abs(targetYaw - this._currentYaw) < 0.01) this._currentYaw = targetYaw;
+        if (Math.abs(targetZoom - this._currentZoom) < 0.001) this._currentZoom = targetZoom;
+
+        // Mode3D 전역에 반영: tilt
+        this._tiltDeg = this._currentTilt;
+        this._tiltRad = this._currentTilt * Math.PI / 180;
+
+        // Mode3D 전역에 반영: yaw
+        this._yawDeg = this._currentYaw;
+        this._yawRad = this._currentYaw * Math.PI / 180;
+
+        // Mode3D 전역에 반영: zoom (카메라 거리 조절에 사용)
+        this._zoomScale = this._currentZoom;
+
+        // PerspectiveCamera fov 업데이트
+        if (this._perspCamera.fov !== this._currentFov) {
+            this._perspCamera.fov = this._currentFov;
+            this._perspCamera.updateProjectionMatrix();
+        }
+    };
+
+})();

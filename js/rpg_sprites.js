@@ -2266,6 +2266,7 @@ Spriteset_Map.prototype.createLowerLayer = function() {
     this.createParallax();
     this.createTilemap();
     this.createCharacters();
+    this.createMapObjects();
     this.createShadow();
     this.createDestination();
     this.createWeather();
@@ -2276,6 +2277,7 @@ Spriteset_Map.prototype.update = function() {
     this.updateTileset();
     this.updateParallax();
     this.updateTilemap();
+    this.updateMapObjects();
     this.updateShadow();
     this.updateWeather();
 };
@@ -2296,11 +2298,7 @@ Spriteset_Map.prototype.createParallax = function() {
 };
 
 Spriteset_Map.prototype.createTilemap = function() {
-    if (Graphics.isWebGL() && RendererFactory.supportsShaderTilemap()) {
-        this._tilemap = new ShaderTilemap();
-    } else {
-        this._tilemap = new Tilemap();
-    }
+    this._tilemap = new ShaderTilemap();
     this._tilemap.tileWidth = $gameMap.tileWidth();
     this._tilemap.tileHeight = $gameMap.tileHeight();
     this._tilemap.setData($gameMap.width(), $gameMap.height(), $gameMap.data());
@@ -2340,6 +2338,70 @@ Spriteset_Map.prototype.createCharacters = function() {
     this._characterSprites.push(new Sprite_Character($gamePlayer));
     for (var i = 0; i < this._characterSprites.length; i++) {
         this._tilemap.addChild(this._characterSprites[i]);
+    }
+};
+
+Spriteset_Map.prototype.createMapObjects = function() {
+    this._objectSprites = [];
+    var objects = $dataMap.objects;
+    if (!objects || !Array.isArray(objects)) return;
+    var tw = $gameMap.tileWidth();
+    var th = $gameMap.tileHeight();
+    var tileset = $gameMap.tileset();
+    if (!tileset) return;
+
+    for (var i = 0; i < objects.length; i++) {
+        var obj = objects[i];
+        if (!obj) continue;
+        // Create a container sprite for the entire object
+        var container = new Sprite();
+        // Store map tile coordinates for scroll-based position update
+        container._mapObjX = obj.x;
+        container._mapObjY = obj.y;
+        container._mapObjH = obj.height;
+        container.z = 3; // above lower tiles, below characters
+
+        for (var row = 0; row < obj.height; row++) {
+            for (var col = 0; col < obj.width; col++) {
+                var tileIds = obj.tileIds[row];
+                if (!tileIds) continue;
+                var tileId = tileIds[col];
+                if (!tileId || tileId === 0) continue;
+
+                var setNumber = 5 + Math.floor(tileId / 256);
+                var tilesetName = tileset.tilesetNames[setNumber];
+                if (!tilesetName) continue;
+
+                var tileSprite = new Sprite();
+                tileSprite.bitmap = ImageManager.loadTileset(tilesetName);
+                var sx = (Math.floor(tileId / 128) % 2 * 8 + tileId % 8) * tw;
+                var sy = Math.floor(tileId % 256 / 8) % 16 * th;
+                tileSprite.setFrame(sx, sy, tw, th);
+                tileSprite.x = col * tw;
+                tileSprite.y = (row - obj.height) * th;
+                container.addChild(tileSprite);
+            }
+        }
+
+        this._tilemap.addChild(container);
+        this._objectSprites.push(container);
+
+        // Register as billboard for 3D mode
+        if (typeof Mode3D !== 'undefined') {
+            Mode3D.registerBillboard(container);
+        }
+    }
+};
+
+Spriteset_Map.prototype.updateMapObjects = function() {
+    if (!this._objectSprites) return;
+    var tw = $gameMap.tileWidth();
+    var th = $gameMap.tileHeight();
+    for (var i = 0; i < this._objectSprites.length; i++) {
+        var container = this._objectSprites[i];
+        // Update position based on map scroll (same as character screenX/Y)
+        container.x = Math.round($gameMap.adjustX(container._mapObjX) * tw);
+        container.y = Math.round($gameMap.adjustY(container._mapObjY) * th + th);
     }
 };
 
@@ -2390,10 +2452,94 @@ Spriteset_Map.prototype.updateParallax = function() {
         } else {
             this._parallax.bitmap = ImageManager.loadParallax(this._parallaxName);
         }
+
+        // Update Three.js parallax sky plane
+        this._updateParallaxSkyPlane();
     }
     if (this._parallax.bitmap) {
         this._parallax.origin.x = $gameMap.parallaxOx();
         this._parallax.origin.y = $gameMap.parallaxOy();
+    }
+};
+
+/**
+ * Creates/updates a large Three.js plane behind the tilemap as a sky background.
+ * This makes the parallax visible in 3D mode beyond the map edges,
+ * and also visible through transparent tile areas.
+ * The mesh is added to _baseSprite's Three.js object so it participates
+ * in the normal renderOrder hierarchy (drawn before tilemap).
+ */
+Spriteset_Map.prototype._updateParallaxSkyPlane = function() {
+    var rendererObj = Graphics._renderer;
+    if (!rendererObj || !rendererObj.scene) return;
+
+    // Remove existing sky plane
+    if (this._parallaxSkyMesh) {
+        rendererObj.scene.remove(this._parallaxSkyMesh);
+        this._parallaxSkyMesh.geometry.dispose();
+        this._parallaxSkyMesh.material.dispose();
+        this._parallaxSkyMesh = null;
+    }
+
+    if (!this._parallaxName) return;
+
+    var bitmap = ImageManager.loadParallax(this._parallaxName);
+    var self = this;
+
+    var createMesh = function() {
+        if (!bitmap.isReady()) return;
+
+        var THREE = window.THREE;
+        if (!THREE) return;
+
+        // Create a large plane (4x screen size) centered on the map
+        var mapW = $gameMap.width() * $gameMap.tileWidth();
+        var mapH = $gameMap.height() * $gameMap.tileHeight();
+        var planeW = Math.max(mapW, Graphics.width) * 4;
+        var planeH = Math.max(mapH, Graphics.height) * 4;
+
+        var geometry = new THREE.PlaneGeometry(planeW, planeH);
+        // Adjust vertices for Y-down coordinate system (matching camera setup)
+        var posAttr = geometry.attributes.position;
+        for (var i = 0; i < posAttr.count; i++) {
+            posAttr.setX(i, posAttr.getX(i) + mapW / 2);
+            posAttr.setY(i, posAttr.getY(i) + mapH / 2);
+        }
+        posAttr.needsUpdate = true;
+
+        // Create texture from bitmap
+        var canvas = bitmap._canvas || bitmap._image;
+        var texture = new THREE.Texture(canvas);
+        texture.needsUpdate = true;
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.magFilter = THREE.LinearFilter;
+        texture.minFilter = THREE.LinearFilter;
+
+        // Set repeat based on plane size vs texture size
+        var texW = bitmap.width || 1;
+        var texH = bitmap.height || 1;
+        texture.repeat.set(planeW / texW, planeH / texH);
+
+        var material = new THREE.MeshBasicMaterial({
+            map: texture,
+            side: THREE.DoubleSide,
+            depthTest: false,
+            depthWrite: false,
+        });
+
+        var mesh = new THREE.Mesh(geometry, material);
+        mesh._isParallaxSky = true;  // Tag for Mode3D render pass
+        mesh.position.z = -100;
+        mesh.visible = false;  // Hidden by default; Mode3D render controls visibility
+        rendererObj.scene.add(mesh);
+        self._parallaxSkyMesh = mesh;
+    };
+
+    if (bitmap.isReady()) {
+        createMesh();
+    } else {
+        bitmap.addLoadListener(createMesh);
     }
 };
 
