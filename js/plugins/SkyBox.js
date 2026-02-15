@@ -157,21 +157,19 @@
     }
 
     function restoreParallaxSky() {
-        var rendererObj = getRendererObj();
-        if (!rendererObj || !rendererObj.scene) return;
-        rendererObj.scene.traverse(function(obj) {
-            if (obj._isParallaxSky && obj !== _skyMesh) {
-                obj.visible = true;
-            }
-        });
+        // _parallaxSkyMesh는 3D Pass 0에서 visible을 제어하므로
+        // 여기서는 건드리지 않음 (visible=true로 만들면 2D 카메라에 렌더됨)
     }
 
     // $dataMap에서 skyBackground 읽어 자동 적용
     function readMapSettings() {
         if (typeof $dataMap !== 'undefined' && $dataMap && $dataMap.skyBackground) {
             applySettings($dataMap.skyBackground);
+        } else if (typeof $dataMap !== 'undefined' && $dataMap && $dataMap.parallaxName) {
+            // skyBackground 없지만 parallaxName 있으면 parallax 모드 사용
+            applySettings(null);
         } else {
-            // skyBackground 없으면 기본 설정 (기존 동작 유지: sky sphere 활성)
+            // skyBackground도 parallax도 없으면 기본 sky sphere
             applySettings({ type: 'skysphere', skyImage: defaultPanoramaFile, rotationSpeed: 0.02 });
         }
     }
@@ -206,7 +204,13 @@
         _Spriteset_Map_update.call(this);
         if (_skyEnabled) {
             if (!_applied) addToScene();
-            updateSkyPosition();
+            // 2D 모드에서는 sky mesh 숨김 (orthographic 카메라에 렌더되는 것 방지)
+            if (_skyMesh) {
+                _skyMesh.visible = !!(ConfigManager.mode3d);
+            }
+            if (ConfigManager.mode3d) {
+                updateSkyPosition();
+            }
         }
     };
 
