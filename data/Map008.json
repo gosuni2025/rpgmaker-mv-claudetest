@@ -9452,7 +9452,7 @@
               "code": 356,
               "indent": 0,
               "parameters": [
-                "MapObject showWithShader 1 glitch 5"
+                "MapObject showWithShader 1 fade 5"
               ]
             },
             {
