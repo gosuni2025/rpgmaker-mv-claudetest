@@ -2361,25 +2361,37 @@ Spriteset_Map.prototype.createMapObjects = function() {
         container._mapObjH = obj.height;
         container.z = 3; // above lower tiles, below characters
 
-        for (var row = 0; row < obj.height; row++) {
-            for (var col = 0; col < obj.width; col++) {
-                var tileIds = obj.tileIds[row];
-                if (!tileIds) continue;
-                var tileId = tileIds[col];
-                if (!tileId || tileId === 0) continue;
+        if (obj.imageName) {
+            // 이미지 기반 오브젝트: pictures 폴더에서 이미지 로드
+            var imgSprite = new Sprite();
+            imgSprite.bitmap = ImageManager.loadPicture(obj.imageName);
+            var objAnchorY = obj.anchorY != null ? obj.anchorY : 1.0;
+            imgSprite.anchor.set(0.5, objAnchorY);
+            imgSprite.x = obj.width * tw / 2;
+            container.addChild(imgSprite);
+            container._imgSprite = imgSprite;
+            container._imageReady = false;
+        } else {
+            for (var row = 0; row < obj.height; row++) {
+                for (var col = 0; col < obj.width; col++) {
+                    var tileIds = obj.tileIds[row];
+                    if (!tileIds) continue;
+                    var tileId = tileIds[col];
+                    if (!tileId || tileId === 0) continue;
 
-                var setNumber = 5 + Math.floor(tileId / 256);
-                var tilesetName = tileset.tilesetNames[setNumber];
-                if (!tilesetName) continue;
+                    var setNumber = 5 + Math.floor(tileId / 256);
+                    var tilesetName = tileset.tilesetNames[setNumber];
+                    if (!tilesetName) continue;
 
-                var tileSprite = new Sprite();
-                tileSprite.bitmap = ImageManager.loadTileset(tilesetName);
-                var sx = (Math.floor(tileId / 128) % 2 * 8 + tileId % 8) * tw;
-                var sy = Math.floor(tileId % 256 / 8) % 16 * th;
-                tileSprite.setFrame(sx, sy, tw, th);
-                tileSprite.x = col * tw;
-                tileSprite.y = (row - obj.height) * th;
-                container.addChild(tileSprite);
+                    var tileSprite = new Sprite();
+                    tileSprite.bitmap = ImageManager.loadTileset(tilesetName);
+                    var sx = (Math.floor(tileId / 128) % 2 * 8 + tileId % 8) * tw;
+                    var sy = Math.floor(tileId % 256 / 8) % 16 * th;
+                    tileSprite.setFrame(sx, sy, tw, th);
+                    tileSprite.x = col * tw;
+                    tileSprite.y = (row - obj.height) * th;
+                    container.addChild(tileSprite);
+                }
             }
         }
 
@@ -2402,6 +2414,14 @@ Spriteset_Map.prototype.updateMapObjects = function() {
         // Update position based on map scroll (same as character screenX/Y)
         container.x = Math.round($gameMap.adjustX(container._mapObjX) * tw);
         container.y = Math.round($gameMap.adjustY(container._mapObjY) * th + th);
+        // 이미지 오브젝트: 비동기 로드 완료 감지하여 repaint 요청
+        if (container._imgSprite && !container._imageReady) {
+            var bmp = container._imgSprite.bitmap;
+            if (bmp && bmp.isReady()) {
+                container._imageReady = true;
+                if (this._tilemap) this._tilemap._needsRepaint = true;
+            }
+        }
     }
 };
 
@@ -2456,6 +2476,27 @@ Spriteset_Map.prototype.updateParallax = function() {
         // Update Three.js parallax sky plane
         this._updateParallaxSkyPlane();
     }
+    // Retry: parallax sky plane이 아직 생성되지 않았고, 대기중도 아니면 재시도
+    if (this._parallaxName && !this._parallaxSkyMesh && !this._parallaxSkyPending) {
+        this._updateParallaxSkyPlane();
+    }
+    // 3D 모드: parallax sky mesh를 카메라 look-at 방향에 수직으로 배치
+    var is3D = this._parallaxSkyMesh && window.Mode3D && Mode3D._perspCamera;
+    if (is3D) {
+        var cam = Mode3D._perspCamera;
+        var mesh = this._parallaxSkyMesh;
+        // 카메라 look direction (로컬 -Z → 월드)
+        var dir = new THREE.Vector3(0, 0, -1).applyQuaternion(cam.quaternion);
+        // far plane의 80% 거리에 배치
+        var farDist = cam.far * 0.8;
+        mesh.position.copy(cam.position).addScaledVector(dir, farDist);
+        // 카메라를 정면으로 바라보도록 회전
+        mesh.lookAt(cam.position);
+    }
+    // 3D 모드에서 2D parallax TilingSprite 숨기기 (화면 덮힘 방지)
+    if (this._parallax._threeObj) {
+        this._parallax._threeObj.visible = !is3D;
+    }
     if (this._parallax.bitmap) {
         this._parallax.origin.x = $gameMap.parallaxOx();
         this._parallax.origin.y = $gameMap.parallaxOy();
@@ -2480,6 +2521,7 @@ Spriteset_Map.prototype._updateParallaxSkyPlane = function() {
         this._parallaxSkyMesh.material.dispose();
         this._parallaxSkyMesh = null;
     }
+    this._parallaxSkyPending = false;
 
     if (!this._parallaxName) return;
 
@@ -2487,25 +2529,30 @@ Spriteset_Map.prototype._updateParallaxSkyPlane = function() {
     var self = this;
 
     var createMesh = function() {
+        self._parallaxSkyPending = false;
         if (!bitmap.isReady()) return;
 
         var THREE = window.THREE;
         if (!THREE) return;
 
-        // Create a large plane (4x screen size) centered on the map
-        var mapW = $gameMap.width() * $gameMap.tileWidth();
-        var mapH = $gameMap.height() * $gameMap.tileHeight();
-        var planeW = Math.max(mapW, Graphics.width) * 4;
-        var planeH = Math.max(mapH, Graphics.height) * 4;
+        // 이미 다른 경로로 mesh가 생성된 경우 중복 방지
+        if (self._parallaxSkyMesh) return;
+
+        // 충분히 큰 plane (카메라 far 거리에서 시야를 덮을 크기)
+        // far * 0.8 거리에서 FOV 기준 필요 크기 계산
+        var farDist = 5000; // 기본값
+        if (window.Mode3D && Mode3D._perspCamera) {
+            farDist = Mode3D._perspCamera.far * 0.8;
+        }
+        var fovRad = (60 * Math.PI / 180); // 기본 FOV 60도
+        if (window.Mode3D && Mode3D._perspCamera) {
+            fovRad = Mode3D._perspCamera.fov * Math.PI / 180;
+        }
+        var planeH = 2 * farDist * Math.tan(fovRad / 2) * 1.5;
+        var aspect = Graphics.width / Graphics.height;
+        var planeW = planeH * aspect * 1.5;
 
         var geometry = new THREE.PlaneGeometry(planeW, planeH);
-        // Adjust vertices for Y-down coordinate system (matching camera setup)
-        var posAttr = geometry.attributes.position;
-        for (var i = 0; i < posAttr.count; i++) {
-            posAttr.setX(i, posAttr.getX(i) + mapW / 2);
-            posAttr.setY(i, posAttr.getY(i) + mapH / 2);
-        }
-        posAttr.needsUpdate = true;
 
         // Create texture from bitmap
         var canvas = bitmap._canvas || bitmap._image;
@@ -2528,17 +2575,21 @@ Spriteset_Map.prototype._updateParallaxSkyPlane = function() {
             depthWrite: false,
         });
 
+        var rendObj = Graphics._renderer;
+        if (!rendObj || !rendObj.scene) return;
+
         var mesh = new THREE.Mesh(geometry, material);
         mesh._isParallaxSky = true;  // Tag for Mode3D render pass
-        mesh.position.z = -100;
+        mesh.frustumCulled = false;
         mesh.visible = false;  // Hidden by default; Mode3D render controls visibility
-        rendererObj.scene.add(mesh);
+        rendObj.scene.add(mesh);
         self._parallaxSkyMesh = mesh;
     };
 
     if (bitmap.isReady()) {
         createMesh();
     } else {
+        this._parallaxSkyPending = true;
         bitmap.addLoadListener(createMesh);
     }
 };
