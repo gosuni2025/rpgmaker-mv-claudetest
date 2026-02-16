@@ -9449,6 +9449,13 @@
               ]
             },
             {
+              "code": 356,
+              "indent": 0,
+              "parameters": [
+                "MapObject showWithShader 1 glitch 5"
+              ]
+            },
+            {
               "code": 0,
               "indent": 0,
               "parameters": []
