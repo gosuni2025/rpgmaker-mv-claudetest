@@ -6,5 +6,6 @@ var $plugins =
 {"name":"MadeWithMv","status":false,"description":"Show a Splash Screen \"Made with MV\" and/or a Custom Splash Screen before going to main screen.","parameters":{"Show Made With MV":"true","Made with MV Image":"MadeWithMv","Show Custom Splash":"false","Custom Image":"","Fade Out Time":"120","Fade In Time":"120","Wait Time":"160"}},
 {"name":"SkyBox","status":true,"description":"Three.js SkySphere - 3D 모드에서 파노라마 하늘 배경 표시","parameters":{"Skybox Folder":"skybox","Panorama File":"sky_panorama.png"}},
 {"name":"TitleCredit","status":true,"description":"타이틀 화면에 Credit 버튼 추가","parameters":{}},
-{"name":"WASD_Movement","status":true,"description":"WASD 키로 이동, Q/E 키로 PageUp/PageDown 매핑","parameters":{}}
+{"name":"WASD_Movement","status":true,"description":"WASD 키로 이동, Q/E 키로 PageUp/PageDown 매핑","parameters":{}},
+{"name":"TouchDestAnimation","status":true,"description":"터치/클릭 목적지에 RPG Maker 애니메이션 재생","parameters":{"Animation ID":"1","Hide Default":"true"}}
 ];
