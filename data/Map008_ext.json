@@ -1314,10 +1314,28 @@
     {
       "id": 6,
       "name": "OBJ6",
-      "x": 22,
-      "y": 15,
+      "x": 23,
+      "y": 16,
       "tileIds": [
         [
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
           [
             1552,
             0,
@@ -1387,6 +1405,24 @@
         ],
         [
           [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
             1552,
             0,
             433,
@@ -1455,6 +1491,24 @@
         ],
         [
           [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
             1552,
             0,
             441,
@@ -1522,6 +1576,24 @@
           ]
         ],
         [
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
           [
             0,
             0,
@@ -1609,6 +1681,24 @@
             0
           ],
           [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
             1572,
             0,
             0,
@@ -1677,6 +1767,24 @@
             0
           ],
           [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
             1572,
             0,
             0,
@@ -1726,6 +1834,24 @@
           ]
         ],
         [
+          [
+            1572,
+            0,
+            0,
+            439
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
           [
             0,
             0,
@@ -1825,6 +1951,24 @@
             0
           ],
           [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
             2356,
             0,
             0,
@@ -1899,6 +2043,24 @@
             0
           ],
           [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
             2364,
             0,
             0,
@@ -1930,7 +2092,7 @@
           ]
         ]
       ],
-      "width": 11,
+      "width": 14,
       "height": 9,
       "zHeight": 0,
       "passability": [
@@ -1945,16 +2107,6 @@
           true,
           true,
           true,
-          true
-        ],
-        [
-          true,
-          true,
-          true,
-          true,
-          true,
-          true,
-          true,
           true,
           true,
           true,
@@ -1964,16 +2116,6 @@
           true,
           true,
           true,
-          true,
-          true,
-          true,
-          true,
-          true,
-          true,
-          true,
-          true
-        ],
-        [
           true,
           true,
           true,
@@ -1997,16 +2139,6 @@
           true,
           true,
           true,
-          true
-        ],
-        [
-          true,
-          true,
-          true,
-          true,
-          true,
-          true,
-          true,
           true,
           true,
           true,
@@ -2023,6 +2155,25 @@
           true,
           true,
           true,
+          true,
+          true,
+          true,
+          true
+        ],
+        [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
           true
         ],
         [
@@ -2036,6 +2187,41 @@
           true,
           true,
           true,
+          true,
+          true,
+          true,
+          true
+        ],
+        [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
           true
         ],
         [
@@ -2049,6 +2235,33 @@
           false,
           false,
           false,
+          false,
+          false,
+          false,
+          false
+        ]
+      ]
+    },
+    {
+      "id": 7,
+      "name": "OBJ7",
+      "x": 22,
+      "y": 12,
+      "tileIds": [
+        [
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 1,
+      "zHeight": 0,
+      "passability": [
+        [
           false
         ]
       ]
