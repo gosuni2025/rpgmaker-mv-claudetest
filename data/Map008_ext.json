@@ -1,0 +1,912 @@
+{
+  "editorLights": {
+    "ambient": {
+      "color": "#667788",
+      "intensity": 0.4
+    },
+    "directional": {
+      "enabled": false,
+      "color": "#fff8ee",
+      "intensity": 0.1,
+      "direction": [
+        -1,
+        -1,
+        -2
+      ],
+      "castShadow": true,
+      "shadowMapSize": 2048,
+      "shadowBias": -0.001,
+      "shadowNear": 1,
+      "shadowFar": 5000
+    },
+    "points": [
+      {
+        "id": 1,
+        "x": 19,
+        "y": 18,
+        "z": 30,
+        "color": "#ffcc88",
+        "intensity": 6.4,
+        "distance": 150,
+        "decay": 0
+      }
+    ],
+    "playerLight": {
+      "color": "#a25f06",
+      "intensity": 0.8,
+      "distance": 200,
+      "z": 40
+    },
+    "spotLight": {
+      "enabled": true,
+      "color": "#ffeedd",
+      "intensity": 0.8,
+      "distance": 250,
+      "angle": 0.6,
+      "penumbra": 0.9,
+      "z": 120,
+      "shadowMapSize": 2048,
+      "targetDistance": 70
+    },
+    "shadow": {
+      "opacity": 0.4,
+      "color": "#000000",
+      "offsetScale": 0.6
+    }
+  },
+  "objects": [
+    {
+      "id": 1,
+      "name": "Sprite-0001",
+      "x": 12,
+      "y": 17,
+      "tileIds": [
+        [
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        [
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        [
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        [
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        [
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        [
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        [
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 7,
+      "height": 7,
+      "zHeight": 0,
+      "passability": [
+        [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        [
+          true,
+          true,
+          false,
+          false,
+          false,
+          true,
+          true
+        ],
+        [
+          true,
+          true,
+          false,
+          false,
+          false,
+          true,
+          true
+        ]
+      ],
+      "imageName": "Sprite-0001",
+      "anchorY": 0.75,
+      "imageScale": 1.2
+    },
+    {
+      "id": 2,
+      "name": "Sprite-0002",
+      "x": 12,
+      "y": 12,
+      "tileIds": [
+        [
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        [
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        [
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        [
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        [
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        [
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ],
+        [
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 7,
+      "height": 7,
+      "zHeight": 0,
+      "passability": [
+        [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        [
+          true,
+          true,
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        [
+          true,
+          true,
+          false,
+          false,
+          false,
+          true,
+          true
+        ],
+        [
+          true,
+          true,
+          false,
+          false,
+          false,
+          true,
+          true
+        ]
+      ],
+      "imageName": "Sprite-0001",
+      "anchorY": 0.75,
+      "imageScale": 1.2
+    },
+    {
+      "id": 3,
+      "name": "OBJ3",
+      "x": 22,
+      "y": 12,
+      "tileIds": [
+        [
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 1,
+      "zHeight": 0,
+      "passability": [
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 4,
+      "name": "OBJ4",
+      "x": 22,
+      "y": 13,
+      "tileIds": [
+        [
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 1,
+      "zHeight": 0,
+      "passability": [
+        [
+          false
+        ]
+      ]
+    }
+  ],
+  "animTileSettings": {
+    "6": {
+      "enabled": true,
+      "waveAmplitude": 0.006,
+      "waveFrequency": 6,
+      "waveSpeed": 1.3,
+      "waterAlpha": 0.8,
+      "specularStrength": 0.6,
+      "emissive": 0.15,
+      "emissiveColor": "#ffffff"
+    }
+  },
+  "fogOfWar": {
+    "enabled": false,
+    "radius": 5,
+    "fogColor": "#000000",
+    "unexploredAlpha": 1,
+    "exploredAlpha": 0.6,
+    "fogHeight": 300,
+    "lineOfSight": true,
+    "absorption": 0.012,
+    "visibilityBrightness": 0,
+    "edgeAnimation": true,
+    "edgeAnimationSpeed": 1,
+    "fogMode": "2d",
+    "enabled2D": false
+  },
+  "testStartPosition": {
+    "x": 19,
+    "y": 16
+  }
+}

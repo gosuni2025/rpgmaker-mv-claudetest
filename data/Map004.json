@@ -19085,9 +19085,9 @@
           "directionFix": false,
           "image": {
             "characterIndex": 0,
-            "characterName": "",
+            "characterName": "!Door2",
             "direction": 2,
-            "pattern": 1,
+            "pattern": 0,
             "tileId": 0
           },
           "list": [
@@ -19174,8 +19174,8 @@
           },
           "directionFix": false,
           "image": {
-            "characterIndex": 0,
-            "characterName": "",
+            "characterIndex": 4,
+            "characterName": "!Flame",
             "direction": 2,
             "pattern": 1,
             "tileId": 0
@@ -19184,62 +19184,101 @@
             {
               "code": 101,
               "indent": 0,
-              "parameters": ["", 0, 0, 2]
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
             },
             {
               "code": 401,
               "indent": 0,
-              "parameters": ["\\C[4]용암 지대\\C[0]"]
+              "parameters": [
+                "\\C[4]용암 지대\\C[0]"
+              ]
             },
             {
               "code": 401,
               "indent": 0,
-              "parameters": ["발밑의 열기가 너무 뜨겁다..."]
+              "parameters": [
+                "발밑의 열기가 너무 뜨겁다..."
+              ]
             },
             {
               "code": 401,
               "indent": 0,
-              "parameters": ["지형 데미지를 비활성화할까?"]
+              "parameters": [
+                "지형 데미지를 비활성화할까?"
+              ]
             },
             {
               "code": 102,
               "indent": 0,
-              "parameters": [["예", "아니오"], 0, 0, 2, 0]
+              "parameters": [
+                [
+                  "예",
+                  "아니오"
+                ],
+                0,
+                0,
+                2,
+                0
+              ]
             },
             {
               "code": 402,
               "indent": 0,
-              "parameters": [0, "예"]
+              "parameters": [
+                0,
+                "예"
+              ]
             },
             {
               "code": 355,
               "indent": 1,
-              "parameters": ["Game_Actor.prototype.basicFloorDamage = function() {"]
+              "parameters": [
+                "Game_Actor.prototype.basicFloorDamage = function() {"
+              ]
             },
             {
               "code": 655,
               "indent": 1,
-              "parameters": ["  return 0;"]
+              "parameters": [
+                "  return 0;"
+              ]
             },
             {
               "code": 655,
               "indent": 1,
-              "parameters": ["};"]
+              "parameters": [
+                "};"
+              ]
             },
             {
               "code": 101,
               "indent": 1,
-              "parameters": ["", 0, 0, 2]
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
             },
             {
               "code": 401,
               "indent": 1,
-              "parameters": ["\\C[3]지형 데미지를 비활성화했다!\\C[0]"]
+              "parameters": [
+                "\\C[3]지형 데미지를 비활성화했다!\\C[0]"
+              ]
             },
             {
               "code": 123,
               "indent": 1,
-              "parameters": ["A", 0]
+              "parameters": [
+                "A",
+                0
+              ]
             },
             {
               "code": 0,
@@ -19249,7 +19288,10 @@
             {
               "code": 402,
               "indent": 0,
-              "parameters": [1, "아니오"]
+              "parameters": [
+                1,
+                "아니오"
+              ]
             },
             {
               "code": 0,
@@ -19314,62 +19356,101 @@
             {
               "code": 101,
               "indent": 0,
-              "parameters": ["", 0, 0, 2]
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
             },
             {
               "code": 401,
               "indent": 0,
-              "parameters": ["\\C[4]용암 지대\\C[0]"]
+              "parameters": [
+                "\\C[4]용암 지대\\C[0]"
+              ]
             },
             {
               "code": 401,
               "indent": 0,
-              "parameters": ["지형 데미지가 현재 \\C[2]비활성화\\C[0] 상태다."]
+              "parameters": [
+                "지형 데미지가 현재 \\C[2]비활성화\\C[0] 상태다."
+              ]
             },
             {
               "code": 401,
               "indent": 0,
-              "parameters": ["다시 활성화할까?"]
+              "parameters": [
+                "다시 활성화할까?"
+              ]
             },
             {
               "code": 102,
               "indent": 0,
-              "parameters": [["예", "아니오"], 0, 0, 2, 0]
+              "parameters": [
+                [
+                  "예",
+                  "아니오"
+                ],
+                0,
+                0,
+                2,
+                0
+              ]
             },
             {
               "code": 402,
               "indent": 0,
-              "parameters": [0, "예"]
+              "parameters": [
+                0,
+                "예"
+              ]
             },
             {
               "code": 355,
               "indent": 1,
-              "parameters": ["Game_Actor.prototype.basicFloorDamage = function() {"]
+              "parameters": [
+                "Game_Actor.prototype.basicFloorDamage = function() {"
+              ]
             },
             {
               "code": 655,
               "indent": 1,
-              "parameters": ["  return 10;"]
+              "parameters": [
+                "  return 10;"
+              ]
             },
             {
               "code": 655,
               "indent": 1,
-              "parameters": ["};"]
+              "parameters": [
+                "};"
+              ]
             },
             {
               "code": 101,
               "indent": 1,
-              "parameters": ["", 0, 0, 2]
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
             },
             {
               "code": 401,
               "indent": 1,
-              "parameters": ["\\C[18]지형 데미지를 다시 활성화했다.\\C[0]"]
+              "parameters": [
+                "\\C[18]지형 데미지를 다시 활성화했다.\\C[0]"
+              ]
             },
             {
               "code": 123,
               "indent": 1,
-              "parameters": ["A", 1]
+              "parameters": [
+                "A",
+                1
+              ]
             },
             {
               "code": 0,
@@ -19379,7 +19460,10 @@
             {
               "code": 402,
               "indent": 0,
-              "parameters": [1, "아니오"]
+              "parameters": [
+                1,
+                "아니오"
+              ]
             },
             {
               "code": 0,
@@ -19417,6 +19501,7 @@
           "walkAnime": true
         }
       ]
-    }
+    },
+    null
   ]
 }

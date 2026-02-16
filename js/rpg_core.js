@@ -3038,12 +3038,8 @@ Input.keyMapper = {
     39: 'right',    // right arrow
     40: 'down',     // down arrow
     45: 'escape',   // insert
-    65: 'left',     // A
-    68: 'right',    // D
-    69: 'pagedown', // E
     81: 'pageup',   // Q
-    83: 'down',     // S
-    87: 'up',       // W
+    87: 'pagedown', // W
     88: 'escape',   // X
     90: 'ok',       // Z
     96: 'escape',   // numpad 0
@@ -3719,7 +3715,7 @@ TouchInput._setupEventHandlers = function() {
     document.addEventListener('mousedown', this._onMouseDown.bind(this));
     document.addEventListener('mousemove', this._onMouseMove.bind(this));
     document.addEventListener('mouseup', this._onMouseUp.bind(this));
-    document.addEventListener('wheel', this._onWheel.bind(this));
+    document.addEventListener('wheel', this._onWheel.bind(this), isSupportPassive ? {passive: false} : false);
     document.addEventListener('touchstart', this._onTouchStart.bind(this), isSupportPassive ? {passive: false} : false);
     document.addEventListener('touchmove', this._onTouchMove.bind(this), isSupportPassive ? {passive: false} : false);
     document.addEventListener('touchend', this._onTouchEnd.bind(this));
@@ -5820,6 +5816,8 @@ ShaderTilemap.prototype._drawAutotile = function(layer, tileId, dx, dy) {
     var table = autotileTable[shape];
     var w1 = this._tileWidth / 2;
     var h1 = this._tileHeight / 2;
+    // A1 타일은 kind를 addRect에 전달 (kind별 셰이더 설정용)
+    var a1Kind = Tilemap.isTileA1(tileId) ? kind : -1;
     for (var i = 0; i < 4; i++) {
         var qsx = table[i][0];
         var qsy = table[i][1];
@@ -5836,10 +5834,10 @@ ShaderTilemap.prototype._drawAutotile = function(layer, tileId, dx, dy) {
             }
             var sx2 = (bx * 2 + qsx2) * w1;
             var sy2 = (by * 2 + qsy2) * h1;
-            layer.addRect(setNumber, sx2, sy2, dx1, dy1, w1, h1, animX, animY);
-            layer.addRect(setNumber, sx1, sy1, dx1, dy1+h1/2, w1, h1/2, animX, animY);
+            layer.addRect(setNumber, sx2, sy2, dx1, dy1, w1, h1, animX, animY, a1Kind);
+            layer.addRect(setNumber, sx1, sy1, dx1, dy1+h1/2, w1, h1/2, animX, animY, a1Kind);
         } else {
-            layer.addRect(setNumber, sx1, sy1, dx1, dy1, w1, h1, animX, animY);
+            layer.addRect(setNumber, sx1, sy1, dx1, dy1, w1, h1, animX, animY, a1Kind);
         }
     }
 };

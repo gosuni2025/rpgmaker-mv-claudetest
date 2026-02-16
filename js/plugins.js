@@ -55,7 +55,9 @@ var $plugins = [
     "description": "터치/클릭 목적지에 RPG Maker 애니메이션 재생",
     "parameters": {
       "Animation ID": "0",
-      "Hide Default": "true"
+      "Hide Default": "true",
+      "Show Path Arrow": "true",
+      "Arrow Color": "rgba(255, 255, 255, 0.7)"
     }
   }
 ];

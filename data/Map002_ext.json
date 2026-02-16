@@ -1,0 +1,9 @@
+{
+  "bloomConfig": {
+    "enabled": false,
+    "threshold": 0.5,
+    "strength": 0.8,
+    "radius": 1,
+    "downscale": 4
+  }
+}

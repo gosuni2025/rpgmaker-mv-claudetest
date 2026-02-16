@@ -35,5 +35,33 @@
     "parentId": 3,
     "scrollX": 0,
     "scrollY": 0
+  },
+  {
+    "id": 5,
+    "expanded": false,
+    "name": "MAP005",
+    "order": 5,
+    "parentId": 0,
+    "scrollX": 0,
+    "scrollY": 0
+  },
+  null,
+  {
+    "id": 7,
+    "expanded": false,
+    "name": "Tile Test",
+    "order": 7,
+    "parentId": 0,
+    "scrollX": 0,
+    "scrollY": 0
+  },
+  {
+    "id": 8,
+    "expanded": false,
+    "name": "Big City",
+    "order": 8,
+    "parentId": 7,
+    "scrollX": 0,
+    "scrollY": 0
   }
 ]

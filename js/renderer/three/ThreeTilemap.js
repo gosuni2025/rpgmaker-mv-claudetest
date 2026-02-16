@@ -56,6 +56,8 @@ function ThreeTilemapRectLayer() {
 
     // animOffset 데이터 (setNumber별)
     this._animData = {};   // { setNumber: [] }  animX, animY per rect
+    // A1 kind 데이터 (setNumber별)
+    this._kindData = {};   // { setNumber: [] }  kind per rect (-1 = not A1)
 }
 
 Object.defineProperties(ThreeTilemapRectLayer.prototype, {
@@ -103,6 +105,9 @@ ThreeTilemapRectLayer.prototype.clear = function() {
     for (var key in this._animData) {
         this._animData[key].length = 0;
     }
+    for (var key in this._kindData) {
+        this._kindData[key].length = 0;
+    }
     this._needsRebuild = true;
 };
 
@@ -118,7 +123,7 @@ ThreeTilemapRectLayer.prototype.clear = function() {
  * @param {Number} [animX=0] - 애니메이션 X 배율
  * @param {Number} [animY=0] - 애니메이션 Y 배율
  */
-ThreeTilemapRectLayer.prototype.addRect = function(setNumber, u, v, x, y, w, h, animX, animY) {
+ThreeTilemapRectLayer.prototype.addRect = function(setNumber, u, v, x, y, w, h, animX, animY, a1Kind) {
     if (!this._rectData[setNumber]) {
         this._rectData[setNumber] = {
             positions: new Float32Array(1000 * 12),  // 1000 quads * 6 vertices * 2 components
@@ -127,6 +132,7 @@ ThreeTilemapRectLayer.prototype.addRect = function(setNumber, u, v, x, y, w, h, 
             capacity: 1000
         };
         this._animData[setNumber] = [];
+        this._kindData[setNumber] = [];
     }
 
     var data = this._rectData[setNumber];
@@ -177,6 +183,8 @@ ThreeTilemapRectLayer.prototype.addRect = function(setNumber, u, v, x, y, w, h, 
 
     // 애니메이션 오프셋
     this._animData[setNumber].push(animX || 0, animY || 0);
+    // A1 kind 정보 (-1 = A1이 아님)
+    this._kindData[setNumber].push(a1Kind != null ? a1Kind : -1);
 
     data.count++;
     this._needsRebuild = true;
@@ -264,10 +272,14 @@ ThreeTilemapRectLayer.prototype._flush = function() {
         var hasNormal = false;
 
         if (!isShadow && sn === 0 && typeof ThreeWaterShader !== 'undefined') {
+            var kindArr = this._kindData[setNumber] || [];
             for (var ci = 0; ci < data.count; ci++) {
                 var cAnimX = animOffsets[ci * 2] || 0;
                 var cAnimY = animOffsets[ci * 2 + 1] || 0;
-                if (ThreeWaterShader.isWaterRect(cAnimX, cAnimY)) {
+                var ck = kindArr[ci] != null ? kindArr[ci] : -1;
+                // enabled=false인 kind는 일반 타일로 취급
+                if (ThreeWaterShader.isWaterRect(cAnimX, cAnimY) &&
+                    (ck < 0 || ThreeWaterShader.isKindEnabled(ck))) {
                     hasWater = true;
                 } else {
                     hasNormal = true;
@@ -298,13 +310,18 @@ ThreeTilemapRectLayer.prototype._buildNormalMesh = function(setNumber, data, ani
         texture, texW, texH, tileAnimX, tileAnimY, isShadow, hasWater) {
     var sn = parseInt(setNumber);
 
-    // 물 rect를 제외한 일반 rect만 수집
+    // 물 rect를 제외한 일반 rect만 수집 (enabled=false인 kind는 일반으로 포함)
     var normalIndices = [];
     if (hasWater) {
+        var kindArr = this._kindData[setNumber] || [];
         for (var ci = 0; ci < data.count; ci++) {
             var cAnimX = animOffsets[ci * 2] || 0;
             var cAnimY = animOffsets[ci * 2 + 1] || 0;
-            if (!ThreeWaterShader.isWaterRect(cAnimX, cAnimY)) {
+            var ck = kindArr[ci] != null ? kindArr[ci] : -1;
+            if (ThreeWaterShader.isWaterRect(cAnimX, cAnimY) &&
+                (ck < 0 || ThreeWaterShader.isKindEnabled(ck))) {
+                // 활성화된 물 rect → 물 메시에서 처리 → 스킵
+            } else {
                 normalIndices.push(ci);
             }
         }
@@ -472,26 +489,38 @@ ThreeTilemapRectLayer.prototype._buildNormalMesh = function(setNumber, data, ani
  */
 ThreeTilemapRectLayer.prototype._buildWaterMesh = function(setNumber, data, animOffsets,
         texture, texW, texH, tileAnimX, tileAnimY) {
-    // 물 rect와 폭포 rect 분리
-    var waterIndices = [];
-    var waterfallIndices = [];
+    // kind별로 그룹핑하여 분리
+    var kindGroups = {};  // { 'water_K': { indices: [], isWaterfall: false, kinds: [K] } }
+    var kindArr = this._kindData[setNumber] || [];
+
     for (var ci = 0; ci < data.count; ci++) {
         var cAnimX = animOffsets[ci * 2] || 0;
         var cAnimY = animOffsets[ci * 2 + 1] || 0;
-        if (ThreeWaterShader.isWaterfallRect(cAnimX, cAnimY)) {
-            waterfallIndices.push(ci);
-        } else if (ThreeWaterShader.isWaterRect(cAnimX, cAnimY)) {
-            waterIndices.push(ci);
+        if (!ThreeWaterShader.isWaterRect(cAnimX, cAnimY)) continue;
+
+        // enabled=false인 kind는 물 셰이더 제외 (일반 메시로 렌더)
+        var kind = kindArr[ci] != null ? kindArr[ci] : -1;
+        if (kind >= 0 && !ThreeWaterShader.isKindEnabled(kind)) continue;
+
+        var isWaterfall = ThreeWaterShader.isWaterfallRect(cAnimX, cAnimY);
+        var groupKey = (isWaterfall ? 'wf' : 'w') + '_' + kind;
+
+        if (!kindGroups[groupKey]) {
+            kindGroups[groupKey] = { indices: [], isWaterfall: isWaterfall, kinds: kind >= 0 ? [kind] : [] };
+        }
+        kindGroups[groupKey].indices.push(ci);
+        if (kind >= 0 && kindGroups[groupKey].kinds.indexOf(kind) < 0) {
+            kindGroups[groupKey].kinds.push(kind);
         }
     }
 
-    if (waterIndices.length > 0) {
-        this._buildWaterTypeMesh(setNumber + '_water', waterIndices, data, animOffsets,
-                                  texture, texW, texH, tileAnimX, tileAnimY, false);
-    }
-    if (waterfallIndices.length > 0) {
-        this._buildWaterTypeMesh(setNumber + '_waterfall', waterfallIndices, data, animOffsets,
-                                  texture, texW, texH, tileAnimX, tileAnimY, true);
+    for (var gk in kindGroups) {
+        var group = kindGroups[gk];
+        if (group.indices.length > 0) {
+            this._buildWaterTypeMesh(setNumber + '_' + gk, group.indices, data, animOffsets,
+                                      texture, texW, texH, tileAnimX, tileAnimY,
+                                      group.isWaterfall, group.kinds);
+        }
     }
 };
 
@@ -499,22 +528,44 @@ ThreeTilemapRectLayer.prototype._buildWaterMesh = function(setNumber, data, anim
  * 물/폭포 타일 메시 빌드 (공통)
  */
 ThreeTilemapRectLayer.prototype._buildWaterTypeMesh = function(meshKey, indices, data, animOffsets,
-        texture, texW, texH, tileAnimX, tileAnimY, isWaterfall) {
+        texture, texW, texH, tileAnimX, tileAnimY, isWaterfall, a1Kinds) {
     var count = indices.length;
     var vertCount = count * 6;
     var posArray = new Float32Array(vertCount * 3);
     var normalArray = new Float32Array(vertCount * 3);
     var uvArray = new Float32Array(vertCount * 2);
+    var uvBoundsArray = new Float32Array(vertCount * 4); // vec4(uMin, vMin, uMax, vMax)
 
     for (var ni = 0; ni < count; ni++) {
         var i = indices[ni];
         var srcOff = i * 12;
         var posOff = ni * 18;
         var uvOff = ni * 12;
+        var boundsOff = ni * 24; // 6 verts * 4 components
 
         var ax = (animOffsets[i * 2] || 0) * tileAnimX;
         var ay = (animOffsets[i * 2 + 1] || 0) * tileAnimY;
 
+        // 쿼드의 UV 바운드 계산 (6개 버텍스 중 min/max)
+        var uMin = Infinity, uMax = -Infinity, vMin = Infinity, vMax = -Infinity;
+        for (var j = 0; j < 6; j++) {
+            var u = (data.uvs[srcOff + j * 2] + ax) / texW;
+            var v = 1.0 - (data.uvs[srcOff + j * 2 + 1] + ay) / texH;
+            uvArray[uvOff + j * 2] = u;
+            uvArray[uvOff + j * 2 + 1] = v;
+            if (u < uMin) uMin = u;
+            if (u > uMax) uMax = u;
+            if (v < vMin) vMin = v;
+            if (v > vMax) vMax = v;
+        }
+        // 텍셀 절반만큼 안쪽으로 수축하여 인접 타일 샘플링 방지
+        var halfTexelU = 0.5 / texW;
+        var halfTexelV = 0.5 / texH;
+        uMin += halfTexelU;
+        uMax -= halfTexelU;
+        vMin += halfTexelV;
+        vMax -= halfTexelV;
+        // 모든 버텍스에 동일한 바운드 할당
         for (var j = 0; j < 6; j++) {
             posArray[posOff + j * 3]     = data.positions[srcOff + j * 2];
             posArray[posOff + j * 3 + 1] = data.positions[srcOff + j * 2 + 1];
@@ -524,13 +575,20 @@ ThreeTilemapRectLayer.prototype._buildWaterTypeMesh = function(meshKey, indices,
             normalArray[posOff + j * 3 + 1] = 0;
             normalArray[posOff + j * 3 + 2] = -1;
 
-            uvArray[uvOff + j * 2]     = (data.uvs[srcOff + j * 2] + ax) / texW;
-            uvArray[uvOff + j * 2 + 1] = 1.0 - (data.uvs[srcOff + j * 2 + 1] + ay) / texH;
+            uvBoundsArray[boundsOff + j * 4]     = uMin;
+            uvBoundsArray[boundsOff + j * 4 + 1] = vMin;
+            uvBoundsArray[boundsOff + j * 4 + 2] = uMax;
+            uvBoundsArray[boundsOff + j * 4 + 3] = vMax;
         }
     }
 
     var needsPhong = (window.ShadowLight && window.ShadowLight._active);
     var mesh = this._meshes[meshKey];
+    // kind별 설정 조회
+    var kindSettings = null;
+    if (a1Kinds && a1Kinds.length > 0 && a1Kinds[0] >= 0) {
+        kindSettings = ThreeWaterShader.getUniformsForKind(a1Kinds[0]);
+    }
 
     if (mesh) {
         var geometry = mesh.geometry;
@@ -556,6 +614,13 @@ ThreeTilemapRectLayer.prototype._buildWaterTypeMesh = function(meshKey, indices,
         } else {
             geometry.setAttribute('uv', new THREE.BufferAttribute(uvArray, 2));
         }
+        var boundsAttr = geometry.attributes.aUvBounds;
+        if (boundsAttr && boundsAttr.array.length === uvBoundsArray.length) {
+            boundsAttr.array.set(uvBoundsArray);
+            boundsAttr.needsUpdate = true;
+        } else {
+            geometry.setAttribute('aUvBounds', new THREE.BufferAttribute(uvBoundsArray, 4));
+        }
 
         // material 타입 전환 (ShadowLight 상태에 따라)
         var isPhong = mesh.material.isMeshPhongMaterial;
@@ -568,12 +633,12 @@ ThreeTilemapRectLayer.prototype._buildWaterTypeMesh = function(meshKey, indices,
                 emissive: new THREE.Color(0x000000),
                 specular: new THREE.Color(0x000000), shininess: 0,
             });
-            ThreeWaterShader.applyToPhongMaterial(mat, isWaterfall);
+            ThreeWaterShader.applyToPhongMaterial(mat, isWaterfall, kindSettings);
             mesh.material = mat;
             mesh.material.needsUpdate = true;
         } else if (!needsPhong && (isPhong || !isShader)) {
             mesh.material.dispose();
-            mesh.material = ThreeWaterShader.createStandaloneMaterial(texture, isWaterfall);
+            mesh.material = ThreeWaterShader.createStandaloneMaterial(texture, isWaterfall, kindSettings);
             mesh.material.needsUpdate = true;
         }
 
@@ -583,6 +648,7 @@ ThreeTilemapRectLayer.prototype._buildWaterTypeMesh = function(meshKey, indices,
         geometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
         geometry.setAttribute('normal', new THREE.BufferAttribute(normalArray, 3));
         geometry.setAttribute('uv', new THREE.BufferAttribute(uvArray, 2));
+        geometry.setAttribute('aUvBounds', new THREE.BufferAttribute(uvBoundsArray, 4));
 
         var material;
         texture.minFilter = THREE.NearestFilter;
@@ -597,9 +663,9 @@ ThreeTilemapRectLayer.prototype._buildWaterTypeMesh = function(meshKey, indices,
                 emissive: new THREE.Color(0x000000),
                 specular: new THREE.Color(0x000000), shininess: 0,
             });
-            ThreeWaterShader.applyToPhongMaterial(material, isWaterfall);
+            ThreeWaterShader.applyToPhongMaterial(material, isWaterfall, kindSettings);
         } else {
-            material = ThreeWaterShader.createStandaloneMaterial(texture, isWaterfall);
+            material = ThreeWaterShader.createStandaloneMaterial(texture, isWaterfall, kindSettings);
         }
 
         mesh = new THREE.Mesh(geometry, material);
@@ -630,6 +696,7 @@ ThreeTilemapRectLayer.prototype._buildWaterTypeMesh = function(meshKey, indices,
     // 물 메시 키 저장 (renderLoop에서 time 업데이트용)
     mesh.userData.isWaterMesh = true;
     mesh.userData.isWaterfall = isWaterfall;
+    mesh.userData.a1Kinds = a1Kinds || [];
     ThreeWaterShader._hasWaterMesh = true;
 };
 
@@ -648,9 +715,12 @@ ThreeTilemapRectLayer.prototype._updateAnimUVs = function(tileAnimX, tileAnimY) 
 
         // 물 rect가 있는 경우 분리 처리
         var hasWater = false;
+        var kindArr = this._kindData[setNumber] || [];
         if (sn === 0 && typeof ThreeWaterShader !== 'undefined') {
             for (var ci = 0; ci < data.count; ci++) {
-                if (ThreeWaterShader.isWaterRect(animOffsets[ci * 2] || 0, animOffsets[ci * 2 + 1] || 0)) {
+                var ck = kindArr[ci] != null ? kindArr[ci] : -1;
+                if (ThreeWaterShader.isWaterRect(animOffsets[ci * 2] || 0, animOffsets[ci * 2 + 1] || 0) &&
+                    (ck < 0 || ThreeWaterShader.isKindEnabled(ck))) {
                     hasWater = true;
                     break;
                 }
@@ -674,10 +744,12 @@ ThreeTilemapRectLayer.prototype._updateAnimUVs = function(tileAnimX, tileAnimY) 
             if (uvAttr) {
                 var uvArray = uvAttr.array;
                 if (hasWater) {
-                    // 물 rect를 제외한 인덱스로 UV 갱신
+                    // 물 rect를 제외한 인덱스로 UV 갱신 (enabled=false인 kind는 일반으로 포함)
                     var ni = 0;
                     for (var i = 0; i < data.count; i++) {
-                        if (ThreeWaterShader.isWaterRect(animOffsets[i * 2] || 0, animOffsets[i * 2 + 1] || 0)) continue;
+                        var cka = kindArr[i] != null ? kindArr[i] : -1;
+                        if (ThreeWaterShader.isWaterRect(animOffsets[i * 2] || 0, animOffsets[i * 2 + 1] || 0) &&
+                            (cka < 0 || ThreeWaterShader.isKindEnabled(cka))) continue;
                         var srcOff = i * 12;
                         var uvOff = ni * 12;
                         var ax = (animOffsets[i * 2] || 0) * tileAnimX;
@@ -704,11 +776,15 @@ ThreeTilemapRectLayer.prototype._updateAnimUVs = function(tileAnimX, tileAnimY) 
             }
         }
 
-        // 물 메시 UV 업데이트 (물/폭포 분리)
+        // 물 메시 UV 업데이트 (kind별 분리된 메시)
         if (hasWater) {
-            var waterKeys = [setNumber + '_water', setNumber + '_waterfall'];
-            for (var wk = 0; wk < waterKeys.length; wk++) {
-                var wMesh = this._meshes[waterKeys[wk]];
+            var kindArr = this._kindData[setNumber] || [];
+            // kind별 그룹 키 목록 수집
+            for (var mkey in this._meshes) {
+                // setNumber + '_w_' 또는 '_wf_' 패턴 매칭
+                var prefix = setNumber + '_';
+                if (mkey.indexOf(prefix + 'w_') !== 0 && mkey.indexOf(prefix + 'wf_') !== 0) continue;
+                var wMesh = this._meshes[mkey];
                 if (!wMesh || !wMesh.geometry) continue;
                 var wUvAttr = wMesh.geometry.attributes.uv;
                 if (!wUvAttr) continue;
@@ -719,29 +795,53 @@ ThreeTilemapRectLayer.prototype._updateAnimUVs = function(tileAnimX, tileAnimY) 
                     texH = wTex.image.height || 1;
                 }
 
-                var isWF = waterKeys[wk].indexOf('waterfall') >= 0;
+                var meshKinds = wMesh.userData.a1Kinds || [];
+                var meshIsWF = wMesh.userData.isWaterfall;
                 var wUvArray = wUvAttr.array;
+                var wBoundsAttr = wMesh.geometry.attributes.aUvBounds;
+                var wBoundsArray = wBoundsAttr ? wBoundsAttr.array : null;
+                var halfTexelU = 0.5 / texW;
+                var halfTexelV = 0.5 / texH;
                 var wi = 0;
                 for (var i = 0; i < data.count; i++) {
                     var cAx = animOffsets[i * 2] || 0;
                     var cAy = animOffsets[i * 2 + 1] || 0;
+                    if (!ThreeWaterShader.isWaterRect(cAx, cAy)) continue;
                     var isThisWF = ThreeWaterShader.isWaterfallRect(cAx, cAy);
-                    var isThisWater = ThreeWaterShader.isWaterRect(cAx, cAy) && !isThisWF;
-                    if ((isWF && !isThisWF) || (!isWF && !isThisWater)) continue;
+                    if (isThisWF !== meshIsWF) continue;
+                    var ck = kindArr[i] != null ? kindArr[i] : -1;
+                    if (meshKinds.length > 0 && meshKinds.indexOf(ck) < 0) continue;
 
                     var srcOff = i * 12;
                     var uvOff = wi * 12;
+                    var boundsOff = wi * 24;
                     var ax = cAx * tileAnimX;
                     var ay = cAy * tileAnimY;
+                    var uMin = Infinity, uMax = -Infinity, vMin = Infinity, vMax = -Infinity;
                     for (var j = 0; j < 6; j++) {
-                        wUvArray[uvOff + j * 2]     = (data.uvs[srcOff + j * 2] + ax) / texW;
-                        wUvArray[uvOff + j * 2 + 1] = 1.0 - (data.uvs[srcOff + j * 2 + 1] + ay) / texH;
+                        var u = (data.uvs[srcOff + j * 2] + ax) / texW;
+                        var v = 1.0 - (data.uvs[srcOff + j * 2 + 1] + ay) / texH;
+                        wUvArray[uvOff + j * 2]     = u;
+                        wUvArray[uvOff + j * 2 + 1] = v;
+                        if (u < uMin) uMin = u;
+                        if (u > uMax) uMax = u;
+                        if (v < vMin) vMin = v;
+                        if (v > vMax) vMax = v;
+                    }
+                    if (wBoundsArray) {
+                        uMin += halfTexelU; uMax -= halfTexelU;
+                        vMin += halfTexelV; vMax -= halfTexelV;
+                        for (var j = 0; j < 6; j++) {
+                            wBoundsArray[boundsOff + j * 4]     = uMin;
+                            wBoundsArray[boundsOff + j * 4 + 1] = vMin;
+                            wBoundsArray[boundsOff + j * 4 + 2] = uMax;
+                            wBoundsArray[boundsOff + j * 4 + 3] = vMax;
+                        }
                     }
                     wi++;
                 }
                 wUvAttr.needsUpdate = true;
-
-                // uTime 업데이트
+                if (wBoundsAttr) wBoundsAttr.needsUpdate = true;
                 ThreeWaterShader.updateTime(wMesh, ThreeWaterShader._time);
             }
         }

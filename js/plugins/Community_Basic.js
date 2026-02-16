@@ -31,6 +31,40 @@
  * @default off
  */
 
+/*:ko
+ * @pluginname 기본 설정
+ * @plugindesc 기본 파라미터를 설정하는 플러그인입니다.
+ * @author RM CoreScript team
+ *
+ * @help 이 플러그인에는 플러그인 커맨드가 없습니다.
+ *
+ * @param cacheLimit
+ * @desc 이미지 메모리 캐시 상한값 (MPix)
+ * @default 10
+ *
+ * @param screenWidth
+ * @desc 화면 너비
+ * @default 816
+ *
+ * @param screenHeight
+ * @desc 화면 높이
+ * @default 624
+ *
+ * @param changeWindowWidthTo
+ * @desc 설정 시 창 너비를 이 값으로 변경
+ *
+ * @param changeWindowHeightTo
+ * @desc 설정 시 창 높이를 이 값으로 변경
+ *
+ * @param renderingMode
+ * @desc 렌더링 모드 (canvas/webgl/auto/threejs)
+ * @default auto
+ *
+ * @param alwaysDash
+ * @desc 플레이어가 항상 대시할지 여부 초기값 (on/off)
+ * @default off
+ */
+
 /*:ja
  * @plugindesc 基本的なパラメーターを設定するプラグインです。
  * @author RM CoreScript team

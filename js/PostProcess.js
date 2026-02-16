@@ -1,14 +1,17 @@
 //=============================================================================
-// DepthOfField.js - Tilt-Shift DoF Post-processing (옥토패스 트래블러 스타일)
+// PostProcess.js - 포스트 프로세싱 파이프라인 (Bloom, DoF, PP Effects)
 //=============================================================================
-// 3D 모드에서 화면 Y좌표 기반 Tilt-Shift DoF 효과를 적용합니다.
-// - 화면 상단(원경): 블러 → 포커스 영역(캐릭터): 선명 → 화면 하단(근경): 블러
-// - EffectComposer / RenderPass / TiltShiftPass를 내장 (Three.js r128 호환)
-// - Mode3D._perspCamera가 활성화된 경우에만 동작
-// - 게임 옵션에서 ON/OFF 가능
-// - 개발 모드에서 Debug UI로 파라미터 실시간 조절
+// 포스트 프로세싱 전체를 관리합니다:
+// - SimpleEffectComposer: 커스텀 이펙트 컴포저 (ping-pong 렌더 타겟)
+// - BloomPass: 밝은 부분 추출 → 가우시안 블러 → 원본 합성 (2D/3D emissive 지원)
+// - TiltShiftPass: 화면 Y좌표 기반 Tilt-Shift DoF (피사계 심도)
+// - MapRenderPass / UIRenderPass: 3D 맵/UI 분리 렌더링
+// - Simple2DRenderPass / CopyToScreenPass: 2D 모드 렌더링
+// - PostProcessEffects 패스 관리 및 맵별 설정 로드
+// - 개발 모드 Debug UI
 //
 // 의존: THREE (global), Mode3D, ConfigManager, Graphics, Spriteset_Map
+// 선택적 의존: PostProcessEffects.js, Scene_Map (런타임 게임 플레이어)
 //=============================================================================
 
 (function() {
@@ -39,25 +42,26 @@ Window_Options.prototype.addGeneralOptions = function() {
 };
 
 //=============================================================================
-// DepthOfField 시스템 관리
+// PostProcess 시스템 관리
 //=============================================================================
 
-var DepthOfField = {};
-DepthOfField._active = false;
-DepthOfField._composer = null;
-DepthOfField._tiltShiftPass = null;
-DepthOfField._debugSection = null;
+var PostProcess = {};
+PostProcess._active = false;
+PostProcess._composer = null;
+PostProcess._tiltShiftPass = null;
+PostProcess._debugSection = null;
 
-window.DepthOfField = DepthOfField;
+window.PostProcess = PostProcess;
+window.DepthOfField = PostProcess; // 하위호환
 
-DepthOfField.config = {
+PostProcess.config = {
     focusY: 0.55,       // 포커스 중심 Y위치 (0=상단, 1=하단), 캐릭터 약간 아래
     focusRange: 0.1,    // 선명 영역 반폭
     maxblur: 0.05,      // 최대 블러
     blurPower: 1.5      // 블러 증가 커브 (1=선형, 2=이차, 부드러운 전환)
 };
 
-DepthOfField.bloomConfig = {
+PostProcess.bloomConfig = {
     threshold: 0.5,     // 밝기 추출 임계값 (0~1, 낮을수록 더 많은 부분이 bloom)
     strength: 0.8,      // bloom 합성 강도 (0~2)
     radius: 1.0,        // 블러 반경 배율
@@ -332,6 +336,20 @@ MapRenderPass.prototype.render = function(renderer, writeBuffer /*, readBuffer, 
     var picObj = picContainer && picContainer._threeObj;
     var picWasVisible = picObj ? picObj.visible : false;
     if (picObj) picObj.visible = false;
+    // ScreenSprite(fade/flash)는 Pass 1에서 숨기고 UIRenderPass에서 별도 렌더
+    var fadeSprite = this.spriteset._fadeSprite;
+    var fadeObj = fadeSprite && fadeSprite._threeObj;
+    var fadeWasVisible = fadeObj ? fadeObj.visible : false;
+    if (fadeObj) fadeObj.visible = false;
+    var flashSprite = this.spriteset._flashSprite;
+    var flashObj = flashSprite && flashSprite._threeObj;
+    var flashWasVisible = flashObj ? flashObj.visible : false;
+    if (flashObj) flashObj.visible = false;
+    // 날씨도 Pass 1에서 숨기고 UIRenderPass에서 렌더
+    var weatherSprite = this.spriteset._weather;
+    var weatherObj = weatherSprite && weatherSprite._threeObj;
+    var weatherWasVisible = weatherObj ? weatherObj.visible : false;
+    if (weatherObj) weatherObj.visible = false;
     // 애니메이션 스프라이트를 Pass 1에서 숨김 (UIRenderPass에서 2D HUD로 렌더)
     var animInfo = Mode3D._hideAnimationsForPass1();
     // MapRenderPass에서 수집한 animInfo를 UIRenderPass에서 사용하기 위해 저장
@@ -363,6 +381,10 @@ MapRenderPass.prototype.render = function(renderer, writeBuffer /*, readBuffer, 
     }
     // Picture 가시성 복원
     if (picObj) picObj.visible = picWasVisible;
+    // fade/flash/weather 가시성 복원
+    if (fadeObj) fadeObj.visible = fadeWasVisible;
+    if (flashObj) flashObj.visible = flashWasVisible;
+    if (weatherObj) weatherObj.visible = weatherWasVisible;
 
     // 가시성 복원 (UI는 UIRenderPass에서 별도 렌더)
     if (stageObj) {
@@ -371,6 +393,11 @@ MapRenderPass.prototype.render = function(renderer, writeBuffer /*, readBuffer, 
         }
     }
     renderer.autoClear = true;
+
+    // fade/flash/weather info를 UIRenderPass에 전달
+    this._fadeInfo = { fadeObj: fadeObj, fadeWasVisible: fadeWasVisible, fadeSprite: fadeSprite,
+                       flashObj: flashObj, flashWasVisible: flashWasVisible, flashSprite: flashSprite,
+                       weatherObj: weatherObj, weatherWasVisible: weatherWasVisible, weatherSprite: weatherSprite };
 };
 
 MapRenderPass.prototype.dispose = function() {};
@@ -574,21 +601,35 @@ function BloomPass(params) {
     this._emissiveTexture.minFilter = THREE.LinearFilter;
     this._emissiveTexture.magFilter = THREE.LinearFilter;
     this._emissiveDirty = true;
+
+    // 3D emissive 렌더링용 씬 & 렌더 타겟
+    this._emissive3DScene = new THREE.Scene();
+    this._emissive3DScene.background = new THREE.Color(0x000000);
+    this._emissiveRT = null;  // setSize에서 생성
+    this._emissiveMeshPool = [];  // 재사용 메쉬 풀
+    this._emissiveMeshCount = 0;  // 현재 사용 중인 메쉬 수
+    this._emissiveGeometry = new THREE.PlaneGeometry(48, 48);  // 타일 1개 크기
 }
 
 BloomPass.prototype.setSize = function(width, height) {
     var bw = Math.max(1, Math.floor(width / this._downscale));
     var bh = Math.max(1, Math.floor(height / this._downscale));
-    if (this._width === bw && this._height === bh) return;
-    this._width = bw;
-    this._height = bh;
     var params = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBAFormat };
-    if (this._bloomRT1) this._bloomRT1.dispose();
-    if (this._bloomRT2) this._bloomRT2.dispose();
-    this._bloomRT1 = new THREE.WebGLRenderTarget(bw, bh, params);
-    this._bloomRT2 = new THREE.WebGLRenderTarget(bw, bh, params);
-    this._blurHUniforms.resolution.value.set(bw, bh);
-    this._blurVUniforms.resolution.value.set(bw, bh);
+    if (this._width !== bw || this._height !== bh) {
+        this._width = bw;
+        this._height = bh;
+        if (this._bloomRT1) this._bloomRT1.dispose();
+        if (this._bloomRT2) this._bloomRT2.dispose();
+        this._bloomRT1 = new THREE.WebGLRenderTarget(bw, bh, params);
+        this._bloomRT2 = new THREE.WebGLRenderTarget(bw, bh, params);
+        this._blurHUniforms.resolution.value.set(bw, bh);
+        this._blurVUniforms.resolution.value.set(bw, bh);
+    }
+    // 3D emissive 렌더 타겟 (원본 해상도)
+    if (!this._emissiveRT || this._emissiveRT.width !== width || this._emissiveRT.height !== height) {
+        if (this._emissiveRT) this._emissiveRT.dispose();
+        this._emissiveRT = new THREE.WebGLRenderTarget(width, height, params);
+    }
 };
 
 BloomPass.prototype._updateEmissiveTexture = function(width, height) {
@@ -657,10 +698,9 @@ BloomPass.prototype._updateEmissiveTexture = function(width, height) {
             var r = parseInt(color.substr(1, 2), 16) / 255;
             var g = parseInt(color.substr(3, 2), 16) / 255;
             var b = parseInt(color.substr(5, 2), 16) / 255;
-            // 3D 셰이더에서는 diffuseColor.rgb += emissiveColor * emissive * alpha
-            // 2D에서는 텍스처 밝기를 모르므로, emissive 값 그대로를 사용하되
-            // 블룸 threshold(0.5) 대비 적절한 기여만 하도록 조절
-            var intensity = s.emissive * 0.3;
+            // emissive 값을 bloom 오버레이 강도로 사용
+            // 텍스처 자체는 밝게 하지 않고 bloom에서만 빛이 퍼지도록 함
+            var intensity = s.emissive;
 
             ctx.fillStyle = 'rgba(' +
                 Math.round(r * intensity * 255) + ',' +
@@ -676,6 +716,118 @@ BloomPass.prototype._updateEmissiveTexture = function(width, height) {
     return drawn;
 };
 
+// 3D emissive 렌더링: PerspectiveCamera로 emissive 타일을 렌더 타겟에 렌더
+BloomPass.prototype._updateEmissiveTexture3D = function(renderer, width, height) {
+    // emissive 설정 수집
+    var settings = null;
+    if (typeof ThreeWaterShader !== 'undefined') {
+        settings = ThreeWaterShader._kindSettings;
+        if ((!settings || Object.keys(settings).length === 0) &&
+            typeof $dataMap !== 'undefined' && $dataMap && $dataMap.animTileSettings) {
+            settings = $dataMap.animTileSettings;
+        }
+    }
+    if (!settings) return false;
+
+    var emissiveKinds = {};
+    var hasAny = false;
+    for (var k in settings) {
+        if (settings[k] && settings[k].emissive > 0) {
+            emissiveKinds[k] = settings[k];
+            hasAny = true;
+        }
+    }
+    if (!hasAny) return false;
+
+    var gameMap = typeof $gameMap !== 'undefined' ? $gameMap : null;
+    var dataMap = typeof $dataMap !== 'undefined' ? $dataMap : null;
+    if (!gameMap || !dataMap || !dataMap.data) return false;
+
+    var tw = 48, th = 48;
+    var mapW = dataMap.width, mapH = dataMap.height;
+    var displayX = gameMap._displayX, displayY = gameMap._displayY;
+    var screenTilesX = Math.ceil(width / tw) + 2;
+    var screenTilesY = Math.ceil(height / th) + 2;
+    var startTileX = Math.floor(displayX);
+    var startTileY = Math.floor(displayY);
+    // displayX/Y 서브 타일 오프셋 (tilemap과 동일한 좌표계)
+    var offsetFracX = (displayX - startTileX) * tw;
+    var offsetFracY = (displayY - startTileY) * th;
+
+    // 메쉬 재사용 카운터 리셋
+    this._emissiveMeshCount = 0;
+    var drawn = false;
+
+    for (var dy = -1; dy < screenTilesY; dy++) {
+        for (var dx = -1; dx < screenTilesX; dx++) {
+            var mx = (startTileX + dx) % mapW;
+            var my = (startTileY + dy) % mapH;
+            if (mx < 0) mx += mapW;
+            if (my < 0) my += mapH;
+
+            var tileId = dataMap.data[(0 * mapH + my) * mapW + mx];
+            if (tileId < 2048 || tileId >= 2816) continue;
+
+            var kind = Math.floor((tileId - 2048) / 48);
+            var s = emissiveKinds[kind];
+            if (!s) continue;
+
+            // 스크린 픽셀 좌표 (tilemap 렌더링과 동일한 좌표계)
+            // dx * tw - offsetFracX는 화면상의 타일 위치
+            var wx = dx * tw - offsetFracX + tw / 2;
+            var wy = dy * th - offsetFracY + th / 2;
+
+            var color = s.emissiveColor || '#ffffff';
+            var r = parseInt(color.substr(1, 2), 16) / 255;
+            var g = parseInt(color.substr(3, 2), 16) / 255;
+            var b = parseInt(color.substr(5, 2), 16) / 255;
+            var intensity = s.emissive;
+
+            // 메쉬 풀에서 가져오거나 새로 생성
+            var mesh;
+            if (this._emissiveMeshCount < this._emissiveMeshPool.length) {
+                mesh = this._emissiveMeshPool[this._emissiveMeshCount];
+                mesh.visible = true;
+            } else {
+                var mat = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide });
+                mesh = new THREE.Mesh(this._emissiveGeometry, mat);
+                mesh.frustumCulled = false;
+                this._emissive3DScene.add(mesh);
+                this._emissiveMeshPool.push(mesh);
+            }
+
+            mesh.material.color.setRGB(r * intensity, g * intensity, b * intensity);
+            mesh.position.set(wx, wy, 0);
+            mesh.rotation.set(0, 0, 0);
+            this._emissiveMeshCount++;
+            drawn = true;
+        }
+    }
+
+    // 사용되지 않는 메쉬 숨기기
+    for (var i = this._emissiveMeshCount; i < this._emissiveMeshPool.length; i++) {
+        this._emissiveMeshPool[i].visible = false;
+    }
+
+    if (!drawn) return false;
+
+    // PerspectiveCamera로 emissive 씬 렌더링
+    if (!this._emissiveRT) return false;
+    var perspCamera = Mode3D._perspCamera;
+    if (!perspCamera) return false;
+
+    var prevTarget = renderer.getRenderTarget();
+    var prevAutoClear = renderer.autoClear;
+    renderer.setRenderTarget(this._emissiveRT);
+    renderer.autoClear = true;
+    renderer.clear();
+    renderer.render(this._emissive3DScene, perspCamera);
+    renderer.setRenderTarget(prevTarget);
+    renderer.autoClear = prevAutoClear;
+
+    return true;
+};
+
 BloomPass.prototype.render = function(renderer, writeBuffer, readBuffer) {
     // 축소 RT가 없으면 초기화
     if (!this._bloomRT1) {
@@ -683,17 +835,23 @@ BloomPass.prototype.render = function(renderer, writeBuffer, readBuffer) {
         this.setSize(sz.x, sz.y);
     }
 
-    // 2D emissive 오버레이 업데이트 (3D 모드에서는 셰이더에서 처리되므로 스킵)
-    var is3D = (typeof ConfigManager !== 'undefined' && ConfigManager.mode3d) ||
-               (typeof Mode3D !== 'undefined' && Mode3D._active);
-    var hasEmissive = false;
-    if (!is3D) {
+    // emissive 오버레이 업데이트
+    // 3D 모드: PerspectiveCamera로 렌더 → 카메라 회전 반영
+    // 2D 모드: 기존 2D 캔버스 방식
+    var hasEmissive;
+    var emissiveTex = null;
+    var is3D = typeof Mode3D !== 'undefined' && Mode3D._active;
+    if (is3D) {
+        hasEmissive = this._updateEmissiveTexture3D(renderer, readBuffer.width, readBuffer.height);
+        if (hasEmissive) emissiveTex = this._emissiveRT.texture;
+    } else {
         hasEmissive = this._updateEmissiveTexture(readBuffer.width, readBuffer.height);
+        if (hasEmissive) emissiveTex = this._emissiveTexture;
     }
 
     // 1단계: 밝기 추출 (원본 + emissive → bloomRT1)
     this._extractUniforms.tColor.value = readBuffer.texture;
-    this._extractUniforms.tEmissive.value = hasEmissive ? this._emissiveTexture : null;
+    this._extractUniforms.tEmissive.value = emissiveTex;
     this._extractUniforms.threshold.value = this._threshold;
     this._fsQuad.material = this._extractMaterial;
     renderer.setRenderTarget(this._bloomRT1);
@@ -755,6 +913,11 @@ BloomPass.prototype.dispose = function() {
     if (this._bloomRT1) this._bloomRT1.dispose();
     if (this._bloomRT2) this._bloomRT2.dispose();
     if (this._emissiveTexture) this._emissiveTexture.dispose();
+    if (this._emissiveRT) this._emissiveRT.dispose();
+    if (this._emissiveGeometry) this._emissiveGeometry.dispose();
+    for (var i = 0; i < this._emissiveMeshPool.length; i++) {
+        this._emissiveMeshPool[i].material.dispose();
+    }
 };
 
 // --- UIRenderPass (블러 후 UI를 선명하게 합성) ---
@@ -796,13 +959,43 @@ UIRenderPass.prototype.render = function(renderer, writeBuffer, readBuffer) {
         picObj.visible = picWasVisible;
     }
 
+    // fade/flash/weather를 spritesetObj에서 stageObj로 옮겨서 2D 렌더
+    var mapRenderPassForFade = null;
+    if (PostProcess._composer) {
+        for (var fi = 0; fi < PostProcess._composer.passes.length; fi++) {
+            if (PostProcess._composer.passes[fi]._fadeInfo) {
+                mapRenderPassForFade = PostProcess._composer.passes[fi];
+                break;
+            }
+        }
+    }
+    var fadeInfo = mapRenderPassForFade ? mapRenderPassForFade._fadeInfo : null;
+    var fadeObj = fadeInfo ? fadeInfo.fadeObj : null;
+    var flashObj = fadeInfo ? fadeInfo.flashObj : null;
+    var weatherObj = fadeInfo ? fadeInfo.weatherObj : null;
+    if (fadeObj && fadeInfo.fadeWasVisible && fadeInfo.fadeSprite.alpha > 0) {
+        spritesetObj.remove(fadeObj);
+        stageObj.add(fadeObj);
+        fadeObj.visible = true;
+    }
+    if (flashObj && fadeInfo.flashWasVisible && fadeInfo.flashSprite.alpha > 0) {
+        spritesetObj.remove(flashObj);
+        stageObj.add(flashObj);
+        flashObj.visible = true;
+    }
+    if (weatherObj && fadeInfo.weatherWasVisible) {
+        spritesetObj.remove(weatherObj);
+        stageObj.add(weatherObj);
+        weatherObj.visible = true;
+    }
+
     // 애니메이션을 stageObj로 이동 (2D HUD로 렌더)
     // MapRenderPass에서 저장한 animInfo를 가져옴
     var mapRenderPass = null;
-    if (DepthOfField._composer) {
-        for (var pi = 0; pi < DepthOfField._composer.passes.length; pi++) {
-            if (DepthOfField._composer.passes[pi]._animInfo) {
-                mapRenderPass = DepthOfField._composer.passes[pi];
+    if (PostProcess._composer) {
+        for (var pi = 0; pi < PostProcess._composer.passes.length; pi++) {
+            if (PostProcess._composer.passes[pi]._animInfo) {
+                mapRenderPass = PostProcess._composer.passes[pi];
                 break;
             }
         }
@@ -855,6 +1048,24 @@ UIRenderPass.prototype.render = function(renderer, writeBuffer, readBuffer) {
         picObj.visible = picWasVisible;
     }
 
+    // fade/flash/weather를 원래 spritesetObj로 복원
+    if (fadeObj && fadeObj.parent === stageObj) {
+        stageObj.remove(fadeObj);
+        spritesetObj.add(fadeObj);
+        fadeObj.visible = fadeInfo.fadeWasVisible;
+    }
+    if (flashObj && flashObj.parent === stageObj) {
+        stageObj.remove(flashObj);
+        spritesetObj.add(flashObj);
+        flashObj.visible = fadeInfo.flashWasVisible;
+    }
+    if (weatherObj && weatherObj.parent === stageObj) {
+        stageObj.remove(weatherObj);
+        spritesetObj.add(weatherObj);
+        weatherObj.visible = fadeInfo.weatherWasVisible;
+    }
+    if (mapRenderPassForFade) mapRenderPassForFade._fadeInfo = null;
+
     // 애니메이션을 원래 위치로 복원
     if (animInfo) {
         Mode3D._restoreAnimations(animInfo);
@@ -877,13 +1088,14 @@ UIRenderPass.prototype.render = function(renderer, writeBuffer, readBuffer) {
 
 UIRenderPass.prototype.dispose = function() {};
 
-// --- Simple2DRenderPass (2D 모드용: 기존 렌더를 writeBuffer에 캡처) ---
+// --- Simple2DRenderPass (2D 모드용: UI를 숨기고 맵만 writeBuffer에 렌더) ---
 function Simple2DRenderPass(prevRender, strategy) {
     this.enabled = true;
     this.needsSwap = true;
     this.clear = true;
     this._prevRender = prevRender;
     this._strategy = strategy;
+    this._uiInfo = null;
 }
 
 Simple2DRenderPass.prototype.setSize = function() {};
@@ -892,6 +1104,33 @@ Simple2DRenderPass.prototype.render = function(renderer, writeBuffer /*, readBuf
     var rendererObj = this._rendererObj;
     var stage = this._stage;
     if (!rendererObj || !stage) return;
+
+    // UI 요소를 숨겨서 맵만 렌더 (블룸이 UI에 먹지 않도록)
+    var spriteset = Mode3D._spriteset || (stage.children && stage.children[0]);
+    var uiInfo = null;
+    if (spriteset) {
+        var picContainer = spriteset._pictureContainer;
+        var picObj = picContainer && picContainer._threeObj;
+        var picWasVisible = picObj ? picObj.visible : false;
+        if (picObj) picObj.visible = false;
+
+        var fadeSprite = spriteset._fadeSprite;
+        var fadeObj = fadeSprite && fadeSprite._threeObj;
+        var fadeWasVisible = fadeObj ? fadeObj.visible : false;
+        if (fadeObj) fadeObj.visible = false;
+
+        var flashSprite = spriteset._flashSprite;
+        var flashObj = flashSprite && flashSprite._threeObj;
+        var flashWasVisible = flashObj ? flashObj.visible : false;
+        if (flashObj) flashObj.visible = false;
+
+        uiInfo = {
+            spriteset: spriteset,
+            picObj: picObj, picWasVisible: picWasVisible,
+            fadeObj: fadeObj, fadeWasVisible: fadeWasVisible,
+            flashObj: flashObj, flashWasVisible: flashWasVisible
+        };
+    }
 
     // _prevRender (Mode3D render)는 2D 모드에서 renderer.render(scene, camera) 호출
     // setRenderTarget(writeBuffer)를 미리 설정하면 그쪽에 렌더됨
@@ -909,18 +1148,28 @@ Simple2DRenderPass.prototype.render = function(renderer, writeBuffer /*, readBuf
     this._prevRender.call(this._strategy, rendererObj, stage);
 
     renderer.setRenderTarget = origSetRT;
+
+    // UI 가시성 복원
+    if (uiInfo) {
+        if (uiInfo.picObj) uiInfo.picObj.visible = uiInfo.picWasVisible;
+        if (uiInfo.fadeObj) uiInfo.fadeObj.visible = uiInfo.fadeWasVisible;
+        if (uiInfo.flashObj) uiInfo.flashObj.visible = uiInfo.flashWasVisible;
+    }
+    this._uiInfo = uiInfo;
 };
 
 Simple2DRenderPass.prototype.dispose = function() {};
 
-// --- CopyToScreenPass (readBuffer를 화면에 복사) ---
-function CopyToScreenPass() {
+// --- Simple2DUIRenderPass (블룸 적용된 맵을 화면에 복사 + UI 합성) ---
+function Simple2DUIRenderPass(prevRender, strategy) {
     this.enabled = true;
     this.needsSwap = false;
     this.renderToScreen = true;
+    this._prevRender = prevRender;
+    this._strategy = strategy;
 
-    this._material = new THREE.ShaderMaterial({
-        uniforms: { tColor: { value: null } },
+    this._copyMaterial = new THREE.ShaderMaterial({
+        uniforms: { tDiffuse: { value: null } },
         vertexShader: [
             'varying vec2 vUv;',
             'void main() {',
@@ -929,34 +1178,111 @@ function CopyToScreenPass() {
             '}'
         ].join('\n'),
         fragmentShader: [
-            'uniform sampler2D tColor;',
+            'uniform sampler2D tDiffuse;',
             'varying vec2 vUv;',
             'void main() {',
-            '    gl_FragColor = texture2D(tColor, vUv);',
+            '    gl_FragColor = texture2D(tDiffuse, vUv);',
             '}'
         ].join('\n')
     });
-    this._fsQuad = new FullScreenQuad(this._material);
+    this._copyQuad = new FullScreenQuad(this._copyMaterial);
 }
 
-CopyToScreenPass.prototype.setSize = function() {};
+Simple2DUIRenderPass.prototype.setSize = function() {};
 
-CopyToScreenPass.prototype.render = function(renderer, writeBuffer, readBuffer) {
-    this._material.uniforms.tColor.value = readBuffer.texture;
+Simple2DUIRenderPass.prototype.render = function(renderer, writeBuffer, readBuffer) {
+    var rendererObj = this._rendererObj;
+    var stage = this._stage;
+
+    // 1) 블룸 적용된 맵을 화면에 복사
+    this._copyMaterial.uniforms.tDiffuse.value = readBuffer.texture;
     renderer.setRenderTarget(null);
-    this._fsQuad.render(renderer);
+    renderer.autoClear = true;
+    this._copyQuad.render(renderer);
+
+    // 2) UI만 맵 위에 합성
+    var renderPass = PostProcess._2dRenderPass;
+    var uiInfo = renderPass ? renderPass._uiInfo : null;
+    if (!uiInfo || !uiInfo.spriteset || !rendererObj || !stage) return;
+
+    var scene = rendererObj.scene;
+    var camera = rendererObj.camera;
+    var spriteset = uiInfo.spriteset;
+    var spritesetObj = spriteset._threeObj;
+    var stageObj = stage._threeObj;
+    if (!stageObj || !spritesetObj) return;
+
+    // spriteset(맵)을 숨기고 UI만 표시
+    var childVisibility = [];
+    for (var i = 0; i < stageObj.children.length; i++) {
+        childVisibility.push(stageObj.children[i].visible);
+        if (stageObj.children[i] === spritesetObj) {
+            stageObj.children[i].visible = false;
+        }
+    }
+
+    // Picture를 stageObj로 이동
+    var picObj = uiInfo.picObj;
+    if (picObj && uiInfo.picWasVisible) {
+        spritesetObj.remove(picObj);
+        stageObj.add(picObj);
+        picObj.visible = true;
+    }
+
+    // Fade/Flash를 stageObj로 이동
+    var fadeObj = uiInfo.fadeObj;
+    if (fadeObj && uiInfo.fadeWasVisible) {
+        spritesetObj.remove(fadeObj);
+        stageObj.add(fadeObj);
+        fadeObj.visible = true;
+    }
+    var flashObj = uiInfo.flashObj;
+    if (flashObj && uiInfo.flashWasVisible) {
+        spritesetObj.remove(flashObj);
+        stageObj.add(flashObj);
+        flashObj.visible = true;
+    }
+
+    // UI 렌더 (블룸 맵 위에 합성)
+    renderer.autoClear = false;
+    renderer.render(scene, camera);
+
+    // 복원: Picture, Fade, Flash를 spritesetObj로 되돌림
+    if (picObj && picObj.parent === stageObj) {
+        stageObj.remove(picObj);
+        spritesetObj.add(picObj);
+        picObj.visible = uiInfo.picWasVisible;
+    }
+    if (fadeObj && fadeObj.parent === stageObj) {
+        stageObj.remove(fadeObj);
+        spritesetObj.add(fadeObj);
+        fadeObj.visible = uiInfo.fadeWasVisible;
+    }
+    if (flashObj && flashObj.parent === stageObj) {
+        stageObj.remove(flashObj);
+        spritesetObj.add(flashObj);
+        flashObj.visible = uiInfo.flashWasVisible;
+    }
+
+    // stageObj 가시성 복원
+    for (var i = 0; i < stageObj.children.length; i++) {
+        if (i < childVisibility.length) {
+            stageObj.children[i].visible = childVisibility[i];
+        }
+    }
+    renderer.autoClear = true;
 };
 
-CopyToScreenPass.prototype.dispose = function() {
-    this._material.dispose();
-    this._fsQuad.dispose();
+Simple2DUIRenderPass.prototype.dispose = function() {
+    this._copyMaterial.dispose();
+    this._copyQuad.dispose();
 };
 
 //=============================================================================
-// DepthOfField - Composer 생성/파괴
+// PostProcess - Composer 생성/파괴
 //=============================================================================
 
-DepthOfField._createComposer = function(rendererObj, stage) {
+PostProcess._createComposer = function(rendererObj, stage) {
     if (this._composer) this._disposeComposer();
 
     var renderer = rendererObj.renderer;
@@ -981,10 +1307,14 @@ DepthOfField._createComposer = function(rendererObj, stage) {
         radius: this.bloomConfig.radius,
         downscale: this.bloomConfig.downscale
     });
+    // $dataMap.bloomConfig.enabled 반영 (composer 재생성 시에도 설정 유지)
+    if ($dataMap && $dataMap.bloomConfig) {
+        bloomPass.enabled = $dataMap.bloomConfig.enabled !== false;
+    }
     composer.addPass(bloomPass);
 
     // PostProcessEffects 패스들 생성 및 추가
-    var ppPasses = DepthOfField._createPPPasses(composer);
+    var ppPasses = PostProcess._createPPPasses(composer);
 
     // TiltShiftPass (화면 Y좌표 기반 DoF) - 맵에만 블러
     var tiltShiftPass = new TiltShiftPass({
@@ -1008,9 +1338,12 @@ DepthOfField._createComposer = function(rendererObj, stage) {
     this._ppPasses = ppPasses;
     this._lastStage = stage;
     this._composerMode = '3d';
+
+    // composer 재생성 후 맵별 설정 재적용
+    this._applyMapSettings();
 };
 
-DepthOfField._createComposer2D = function(rendererObj, stage) {
+PostProcess._createComposer2D = function(rendererObj, stage) {
     if (this._composer) this._disposeComposer();
 
     var renderer = rendererObj.renderer;
@@ -1031,14 +1364,18 @@ DepthOfField._createComposer2D = function(rendererObj, stage) {
         radius: this.bloomConfig.radius,
         downscale: this.bloomConfig.downscale
     });
+    // $dataMap.bloomConfig.enabled 반영 (composer 재생성 시에도 설정 유지)
+    if ($dataMap && $dataMap.bloomConfig) {
+        bloomPass.enabled = $dataMap.bloomConfig.enabled !== false;
+    }
     composer.addPass(bloomPass);
 
     // PostProcessEffects 패스들 생성 및 추가
-    var ppPasses = DepthOfField._createPPPasses(composer);
+    var ppPasses = PostProcess._createPPPasses(composer);
 
-    // CopyToScreen - 최종 출력
-    var copyPass = new CopyToScreenPass();
-    composer.addPass(copyPass);
+    // Simple2DUIRenderPass - 블룸 적용된 맵을 화면에 복사 + UI 합성
+    var uiPass = new Simple2DUIRenderPass(_prevRender, _ThreeStrategy);
+    composer.addPass(uiPass);
 
     this._composer = composer;
     this._tiltShiftPass = null;
@@ -1046,14 +1383,17 @@ DepthOfField._createComposer2D = function(rendererObj, stage) {
     this._renderPass = null;
     this._uiPass = null;
     this._2dRenderPass = renderPass;
+    this._2dUIRenderPass = uiPass;
     this._ppPasses = ppPasses;
-    this._copyToScreenPass = copyPass;
     this._lastStage = stage;
     this._composerMode = '2d';
+
+    // composer 재생성 후 맵별 설정 재적용
+    this._applyMapSettings();
 };
 
 // PostProcessEffects 패스 일괄 생성 헬퍼
-DepthOfField._createPPPasses = function(composer) {
+PostProcess._createPPPasses = function(composer) {
     var ppPasses = {};
     if (window.PostProcessEffects) {
         var PPE = window.PostProcessEffects;
@@ -1070,7 +1410,7 @@ DepthOfField._createPPPasses = function(composer) {
 };
 
 // 에디터에서 postProcessConfig를 받아 패스 활성/비활성 + 파라미터 적용
-DepthOfField.applyPostProcessConfig = function(config) {
+PostProcess.applyPostProcessConfig = function(config) {
     if (!this._ppPasses) return;
     var PPE = window.PostProcessEffects;
     if (!PPE) return;
@@ -1101,16 +1441,21 @@ DepthOfField.applyPostProcessConfig = function(config) {
     // filmGrain, waveDistortion: uTime 업데이트 필요
     this._ppNeedsTimeUpdate = anyEnabled;
 
+    // godRays base lightPos 갱신 플래그
+    if (this._ppPasses.godRays) {
+        this._ppPasses.godRays._baseDirty = true;
+    }
+
     // 3D: renderToScreen 재조정
     this._updateRenderToScreen();
 };
 
 // renderToScreen 플래그를 올바르게 재조정
-DepthOfField._updateRenderToScreen = function() {
+PostProcess._updateRenderToScreen = function() {
     if (!this._composer) return;
     var passes = this._composer.passes;
     // 마지막으로 활성화된 "화면 출력" 패스를 찾아 renderToScreen 설정
-    // UIRenderPass(3D) 또는 CopyToScreenPass(2D)가 항상 마지막
+    // UIRenderPass(3D) 또는 Simple2DUIRenderPass(2D)가 항상 마지막
     // 그 사이의 PP 패스들은 needsSwap=true로 ping-pong
 
     // bloom의 renderToScreen을 false로 (PP 패스가 뒤에 올 수 있으므로)
@@ -1138,14 +1483,14 @@ DepthOfField._updateRenderToScreen = function() {
         }
         // UI pass가 항상 최종 출력 (renderToScreen=true, needsSwap=false)
     } else if (this._composerMode === '2d') {
-        // 2D: CopyToScreenPass가 최종 출력
-        if (this._copyToScreenPass) {
-            this._copyToScreenPass.renderToScreen = true;
+        // 2D: Simple2DUIRenderPass가 최종 출력
+        if (this._2dUIRenderPass) {
+            this._2dUIRenderPass.renderToScreen = true;
         }
     }
 };
 
-DepthOfField._disposeComposer = function() {
+PostProcess._disposeComposer = function() {
     if (this._composer) {
         this._composer.dispose();
         this._composer = null;
@@ -1154,8 +1499,8 @@ DepthOfField._disposeComposer = function() {
         this._renderPass = null;
         this._uiPass = null;
         this._2dRenderPass = null;
+        this._2dUIRenderPass = null;
         this._ppPasses = null;
-        this._copyToScreenPass = null;
         this._ppNeedsTimeUpdate = false;
         this._lastStage = null;
         this._composerMode = null;
@@ -1168,12 +1513,12 @@ DepthOfField._disposeComposer = function() {
 };
 
 // 카메라존 DoF lerp 상태
-DepthOfField._currentFocusY = null;
-DepthOfField._currentFocusRange = null;
-DepthOfField._currentMaxBlur = null;
-DepthOfField._currentBlurPower = null;
+PostProcess._currentFocusY = null;
+PostProcess._currentFocusRange = null;
+PostProcess._currentMaxBlur = null;
+PostProcess._currentBlurPower = null;
 
-DepthOfField._updateUniforms = function() {
+PostProcess._updateUniforms = function() {
     // Bloom uniform 실시간 갱신 (DoF 비활성이어도 bloom은 동작)
     if (this._bloomPass) {
         this._bloomPass._threshold = this.bloomConfig.threshold;
@@ -1182,6 +1527,9 @@ DepthOfField._updateUniforms = function() {
         this._bloomPass._blurHUniforms.direction.value.set(this.bloomConfig.radius, 0.0);
         this._bloomPass._blurVUniforms.direction.value.set(0.0, this.bloomConfig.radius);
     }
+
+    // GodRays lightPos를 카메라 yaw에 따라 회전
+    this._updateGodRaysLightPos();
 
     if (!this._tiltShiftPass) return;
 
@@ -1227,6 +1575,33 @@ DepthOfField._updateUniforms = function() {
         Graphics.height / Graphics.width;
 };
 
+PostProcess._updateGodRaysLightPos = function() {
+    if (!this._ppPasses || !this._ppPasses.godRays || !this._ppPasses.godRays.enabled) {
+        return;
+    }
+    var yaw = (typeof Mode3D !== 'undefined') ? (Mode3D._yawRad || 0) : 0;
+
+    var pass = this._ppPasses.godRays;
+
+    // 원본 lightPos가 변경되었으면 base 갱신 (맵 전환 등)
+    if (pass._baseLightPosX == null || pass._baseDirty) {
+        pass._baseLightPosX = pass.uniforms.uLightPos.value.x;
+        pass._baseLightPosY = pass.uniforms.uLightPos.value.y;
+        pass._baseDirty = false;
+    }
+
+    if (yaw === 0) return;
+
+    // 화면 중심(0.5, 0.5) 기준으로 yaw만큼 회전
+    var cx = 0.5, cy = 0.5;
+    var dx = pass._baseLightPosX - cx;
+    var dy = pass._baseLightPosY - cy;
+    var cosY = Math.cos(-yaw);
+    var sinY = Math.sin(-yaw);
+    pass.uniforms.uLightPos.value.x = cx + dx * cosY - dy * sinY;
+    pass.uniforms.uLightPos.value.y = cy + dx * sinY + dy * cosY;
+};
+
 //=============================================================================
 // ThreeRendererStrategy.render 오버라이드 - DoF 적용
 // Mode3D.js에서 이미 오버라이드한 render를 다시 오버라이드
@@ -1243,22 +1618,22 @@ _ThreeStrategy.render = function(rendererObj, stage) {
     if (is3D) {
         // 3D 모드에서는 3D composer 사용 (bloom + DoF 등 후처리)
         // Composer가 없거나 모드가 다르거나 stage가 바뀌면 재생성
-        if (!DepthOfField._composer || DepthOfField._composerMode !== '3d' || DepthOfField._lastStage !== stage) {
+        if (!PostProcess._composer || PostProcess._composerMode !== '3d' || PostProcess._lastStage !== stage) {
             var w = rendererObj._width;
             var h = rendererObj._height;
             if (!Mode3D._perspCamera) {
                 Mode3D._perspCamera = Mode3D._createPerspCamera(w, h);
             }
-            DepthOfField._createComposer(rendererObj, stage);
+            PostProcess._createComposer(rendererObj, stage);
         }
 
         // DoF(TiltShift)는 설정에 따라 활성/비활성 + renderToScreen 재조정
-        DepthOfField._updateRenderToScreen();
+        PostProcess._updateRenderToScreen();
 
         // PP 패스 시간 업데이트 (filmGrain, waveDistortion 등)
-        if (DepthOfField._ppNeedsTimeUpdate && DepthOfField._ppPasses) {
+        if (PostProcess._ppNeedsTimeUpdate && PostProcess._ppPasses) {
             var ppTime = (typeof ThreeWaterShader !== 'undefined') ? ThreeWaterShader._time : (Date.now() / 1000);
-            var pp = DepthOfField._ppPasses;
+            var pp = PostProcess._ppPasses;
             if (pp.filmGrain && pp.filmGrain.enabled) pp.filmGrain.uniforms.uTime.value = ppTime;
             if (pp.waveDistortion && pp.waveDistortion.enabled) pp.waveDistortion.uniforms.uTime.value = ppTime;
         }
@@ -1289,28 +1664,28 @@ _ThreeStrategy.render = function(rendererObj, stage) {
         Mode3D._enforceNearestFilter(scene);
 
         // RenderPass에 최신 참조 반영
-        DepthOfField._renderPass.perspCamera = Mode3D._perspCamera;
-        DepthOfField._renderPass.spriteset = Mode3D._spriteset;
-        DepthOfField._renderPass.stage = stage;
-        DepthOfField._renderPass.scene = scene;
-        DepthOfField._renderPass.camera = camera;
+        PostProcess._renderPass.perspCamera = Mode3D._perspCamera;
+        PostProcess._renderPass.spriteset = Mode3D._spriteset;
+        PostProcess._renderPass.stage = stage;
+        PostProcess._renderPass.scene = scene;
+        PostProcess._renderPass.camera = camera;
 
         // UIRenderPass에 최신 참조 반영
-        DepthOfField._uiPass.spriteset = Mode3D._spriteset;
-        DepthOfField._uiPass.stage = stage;
-        DepthOfField._uiPass.scene = scene;
-        DepthOfField._uiPass.camera = camera;
+        PostProcess._uiPass.spriteset = Mode3D._spriteset;
+        PostProcess._uiPass.stage = stage;
+        PostProcess._uiPass.scene = scene;
+        PostProcess._uiPass.camera = camera;
 
         // uniform 갱신
-        DepthOfField._updateUniforms();
+        PostProcess._updateUniforms();
 
         // Composer 크기 동기화
         var composerNeedsResize = (
-            DepthOfField._composer.renderTarget1.width !== w ||
-            DepthOfField._composer.renderTarget1.height !== h
+            PostProcess._composer.renderTarget1.width !== w ||
+            PostProcess._composer.renderTarget1.height !== h
         );
         if (composerNeedsResize) {
-            DepthOfField._composer.setSize(w, h);
+            PostProcess._composer.setSize(w, h);
         }
 
         // Shadow Map: multi-pass 렌더링에서 shadow map은 MapRenderPass의
@@ -1319,30 +1694,34 @@ _ThreeStrategy.render = function(rendererObj, stage) {
         renderer.shadowMap.autoUpdate = false;
 
         // 렌더!
-        DepthOfField._composer.render();
+        PostProcess._composer.render();
 
         renderer.shadowMap.autoUpdate = prevShadowAutoUpdate;
         Mode3D._active = true;
     } else {
         // 2D 모드 → bloom만 적용하는 2D composer 사용
-        if (!DepthOfField._composer || DepthOfField._composerMode !== '2d' || DepthOfField._lastStage !== stage) {
-            DepthOfField._createComposer2D(rendererObj, stage);
+        if (!PostProcess._composer || PostProcess._composerMode !== '2d' || PostProcess._lastStage !== stage) {
+            PostProcess._createComposer2D(rendererObj, stage);
         }
 
-        // 2D RenderPass에 최신 참조 전달
-        DepthOfField._2dRenderPass._rendererObj = rendererObj;
-        DepthOfField._2dRenderPass._stage = stage;
+        // 2D RenderPass / UIRenderPass에 최신 참조 전달
+        PostProcess._2dRenderPass._rendererObj = rendererObj;
+        PostProcess._2dRenderPass._stage = stage;
+        if (PostProcess._2dUIRenderPass) {
+            PostProcess._2dUIRenderPass._rendererObj = rendererObj;
+            PostProcess._2dUIRenderPass._stage = stage;
+        }
 
         // renderToScreen 재조정
-        DepthOfField._updateRenderToScreen();
+        PostProcess._updateRenderToScreen();
 
         // bloom uniform 갱신
-        DepthOfField._updateUniforms();
+        PostProcess._updateUniforms();
 
         // PP 패스 시간 업데이트
-        if (DepthOfField._ppNeedsTimeUpdate && DepthOfField._ppPasses) {
+        if (PostProcess._ppNeedsTimeUpdate && PostProcess._ppPasses) {
             var ppTime = (typeof ThreeWaterShader !== 'undefined') ? ThreeWaterShader._time : (Date.now() / 1000);
-            var pp = DepthOfField._ppPasses;
+            var pp = PostProcess._ppPasses;
             if (pp.filmGrain && pp.filmGrain.enabled) pp.filmGrain.uniforms.uTime.value = ppTime;
             if (pp.waveDistortion && pp.waveDistortion.enabled) pp.waveDistortion.uniforms.uTime.value = ppTime;
         }
@@ -1351,14 +1730,14 @@ _ThreeStrategy.render = function(rendererObj, stage) {
         var w = rendererObj._width;
         var h = rendererObj._height;
         var composerNeedsResize = (
-            DepthOfField._composer.renderTarget1.width !== w ||
-            DepthOfField._composer.renderTarget1.height !== h
+            PostProcess._composer.renderTarget1.width !== w ||
+            PostProcess._composer.renderTarget1.height !== h
         );
         if (composerNeedsResize) {
-            DepthOfField._composer.setSize(w, h);
+            PostProcess._composer.setSize(w, h);
         }
 
-        DepthOfField._composer.render();
+        PostProcess._composer.render();
     }
 };
 
@@ -1373,10 +1752,10 @@ Spriteset_Map.prototype.update = function() {
     // 3D 모드이면 Debug UI 표시 (DoF ON/OFF와 무관)
     var shouldShowDebug = ConfigManager.mode3d;
 
-    if (shouldShowDebug && !DepthOfField._debugSection) {
-        DepthOfField._createDebugUI();
-    } else if (!shouldShowDebug && DepthOfField._debugSection) {
-        DepthOfField._removeDebugUI();
+    if (shouldShowDebug && !PostProcess._debugSection) {
+        PostProcess._createDebugUI();
+    } else if (!shouldShowDebug && PostProcess._debugSection) {
+        PostProcess._removeDebugUI();
     }
 };
 
@@ -1384,13 +1763,15 @@ Spriteset_Map.prototype.update = function() {
 // Scene_Map.onMapLoaded - 맵 데이터에서 bloomConfig, postProcessConfig 로드
 //=============================================================================
 
-var _Scene_Map_onMapLoaded_dof = Scene_Map.prototype.onMapLoaded;
-Scene_Map.prototype.onMapLoaded = function() {
-    _Scene_Map_onMapLoaded_dof.call(this);
-    DepthOfField._applyMapSettings();
-};
+if (typeof Scene_Map !== 'undefined') {
+    var _Scene_Map_onMapLoaded_dof = Scene_Map.prototype.onMapLoaded;
+    Scene_Map.prototype.onMapLoaded = function() {
+        _Scene_Map_onMapLoaded_dof.call(this);
+        PostProcess._applyMapSettings();
+    };
+}
 
-DepthOfField._applyMapSettings = function() {
+PostProcess._applyMapSettings = function() {
     if (!$dataMap) return;
 
     // bloomConfig 적용
@@ -1428,7 +1809,7 @@ DepthOfField._applyMapSettings = function() {
 // Debug UI - ShadowLight Debug 패턴과 동일한 스타일
 //=============================================================================
 
-DepthOfField._createDebugUI = function() {
+PostProcess._createDebugUI = function() {
     if (this._debugSection) return;
 
     // ShadowLight 패널의 DoF 컨테이너에 삽입
@@ -1555,7 +1936,7 @@ DepthOfField._createDebugUI = function() {
     this._debugSection = wrapper;
 };
 
-DepthOfField._removeDebugUI = function() {
+PostProcess._removeDebugUI = function() {
     if (this._debugSection) {
         this._debugSection.remove();
         this._debugSection = null;
@@ -1570,20 +1951,20 @@ var _Game_Interpreter_pluginCommand_dof = Game_Interpreter.prototype.pluginComma
 Game_Interpreter.prototype.pluginCommand = function(command, args) {
     _Game_Interpreter_pluginCommand_dof.call(this, command, args);
 
-    if (command === 'DoF' || command === 'DepthOfField') {
+    if (command === 'DoF' || command === 'DepthOfField' || command === 'PostProcess') {
         if (args[0] === 'on') ConfigManager.depthOfField = true;
         if (args[0] === 'off') ConfigManager.depthOfField = false;
         if (args[0] === 'focusY' && args[1]) {
-            DepthOfField.config.focusY = parseFloat(args[1]);
+            PostProcess.config.focusY = parseFloat(args[1]);
         }
         if (args[0] === 'focusRange' && args[1]) {
-            DepthOfField.config.focusRange = parseFloat(args[1]);
+            PostProcess.config.focusRange = parseFloat(args[1]);
         }
         if (args[0] === 'maxblur' && args[1]) {
-            DepthOfField.config.maxblur = parseFloat(args[1]);
+            PostProcess.config.maxblur = parseFloat(args[1]);
         }
         if (args[0] === 'blurPower' && args[1]) {
-            DepthOfField.config.blurPower = parseFloat(args[1]);
+            PostProcess.config.blurPower = parseFloat(args[1]);
         }
     }
 };

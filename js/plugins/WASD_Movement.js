@@ -1,4 +1,5 @@
 /*:
+ * @pluginname WASD 이동
  * @plugindesc WASD 키로 이동, Q/E 키로 PageUp/PageDown 매핑
  * @author Claude
  *

@@ -108,8 +108,8 @@
   "editMapId": 1,
   "elements": [
     "",
-    "불",
     "물리적",
+    "불",
     "얼음",
     "천둥",
     "물",
@@ -323,9 +323,9 @@
       "volume": 90
     }
   ],
-  "startMapId": 4,
+  "startMapId": 3,
   "startX": 13,
-  "startY": 23,
+  "startY": 17,
   "switches": [
     "",
     "",
@@ -502,7 +502,7 @@
       "level": 1
     }
   ],
-  "testTroopId": 4,
+  "testTroopId": 1,
   "title1Name": "CrossedSwords",
   "title2Name": "Medieval",
   "titleBgm": {

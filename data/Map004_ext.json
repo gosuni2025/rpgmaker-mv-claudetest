@@ -1,5 +1,10 @@
 {
   "cameraZones": [],
+  "skyBackground": {
+    "type": "parallax",
+    "skyImage": "",
+    "rotationSpeed": 0
+  },
   "animTileSettings": {
     "1": {
       "enabled": true,
@@ -21,5 +26,98 @@
       "emissive": 0.8,
       "emissiveColor": "#ffffff"
     }
+  },
+  "bloomConfig": {
+    "enabled": true,
+    "threshold": 0.25,
+    "strength": 5.6,
+    "radius": 2,
+    "downscale": 1
+  },
+  "postProcessConfig": {
+    "godRays": {
+      "enabled": false,
+      "exposure": 1,
+      "decay": 1,
+      "density": 2,
+      "weight": 1
+    },
+    "vignette": {
+      "enabled": false,
+      "intensity": 1.65,
+      "radius": 0.3,
+      "softness": 0.3,
+      "color": "#ff0000"
+    },
+    "colorGrading": {
+      "enabled": false,
+      "brightness": 0.21,
+      "contrast": 0.75,
+      "saturation": 2.15,
+      "temperature": -0.6,
+      "tint": 0.6,
+      "gamma": 1.8
+    },
+    "radialBlur": {
+      "enabled": false
+    },
+    "filmGrain": {
+      "enabled": false,
+      "intensity": 0.22
+    },
+    "chromatic": {
+      "enabled": false,
+      "strength": 0.041,
+      "radial": 2.9
+    },
+    "anamorphic": {
+      "enabled": false,
+      "intensity": 0.75,
+      "threshold": 0
+    },
+    "motionBlur": {
+      "enabled": false,
+      "velocityX": 0.003,
+      "velocityY": 0.006
+    },
+    "colorInversion": {
+      "enabled": false
+    },
+    "pixelation": {
+      "enabled": false,
+      "pixelSize": 10
+    },
+    "edgeDetection": {
+      "enabled": false
+    },
+    "ssao": {
+      "enabled": false,
+      "radius": 18.5,
+      "intensity": 0.95,
+      "bias": 0.03
+    },
+    "toneMapping": {
+      "enabled": false,
+      "exposure": 1.3,
+      "mode": 1
+    },
+    "fog": {
+      "enabled": false
+    }
+  },
+  "fogOfWar": {
+    "enabled": true,
+    "radius": 5,
+    "fogColor": "#000000",
+    "unexploredAlpha": 1,
+    "exploredAlpha": 0.23,
+    "visibilityBrightness": 0.8,
+    "godRay": false,
+    "lightScattering": false,
+    "vortexSpeed": 3,
+    "fogColorTop": "#000000",
+    "vortex": false,
+    "dissolveStrength": 3,
+    "fogMode": "3dbox"
   }
 }
