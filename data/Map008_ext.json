@@ -440,7 +440,17 @@
       ],
       "imageName": "Sprite-0001",
       "anchorY": 0.75,
-      "imageScale": 1.2
+      "imageScale": 1.2,
+      "shaderData": [
+        {
+          "type": "wind",
+          "enabled": true,
+          "params": {
+            "speed": 2,
+            "wind": 5
+          }
+        }
+      ]
     },
     {
       "id": 2,
