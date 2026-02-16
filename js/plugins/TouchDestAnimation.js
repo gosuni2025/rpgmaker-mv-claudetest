@@ -157,15 +157,11 @@
             this._tilemap.addChild(this._touchAnimSprite);
         }
 
-        // 경로 화살표 스프라이트
+        // 경로 화살표 스프라이트 - tilemap 밖, 화면 좌표 기준
         if (showPathArrow) {
             this._pathArrowSprite = new Sprite();
-            this._pathArrowSprite.z = 8;
-            this._pathArrowSprite.bitmap = new Bitmap(
-                $gameMap.width() * $gameMap.tileWidth(),
-                $gameMap.height() * $gameMap.tileHeight()
-            );
-            this._tilemap.addChild(this._pathArrowSprite);
+            this._pathArrowSprite.bitmap = new Bitmap(Graphics.width, Graphics.height);
+            this._baseSprite.addChild(this._pathArrowSprite);
             this._currentPath = [];
         }
 
@@ -248,8 +244,10 @@
             _pathLastDestX = destX;
             _pathLastDestY = destY;
             this._currentPath = findPath(playerX, playerY, destX, destY);
-            this.drawPathArrow();
         }
+
+        // 매 프레임 화면 좌표로 다시 그리기 (스크롤 대응)
+        this.drawPathArrow();
     };
 
     Spriteset_Map.prototype.drawPathArrow = function() {
@@ -263,6 +261,14 @@
         var th = $gameMap.tileHeight();
         var ctx = bitmap._context;
 
+        // 타일 좌표 → 화면 좌표 변환 함수
+        function screenX(tileX) {
+            return $gameMap.adjustX(tileX) * tw + tw / 2;
+        }
+        function screenY(tileY) {
+            return $gameMap.adjustY(tileY) * th + th / 2;
+        }
+
         ctx.save();
         ctx.strokeStyle = arrowColor;
         ctx.fillStyle = arrowColor;
@@ -270,28 +276,25 @@
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
 
-        // 시작점: 플레이어 위치
-        var startX = _pathLastPlayerX * tw + tw / 2;
-        var startY = _pathLastPlayerY * th + th / 2;
+        // 시작점: 플레이어 위치 (화면 좌표)
+        var sx = screenX(_pathLastPlayerX);
+        var sy = screenY(_pathLastPlayerY);
 
-        // 경로 선 그리기
         ctx.beginPath();
-        ctx.moveTo(startX, startY);
+        ctx.moveTo(sx, sy);
         for (var i = 0; i < path.length; i++) {
-            var px = path[i].x * tw + tw / 2;
-            var py = path[i].y * th + th / 2;
-            ctx.lineTo(px, py);
+            ctx.lineTo(screenX(path[i].x), screenY(path[i].y));
         }
         ctx.stroke();
 
-        // 끝점 화살촉 그리기
+        // 끝점 화살촉
         if (path.length >= 1) {
             var last = path[path.length - 1];
             var prev = path.length >= 2 ? path[path.length - 2] :
                        { x: _pathLastPlayerX, y: _pathLastPlayerY };
 
-            var endX = last.x * tw + tw / 2;
-            var endY = last.y * th + th / 2;
+            var endX = screenX(last.x);
+            var endY = screenY(last.y);
             var dx = last.x - prev.x;
             var dy = last.y - prev.y;
             var angle = Math.atan2(dy, dx);
