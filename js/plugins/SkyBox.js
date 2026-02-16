@@ -4,12 +4,16 @@
  * @author Claude
  *
  * @param Skybox Folder
+ * @type dir
+ * @dir img/
  * @desc 스카이 이미지 폴더 (img/ 하위)
  * @default skybox
  *
  * @param Panorama File
+ * @type file
+ * @dir img/skybox/
  * @desc equirectangular 파노라마 파일명 (기본 폴백)
- * @default sky_panorama.png
+ * @default sky_panorama
  *
  * @help
  * 3D 모드(Mode3D) 활성 시 카메라 위치에 스카이 돔을 배치하여

@@ -59,5 +59,20 @@ var $plugins = [
       "Show Path Arrow": "true",
       "Arrow Color": "rgba(255, 255, 255, 0.7)"
     }
+  },
+  {
+    "name": "OcclusionSilhouette",
+    "status": true,
+    "description": "플레이어가 오브젝트 뒤에 가려졌을 때 실루엣으로 위치를 표시합니다.",
+    "parameters": {
+      "Fill Color": "#3366ff",
+      "Fill Opacity": "0.35",
+      "Outline Color": "#ffffff",
+      "Outline Opacity": "0.8",
+      "Outline Width": "2",
+      "Pattern": "solid",
+      "Pattern Scale": "8",
+      "Include Followers": "true"
+    }
   }
 ];
