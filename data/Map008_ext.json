@@ -2199,8 +2199,8 @@
     },
     {
       "id": 7,
-      "name": "타격/불",
-      "x": 5,
+      "name": "타격 효과",
+      "x": 4,
       "y": 2,
       "tileIds": [
         [
@@ -2337,7 +2337,7 @@
           true
         ]
       ],
-      "animationId": 3,
+      "animationId": 2,
       "animationLoop": "forward",
       "animationSe": false
     }
