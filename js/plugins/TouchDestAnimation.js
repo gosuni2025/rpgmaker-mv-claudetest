@@ -23,6 +23,30 @@
  * @desc 화살표 색상 (CSS 색상값)
  * @default rgba(255, 255, 255, 0.7)
  *
+ * @param Arrow Width
+ * @type number
+ * @desc 화살표 선 굵기 (px)
+ * @min 1
+ * @max 10
+ * @default 3
+ *
+ * @param Arrow Outline
+ * @type boolean
+ * @desc 화살표 테두리 표시 여부
+ * @default true
+ *
+ * @param Arrow Outline Color
+ * @type color
+ * @desc 화살표 테두리 색상
+ * @default rgba(0, 0, 0, 0.5)
+ *
+ * @param Arrow Outline Width
+ * @type number
+ * @desc 화살표 테두리 굵기 (px, 선 굵기에 추가)
+ * @min 1
+ * @max 10
+ * @default 2
+ *
  * @help
  * 맵을 터치/클릭하면 기본 흰색 사각형 펄스 대신
  * 지정한 RPG Maker 애니메이션을 해당 위치에 재생합니다.
@@ -31,6 +55,10 @@
  * Hide Default: true이면 기존 Sprite_Destination 숨김
  * Show Path Arrow: true이면 이동경로를 화살표로 표시
  * Arrow Color: 화살표 색상
+ * Arrow Width: 화살표 선 굵기
+ * Arrow Outline: 화살표 테두리 표시 여부
+ * Arrow Outline Color: 테두리 색상
+ * Arrow Outline Width: 테두리 굵기
  */
 
 (function() {
@@ -40,6 +68,10 @@
     var hideDefault = String(parameters['Hide Default']) !== 'false';
     var showPathArrow = String(parameters['Show Path Arrow']) !== 'false';
     var arrowColor = String(parameters['Arrow Color'] || 'rgba(255, 255, 255, 0.7)');
+    var arrowWidth = Number(parameters['Arrow Width'] || 3);
+    var arrowOutline = String(parameters['Arrow Outline']) !== 'false';
+    var arrowOutlineColor = String(parameters['Arrow Outline Color'] || 'rgba(0, 0, 0, 0.5)');
+    var arrowOutlineWidth = Number(parameters['Arrow Outline Width'] || 2);
 
     var _lastDestX = -1;
     var _lastDestY = -1;
@@ -271,15 +303,62 @@
         }
 
         ctx.save();
-        ctx.strokeStyle = arrowColor;
-        ctx.fillStyle = arrowColor;
-        ctx.lineWidth = 3;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
 
         // 시작점: 플레이어 위치 (화면 좌표)
         var sx = screenX(_pathLastPlayerX);
         var sy = screenY(_pathLastPlayerY);
+
+        // 화살촉 계산 (테두리, 메인 모두 같은 좌표 사용)
+        var arrowHeadPoints = null;
+        if (path.length >= 1) {
+            var last = path[path.length - 1];
+            var prev = path.length >= 2 ? path[path.length - 2] :
+                       { x: _pathLastPlayerX, y: _pathLastPlayerY };
+            var endX = screenX(last.x);
+            var endY = screenY(last.y);
+            var adx = last.x - prev.x;
+            var ady = last.y - prev.y;
+            var angle = Math.atan2(ady, adx);
+            var arrowSize = 10;
+            arrowHeadPoints = {
+                tip: [endX, endY],
+                left: [endX - arrowSize * Math.cos(angle - Math.PI / 6),
+                       endY - arrowSize * Math.sin(angle - Math.PI / 6)],
+                right: [endX - arrowSize * Math.cos(angle + Math.PI / 6),
+                        endY - arrowSize * Math.sin(angle + Math.PI / 6)]
+            };
+        }
+
+        // 테두리 (아래 레이어)
+        if (arrowOutline) {
+            ctx.strokeStyle = arrowOutlineColor;
+            ctx.fillStyle = arrowOutlineColor;
+            ctx.lineWidth = arrowWidth + arrowOutlineWidth * 2;
+
+            ctx.beginPath();
+            ctx.moveTo(sx, sy);
+            for (var oi = 0; oi < path.length; oi++) {
+                ctx.lineTo(screenX(path[oi].x), screenY(path[oi].y));
+            }
+            ctx.stroke();
+
+            if (arrowHeadPoints) {
+                ctx.beginPath();
+                ctx.moveTo(arrowHeadPoints.tip[0], arrowHeadPoints.tip[1]);
+                ctx.lineTo(arrowHeadPoints.left[0], arrowHeadPoints.left[1]);
+                ctx.lineTo(arrowHeadPoints.right[0], arrowHeadPoints.right[1]);
+                ctx.closePath();
+                ctx.stroke();
+                ctx.fill();
+            }
+        }
+
+        // 메인 화살표 (위 레이어)
+        ctx.strokeStyle = arrowColor;
+        ctx.fillStyle = arrowColor;
+        ctx.lineWidth = arrowWidth;
 
         ctx.beginPath();
         ctx.moveTo(sx, sy);
@@ -288,29 +367,11 @@
         }
         ctx.stroke();
 
-        // 끝점 화살촉
-        if (path.length >= 1) {
-            var last = path[path.length - 1];
-            var prev = path.length >= 2 ? path[path.length - 2] :
-                       { x: _pathLastPlayerX, y: _pathLastPlayerY };
-
-            var endX = screenX(last.x);
-            var endY = screenY(last.y);
-            var dx = last.x - prev.x;
-            var dy = last.y - prev.y;
-            var angle = Math.atan2(dy, dx);
-            var arrowSize = 10;
-
+        if (arrowHeadPoints) {
             ctx.beginPath();
-            ctx.moveTo(endX, endY);
-            ctx.lineTo(
-                endX - arrowSize * Math.cos(angle - Math.PI / 6),
-                endY - arrowSize * Math.sin(angle - Math.PI / 6)
-            );
-            ctx.lineTo(
-                endX - arrowSize * Math.cos(angle + Math.PI / 6),
-                endY - arrowSize * Math.sin(angle + Math.PI / 6)
-            );
+            ctx.moveTo(arrowHeadPoints.tip[0], arrowHeadPoints.tip[1]);
+            ctx.lineTo(arrowHeadPoints.left[0], arrowHeadPoints.left[1]);
+            ctx.lineTo(arrowHeadPoints.right[0], arrowHeadPoints.right[1]);
             ctx.closePath();
             ctx.fill();
         }
