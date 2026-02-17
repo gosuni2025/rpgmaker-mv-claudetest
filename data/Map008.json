@@ -9645,9 +9645,9 @@
           "directionFix": false,
           "image": {
             "characterIndex": 0,
-            "characterName": "",
+            "characterName": "Monster",
             "direction": 2,
-            "pattern": 1,
+            "pattern": 0,
             "tileId": 0
           },
           "list": [
