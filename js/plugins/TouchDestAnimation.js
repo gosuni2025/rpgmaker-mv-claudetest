@@ -19,6 +19,7 @@
  * @default true
  *
  * @param Arrow Color
+ * @type color
  * @desc 화살표 색상 (CSS 색상값)
  * @default rgba(255, 255, 255, 0.7)
  *
