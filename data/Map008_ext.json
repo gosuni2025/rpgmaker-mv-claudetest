@@ -58,8 +58,8 @@
     {
       "id": 1,
       "name": "Sprite-0001",
-      "x": 12,
-      "y": 17,
+      "x": 14,
+      "y": 22,
       "tileIds": [
         [
           [
@@ -422,9 +422,9 @@
         [
           true,
           true,
-          false,
-          false,
-          false,
+          true,
+          true,
+          true,
           true,
           true
         ],
@@ -820,9 +820,9 @@
         [
           true,
           true,
-          false,
-          false,
-          false,
+          true,
+          true,
+          true,
           true,
           true
         ],
