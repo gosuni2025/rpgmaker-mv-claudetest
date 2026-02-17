@@ -55,7 +55,7 @@
       "color": "#000000",
       "offsetScale": 0.6
     },
-    "enabled": false
+    "enabled": true
   },
   "objects": [
     {
