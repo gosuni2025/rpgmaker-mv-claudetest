@@ -2,7 +2,8 @@
   "editorLights": {
     "ambient": {
       "color": "#667788",
-      "intensity": 0.4
+      "intensity": 0.4,
+      "enabled": false
     },
     "directional": {
       "enabled": false,
@@ -35,10 +36,11 @@
       "color": "#a25f06",
       "intensity": 0.8,
       "distance": 200,
-      "z": 40
+      "z": 40,
+      "enabled": false
     },
     "spotLight": {
-      "enabled": true,
+      "enabled": false,
       "color": "#ffeedd",
       "intensity": 0.8,
       "distance": 250,
@@ -52,7 +54,8 @@
       "opacity": 0.4,
       "color": "#000000",
       "offsetScale": 0.6
-    }
+    },
+    "enabled": false
   },
   "objects": [
     {
