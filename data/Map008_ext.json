@@ -55,7 +55,7 @@
       "color": "#000000",
       "offsetScale": 0.6
     },
-    "enabled": true
+    "enabled": false
   },
   "objects": [
     {
@@ -2310,7 +2310,7 @@
       ],
       "width": 4,
       "height": 4,
-      "zHeight": 2,
+      "zHeight": 3.5,
       "passability": [
         [
           true,
