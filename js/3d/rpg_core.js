@@ -622,11 +622,24 @@ function Point() {
     this.initialize.apply(this, arguments);
 }
 
-Point.prototype = Object.create(PIXI.Point.prototype);
 Point.prototype.constructor = Point;
 
 Point.prototype.initialize = function(x, y) {
-    PIXI.Point.call(this, x, y);
+    this.x = x || 0;
+    this.y = y || 0;
+};
+
+Point.prototype.copy = function(p) {
+    this.set(p.x, p.y);
+};
+
+Point.prototype.set = function(x, y) {
+    this.x = x || 0;
+    this.y = y || ((y !== 0) ? x || 0 : 0);
+};
+
+Point.prototype.equals = function(p) {
+    return (p.x === this.x) && (p.y === this.y);
 };
 
 /**
@@ -658,11 +671,35 @@ function Rectangle() {
     this.initialize.apply(this, arguments);
 }
 
-Rectangle.prototype = Object.create(PIXI.Rectangle.prototype);
 Rectangle.prototype.constructor = Rectangle;
 
 Rectangle.prototype.initialize = function(x, y, width, height) {
-    PIXI.Rectangle.call(this, x, y, width, height);
+    this.x = x || 0;
+    this.y = y || 0;
+    this.width = width || 0;
+    this.height = height || 0;
+};
+
+Rectangle.prototype.clone = function() {
+    return new Rectangle(this.x, this.y, this.width, this.height);
+};
+
+Rectangle.prototype.copy = function(rectangle) {
+    this.x = rectangle.x;
+    this.y = rectangle.y;
+    this.width = rectangle.width;
+    this.height = rectangle.height;
+    return this;
+};
+
+Rectangle.prototype.contains = function(x, y) {
+    if (this.width <= 0 || this.height <= 0) return false;
+    if (x >= this.x && x < this.x + this.width) {
+        if (y >= this.y && y < this.y + this.height) {
+            return true;
+        }
+    }
+    return false;
 };
 
 /**
@@ -753,7 +790,7 @@ Bitmap._reuseImages = [];
 
 Bitmap.prototype._createCanvas = function(width, height){
     this.__canvas = this.__canvas || document.createElement('canvas');
-    this.__context = this.__canvas.getContext('2d');
+    this.__context = this.__canvas.getContext('2d', { willReadFrequently: true });
 
     this.__canvas.width = Math.max(width || 0, 1);
     this.__canvas.height = Math.max(height || 0, 1);
@@ -772,15 +809,15 @@ Bitmap.prototype._createCanvas = function(width, height){
 };
 
 Bitmap.prototype._createBaseTexture = function(source){
-    this.__baseTexture = new PIXI.BaseTexture(source);
+    this.__baseTexture = RendererFactory.createBaseTexture(source);
     this.__baseTexture.mipmap = false;
     this.__baseTexture.width = source.width;
     this.__baseTexture.height = source.height;
 
     if (this._smooth) {
-        this._baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
+        RendererFactory.setScaleMode(this._baseTexture, RendererFactory.SCALE_MODE_LINEAR);
     } else {
-        this._baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+        RendererFactory.setScaleMode(this._baseTexture, RendererFactory.SCALE_MODE_NEAREST);
     }
 };
 
@@ -927,21 +964,12 @@ Bitmap.snap = function(stage) {
     var height = Graphics.height;
     var bitmap = new Bitmap(width, height);
     var context = bitmap._context;
-    var renderTexture = PIXI.RenderTexture.create(width, height);
     if (stage) {
-        Graphics._renderer.render(stage, renderTexture);
-        stage.worldTransform.identity();
-        var canvas = null;
-        if (Graphics.isWebGL()) {
-            canvas = Graphics._renderer.extract.canvas(renderTexture);
-        } else {
-            canvas = renderTexture.baseTexture._canvasRenderTarget.canvas;
+        var canvas = RendererStrategy.renderToCanvas(Graphics._renderer, stage, width, height);
+        if (canvas) {
+            context.drawImage(canvas, 0, 0);
         }
-        context.drawImage(canvas, 0, 0);
-    } else {
-
     }
-    renderTexture.destroy({ destroyBase: true });
     bitmap._setDirty();
     return bitmap;
 };
@@ -993,7 +1021,7 @@ Object.defineProperty(Bitmap.prototype, 'url', {
  * [read-only] The base texture that holds the image.
  *
  * @property baseTexture
- * @type PIXI.BaseTexture
+ * @type Object
  */
 Object.defineProperty(Bitmap.prototype, 'baseTexture', {
     get: function() {
@@ -1090,9 +1118,9 @@ Object.defineProperty(Bitmap.prototype, 'smooth', {
             this._smooth = value;
             if(this.__baseTexture){
                 if (this._smooth) {
-                    this._baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
+                    RendererFactory.setScaleMode(this._baseTexture, RendererFactory.SCALE_MODE_LINEAR);
                 } else {
-                    this._baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+                    RendererFactory.setScaleMode(this._baseTexture, RendererFactory.SCALE_MODE_NEAREST);
                 }
             }
         }
@@ -1345,7 +1373,7 @@ Bitmap.prototype.drawText = function(text, x, y, maxWidth, lineHeight, align) {
         }
         context.save();
         context.font = this._makeFontNameText();
-        context.textAlign = align;
+        context.textAlign = align || 'left';
         context.textBaseline = 'alphabetic';
         context.globalAlpha = 1;
         this._drawTextOutline(text, tx, ty, maxWidth);
@@ -1763,6 +1791,9 @@ Graphics.initialize = function(width, height, type) {
     this._canUseSaturationBlend = false;
     this._hiddenCanvas = null;
 
+    // Initialize renderer backend based on type
+    this._initializeBackend();
+
     this._testCanvasBlendModes();
     this._modifyExistingElements();
     this._updateRealScale();
@@ -1771,6 +1802,19 @@ Graphics.initialize = function(width, height, type) {
     this._disableContextMenu();
     this._setupEventHandlers();
     this._setupCssFontLoading();
+
+    // Initialize filters that depend on the backend
+    this._initializeFilters();
+};
+
+Graphics._initializeBackend = function() {
+    RendererFactory.setBackend('threejs');
+    RendererStrategy.setStrategy('threejs');
+};
+
+Graphics._initializeFilters = function() {
+    Sprite._initVoidFilter();
+    WindowLayer._initVoidFilter();
 };
 
 
@@ -1798,7 +1842,7 @@ Graphics.canUseCssFontLoading = function(){
 Graphics.frameCount     = 0;
 
 /**
- * The alias of PIXI.blendModes.NORMAL.
+ * Blend mode: NORMAL.
  *
  * @static
  * @property BLEND_NORMAL
@@ -1808,7 +1852,7 @@ Graphics.frameCount     = 0;
 Graphics.BLEND_NORMAL   = 0;
 
 /**
- * The alias of PIXI.blendModes.ADD.
+ * Blend mode: ADD.
  *
  * @static
  * @property BLEND_ADD
@@ -1818,7 +1862,7 @@ Graphics.BLEND_NORMAL   = 0;
 Graphics.BLEND_ADD      = 1;
 
 /**
- * The alias of PIXI.blendModes.MULTIPLY.
+ * Blend mode: MULTIPLY.
  *
  * @static
  * @property BLEND_MULTIPLY
@@ -1828,7 +1872,7 @@ Graphics.BLEND_ADD      = 1;
 Graphics.BLEND_MULTIPLY = 2;
 
 /**
- * The alias of PIXI.blendModes.SCREEN.
+ * Blend mode: SCREEN.
  *
  * @static
  * @property BLEND_SCREEN
@@ -1872,10 +1916,7 @@ Graphics.render = function(stage) {
     if (this._skipCount === 0) {
         var startTime = Date.now();
         if (stage) {
-            this._renderer.render(stage);
-            if (this._renderer.gl && this._renderer.gl.flush) {
-                this._renderer.gl.flush();
-            }
+            RendererStrategy.render(this._renderer, stage);
         }
         var endTime = Date.now();
         var elapsed = endTime - startTime;
@@ -1896,7 +1937,7 @@ Graphics.render = function(stage) {
  * @return {Boolean} True if the renderer type is WebGL
  */
 Graphics.isWebGL = function() {
-    return this._renderer && this._renderer.type === PIXI.RENDERER_TYPE.WEBGL;
+    return RendererStrategy.isWebGL(this._renderer);
 };
 
 /**
@@ -2223,12 +2264,10 @@ Graphics.isInsideCanvas = function(x, y) {
 };
 
 /**
- * Calls pixi.js garbage collector
+ * Calls renderer garbage collector
  */
 Graphics.callGC = function() {
-    if (Graphics.isWebGL()) {
-        Graphics._renderer.textureGC.run();
-    }
+    RendererStrategy.callGC(Graphics._renderer);
 };
 
 
@@ -2406,7 +2445,7 @@ Graphics._testCanvasBlendModes = function() {
     canvas = document.createElement('canvas');
     canvas.width = 1;
     canvas.height = 1;
-    context = canvas.getContext('2d');
+    context = canvas.getContext('2d', { willReadFrequently: true });
     context.globalCompositeOperation = 'source-over';
     context.fillStyle = 'white';
     context.fillRect(0, 0, 1, 1);
@@ -2577,26 +2616,11 @@ Graphics._paintUpperCanvas = function() {
  * @private
  */
 Graphics._createRenderer = function() {
-    PIXI.dontSayHello = true;
     var width = this._width;
     var height = this._height;
-    var options = { view: this._canvas };
+    var options = { view: this._canvas, type: this._rendererType };
     try {
-        switch (this._rendererType) {
-        case 'canvas':
-            this._renderer = new PIXI.CanvasRenderer(width, height, options);
-            break;
-        case 'webgl':
-            this._renderer = new PIXI.WebGLRenderer(width, height, options);
-            break;
-        default:
-            this._renderer = PIXI.autoDetectRenderer(width, height, options);
-            break;
-        }
-
-        if(this._renderer && this._renderer.textureGC)
-            this._renderer.textureGC.maxIdle = 1;
-
+        this._renderer = RendererStrategy.createRenderer(width, height, options);
     } catch (e) {
         this._renderer = null;
     }
@@ -2609,7 +2633,7 @@ Graphics._createRenderer = function() {
  */
 Graphics._updateRenderer = function() {
     if (this._renderer) {
-        this._renderer.resize(this._width, this._height);
+        RendererStrategy.resize(this._renderer, this._width, this._height);
     }
 };
 
@@ -2652,7 +2676,7 @@ Graphics._createModeBox = function() {
     text.style.color = 'white';
     text.style.textAlign = 'center';
     text.style.textShadow = '1px 1px 0 rgba(0,0,0,0.5)';
-    text.innerHTML = this.isWebGL() ? 'WebGL mode' : 'Canvas mode';
+    text.innerHTML = RendererStrategy.getModeText(this._renderer);
 
     document.body.appendChild(box);
     box.appendChild(text);
@@ -3691,7 +3715,7 @@ TouchInput._setupEventHandlers = function() {
     document.addEventListener('mousedown', this._onMouseDown.bind(this));
     document.addEventListener('mousemove', this._onMouseMove.bind(this));
     document.addEventListener('mouseup', this._onMouseUp.bind(this));
-    document.addEventListener('wheel', this._onWheel.bind(this));
+    document.addEventListener('wheel', this._onWheel.bind(this), isSupportPassive ? {passive: false} : false);
     document.addEventListener('touchstart', this._onTouchStart.bind(this), isSupportPassive ? {passive: false} : false);
     document.addEventListener('touchmove', this._onTouchMove.bind(this), isSupportPassive ? {passive: false} : false);
     document.addEventListener('touchend', this._onTouchEnd.bind(this));
@@ -3946,15 +3970,19 @@ function Sprite() {
     this.initialize.apply(this, arguments);
 }
 
-Sprite.prototype = Object.create(PIXI.Sprite.prototype);
+Sprite.prototype = Object.create(ThreeSprite.prototype);
 Sprite.prototype.constructor = Sprite;
 
-Sprite.voidFilter = new PIXI.filters.VoidFilter();
+Sprite.voidFilter = null;
+
+Sprite._initVoidFilter = function() {
+    Sprite.voidFilter = RendererFactory.createVoidFilter();
+};
 
 Sprite.prototype.initialize = function(bitmap) {
-    var texture = new PIXI.Texture(new PIXI.BaseTexture());
+    var texture = RendererFactory.createTexture(RendererFactory.createBaseTexture(document.createElement('canvas')));
 
-    PIXI.Sprite.call(this, texture);
+    ThreeSprite.call(this, texture);
 
     this._bitmap = null;
     this._frame = new Rectangle();
@@ -4251,14 +4279,14 @@ Sprite.prototype._needsTint = function() {
 Sprite.prototype._createTinter = function(w, h) {
     if (!this._canvas) {
         this._canvas = document.createElement('canvas');
-        this._context = this._canvas.getContext('2d');
+        this._context = this._canvas.getContext('2d', { willReadFrequently: true });
     }
 
     this._canvas.width = w;
     this._canvas.height = h;
 
     if (!this._tintTexture) {
-        this._tintTexture = new PIXI.BaseTexture(this._canvas);
+        this._tintTexture = RendererFactory.createBaseTexture(this._canvas);
     }
 
     this._tintTexture.width = w;
@@ -4327,9 +4355,6 @@ Sprite.prototype._executeTint = function(x, y, w, h) {
     context.drawImage(this._bitmap.canvas, x, y, w, h, 0, 0, w, h);
 };
 
-Sprite.prototype._renderCanvas_PIXI = PIXI.Sprite.prototype._renderCanvas;
-Sprite.prototype._renderWebGL_PIXI = PIXI.Sprite.prototype._renderWebGL;
-
 /**
  * @method _renderCanvas
  * @param {Object} renderer
@@ -4342,72 +4367,9 @@ Sprite.prototype._renderCanvas = function(renderer) {
     if(this.bitmap && !this.bitmap.isReady()){
         return;
     }
-
-    if (this.texture.frame.width > 0 && this.texture.frame.height > 0) {
-        this._renderCanvas_PIXI(renderer);
-    }
 };
 
-/**
- * checks if we need to speed up custom blendmodes
- * @param renderer
- * @private
- */
-Sprite.prototype._speedUpCustomBlendModes = function(renderer) {
-    var picture = renderer.plugins.picture;
-    var blend = this.blendMode;
-    if (renderer.renderingToScreen && renderer._activeRenderTarget.root) {
-        if (picture.drawModes[blend]) {
-            var stage = renderer._lastObjectRendered;
-            var f = stage._filters;
-            if (!f || !f[0]) {
-                setTimeout(function () {
-                    var f = stage._filters;
-                    if (!f || !f[0]) {
-                        stage.filters = [Sprite.voidFilter];
-                        stage.filterArea = new PIXI.Rectangle(0, 0, Graphics.width, Graphics.height);
-                    }
-                }, 0);
-            }
-        }
-    }
-};
-
-/**
- * @method _renderWebGL
- * @param {Object} renderer
- * @private
- */
-Sprite.prototype._renderWebGL = function(renderer) {
-    if (this.bitmap) {
-        this.bitmap.touch();
-    }
-    if(this.bitmap && !this.bitmap.isReady()){
-        return;
-    }
-    if (this.texture.frame.width > 0 && this.texture.frame.height > 0) {
-        if (this._bitmap) {
-            this._bitmap.checkDirty();
-        }
-
-        //copy of pixi-v4 internal code
-        this.calculateVertices();
-
-        if (this.pluginName === 'sprite' && this._isPicture) {
-            // use heavy renderer, which reduces artifacts and applies corrent blendMode,
-            // but does not use multitexture optimization
-            this._speedUpCustomBlendModes(renderer);
-            renderer.setObjectRenderer(renderer.plugins.picture);
-            renderer.plugins.picture.render(this);
-        } else {
-            // use pixi super-speed renderer
-            renderer.setObjectRenderer(renderer.plugins[this.pluginName]);
-			renderer.plugins[this.pluginName].render(this);
-        }
-    }
-};
-
-// The important members from Pixi.js
+// The important members
 
 /**
  * The visibility of the sprite.
@@ -4523,11 +4485,12 @@ function Tilemap() {
     this.initialize.apply(this, arguments);
 }
 
-Tilemap.prototype = Object.create(PIXI.Container.prototype);
+Tilemap.prototype = Object.create(ThreeContainer.prototype);
 Tilemap.prototype.constructor = Tilemap;
 
 Tilemap.prototype.initialize = function() {
-    PIXI.Container.call(this);
+    ThreeContainer.call(this);
+    this._needsRepaint = false;
 
     this._margin = 20;
     this._width = Graphics.width + this._margin * 2;
@@ -4753,7 +4716,7 @@ Tilemap.prototype.updateTransform = function() {
         this._needsRepaint = false;
     }
     this._sortChildren();
-    PIXI.Container.prototype.updateTransform.call(this);
+    ThreeContainer.prototype.updateTransform.call(this);
 };
 
 /**
@@ -5428,7 +5391,7 @@ Tilemap.WATERFALL_AUTOTILE_TABLE = [
     [[2,0],[3,0],[2,1],[3,1]],[[0,0],[3,0],[0,1],[3,1]]
 ];
 
-// The important members from Pixi.js
+// The important members
 
 /**
  * [read-only] The array of children of the tilemap.
@@ -5492,11 +5455,6 @@ function ShaderTilemap() {
 ShaderTilemap.prototype = Object.create(Tilemap.prototype);
 ShaderTilemap.prototype.constructor = ShaderTilemap;
 
-// we need this constant for some platforms (Samsung S4, S5, Tab4, HTC One H8)
-PIXI.glCore.VertexArrayObject.FORCE_NATIVE = true;
-PIXI.settings.GC_MODE = PIXI.GC_MODES.AUTO;
-PIXI.tilemap.TileRenderer.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
-PIXI.tilemap.TileRenderer.DO_CLEAR = true;
 
 /**
  * Uploads animation state in renderer
@@ -5507,32 +5465,34 @@ PIXI.tilemap.TileRenderer.DO_CLEAR = true;
 ShaderTilemap.prototype._hackRenderer = function(renderer) {
     var af = this.animationFrame % 4;
     if (af==3) af = 1;
-    renderer.plugins.tilemap.tileAnim[0] = af * this._tileWidth;
-    renderer.plugins.tilemap.tileAnim[1] = (this.animationFrame % 3) * this._tileHeight;
+    if (renderer.plugins && renderer.plugins.tilemap) {
+        renderer.plugins.tilemap.tileAnim[0] = af * this._tileWidth;
+        renderer.plugins.tilemap.tileAnim[1] = (this.animationFrame % 3) * this._tileHeight;
+    }
     return renderer;
 };
 
 /**
- * PIXI render method
+ * Render method
  *
  * @method renderCanvas
- * @param {Object} pixi renderer
+ * @param {Object} renderer
  */
 ShaderTilemap.prototype.renderCanvas = function(renderer) {
     this._hackRenderer(renderer);
-    PIXI.Container.prototype.renderCanvas.call(this, renderer);
+    ThreeContainer.prototype.renderCanvas.call(this, renderer);
 };
 
 
 /**
- * PIXI render method
+ * Render method
  *
  * @method renderWebGL
- * @param {Object} pixi renderer
+ * @param {Object} renderer
  */
 ShaderTilemap.prototype.renderWebGL = function(renderer) {
     this._hackRenderer(renderer);
-    PIXI.Container.prototype.renderWebGL.call(this, renderer);
+    ThreeContainer.prototype.renderWebGL.call(this, renderer);
 };
 
 /**
@@ -5554,7 +5514,7 @@ ShaderTilemap.prototype.refresh = function() {
  * @method updateBitmaps
  */
 ShaderTilemap.prototype.refreshTileset = function() {
-    var bitmaps = this.bitmaps.map(function(x) { return x._baseTexture ? new PIXI.Texture(x._baseTexture) : x; } );
+    var bitmaps = this.bitmaps.map(function(x) { return x._baseTexture ? RendererFactory.createTexture(x._baseTexture) : x; } );
     this.lowerLayer.setBitmaps(bitmaps);
     this.upperLayer.setBitmaps(bitmaps);
 };
@@ -5581,8 +5541,41 @@ ShaderTilemap.prototype.updateTransform = function() {
         this._paintAllTiles(startX, startY);
         this._needsRepaint = false;
     }
+    // Three.js 백엔드: renderWebGL/renderCanvas가 호출되지 않으므로
+    // updateTransform에서 tileAnim을 RectLayer에 직접 전파
+    this._updateTileAnimForThree();
+    // 물 셰이더 시간 갱신 + 라이트 방향 동기화 (매 프레임)
+    if (typeof ThreeWaterShader !== 'undefined') {
+        ThreeWaterShader._time += 1 / 60;
+        ThreeWaterShader.updateAllWaterMeshes(this, ThreeWaterShader._time);
+        ThreeWaterShader.syncLightDirection(this);
+    }
     this._sortChildren();
-    PIXI.Container.prototype.updateTransform.call(this);
+    ThreeContainer.prototype.updateTransform.call(this);
+};
+
+/**
+ * Three.js 백엔드용: 물 타일 애니메이션 오프셋을 RectLayer에 전파
+ * (PIXI에서는 _hackRenderer → renderer.plugins.tilemap.tileAnim으로 처리)
+ */
+ShaderTilemap.prototype._updateTileAnimForThree = function() {
+    var af = this.animationFrame % 4;
+    if (af === 3) af = 1;
+    var tileAnimX = af * this._tileWidth;
+    var tileAnimY = (this.animationFrame % 3) * this._tileHeight;
+    var layers = [this.lowerLayer, this.upperLayer];
+    for (var i = 0; i < layers.length; i++) {
+        var layer = layers[i];
+        if (layer && layer.children) {
+            for (var j = 0; j < layer.children.length; j++) {
+                var rect = layer.children[j];
+                if (rect && rect._tileAnimX !== undefined) {
+                    rect._tileAnimX = tileAnimX;
+                    rect._tileAnimY = tileAnimY;
+                }
+            }
+        }
+    }
 };
 
 /**
@@ -5601,15 +5594,20 @@ ShaderTilemap.prototype._createLayers = function() {
 
     if (!this.lowerZLayer) {
         //@hackerham: create layers only in initialization. Doesn't depend on width/height
-        this.addChild(this.lowerZLayer = new PIXI.tilemap.ZLayer(this, 0));
-        this.addChild(this.upperZLayer = new PIXI.tilemap.ZLayer(this, 4));
-
         var parameters = PluginManager.parameters('ShaderTilemap');
         var useSquareShader = Number(parameters.hasOwnProperty('squareShader') ? parameters['squareShader'] : 0);
 
-        this.lowerZLayer.addChild(this.lowerLayer = new PIXI.tilemap.CompositeRectTileLayer(0, [], useSquareShader));
+        var lowerResult = RendererFactory.createTilemapLayer(0, [], useSquareShader);
+        this.lowerZLayer = lowerResult.zLayer;
+        this.lowerLayer = lowerResult.layer;
+        this.addChild(this.lowerZLayer);
+
+        var upperResult = RendererFactory.createTilemapLayer(4, [], useSquareShader);
+        this.upperZLayer = upperResult.zLayer;
+        this.upperLayer = upperResult.layer;
+        this.addChild(this.upperZLayer);
+
         this.lowerLayer.shadowColor = new Float32Array([0.0, 0.0, 0.0, 0.5]);
-        this.upperZLayer.addChild(this.upperLayer = new PIXI.tilemap.CompositeRectTileLayer(4, [], useSquareShader));
     }
 };
 
@@ -5818,6 +5816,8 @@ ShaderTilemap.prototype._drawAutotile = function(layer, tileId, dx, dy) {
     var table = autotileTable[shape];
     var w1 = this._tileWidth / 2;
     var h1 = this._tileHeight / 2;
+    // A1 타일은 kind를 addRect에 전달 (kind별 셰이더 설정용)
+    var a1Kind = Tilemap.isTileA1(tileId) ? kind : -1;
     for (var i = 0; i < 4; i++) {
         var qsx = table[i][0];
         var qsy = table[i][1];
@@ -5834,10 +5834,10 @@ ShaderTilemap.prototype._drawAutotile = function(layer, tileId, dx, dy) {
             }
             var sx2 = (bx * 2 + qsx2) * w1;
             var sy2 = (by * 2 + qsy2) * h1;
-            layer.addRect(setNumber, sx2, sy2, dx1, dy1, w1, h1, animX, animY);
-            layer.addRect(setNumber, sx1, sy1, dx1, dy1+h1/2, w1, h1/2, animX, animY);
+            layer.addRect(setNumber, sx2, sy2, dx1, dy1, w1, h1, animX, animY, a1Kind);
+            layer.addRect(setNumber, sx1, sy1, dx1, dy1+h1/2, w1, h1/2, animX, animY, a1Kind);
         } else {
-            layer.addRect(setNumber, sx1, sy1, dx1, dy1, w1, h1, animX, animY);
+            layer.addRect(setNumber, sx1, sy1, dx1, dy1, w1, h1, animX, animY, a1Kind);
         }
     }
 };
@@ -5907,13 +5907,15 @@ function TilingSprite() {
     this.initialize.apply(this, arguments);
 }
 
-TilingSprite.prototype = Object.create(PIXI.extras.PictureTilingSprite.prototype);
+TilingSprite.prototype = Object.create(ThreeSprite.prototype);
 TilingSprite.prototype.constructor = TilingSprite;
 
 TilingSprite.prototype.initialize = function(bitmap) {
-    var texture = new PIXI.Texture(new PIXI.BaseTexture());
+    var texture = RendererFactory.createTexture(RendererFactory.createBaseTexture(document.createElement('canvas')));
 
-    PIXI.extras.PictureTilingSprite.call(this, texture);
+    ThreeSprite.call(this, texture);
+    this._tilePosition = { x: 0, y: 0 };
+    this._tileScale = { x: 1, y: 1 };
 
     this._bitmap = null;
     this._width = 0;
@@ -5931,9 +5933,6 @@ TilingSprite.prototype.initialize = function(bitmap) {
     this.bitmap = bitmap;
 };
 
-TilingSprite.prototype._renderCanvas_PIXI = PIXI.extras.PictureTilingSprite.prototype._renderCanvas;
-TilingSprite.prototype._renderWebGL_PIXI = PIXI.extras.PictureTilingSprite.prototype._renderWebGL;
-
 /**
  * @method _renderCanvas
  * @param {Object} renderer
@@ -5942,9 +5941,6 @@ TilingSprite.prototype._renderWebGL_PIXI = PIXI.extras.PictureTilingSprite.proto
 TilingSprite.prototype._renderCanvas = function(renderer) {
     if (this._bitmap) {
         this._bitmap.touch();
-    }
-    if (this.texture.frame.width > 0 && this.texture.frame.height > 0) {
-        this._renderCanvas_PIXI(renderer);
     }
 };
 
@@ -5957,11 +5953,8 @@ TilingSprite.prototype._renderWebGL = function(renderer) {
     if (this._bitmap) {
         this._bitmap.touch();
     }
-    if (this.texture.frame.width > 0 && this.texture.frame.height > 0) {
-        if (this._bitmap) {
-            this._bitmap.checkDirty();
-        }
-        this._renderWebGL_PIXI(renderer);
+    if (this._bitmap) {
+        this._bitmap.checkDirty();
     }
 };
 
@@ -6055,12 +6048,46 @@ TilingSprite.prototype.setFrame = function(x, y, width, height) {
  * @private
  */
 TilingSprite.prototype.updateTransform = function() {
-    this.tilePosition.x = Math.round(-this.origin.x);
-    this.tilePosition.y = Math.round(-this.origin.y);
-    this.updateTransformTS();
+    this._tileOriginX = Math.round(-this.origin.x);
+    this._tileOriginY = Math.round(-this.origin.y);
+    this._tilePosition.x = this._tileOriginX;
+    this._tilePosition.y = this._tileOriginY;
+    ThreeSprite.prototype.updateTransform.call(this);
 };
 
-TilingSprite.prototype.updateTransformTS = PIXI.extras.TilingSprite.prototype.updateTransform;
+/**
+ * Override _updateTexture to apply RepeatWrapping for tiling.
+ */
+TilingSprite.prototype._updateTexture = function() {
+    ThreeSprite.prototype._updateTexture.call(this);
+    if (this._threeTexture) {
+        this._threeTexture.wrapS = THREE.RepeatWrapping;
+        this._threeTexture.wrapT = THREE.RepeatWrapping;
+        this._threeTexture.needsUpdate = true;
+    }
+};
+
+/**
+ * Override syncTransform to handle tile offset and repeat via UV manipulation.
+ */
+TilingSprite.prototype.syncTransform = function() {
+    ThreeSprite.prototype.syncTransform.call(this);
+
+    if (this._threeTexture && this._frameWidth > 0 && this._frameHeight > 0) {
+        var tw = this._threeTexture.image ? this._threeTexture.image.width : this._frameWidth;
+        var th = this._threeTexture.image ? this._threeTexture.image.height : this._frameHeight;
+
+        if (tw > 0 && th > 0) {
+            var offsetX = (this._tilePosition.x / tw) || 0;
+            var offsetY = (this._tilePosition.y / th) || 0;
+            var repeatX = (this._frameWidth / (tw * this._tileScale.x)) || 1;
+            var repeatY = (this._frameHeight / (th * this._tileScale.y)) || 1;
+
+            this._threeTexture.offset.set(-offsetX, -offsetY);
+            this._threeTexture.repeat.set(repeatX, repeatY);
+        }
+    }
+};
 
 /**
  * @method _onBitmapLoad
@@ -6087,25 +6114,7 @@ TilingSprite.prototype._refresh = function() {
 };
 
 
-TilingSprite.prototype._speedUpCustomBlendModes = Sprite.prototype._speedUpCustomBlendModes;
-
-/**
- * @method _renderWebGL
- * @param {Object} renderer
- * @private
- */
-TilingSprite.prototype._renderWebGL = function(renderer) {
-    if (this._bitmap) {
-        this._bitmap.touch();
-        this._bitmap.checkDirty();
-    }
-
-    this._speedUpCustomBlendModes(renderer);
-
-    this._renderWebGL_PIXI(renderer);
-};
-
-// The important members from Pixi.js
+// The important members
 
 /**
  * The visibility of the tiling sprite.
@@ -6139,13 +6148,13 @@ function ScreenSprite() {
     this.initialize.apply(this, arguments);
 }
 
-ScreenSprite.prototype = Object.create(PIXI.Container.prototype);
+ScreenSprite.prototype = Object.create(ThreeContainer.prototype);
 ScreenSprite.prototype.constructor = ScreenSprite;
 
 ScreenSprite.prototype.initialize = function () {
-    PIXI.Container.call(this);
+    ThreeContainer.call(this);
 
-    this._graphics = new PIXI.Graphics();
+    this._graphics = RendererFactory.createGraphicsNode();
     this.addChild(this._graphics);
     this.opacity = 0;
 
@@ -6259,11 +6268,11 @@ function Window() {
     this.initialize.apply(this, arguments);
 }
 
-Window.prototype = Object.create(PIXI.Container.prototype);
+Window.prototype = Object.create(ThreeContainer.prototype);
 Window.prototype.constructor = Window;
 
 Window.prototype.initialize = function() {
-    PIXI.Container.call(this);
+    ThreeContainer.call(this);
 
     this._isWindow = true;
     this._windowskin = null;
@@ -6613,7 +6622,7 @@ Window.prototype.updateTransform = function() {
     this._updateArrows();
     this._updatePauseSign();
     this._updateContents();
-    PIXI.Container.prototype.updateTransform.call(this);
+    ThreeContainer.prototype.updateTransform.call(this);
 };
 
 /**
@@ -6621,7 +6630,7 @@ Window.prototype.updateTransform = function() {
  * @private
  */
 Window.prototype._createAllParts = function() {
-    this._windowSpriteContainer = new PIXI.Container();
+    this._windowSpriteContainer = RendererFactory.createContainer();
     this._windowBackSprite = new Sprite();
     this._windowCursorSprite = new Sprite();
     this._windowFrameSprite = new Sprite();
@@ -6865,7 +6874,7 @@ Window.prototype._updatePauseSign = function() {
     sprite.visible = this.isOpen();
 };
 
-// The important members from Pixi.js
+// The important members
 
 /**
  * The visibility of the window.
@@ -6946,35 +6955,32 @@ function WindowLayer() {
     this.initialize.apply(this, arguments);
 }
 
-WindowLayer.prototype = Object.create(PIXI.Container.prototype);
+WindowLayer.prototype = Object.create(ThreeContainer.prototype);
 WindowLayer.prototype.constructor = WindowLayer;
 
 WindowLayer.prototype.initialize = function() {
-    PIXI.Container.call(this);
+    ThreeContainer.call(this);
     this._width = 0;
     this._height = 0;
     this._tempCanvas = null;
     this._translationMatrix = [1, 0, 0, 0, 1, 0, 0, 0, 1];
 
-    this._windowMask = new PIXI.Graphics();
+    this._windowMask = RendererFactory.createGraphicsNode();
     this._windowMask.beginFill(0xffffff, 1);
     this._windowMask.drawRect(0, 0, 0, 0);
     this._windowMask.endFill();
-    this._windowRect = this._windowMask.graphicsData[0].shape;
+    this._windowRect = { x: 0, y: 0, width: 0, height: 0 };
 
     this._renderSprite = null;
-    this.filterArea = new PIXI.Rectangle();
+    this.filterArea = new Rectangle();
     this.filters = [WindowLayer.voidFilter];
-
-    //temporary fix for memory leak bug
-    this.on('removed', this.onRemoveAsAChild);
 };
 
-WindowLayer.prototype.onRemoveAsAChild = function() {
-    this.removeChildren();
-}
+WindowLayer.voidFilter = null;
 
-WindowLayer.voidFilter = new PIXI.filters.VoidFilter();
+WindowLayer._initVoidFilter = function() {
+    WindowLayer.voidFilter = RendererFactory.createVoidFilter();
+};
 
 /**
  * The width of the window layer in pixels.
@@ -7111,47 +7117,7 @@ WindowLayer.prototype._canvasClearWindowRect = function(renderSession, window) {
  * @private
  */
 WindowLayer.prototype.renderWebGL = function(renderer) {
-    if (!this.visible || !this.renderable) {
-        return;
-    }
-
-    if (this.children.length==0) {
-        return;
-    }
-
-    renderer.flush();
-    this.filterArea.copy(this);
-    renderer.filterManager.pushFilter(this, this.filters);
-    renderer.currentRenderer.start();
-
-    var shift = new PIXI.Point();
-    var rt = renderer._activeRenderTarget;
-    var projectionMatrix = rt.projectionMatrix;
-    shift.x = Math.round((projectionMatrix.tx + 1) / 2 * rt.sourceFrame.width);
-    shift.y = Math.round((projectionMatrix.ty + 1) / 2 * rt.sourceFrame.height);
-
-    for (var i = 0; i < this.children.length; i++) {
-        var child = this.children[i];
-        if (child._isWindow && child.visible && child.openness > 0) {
-            this._maskWindow(child, shift);
-            renderer.maskManager.pushScissorMask(this, this._windowMask);
-            renderer.clear();
-            renderer.maskManager.popScissorMask();
-            renderer.currentRenderer.start();
-            child.renderWebGL(renderer);
-            renderer.currentRenderer.flush();
-        }
-    }
-
-    renderer.flush();
-    renderer.filterManager.popFilter();
-    renderer.maskManager.popScissorMask();
-
-    for (var j = 0; j < this.children.length; j++) {
-        if (!this.children[j]._isWindow) {
-            this.children[j].renderWebGL(renderer);
-        }
-    }
+    // No-op: Three.js handles window rendering via scene graph
 };
 
 /**
@@ -7169,7 +7135,7 @@ WindowLayer.prototype._maskWindow = function(window, shift) {
     rect.height = window.height * window._openness / 255;
 };
 
-// The important members from Pixi.js
+// The important members
 
 /**
  * The x coordinate of the window layer.
@@ -7243,11 +7209,11 @@ function Weather() {
     this.initialize.apply(this, arguments);
 }
 
-Weather.prototype = Object.create(PIXI.Container.prototype);
+Weather.prototype = Object.create(ThreeContainer.prototype);
 Weather.prototype.constructor = Weather;
 
 Weather.prototype.initialize = function() {
-    PIXI.Container.call(this);
+    ThreeContainer.call(this);
 
     this._width = Graphics.width;
     this._height = Graphics.height;
@@ -7437,14 +7403,14 @@ Weather.prototype._rebornSprite = function(sprite) {
  * The color matrix filter for WebGL.
  *
  * @class ToneFilter
- * @extends PIXI.Filter
+ * @extends ThreeColorMatrixFilter
  * @constructor
  */
 function ToneFilter() {
-    PIXI.filters.ColorMatrixFilter.call(this);
+    ThreeColorMatrixFilter.call(this);
 }
 
-ToneFilter.prototype = Object.create(PIXI.filters.ColorMatrixFilter.prototype);
+ToneFilter.prototype = Object.create(ThreeColorMatrixFilter.prototype);
 ToneFilter.prototype.constructor = ToneFilter;
 
 /**
@@ -7504,11 +7470,11 @@ function ToneSprite() {
     this.initialize.apply(this, arguments);
 }
 
-ToneSprite.prototype = Object.create(PIXI.Container.prototype);
+ToneSprite.prototype = Object.create(ThreeContainer.prototype);
 ToneSprite.prototype.constructor = ToneSprite;
 
 ToneSprite.prototype.initialize = function() {
-    PIXI.Container.call(this);
+    ThreeContainer.call(this);
     this.clear();
 };
 
@@ -7609,11 +7575,11 @@ function Stage() {
     this.initialize.apply(this, arguments);
 }
 
-Stage.prototype = Object.create(PIXI.Container.prototype);
+Stage.prototype = Object.create(ThreeContainer.prototype);
 Stage.prototype.constructor = Stage;
 
 Stage.prototype.initialize = function() {
-    PIXI.Container.call(this);
+    ThreeContainer.call(this);
 
     // The interactive flag causes a memory leak.
     this.interactive = false;

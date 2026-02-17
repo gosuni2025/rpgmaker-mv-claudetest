@@ -1826,19 +1826,13 @@ SceneManager.initGraphics = function() {
     if (Utils.isOptionValid('showfps')) {
         Graphics.showFps();
     }
-    if (type === 'webgl') {
+    if (type === 'webgl' || type === 'threejs') {
         this.checkWebGL();
     }
 };
 
 SceneManager.preferableRendererType = function() {
-    if (Utils.isOptionValid('canvas')) {
-        return 'canvas';
-    } else if (Utils.isOptionValid('webgl')) {
-        return 'webgl';
-    } else {
-        return 'auto';
-    }
+    return 'threejs';
 };
 
 SceneManager.shouldUseCanvasRenderer = function() {
