@@ -844,54 +844,6 @@
       "imageScale": 1.2
     },
     {
-      "id": 3,
-      "name": "OBJ3",
-      "x": 22,
-      "y": 12,
-      "tileIds": [
-        [
-          [
-            0,
-            0,
-            0,
-            0
-          ]
-        ]
-      ],
-      "width": 1,
-      "height": 1,
-      "zHeight": 0,
-      "passability": [
-        [
-          false
-        ]
-      ]
-    },
-    {
-      "id": 4,
-      "name": "OBJ4",
-      "x": 22,
-      "y": 13,
-      "tileIds": [
-        [
-          [
-            0,
-            0,
-            0,
-            0
-          ]
-        ]
-      ],
-      "width": 1,
-      "height": 1,
-      "zHeight": 0,
-      "passability": [
-        [
-          false
-        ]
-      ]
-    },
-    {
       "id": 5,
       "name": "Sprite-0003",
       "x": 13,
@@ -2241,30 +2193,6 @@
           false,
           false,
           false,
-          false
-        ]
-      ]
-    },
-    {
-      "id": 7,
-      "name": "OBJ7",
-      "x": 22,
-      "y": 12,
-      "tileIds": [
-        [
-          [
-            0,
-            0,
-            0,
-            0
-          ]
-        ]
-      ],
-      "width": 1,
-      "height": 1,
-      "zHeight": 0,
-      "passability": [
-        [
           false
         ]
       ]
