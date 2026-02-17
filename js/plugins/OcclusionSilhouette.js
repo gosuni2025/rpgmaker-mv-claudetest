@@ -68,6 +68,9 @@
 (function() {
     'use strict';
 
+    // Three.js / Mode3D가 없는 환경에서는 실행하지 않음
+    if (typeof THREE === 'undefined' || typeof Mode3D === 'undefined') return;
+
     // 플러그인 파라미터 읽기
     var parameters = PluginManager.parameters('OcclusionSilhouette');
 

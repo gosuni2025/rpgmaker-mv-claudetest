@@ -31,6 +31,9 @@
 
 (function() {
 
+    // Three.js / Mode3D가 없는 환경에서는 실행하지 않음
+    if (typeof THREE === 'undefined' || typeof Mode3D === 'undefined') return;
+
     var parameters = PluginManager.parameters('SkyBox');
     var skyboxFolder = String(parameters['Skybox Folder'] || 'skybox');
     var defaultPanoramaFile = String(parameters['Panorama File'] || 'sky_panorama.png');
