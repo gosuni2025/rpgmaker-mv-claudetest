@@ -69,10 +69,10 @@ var $plugins = [
       "Fill Opacity": "0.35",
       "Outline Color": "#ffffff",
       "Outline Opacity": "0.8",
-      "Outline Width": "2",
-      "Pattern": "solid",
+      "Outline Width": "1",
+      "Pattern": "diagonal",
       "Pattern Scale": "8",
-      "Include Followers": "true"
+      "Include Followers": "false"
     }
   }
 ];
