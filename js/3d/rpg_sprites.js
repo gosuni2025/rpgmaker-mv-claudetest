@@ -2788,8 +2788,15 @@ Spriteset_Map.prototype.createMapObjects = function() {
         this._objectSprites.push(container);
 
         // Register as billboard for 3D mode
+        // 이미지 오브젝트: imgSprite를 빌보드로 등록 (anchor 기준 회전)
+        // 타일/애니메이션 오브젝트: container를 빌보드로 등록
         if (typeof Mode3D !== 'undefined') {
-            Mode3D.registerBillboard(container);
+            if (obj.imageName && container.children && container.children[0]) {
+                // 이미지 오브젝트: imgSprite의 anchor 기준으로 회전하도록
+                Mode3D.registerBillboard(container.children[0]);
+            } else {
+                Mode3D.registerBillboard(container);
+            }
         }
 
         // ShadowLight 활성 상태이면 material을 MeshPhongMaterial로 변환
@@ -3391,8 +3398,8 @@ Spriteset_Map.prototype.updateParallax = function() {
             // far plane의 80% 거리에 배치
             var farDist = cam.far * 0.8;
             mesh.position.copy(cam.position).addScaledVector(dir, farDist);
-            // 카메라를 정면으로 바라보도록 회전
-            mesh.lookAt(cam.position);
+            // 카메라와 정확히 같은 방향을 향하도록 quaternion 복사
+            mesh.quaternion.copy(cam.quaternion);
             // 패럴랙스 스크롤 오프셋을 sky mesh 텍스처에 적용
             if (mesh.material && mesh.material.map) {
                 var tex = mesh.material.map;
