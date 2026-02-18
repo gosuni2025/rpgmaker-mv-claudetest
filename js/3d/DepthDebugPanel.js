@@ -134,9 +134,9 @@
             saveToStorage();
         }
 
-        minusBtn.addEventListener('click', function() { applyStep(-param.step); });
-        plusBtn.addEventListener('click', function() { applyStep(param.step); });
-        zeroBtn.addEventListener('click', function() {
+        minusBtn.addEventListener('mouseup', function(e) { e.stopPropagation(); applyStep(-param.step); });
+        plusBtn.addEventListener('mouseup', function(e) { e.stopPropagation(); applyStep(param.step); });
+        zeroBtn.addEventListener('mouseup', function(e) { e.stopPropagation();
             window.DepthDebugConfig[param.key] = 0;
             valEl.textContent = formatVal(0);
             saveToStorage();
