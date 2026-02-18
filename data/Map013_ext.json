@@ -1,0 +1,392 @@
+{
+  "objects": [
+    {
+      "id": 1,
+      "name": "OBJ1",
+      "x": 27,
+      "y": 12,
+      "tileIds": [
+        [
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 1,
+      "zHeight": 0,
+      "passability": [
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 2,
+      "name": "OBJ2",
+      "x": 37,
+      "y": 10,
+      "tileIds": [
+        [
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 1,
+      "zHeight": 0,
+      "passability": [
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 3,
+      "name": "OBJ3",
+      "x": 13,
+      "y": 25,
+      "tileIds": [
+        [
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 1,
+      "zHeight": 1,
+      "passability": [
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 4,
+      "name": "OBJ4",
+      "x": 44,
+      "y": 30,
+      "tileIds": [
+        [
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 1,
+      "zHeight": 0,
+      "passability": [
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 5,
+      "name": "OBJ5",
+      "x": 36,
+      "y": 39,
+      "tileIds": [
+        [
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 1,
+      "zHeight": 0,
+      "passability": [
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 6,
+      "name": "OBJ6",
+      "x": 58,
+      "y": 27,
+      "tileIds": [
+        [
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 1,
+      "zHeight": 0,
+      "passability": [
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 7,
+      "name": "OBJ7",
+      "x": 56,
+      "y": 50,
+      "tileIds": [
+        [
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 1,
+      "zHeight": 0,
+      "passability": [
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 8,
+      "name": "OBJ8",
+      "x": 45,
+      "y": 68,
+      "tileIds": [
+        [
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 1,
+      "zHeight": 0,
+      "passability": [
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 9,
+      "name": "OBJ9",
+      "x": 31,
+      "y": 55,
+      "tileIds": [
+        [
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 1,
+      "zHeight": 0,
+      "passability": [
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 10,
+      "name": "OBJ10",
+      "x": 51,
+      "y": 60,
+      "tileIds": [
+        [
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 1,
+      "zHeight": 0,
+      "passability": [
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 11,
+      "name": "OBJ11",
+      "x": 40,
+      "y": 84,
+      "tileIds": [
+        [
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 1,
+      "zHeight": 0,
+      "passability": [
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 12,
+      "name": "OBJ12",
+      "x": 32,
+      "y": 84,
+      "tileIds": [
+        [
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 1,
+      "zHeight": 0,
+      "passability": [
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 13,
+      "name": "OBJ13",
+      "x": 12,
+      "y": 67,
+      "tileIds": [
+        [
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 1,
+      "zHeight": 0,
+      "passability": [
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 14,
+      "name": "OBJ14",
+      "x": 14,
+      "y": 78,
+      "tileIds": [
+        [
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 1,
+      "zHeight": 0,
+      "passability": [
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 15,
+      "name": "OBJ15",
+      "x": 45,
+      "y": 68,
+      "tileIds": [
+        [
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 1,
+      "zHeight": 0,
+      "passability": [
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 16,
+      "name": "OBJ16",
+      "x": 51,
+      "y": 60,
+      "tileIds": [
+        [
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 1,
+      "zHeight": 0,
+      "passability": [
+        [
+          false
+        ]
+      ]
+    }
+  ],
+  "testStartPosition": {
+    "x": 48,
+    "y": 72
+  }
+}

@@ -24,5 +24,41 @@
     "scrollX": 0,
     "scrollY": 0
   },
-  null
+  {
+    "id": 9,
+    "expanded": false,
+    "name": "MAP009",
+    "order": 9,
+    "parentId": 8,
+    "scrollX": 0,
+    "scrollY": 0
+  },
+  {
+    "id": 10,
+    "expanded": false,
+    "name": "MAP010",
+    "order": 10,
+    "parentId": 0,
+    "scrollX": 0,
+    "scrollY": 0
+  },
+  null,
+  {
+    "id": 12,
+    "expanded": false,
+    "name": "World 1",
+    "order": 12,
+    "parentId": 0,
+    "scrollX": 0,
+    "scrollY": 0
+  },
+  {
+    "id": 13,
+    "expanded": false,
+    "name": "World 2",
+    "order": 13,
+    "parentId": 0,
+    "scrollX": 0,
+    "scrollY": 0
+  }
 ]
