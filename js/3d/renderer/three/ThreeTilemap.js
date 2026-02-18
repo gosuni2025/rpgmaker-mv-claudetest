@@ -595,7 +595,7 @@ ThreeTilemapRectLayer.prototype._buildUnifiedMesh = function(allRects, tileAnimX
 
         var drawZ = drawZArr[i] || 0;
         if (drawZ > maxDrawZ) maxDrawZ = drawZ;
-        var zOffset = elevationEnabled ? -drawZ * 0.01 : 0;
+        var zOffset = (is3DMode || elevationEnabled) ? -drawZ * 0.01 : 0;
 
         var sn = rect.setNumber;
 
@@ -762,7 +762,7 @@ ThreeTilemapRectLayer.prototype._buildShadowMesh = function(data) {
         var srcOff = i * 12;
         var posOff = i * 18;
         var drawZ = drawZArr[i] || 0;
-        var zOffset = elevationEnabled ? -drawZ * 0.01 : 0;
+        var zOffset = (is3DMode || elevationEnabled) ? -drawZ * 0.01 : 0;
 
         for (var j = 0; j < 6; j++) {
             posArray[posOff + j * 3]     = data.positions[srcOff + j * 2];
@@ -855,6 +855,8 @@ ThreeTilemapRectLayer.prototype._buildWaterTypeMesh = function(setNumber, meshKe
     var uvArray = new Float32Array(vertCount * 2);
     var uvBoundsArray = new Float32Array(vertCount * 4); // vec4(uMin, vMin, uMax, vMax)
 
+    var is3DMode = typeof ConfigManager !== 'undefined' && ConfigManager.mode3d;
+
     for (var ni = 0; ni < count; ni++) {
         var i = indices[ni];
         var srcOff = i * 12;
@@ -888,7 +890,7 @@ ThreeTilemapRectLayer.prototype._buildWaterTypeMesh = function(setNumber, meshKe
         var drawZArr = this._drawZData[setNumber] || [];
         var drawZ = drawZArr[i] || 0;
         var elevationEnabled = $dataMap && $dataMap.tileLayerElevation;
-        var zOffset = elevationEnabled ? -drawZ * 0.01 : 0;
+        var zOffset = (is3DMode || elevationEnabled) ? -drawZ * 0.01 : 0;
         for (var j = 0; j < 6; j++) {
             posArray[posOff + j * 3]     = data.positions[srcOff + j * 2];
             posArray[posOff + j * 3 + 1] = data.positions[srcOff + j * 2 + 1];
