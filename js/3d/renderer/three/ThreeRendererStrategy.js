@@ -301,45 +301,85 @@
         }
 
         // Assign render order for proper 2D layering
+        var _is3DMode = typeof ConfigManager !== 'undefined' && ConfigManager.mode3d;
         if (node._threeObj) {
-            // THREE.Mesh objects get renderOrder for depth-independent sorting
-            if (node._threeObj.isMesh) {
-                // 오브젝트 물 메시는 container보다 먼저 렌더링 (물 → 일반 타일 순서)
-                var meshChildren = node._threeObj.children;
-                if (meshChildren) {
-                    for (var t = 0; t < meshChildren.length; t++) {
-                        if (meshChildren[t].isMesh && meshChildren[t].userData && meshChildren[t].userData.isObjectWater) {
-                            meshChildren[t].renderOrder = rendererObj._drawOrderCounter++;
+            if (_is3DMode) {
+                // 3D 모드: depth buffer가 순서를 결정하므로
+                // 불투명(depthWrite) 오브젝트는 renderOrder=0, 반투명만 증분
+                if (node._threeObj.isMesh) {
+                    var meshChildren = node._threeObj.children;
+                    if (meshChildren) {
+                        for (var t = 0; t < meshChildren.length; t++) {
+                            if (meshChildren[t].isMesh) {
+                                var mat = meshChildren[t].material;
+                                if (mat && mat.transparent && !mat.alphaTest) {
+                                    meshChildren[t].renderOrder = rendererObj._drawOrderCounter++;
+                                } else {
+                                    meshChildren[t].renderOrder = 0;
+                                }
+                            }
+                        }
+                    }
+                    var nodeMat = node._threeObj.material;
+                    if (nodeMat && nodeMat.transparent && !nodeMat.alphaTest) {
+                        node._threeObj.renderOrder = rendererObj._drawOrderCounter++;
+                    } else {
+                        node._threeObj.renderOrder = 0;
+                    }
+                }
+                if (node._threeObj.isGroup) {
+                    var threeChildren = node._threeObj.children;
+                    for (var t = 0; t < threeChildren.length; t++) {
+                        if (threeChildren[t].isMesh && !threeChildren[t]._wrapper) {
+                            var mat = threeChildren[t].material;
+                            if (mat && mat.transparent && !mat.alphaTest) {
+                                threeChildren[t].renderOrder = rendererObj._drawOrderCounter++;
+                            } else {
+                                threeChildren[t].renderOrder = 0;
+                            }
                         }
                     }
                 }
-                node._threeObj.renderOrder = rendererObj._drawOrderCounter++;
-            }
-            // For Groups, traverse their direct THREE children that are meshes
-            // (e.g., internal meshes of ThreeGraphicsNode)
-            // Water meshes render before normal meshes so decoration tiles overlay correctly
-            if (node._threeObj.isGroup) {
-                var threeChildren = node._threeObj.children;
-                // 물 메시를 먼저, 일반 메시를 나중에 renderOrder 할당
-                for (var t = 0; t < threeChildren.length; t++) {
-                    if (threeChildren[t].isMesh && !threeChildren[t]._wrapper && threeChildren[t].userData && threeChildren[t].userData.isWaterMesh) {
-                        threeChildren[t].renderOrder = rendererObj._drawOrderCounter++;
+            } else {
+                // 2D 모드: 기존 renderOrder 증분 방식
+                // THREE.Mesh objects get renderOrder for depth-independent sorting
+                if (node._threeObj.isMesh) {
+                    // 오브젝트 물 메시는 container보다 먼저 렌더링 (물 → 일반 타일 순서)
+                    var meshChildren = node._threeObj.children;
+                    if (meshChildren) {
+                        for (var t = 0; t < meshChildren.length; t++) {
+                            if (meshChildren[t].isMesh && meshChildren[t].userData && meshChildren[t].userData.isObjectWater) {
+                                meshChildren[t].renderOrder = rendererObj._drawOrderCounter++;
+                            }
+                        }
                     }
+                    node._threeObj.renderOrder = rendererObj._drawOrderCounter++;
                 }
-                // 일반 메시: drawZ(maxDrawZ) 기준 정렬 후 renderOrder 할당
-                // 낮은 drawZ가 먼저 렌더링되어 높은 drawZ가 위에 그려짐
-                var normalMeshes = [];
-                for (var t = 0; t < threeChildren.length; t++) {
-                    if (threeChildren[t].isMesh && !threeChildren[t]._wrapper &&
-                        !(threeChildren[t].userData && threeChildren[t].userData.isWaterMesh)) {
-                        normalMeshes.push(threeChildren[t]);
+                // For Groups, traverse their direct THREE children that are meshes
+                // Water meshes render before normal meshes so decoration tiles overlay correctly
+                if (node._threeObj.isGroup) {
+                    var threeChildren = node._threeObj.children;
+                    // 물 메시를 먼저, 일반 메시를 나중에 renderOrder 할당
+                    for (var t = 0; t < threeChildren.length; t++) {
+                        if (threeChildren[t].isMesh && !threeChildren[t]._wrapper && threeChildren[t].userData && threeChildren[t].userData.isWaterMesh) {
+                            threeChildren[t].renderOrder = rendererObj._drawOrderCounter++;
+                        }
                     }
-                }
-                normalMeshes.sort(function(a, b) {
-                    return (a.userData.maxDrawZ || 0) - (b.userData.maxDrawZ || 0);
-                });
-                for (var t = 0; t < normalMeshes.length; t++) {
-                    normalMeshes[t].renderOrder = rendererObj._drawOrderCounter++;
+                    // 일반 메시: drawZ(maxDrawZ) 기준 정렬 후 renderOrder 할당
+                    // 낮은 drawZ가 먼저 렌더링되어 높은 drawZ가 위에 그려짐
+                    var normalMeshes = [];
+                    for (var t = 0; t < threeChildren.length; t++) {
+                        if (threeChildren[t].isMesh && !threeChildren[t]._wrapper &&
+                            !(threeChildren[t].userData && threeChildren[t].userData.isWaterMesh)) {
+                            normalMeshes.push(threeChildren[t]);
+                        }
+                    }
+                    normalMeshes.sort(function(a, b) {
+                        return (a.userData.maxDrawZ || 0) - (b.userData.maxDrawZ || 0);
+                    });
+                    for (var t = 0; t < normalMeshes.length; t++) {
+                        normalMeshes[t].renderOrder = rendererObj._drawOrderCounter++;
+                    }
                 }
             }
         }
@@ -528,6 +568,7 @@
                 }
             }
             renderer.autoClear = false;
+            renderer.clearDepth();
             renderer.render(scene, camera);
 
             // 가시성 복원

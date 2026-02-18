@@ -2634,7 +2634,7 @@ Spriteset_Map.prototype.createMapObjects = function() {
         container._mapObjName = obj.name || '';
         container._mapObjVisible = obj.visible !== false;
         container.visible = obj.visible !== false;
-        container.z = 5; // above upper tiles (z=4), same as upper characters
+        container.z = 3; // normal character layer (depth test handles upper tile occlusion)
         container._heightOffset = (obj.zHeight || 0) * th;
 
         if (obj.animationId && $dataAnimations && $dataAnimations[obj.animationId]) {

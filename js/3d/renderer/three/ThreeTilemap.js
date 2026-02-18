@@ -386,8 +386,10 @@ ThreeTilemapRectLayer.prototype._buildNormalMesh = function(setNumber, data, ani
 
         // 그리기 z 레이어 기반 z 오프셋: 높은 drawZ가 카메라에 더 가깝도록 음수
         // z=0→0.00, z=1→-0.01, z=2→-0.02, z=3→-0.03
+        // 3D 모드에서는 depth test가 처리하므로 zOffset 불필요
         var drawZ = drawZArr[i] || 0;
-        var elevationEnabled = $dataMap && $dataMap.tileLayerElevation;
+        var is3DMode = typeof ConfigManager !== 'undefined' && ConfigManager.mode3d;
+        var elevationEnabled = !is3DMode && $dataMap && $dataMap.tileLayerElevation;
         var zOffset = elevationEnabled ? -drawZ * 0.01 : 0;
 
         for (var j = 0; j < 6; j++) {
@@ -435,28 +437,55 @@ ThreeTilemapRectLayer.prototype._buildNormalMesh = function(setNumber, data, ani
             }
         }
         // material 타입 전환
+        var is3D = typeof ConfigManager !== 'undefined' && ConfigManager.mode3d;
         if (!isShadow) {
             var isPhong = mesh.material.isMeshPhongMaterial;
             if (needsPhong && !isPhong) {
                 mesh.material.dispose();
-                mesh.material = new THREE.MeshPhongMaterial({
-                    map: texture, transparent: true, depthTest: false, depthWrite: false,
-                    side: THREE.DoubleSide,
-                    emissive: new THREE.Color(0x000000),
-                    specular: new THREE.Color(0x000000), shininess: 0,
-                });
+                if (is3D) {
+                    mesh.material = new THREE.MeshPhongMaterial({
+                        map: texture, transparent: false, alphaTest: 0.5,
+                        depthTest: true, depthWrite: true,
+                        side: THREE.DoubleSide,
+                        emissive: new THREE.Color(0x000000),
+                        specular: new THREE.Color(0x000000), shininess: 0,
+                    });
+                } else {
+                    mesh.material = new THREE.MeshPhongMaterial({
+                        map: texture, transparent: true, depthTest: false, depthWrite: false,
+                        side: THREE.DoubleSide,
+                        emissive: new THREE.Color(0x000000),
+                        specular: new THREE.Color(0x000000), shininess: 0,
+                    });
+                }
                 mesh.material.needsUpdate = true;
             } else if (!needsPhong && isPhong) {
                 mesh.material.dispose();
-                mesh.material = new THREE.MeshBasicMaterial({
-                    map: texture, transparent: true, depthTest: false, depthWrite: false,
-                    side: THREE.DoubleSide,
-                });
+                if (is3D) {
+                    mesh.material = new THREE.MeshBasicMaterial({
+                        map: texture, transparent: false, alphaTest: 0.5,
+                        depthTest: true, depthWrite: true,
+                        side: THREE.DoubleSide,
+                    });
+                } else {
+                    mesh.material = new THREE.MeshBasicMaterial({
+                        map: texture, transparent: true, depthTest: false, depthWrite: false,
+                        side: THREE.DoubleSide,
+                    });
+                }
                 mesh.material.needsUpdate = true;
-            } else if (mesh.material.depthTest !== false || mesh.material.depthWrite !== false) {
-                mesh.material.depthTest = false;
-                mesh.material.depthWrite = false;
-                mesh.material.needsUpdate = true;
+            } else if (is3D) {
+                if (mesh.material.depthTest !== true || mesh.material.depthWrite !== true) {
+                    mesh.material.depthTest = true;
+                    mesh.material.depthWrite = true;
+                    mesh.material.needsUpdate = true;
+                }
+            } else {
+                if (mesh.material.depthTest !== false || mesh.material.depthWrite !== false) {
+                    mesh.material.depthTest = false;
+                    mesh.material.depthWrite = false;
+                    mesh.material.needsUpdate = true;
+                }
             }
         }
         mesh.visible = true;
@@ -469,30 +498,49 @@ ThreeTilemapRectLayer.prototype._buildNormalMesh = function(setNumber, data, ani
         }
 
         var material;
+        var is3D = typeof ConfigManager !== 'undefined' && ConfigManager.mode3d;
         if (isShadow) {
             var sc = this._shadowColor;
             material = new THREE.MeshBasicMaterial({
                 color: new THREE.Color(sc[0], sc[1], sc[2]),
                 transparent: true, opacity: sc[3],
-                depthTest: false, depthWrite: false, side: THREE.DoubleSide,
+                depthTest: is3D ? true : false, depthWrite: false, side: THREE.DoubleSide,
             });
         } else {
             texture.minFilter = THREE.NearestFilter;
             texture.magFilter = THREE.NearestFilter;
             texture.generateMipmaps = false;
             texture.anisotropy = 1;
-            if (needsPhong) {
-                material = new THREE.MeshPhongMaterial({
-                    map: texture, transparent: true, depthTest: false, depthWrite: false,
-                    side: THREE.DoubleSide,
-                    emissive: new THREE.Color(0x000000),
-                    specular: new THREE.Color(0x000000), shininess: 0,
-                });
+            if (is3D) {
+                if (needsPhong) {
+                    material = new THREE.MeshPhongMaterial({
+                        map: texture, transparent: false, alphaTest: 0.5,
+                        depthTest: true, depthWrite: true,
+                        side: THREE.DoubleSide,
+                        emissive: new THREE.Color(0x000000),
+                        specular: new THREE.Color(0x000000), shininess: 0,
+                    });
+                } else {
+                    material = new THREE.MeshBasicMaterial({
+                        map: texture, transparent: false, alphaTest: 0.5,
+                        depthTest: true, depthWrite: true,
+                        side: THREE.DoubleSide,
+                    });
+                }
             } else {
-                material = new THREE.MeshBasicMaterial({
-                    map: texture, transparent: true, depthTest: false, depthWrite: false,
-                    side: THREE.DoubleSide,
-                });
+                if (needsPhong) {
+                    material = new THREE.MeshPhongMaterial({
+                        map: texture, transparent: true, depthTest: false, depthWrite: false,
+                        side: THREE.DoubleSide,
+                        emissive: new THREE.Color(0x000000),
+                        specular: new THREE.Color(0x000000), shininess: 0,
+                    });
+                } else {
+                    material = new THREE.MeshBasicMaterial({
+                        map: texture, transparent: true, depthTest: false, depthWrite: false,
+                        side: THREE.DoubleSide,
+                    });
+                }
             }
         }
 
@@ -1160,8 +1208,14 @@ ThreeTilemapZLayer.prototype.syncTransform = function() {
     var obj = this._threeObj;
     obj.position.x = this._x - this._pivotX;
     obj.position.y = this._y - this._pivotY;
-    var elevationEnabled = $dataMap && $dataMap.tileLayerElevation;
-    obj.position.z = elevationEnabled ? this._zIndex : 0;
+    var is3D = typeof ConfigManager !== 'undefined' && ConfigManager.mode3d;
+    if (is3D) {
+        // 3D 모드: upper layer(z=4)를 타일 높이(48px)만큼 올려 depth test로 가림 효과
+        obj.position.z = (this.z === 4) ? 48 : 0;
+    } else {
+        var elevationEnabled = $dataMap && $dataMap.tileLayerElevation;
+        obj.position.z = elevationEnabled ? this._zIndex : 0;
+    }
     obj.scale.x = this._scaleX;
     obj.scale.y = this._scaleY;
     obj.rotation.z = -this._rotation;

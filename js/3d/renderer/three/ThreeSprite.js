@@ -21,12 +21,23 @@ function ThreeSprite(texture) {
     for (var ni = 0; ni < norms.count; ni++) {
         norms.setZ(ni, -1);
     }
-    this._material = new THREE.MeshBasicMaterial({
-        transparent: true,
-        depthTest: false,
-        depthWrite: false,
-        side: THREE.DoubleSide
-    });
+    var _is3D = typeof ConfigManager !== 'undefined' && ConfigManager.mode3d;
+    if (_is3D) {
+        this._material = new THREE.MeshBasicMaterial({
+            transparent: false,
+            alphaTest: 0.5,
+            depthTest: true,
+            depthWrite: true,
+            side: THREE.DoubleSide
+        });
+    } else {
+        this._material = new THREE.MeshBasicMaterial({
+            transparent: true,
+            depthTest: false,
+            depthWrite: false,
+            side: THREE.DoubleSide
+        });
+    }
     this._threeObj = new THREE.Mesh(this._geometry, this._material);
     this._threeObj.frustumCulled = false;
     this._threeObj._wrapper = this;
@@ -422,7 +433,13 @@ ThreeSprite.prototype.syncTransform = function() {
     // Position: apply pivot offsets
     obj.position.x = this._x - this._pivotX;
     obj.position.y = this._y - this._pivotY;
-    obj.position.z = this._zIndex + (this._heightOffset || 0);
+    var _is3D = typeof ConfigManager !== 'undefined' && ConfigManager.mode3d;
+    if (_is3D) {
+        // 3D 모드: depth test가 순서를 결정하므로 zIndex 불필요, heightOffset만 적용
+        obj.position.z = (this._heightOffset || 0);
+    } else {
+        obj.position.z = this._zIndex + (this._heightOffset || 0);
+    }
 
     // Scale: only logical scale (scaleX/scaleY), NOT frame dimensions.
     // Frame dimensions are baked into geometry vertices below.
@@ -458,8 +475,20 @@ ThreeSprite.prototype.syncTransform = function() {
     }
 
     // Alpha: update material opacity
+    var __is3D = typeof ConfigManager !== 'undefined' && ConfigManager.mode3d;
     this._material.opacity = this.worldAlpha;
-    this._material.transparent = true;
+    if (__is3D) {
+        // 3D 모드: 반투명(worldAlpha < 1)인 경우 transparent 전환
+        if (this.worldAlpha < 1) {
+            this._material.transparent = true;
+            this._material.depthWrite = false;
+        } else {
+            this._material.transparent = false;
+            this._material.depthWrite = true;
+        }
+    } else {
+        this._material.transparent = true;
+    }
 
     // Visibility: hide the mesh if no frame, but keep the Three.js object
     // visible when there are children (sprite used as container, e.g. Tilemap layers)

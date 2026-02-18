@@ -772,6 +772,8 @@
             }
 
             renderer.autoClear = false;
+            // depth buffer 클리어: UI가 맵의 depth에 영향받지 않도록
+            renderer.clearDepth();
             renderer.render(scene, camera);
 
             // Picture를 원래 spritesetObj로 복원
@@ -873,23 +875,7 @@
                 this._heightOffset = bz * th;
             } catch (e) { /* ignore */ }
         }
-        // 3D 모드에서 빌보드 캐릭터는 z=5로 설정 (upper layer 타일 z=4 위에 그리기)
-        // 플레이어, 팔로워, billboard 활성화된 이벤트 모두 해당
-        if (ConfigManager.mode3d && this._character) {
-            var isBillboard = true;
-            // 이벤트인 경우 페이지의 billboard 설정 확인
-            if (typeof this._character.page === 'function') {
-                try {
-                    var page = this._character.page();
-                    if (page && page.billboard === false) {
-                        isBillboard = false;
-                    }
-                } catch (e) { /* ignore */ }
-            }
-            if (isBillboard) {
-                this.z = 5;
-            }
-        }
+        // 3D 모드: depth test가 upper layer 가림을 처리하므로 z=5 해킹 불필요
     };
 
     var _Spriteset_Map_createCharacters = Spriteset_Map.prototype.createCharacters;
