@@ -60331,7 +60331,8 @@
           "stepAnime": true,
           "through": false,
           "trigger": 0,
-          "walkAnime": true
+          "walkAnime": true,
+          "billboard": true
         }
       ],
       "x": 50,

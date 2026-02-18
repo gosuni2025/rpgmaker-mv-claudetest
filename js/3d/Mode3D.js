@@ -54,6 +54,10 @@
     Mode3D._perspCamera = null;
     Mode3D._extraRows = 6;  // 에디터에서 참조
     Mode3D._extraCols = 4;  // 에디터에서 참조
+    // 에디터 카메라 팬 오프셋 (픽셀 단위)
+    Mode3D._editorPanX = 0;
+    Mode3D._editorPanY = 0;
+    Mode3D._editorPanZ = 0; // 높이 오프셋
     window.Mode3D = Mode3D;
 
     //=========================================================================
@@ -173,6 +177,14 @@
         var cx = w / 2;
         var cy = h / 2;
 
+        // 에디터 카메라 팬 오프셋 적용
+        var panZ = 0;
+        if (window.__editorMode) {
+            cx += (this._editorPanX || 0);
+            cy += (this._editorPanY || 0);
+            panZ = (this._editorPanZ || 0);
+        }
+
         // yaw 회전: 카메라를 맵 중심(cx, cy, 0) 주위로 Y축 회전
         var offX = dist * Math.cos(tilt) * Math.sin(yaw);
         var offY = dist * Math.sin(tilt);
@@ -181,13 +193,13 @@
         camera.position.set(
             cx + offX,
             cy + offY,
-            offZ
+            offZ + panZ
         );
 
         // far plane도 충분히 넓게
         camera.far = dist * 4;
         camera.up.set(0, 1, 0);
-        camera.lookAt(new THREE.Vector3(cx, cy, 0));
+        camera.lookAt(new THREE.Vector3(cx, cy, panZ));
         camera.updateProjectionMatrix();
 
         // Y-down 좌표계: projectionMatrix의 Y축 반전
@@ -299,7 +311,17 @@
         for (var i = 0; i < this._billboardTargets.length; i++) {
             var sprite = this._billboardTargets[i];
             if (sprite._threeObj && sprite._visible !== false) {
-                sprite._threeObj.rotation.x = tilt;
+                // 이벤트 캐릭터인 경우 현재 페이지의 billboard 설정을 확인
+                var billboardEnabled = true;
+                if (sprite._character && typeof sprite._character.page === 'function') {
+                    try {
+                        var page = sprite._character.page();
+                        if (page && page.billboard === false) {
+                            billboardEnabled = false;
+                        }
+                    } catch (e) { /* page 접근 실패 시 기본값 유지 */ }
+                }
+                sprite._threeObj.rotation.x = billboardEnabled ? tilt : 0;
             }
         }
     };
@@ -327,7 +349,16 @@
         for (var i = 0; i < this._billboardTargets.length; i++) {
             var sprite = this._billboardTargets[i];
             if (sprite._threeObj && sprite._visible !== false) {
-                sprite._threeObj.rotation.x = shadowTilt;
+                var billboardEnabled = true;
+                if (sprite._character && typeof sprite._character.page === 'function') {
+                    try {
+                        var page = sprite._character.page();
+                        if (page && page.billboard === false) {
+                            billboardEnabled = false;
+                        }
+                    } catch (e) { /* ignore */ }
+                }
+                sprite._threeObj.rotation.x = billboardEnabled ? shadowTilt : 0;
             }
         }
     };
@@ -573,12 +604,11 @@
                 ShadowLight.config.spotLightEnabled && ShadowLight._active) {
                 Mode3D._applyBillboardsForShadow();
                 renderer.shadowMap.needsUpdate = true;
-                var gl = renderer.getContext();
-                gl.colorMask(false, false, false, false);
-                gl.depthMask(false);
+                renderer.state.buffers.color.setMask(false);
+                renderer.state.buffers.depth.setMask(false);
                 renderer.render(scene, Mode3D._perspCamera);
-                gl.colorMask(true, true, true, true);
-                gl.depthMask(true);
+                renderer.state.buffers.color.setMask(true);
+                renderer.state.buffers.depth.setMask(true);
                 Mode3D._applyBillboards();
             } else {
                 renderer.shadowMap.needsUpdate = true;
@@ -601,6 +631,20 @@
             var picObj = picContainer && picContainer._threeObj;
             var picWasVisible = picObj ? picObj.visible : false;
             if (picObj) picObj.visible = false;
+            // ScreenSprite(fade/flash)는 Pass 1,2에서 숨기고 Pass 3에서 별도 렌더
+            var fadeSprite = Mode3D._spriteset._fadeSprite;
+            var fadeObj = fadeSprite && fadeSprite._threeObj;
+            var fadeWasVisible = fadeObj ? fadeObj.visible : false;
+            if (fadeObj) fadeObj.visible = false;
+            var flashSprite = Mode3D._spriteset._flashSprite;
+            var flashObj = flashSprite && flashSprite._threeObj;
+            var flashWasVisible = flashObj ? flashObj.visible : false;
+            if (flashObj) flashObj.visible = false;
+            // Weather는 Pass 1에서 숨기고 Pass 2(2D)에서 렌더
+            var weatherContainer = Mode3D._spriteset._weather;
+            var weatherObj = weatherContainer && weatherContainer._threeObj;
+            var weatherWasVisible = weatherObj ? weatherObj.visible : false;
+            if (weatherObj) weatherObj.visible = false;
             // 애니메이션 스프라이트를 Pass 1에서 숨김 (Pass 2에서 2D HUD로 렌더)
             var animInfo = Mode3D._hideAnimationsForPass1();
             // Hide _blackScreen so parallax sky shows through map edges
@@ -665,13 +709,31 @@
                 stageObj.add(picObj);
                 picObj.visible = picWasVisible;
             }
+            // Weather를 spritesetObj에서 stageObj로 옮겨서 2D 렌더
+            if (weatherObj) {
+                spritesetObj.remove(weatherObj);
+                stageObj.add(weatherObj);
+                weatherObj.visible = weatherWasVisible;
+            }
+            // fade/flash를 spritesetObj에서 stageObj로 옮겨서 2D 렌더
+            if (fadeObj && fadeWasVisible && fadeSprite.alpha > 0) {
+                spritesetObj.remove(fadeObj);
+                stageObj.add(fadeObj);
+                fadeObj.visible = true;
+            }
+            if (flashObj && flashWasVisible && flashSprite.alpha > 0) {
+                spritesetObj.remove(flashObj);
+                stageObj.add(flashObj);
+                flashObj.visible = true;
+            }
             // 애니메이션을 stageObj로 이동 (2D HUD로 렌더)
             Mode3D._moveAnimationsToHUD(animInfo, stageObj);
 
             if (stageObj) {
                 for (var i = 0; i < stageObj.children.length; i++) {
                     var child = stageObj.children[i];
-                    if (child === picObj) continue; // picObj는 새로 추가됨, visible 이미 설정
+                    if (child === picObj || child === weatherObj ||
+                        child === fadeObj || child === flashObj) continue; // 새로 추가됨, visible 이미 설정
                     if (child === spritesetObj) {
                         child.visible = false;
                     } else if (i < childVisibility.length) {
@@ -689,6 +751,23 @@
                 spritesetObj.add(picObj);
                 picObj.visible = picWasVisible;
             }
+            // Weather를 원래 spritesetObj로 복원
+            if (weatherObj && weatherObj.parent === stageObj) {
+                stageObj.remove(weatherObj);
+                spritesetObj.add(weatherObj);
+                weatherObj.visible = weatherWasVisible;
+            }
+            // fade/flash를 원래 spritesetObj로 복원
+            if (fadeObj && fadeObj.parent === stageObj) {
+                stageObj.remove(fadeObj);
+                spritesetObj.add(fadeObj);
+                fadeObj.visible = fadeWasVisible;
+            }
+            if (flashObj && flashObj.parent === stageObj) {
+                stageObj.remove(flashObj);
+                spritesetObj.add(flashObj);
+                flashObj.visible = flashWasVisible;
+            }
             // 애니메이션을 원래 위치로 복원
             Mode3D._restoreAnimations(animInfo);
 
@@ -703,6 +782,7 @@
                 scene.children[gridVisibility[oi].idx].visible =
                     gridVisibility[oi].visible;
             }
+
             renderer.autoClear = true;
             renderer.shadowMap.autoUpdate = prevShadowAutoUpdate;
 
@@ -750,6 +830,20 @@
     Sprite_Character.prototype.initialize = function(character) {
         _Sprite_Character_initialize.call(this, character);
         Mode3D.registerBillboard(this);
+    };
+
+    var _Sprite_Character_updatePosition = Sprite_Character.prototype.updatePosition;
+    Sprite_Character.prototype.updatePosition = function() {
+        _Sprite_Character_updatePosition.call(this);
+        // 현재 이벤트 페이지의 billboardZ(타일 단위)를 _heightOffset에 반영
+        if (this._character && typeof this._character.page === 'function') {
+            try {
+                var page = this._character.page();
+                var bz = (page && page.billboardZ) ? page.billboardZ : 0;
+                var th = ($gameMap && $gameMap.tileHeight) ? $gameMap.tileHeight() : 48;
+                this._heightOffset = bz * th;
+            } catch (e) { /* ignore */ }
+        }
     };
 
     var _Spriteset_Map_createCharacters = Spriteset_Map.prototype.createCharacters;
@@ -875,19 +969,19 @@
         if (!this._perspCamera) return;
         if (window.__editorMode) return; // 에디터에서는 적용하지 않음
 
-        // 타겟 값 결정: 활성 카메라존 → 글로벌 기본값
-        var targetTilt = 60;  // 글로벌 기본
+        // 타겟 값 결정: 활성 카메라존 → 현재 _tiltDeg/_yawDeg (플러그인 커맨드로 변경 가능)
+        var targetTilt = this._tiltDeg != null ? this._tiltDeg : 60;
         var targetFov = 60;
-        var targetYaw = 0;
+        var targetYaw = this._yawDeg != null ? this._yawDeg : 0;
         var targetZoom = 1.0;
         var transitionSpeed = 1.0;
 
         if ($gameMap && $gameMap._activeCameraZoneId != null) {
             var zone = $gameMap.getCameraZoneById($gameMap._activeCameraZoneId);
             if (zone) {
-                targetTilt = zone.tilt != null ? zone.tilt : 60;
+                targetTilt = zone.tilt != null ? zone.tilt : targetTilt;
                 targetFov = zone.fov != null ? zone.fov : 60;
-                targetYaw = zone.yaw != null ? zone.yaw : 0;
+                targetYaw = zone.yaw != null ? zone.yaw : targetYaw;
                 targetZoom = zone.zoom != null ? zone.zoom : 1.0;
                 transitionSpeed = zone.transitionSpeed || 1.0;
             }
@@ -931,6 +1025,42 @@
         if (this._perspCamera.fov !== this._currentFov) {
             this._perspCamera.fov = this._currentFov;
             this._perspCamera.updateProjectionMatrix();
+        }
+    };
+
+    //=========================================================================
+    // Plugin Commands
+    //=========================================================================
+
+    var _Game_Interpreter_pluginCommand_m3d = Game_Interpreter.prototype.pluginCommand;
+    Game_Interpreter.prototype.pluginCommand = function(command, args) {
+        _Game_Interpreter_pluginCommand_m3d.call(this, command, args);
+
+        if (command === 'Mode3D') {
+            if (args[0] === 'on') ConfigManager.mode3d = true;
+            if (args[0] === 'off') ConfigManager.mode3d = false;
+            if (args[0] === 'tilt' && args[1]) {
+                var tiltVal = parseFloat(args[1]);
+                var tiltDur = args[2] ? parseFloat(args[2]) : 0;
+                if (tiltDur > 0 && window.PluginTween) {
+                    PluginTween.add({
+                        target: Mode3D, key: '_tiltDeg', to: tiltVal, duration: tiltDur,
+                        onUpdate: function() { Mode3D._tiltRad = Mode3D._tiltDeg * Math.PI / 180; }
+                    });
+                } else {
+                    Mode3D._tiltDeg = tiltVal;
+                    Mode3D._tiltRad = tiltVal * Math.PI / 180;
+                }
+            }
+            if (args[0] === 'yaw' && args[1]) {
+                var yawVal = parseFloat(args[1]);
+                var yawDur = args[2] ? parseFloat(args[2]) : 0;
+                if (yawDur > 0 && window.PluginTween) {
+                    PluginTween.add({ target: Mode3D, key: '_yawDeg', to: yawVal, duration: yawDur });
+                } else {
+                    Mode3D._yawDeg = yawVal;
+                }
+            }
         }
     };
 

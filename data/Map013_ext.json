@@ -383,10 +383,69 @@
           false
         ]
       ]
+    },
+    {
+      "id": 17,
+      "name": "OBJ17",
+      "x": 63,
+      "y": 55,
+      "tileIds": [
+        [
+          [
+            2912,
+            3043,
+            0,
+            0
+          ]
+        ],
+        [
+          [
+            2912,
+            3052,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 2,
+      "zHeight": 0,
+      "passability": [
+        [
+          true
+        ],
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 18,
+      "name": "OBJ18",
+      "x": 64,
+      "y": 54,
+      "tileIds": [
+        [
+          [
+            0,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 1,
+      "zHeight": 0,
+      "passability": [
+        [
+          false
+        ]
+      ]
     }
   ],
   "testStartPosition": {
-    "x": 48,
-    "y": 72
+    "x": 61,
+    "y": 56
   }
 }
