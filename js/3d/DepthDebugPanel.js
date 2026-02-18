@@ -261,6 +261,31 @@
             saveToStorage();
         });
         btnRow.appendChild(resetBtn);
+
+        var copyBtn = document.createElement('button');
+        copyBtn.textContent = 'Copy';
+        copyBtn.style.cssText = 'flex:1;padding:2px 8px;background:#345;color:#ccc;border:1px solid #666;font:10px monospace;cursor:pointer;border-radius:2px;';
+        copyBtn.addEventListener('click', function() {
+            var cfg = window.DepthDebugConfig;
+            var text = JSON.stringify({
+                zLayerStep: cfg.zLayerStep,
+                drawZStep: cfg.drawZStep,
+                tile: cfg.tile,
+                sprite: cfg.sprite,
+                water: cfg.water,
+                shadow: cfg.shadow,
+            }, null, 2);
+            navigator.clipboard.writeText(text).then(function() {
+                copyBtn.textContent = 'Copied!';
+                copyBtn.style.background = '#264';
+                setTimeout(function() { copyBtn.textContent = 'Copy'; copyBtn.style.background = '#345'; }, 1200);
+            }, function() {
+                copyBtn.textContent = 'Failed';
+                copyBtn.style.background = '#644';
+                setTimeout(function() { copyBtn.textContent = 'Copy'; copyBtn.style.background = '#345'; }, 1200);
+            });
+        });
+        btnRow.appendChild(copyBtn);
         body.appendChild(btnRow);
 
         panel.appendChild(body);
