@@ -487,6 +487,16 @@ ThreeTilemapRectLayer.prototype._buildNormalMesh = function(setNumber, data, ani
                     mesh.material.needsUpdate = true;
                 }
             }
+            // 3D 모드: upper layer 타일에 polygonOffset 적용
+            var parentZLayer = this.parent && this.parent.parent;
+            if (is3D && parentZLayer && parentZLayer.z === 4) {
+                if (!mesh.material.polygonOffset) {
+                    mesh.material.polygonOffset = true;
+                    mesh.material.polygonOffsetFactor = -1;
+                    mesh.material.polygonOffsetUnits = -1;
+                    mesh.material.needsUpdate = true;
+                }
+            }
         }
         mesh.visible = true;
     } else {
@@ -546,9 +556,15 @@ ThreeTilemapRectLayer.prototype._buildNormalMesh = function(setNumber, data, ani
 
         mesh = new THREE.Mesh(geometry, material);
         mesh.frustumCulled = false;
+        var parentZLayer = this.parent && this.parent.parent;
+        // 3D 모드: upper layer 타일에 polygonOffset 적용 (depth buffer에서 더 가깝게 기록)
+        if (is3D && !isShadow && parentZLayer && parentZLayer.z === 4) {
+            material.polygonOffset = true;
+            material.polygonOffsetFactor = -1;
+            material.polygonOffsetUnits = -1;
+        }
         if (window.ShadowLight && window.ShadowLight._active && !isShadow) {
             mesh.receiveShadow = true;
-            var parentZLayer = this.parent && this.parent.parent;
             if (parentZLayer && parentZLayer.z === 4) {
                 mesh.castShadow = true;
                 if (texture) {
@@ -1210,8 +1226,8 @@ ThreeTilemapZLayer.prototype.syncTransform = function() {
     obj.position.y = this._y - this._pivotY;
     var is3D = typeof ConfigManager !== 'undefined' && ConfigManager.mode3d;
     if (is3D) {
-        // 3D 모드: upper layer(z=4)를 타일 높이(48px)만큼 올려 depth test로 가림 효과
-        obj.position.z = (this.z === 4) ? 48 : 0;
+        // 3D 모드: 모든 레이어 z=0, polygonOffset으로 upper 타일 가림 처리
+        obj.position.z = 0;
     } else {
         var elevationEnabled = $dataMap && $dataMap.tileLayerElevation;
         obj.position.z = elevationEnabled ? this._zIndex : 0;
