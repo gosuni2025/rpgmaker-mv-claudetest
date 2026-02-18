@@ -1224,14 +1224,8 @@ ThreeTilemapZLayer.prototype.syncTransform = function() {
     var obj = this._threeObj;
     obj.position.x = this._x - this._pivotX;
     obj.position.y = this._y - this._pivotY;
-    var is3D = typeof ConfigManager !== 'undefined' && ConfigManager.mode3d;
-    if (is3D) {
-        // 3D 모드: 모든 레이어 z=0, polygonOffset으로 upper 타일 가림 처리
-        obj.position.z = 0;
-    } else {
-        var elevationEnabled = $dataMap && $dataMap.tileLayerElevation;
-        obj.position.z = elevationEnabled ? this._zIndex : 0;
-    }
+    var elevationEnabled = $dataMap && $dataMap.tileLayerElevation;
+    obj.position.z = elevationEnabled ? this._zIndex : 0;
     obj.scale.x = this._scaleX;
     obj.scale.y = this._scaleY;
     obj.rotation.z = -this._rotation;

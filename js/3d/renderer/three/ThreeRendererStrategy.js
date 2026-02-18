@@ -300,12 +300,13 @@
             node.syncTransform();
         }
 
-        // Assign render order for proper layering (2D/3D 공통)
-        // 증분 renderOrder로 같은 depth에서 일관된 렌더 순서 보장 (z-fighting 방지)
+        // Assign render order for proper layering
+        var _is3DMode = typeof ConfigManager !== 'undefined' && ConfigManager.mode3d;
         if (node._threeObj) {
-            // THREE.Mesh objects get renderOrder for depth-independent sorting
+            // 2D/3D 공통: 증분 renderOrder로 렌더링 순서 보장
+            // 3D 모드에서도 동일 깊이의 코플래너 타일(풀→벽→문 등) 스태킹에 필요
+            // depth buffer는 서로 다른 깊이의 오브젝트 간 가림만 처리
             if (node._threeObj.isMesh) {
-                // 오브젝트 물 메시는 container보다 먼저 렌더링 (물 → 일반 타일 순서)
                 var meshChildren = node._threeObj.children;
                 if (meshChildren) {
                     for (var t = 0; t < meshChildren.length; t++) {
@@ -316,8 +317,6 @@
                 }
                 node._threeObj.renderOrder = rendererObj._drawOrderCounter++;
             }
-            // For Groups, traverse their direct THREE children that are meshes
-            // Water meshes render before normal meshes so decoration tiles overlay correctly
             if (node._threeObj.isGroup) {
                 var threeChildren = node._threeObj.children;
                 // 물 메시를 먼저, 일반 메시를 나중에 renderOrder 할당
@@ -327,7 +326,6 @@
                     }
                 }
                 // 일반 메시: drawZ(maxDrawZ) 기준 정렬 후 renderOrder 할당
-                // 낮은 drawZ가 먼저 렌더링되어 높은 drawZ가 위에 그려짐
                 var normalMeshes = [];
                 for (var t = 0; t < threeChildren.length; t++) {
                     if (threeChildren[t].isMesh && !threeChildren[t]._wrapper &&
