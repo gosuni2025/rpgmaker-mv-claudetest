@@ -388,7 +388,8 @@ ThreeTilemapRectLayer.prototype._buildNormalMesh = function(setNumber, data, ani
         // z=0→0.00, z=1→-0.01, z=2→-0.02, z=3→-0.03
         var drawZ = drawZArr[i] || 0;
         var elevationEnabled = $dataMap && $dataMap.tileLayerElevation;
-        var zOffset = elevationEnabled ? -drawZ * 0.01 : 0;
+        var _is3DZ = typeof ConfigManager !== 'undefined' && ConfigManager.mode3d;
+        var zOffset = (_is3DZ || elevationEnabled) ? -drawZ * 0.001 : 0;
 
         for (var j = 0; j < 6; j++) {
             posArray[posOff + j * 3]     = data.positions[srcOff + j * 2];
@@ -436,11 +437,14 @@ ThreeTilemapRectLayer.prototype._buildNormalMesh = function(setNumber, data, ani
         }
         // material 타입 전환
         if (!isShadow) {
+            var _is3D = typeof ConfigManager !== 'undefined' && ConfigManager.mode3d;
             var isPhong = mesh.material.isMeshPhongMaterial;
             if (needsPhong && !isPhong) {
                 mesh.material.dispose();
                 mesh.material = new THREE.MeshPhongMaterial({
-                    map: texture, transparent: true, depthTest: false, depthWrite: false,
+                    map: texture,
+                    transparent: !_is3D, alphaTest: _is3D ? 0.5 : 0,
+                    depthTest: _is3D, depthWrite: _is3D,
                     side: THREE.DoubleSide,
                     emissive: new THREE.Color(0x000000),
                     specular: new THREE.Color(0x000000), shininess: 0,
@@ -449,14 +453,21 @@ ThreeTilemapRectLayer.prototype._buildNormalMesh = function(setNumber, data, ani
             } else if (!needsPhong && isPhong) {
                 mesh.material.dispose();
                 mesh.material = new THREE.MeshBasicMaterial({
-                    map: texture, transparent: true, depthTest: false, depthWrite: false,
+                    map: texture,
+                    transparent: !_is3D, alphaTest: _is3D ? 0.5 : 0,
+                    depthTest: _is3D, depthWrite: _is3D,
                     side: THREE.DoubleSide,
                 });
                 mesh.material.needsUpdate = true;
-            } else if (mesh.material.depthTest !== false || mesh.material.depthWrite !== false) {
-                mesh.material.depthTest = false;
-                mesh.material.depthWrite = false;
-                mesh.material.needsUpdate = true;
+            } else {
+                var wantDepth = _is3D ? true : false;
+                if (mesh.material.depthTest !== wantDepth || mesh.material.depthWrite !== wantDepth) {
+                    mesh.material.depthTest = wantDepth;
+                    mesh.material.depthWrite = wantDepth;
+                    mesh.material.transparent = !_is3D;
+                    mesh.material.alphaTest = _is3D ? 0.5 : 0;
+                    mesh.material.needsUpdate = true;
+                }
             }
         }
         mesh.visible = true;
@@ -471,26 +482,32 @@ ThreeTilemapRectLayer.prototype._buildNormalMesh = function(setNumber, data, ani
         var material;
         if (isShadow) {
             var sc = this._shadowColor;
+            var _is3DShadow = typeof ConfigManager !== 'undefined' && ConfigManager.mode3d;
             material = new THREE.MeshBasicMaterial({
                 color: new THREE.Color(sc[0], sc[1], sc[2]),
                 transparent: true, opacity: sc[3],
-                depthTest: false, depthWrite: false, side: THREE.DoubleSide,
+                depthTest: _is3DShadow, depthWrite: false, side: THREE.DoubleSide,
             });
         } else {
+            var _is3D = typeof ConfigManager !== 'undefined' && ConfigManager.mode3d;
             texture.minFilter = THREE.NearestFilter;
             texture.magFilter = THREE.NearestFilter;
             texture.generateMipmaps = false;
             texture.anisotropy = 1;
             if (needsPhong) {
                 material = new THREE.MeshPhongMaterial({
-                    map: texture, transparent: true, depthTest: false, depthWrite: false,
+                    map: texture,
+                    transparent: !_is3D, alphaTest: _is3D ? 0.5 : 0,
+                    depthTest: _is3D, depthWrite: _is3D,
                     side: THREE.DoubleSide,
                     emissive: new THREE.Color(0x000000),
                     specular: new THREE.Color(0x000000), shininess: 0,
                 });
             } else {
                 material = new THREE.MeshBasicMaterial({
-                    map: texture, transparent: true, depthTest: false, depthWrite: false,
+                    map: texture,
+                    transparent: !_is3D, alphaTest: _is3D ? 0.5 : 0,
+                    depthTest: _is3D, depthWrite: _is3D,
                     side: THREE.DoubleSide,
                 });
             }
@@ -615,7 +632,8 @@ ThreeTilemapRectLayer.prototype._buildWaterTypeMesh = function(setNumber, meshKe
         var drawZArr = this._drawZData[setNumber] || [];
         var drawZ = drawZArr[i] || 0;
         var elevationEnabled = $dataMap && $dataMap.tileLayerElevation;
-        var zOffset = elevationEnabled ? -drawZ * 0.01 : 0;
+        var _is3DZ = typeof ConfigManager !== 'undefined' && ConfigManager.mode3d;
+        var zOffset = (_is3DZ || elevationEnabled) ? -drawZ * 0.001 : 0;
         for (var j = 0; j < 6; j++) {
             posArray[posOff + j * 3]     = data.positions[srcOff + j * 2];
             posArray[posOff + j * 3 + 1] = data.positions[srcOff + j * 2 + 1];
@@ -673,12 +691,15 @@ ThreeTilemapRectLayer.prototype._buildWaterTypeMesh = function(setNumber, meshKe
         }
 
         // material 타입 전환 (ShadowLight 상태에 따라)
+        var _is3DW = typeof ConfigManager !== 'undefined' && ConfigManager.mode3d;
         var isPhong = mesh.material.isMeshPhongMaterial;
         var isShader = mesh.material.isShaderMaterial;
         if (needsPhong && !isPhong) {
             mesh.material.dispose();
             var mat = new THREE.MeshPhongMaterial({
-                map: texture, transparent: true, depthTest: true, depthWrite: false,
+                map: texture,
+                transparent: !_is3DW, alphaTest: _is3DW ? 0.5 : 0,
+                depthTest: _is3DW, depthWrite: _is3DW,
                 side: THREE.DoubleSide,
                 emissive: new THREE.Color(0x000000),
                 specular: new THREE.Color(0x000000), shininess: 0,
@@ -688,7 +709,7 @@ ThreeTilemapRectLayer.prototype._buildWaterTypeMesh = function(setNumber, meshKe
             mesh.material.needsUpdate = true;
         } else if (!needsPhong && (isPhong || !isShader)) {
             mesh.material.dispose();
-            mesh.material = ThreeWaterShader.createStandaloneMaterial(texture, isWaterfall, kindSettings);
+            mesh.material = ThreeWaterShader.createStandaloneMaterial(texture, isWaterfall, kindSettings, _is3DW);
             mesh.material.needsUpdate = true;
         }
 
@@ -706,16 +727,19 @@ ThreeTilemapRectLayer.prototype._buildWaterTypeMesh = function(setNumber, meshKe
         texture.generateMipmaps = false;
         texture.anisotropy = 1;
 
+        var _is3DW2 = typeof ConfigManager !== 'undefined' && ConfigManager.mode3d;
         if (needsPhong) {
             material = new THREE.MeshPhongMaterial({
-                map: texture, transparent: true, depthTest: true, depthWrite: false,
+                map: texture,
+                transparent: !_is3DW2, alphaTest: _is3DW2 ? 0.5 : 0,
+                depthTest: _is3DW2, depthWrite: _is3DW2,
                 side: THREE.DoubleSide,
                 emissive: new THREE.Color(0x000000),
                 specular: new THREE.Color(0x000000), shininess: 0,
             });
             ThreeWaterShader.applyToPhongMaterial(material, isWaterfall, kindSettings);
         } else {
-            material = ThreeWaterShader.createStandaloneMaterial(texture, isWaterfall, kindSettings);
+            material = ThreeWaterShader.createStandaloneMaterial(texture, isWaterfall, kindSettings, _is3DW2);
         }
 
         mesh = new THREE.Mesh(geometry, material);

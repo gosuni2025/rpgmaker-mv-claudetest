@@ -394,7 +394,7 @@ ThreeWaterShader.DEFAULT_UNIFORMS = {
 /**
  * 물 타일용 ShaderMaterial 생성 (ShadowLight 비활성 시)
  */
-ThreeWaterShader.createStandaloneMaterial = function(texture, isWaterfall, kindSettings) {
+ThreeWaterShader.createStandaloneMaterial = function(texture, isWaterfall, kindSettings, is3DMode) {
     var fragShader = isWaterfall ?
         this._STANDALONE_FRAGMENT_WATERFALL :
         this._STANDALONE_FRAGMENT_WATER;
@@ -422,9 +422,10 @@ ThreeWaterShader.createStandaloneMaterial = function(texture, isWaterfall, kindS
         },
         vertexShader: this._STANDALONE_VERTEX,
         fragmentShader: fragShader,
-        transparent: true,
-        depthTest: false,
-        depthWrite: false,
+        transparent: !is3DMode,
+        alphaTest: is3DMode ? 0.5 : 0,
+        depthTest: is3DMode ? true : false,
+        depthWrite: is3DMode ? true : false,
         side: THREE.DoubleSide,
     });
 
