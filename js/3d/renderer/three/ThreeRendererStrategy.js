@@ -17,6 +17,108 @@
     var ThreeRendererStrategy = {};
 
     // -----------------------------------------------------------------------
+    // Color Matrix post-processing (for ToneFilter)
+    // -----------------------------------------------------------------------
+
+    var _colorMatrixShader = null;
+    var _colorMatrixScene = null;
+    var _colorMatrixCamera = null;
+    var _colorMatrixQuad = null;
+
+    /**
+     * Lazily creates the color matrix post-processing resources.
+     * Uses a fullscreen quad with a custom ShaderMaterial that applies
+     * a 4x5 color matrix transformation.
+     */
+    function _ensureColorMatrixPass(rendererObj) {
+        if (_colorMatrixScene) return;
+
+        // Fullscreen quad scene + orthographic camera
+        _colorMatrixScene = new THREE.Scene();
+        _colorMatrixCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
+        _colorMatrixShader = new THREE.ShaderMaterial({
+            uniforms: {
+                tDiffuse: { value: null },
+                colorMatrix: { value: new Float32Array(20) }
+            },
+            vertexShader: [
+                'varying vec2 vUv;',
+                'void main() {',
+                '    vUv = uv;',
+                '    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);',
+                '}'
+            ].join('\n'),
+            fragmentShader: [
+                'uniform sampler2D tDiffuse;',
+                'uniform float colorMatrix[20];',
+                'varying vec2 vUv;',
+                'void main() {',
+                '    vec4 c = texture2D(tDiffuse, vUv);',
+                '    vec4 result;',
+                '    result.r = colorMatrix[0]*c.r + colorMatrix[1]*c.g + colorMatrix[2]*c.b + colorMatrix[3]*c.a + colorMatrix[4];',
+                '    result.g = colorMatrix[5]*c.r + colorMatrix[6]*c.g + colorMatrix[7]*c.b + colorMatrix[8]*c.a + colorMatrix[9];',
+                '    result.b = colorMatrix[10]*c.r + colorMatrix[11]*c.g + colorMatrix[12]*c.b + colorMatrix[13]*c.a + colorMatrix[14];',
+                '    result.a = colorMatrix[15]*c.r + colorMatrix[16]*c.g + colorMatrix[17]*c.b + colorMatrix[18]*c.a + colorMatrix[19];',
+                '    gl_FragColor = result;',
+                '}'
+            ].join('\n'),
+            depthTest: false,
+            depthWrite: false
+        });
+
+        var geom = new THREE.PlaneGeometry(2, 2);
+        _colorMatrixQuad = new THREE.Mesh(geom, _colorMatrixShader);
+        _colorMatrixQuad.frustumCulled = false;
+        _colorMatrixScene.add(_colorMatrixQuad);
+    }
+
+    /**
+     * Identity color matrix for comparison.
+     */
+    var _identityMatrix = [
+        1, 0, 0, 0, 0,
+        0, 1, 0, 0, 0,
+        0, 0, 1, 0, 0,
+        0, 0, 0, 1, 0
+    ];
+
+    /**
+     * Checks if a color matrix is identity (no-op).
+     */
+    function _isIdentityMatrix(m) {
+        for (var i = 0; i < 20; i++) {
+            if (Math.abs(m[i] - _identityMatrix[i]) > 0.001) return false;
+        }
+        return true;
+    }
+
+    /**
+     * Finds the first active ColorMatrixFilter in the stage hierarchy.
+     * Returns the matrix array or null if no filter or identity.
+     */
+    function _findColorMatrixFilter(node) {
+        if (node._filters) {
+            for (var i = 0; i < node._filters.length; i++) {
+                var f = node._filters[i];
+                if (f && f._matrix && f.enabled !== false) {
+                    if (!_isIdentityMatrix(f._matrix)) {
+                        return f._matrix;
+                    }
+                }
+            }
+        }
+        var children = node.children;
+        if (children) {
+            for (var i = 0; i < children.length; i++) {
+                var result = _findColorMatrixFilter(children[i]);
+                if (result) return result;
+            }
+        }
+        return null;
+    }
+
+    // -----------------------------------------------------------------------
     // Renderer creation
     // -----------------------------------------------------------------------
 
@@ -202,17 +304,42 @@
         if (node._threeObj) {
             // THREE.Mesh objects get renderOrder for depth-independent sorting
             if (node._threeObj.isMesh) {
+                // 오브젝트 물 메시는 container보다 먼저 렌더링 (물 → 일반 타일 순서)
+                var meshChildren = node._threeObj.children;
+                if (meshChildren) {
+                    for (var t = 0; t < meshChildren.length; t++) {
+                        if (meshChildren[t].isMesh && meshChildren[t].userData && meshChildren[t].userData.isObjectWater) {
+                            meshChildren[t].renderOrder = rendererObj._drawOrderCounter++;
+                        }
+                    }
+                }
                 node._threeObj.renderOrder = rendererObj._drawOrderCounter++;
             }
             // For Groups, traverse their direct THREE children that are meshes
             // (e.g., internal meshes of ThreeGraphicsNode)
+            // Water meshes render before normal meshes so decoration tiles overlay correctly
             if (node._threeObj.isGroup) {
                 var threeChildren = node._threeObj.children;
+                // 물 메시를 먼저, 일반 메시를 나중에 renderOrder 할당
                 for (var t = 0; t < threeChildren.length; t++) {
-                    if (threeChildren[t].isMesh && !threeChildren[t]._wrapper) {
-                        // This is an internal mesh (not a wrapper child)
+                    if (threeChildren[t].isMesh && !threeChildren[t]._wrapper && threeChildren[t].userData && threeChildren[t].userData.isWaterMesh) {
                         threeChildren[t].renderOrder = rendererObj._drawOrderCounter++;
                     }
+                }
+                // 일반 메시: drawZ(maxDrawZ) 기준 정렬 후 renderOrder 할당
+                // 낮은 drawZ가 먼저 렌더링되어 높은 drawZ가 위에 그려짐
+                var normalMeshes = [];
+                for (var t = 0; t < threeChildren.length; t++) {
+                    if (threeChildren[t].isMesh && !threeChildren[t]._wrapper &&
+                        !(threeChildren[t].userData && threeChildren[t].userData.isWaterMesh)) {
+                        normalMeshes.push(threeChildren[t]);
+                    }
+                }
+                normalMeshes.sort(function(a, b) {
+                    return (a.userData.maxDrawZ || 0) - (b.userData.maxDrawZ || 0);
+                });
+                for (var t = 0; t < normalMeshes.length; t++) {
+                    normalMeshes[t].renderOrder = rendererObj._drawOrderCounter++;
                 }
             }
         }
@@ -258,6 +385,12 @@
         camera.top = 0;
         camera.bottom = height;
         camera.updateProjectionMatrix();
+
+        // Invalidate color matrix render target so it gets recreated at new size
+        if (rendererObj._colorMatrixRT) {
+            rendererObj._colorMatrixRT.dispose();
+            rendererObj._colorMatrixRT = null;
+        }
     };
 
     // -----------------------------------------------------------------------
@@ -319,7 +452,6 @@
         var renderTarget = new THREE.WebGLRenderTarget(width, height, {
             minFilter: THREE.NearestFilter,
             magFilter: THREE.NearestFilter,
-            format: THREE.RGBAFormat,
             depthBuffer: false,
             stencilBuffer: false
         });
@@ -340,7 +472,7 @@
             this._syncHierarchy(rendererObj, stage);
         }
 
-        // Render to the render target (3D 2-pass or 2D single-pass)
+        // Render to the render target (3D 3-pass or 2D single-pass)
         renderer.setRenderTarget(renderTarget);
         var is3D = typeof ConfigManager !== 'undefined' && ConfigManager.mode3d &&
             typeof Mode3D !== 'undefined' && Mode3D._spriteset && Mode3D._perspCamera;
@@ -353,8 +485,27 @@
             renderer.shadowMap.autoUpdate = false;
             renderer.shadowMap.needsUpdate = true;
 
-            // Pass 1: PerspectiveCamera로 맵만 렌더
+            // Find parallax sky mesh in scene
+            var skyMesh = null;
             var stageObj = stage._threeObj;
+            for (var si = 0; si < scene.children.length; si++) {
+                if (scene.children[si]._isParallaxSky) {
+                    skyMesh = scene.children[si];
+                    break;
+                }
+            }
+
+            // --- Pass 0: Sky background (PerspectiveCamera) ---
+            if (skyMesh) {
+                if (stageObj) stageObj.visible = false;
+                skyMesh.visible = true;
+                renderer.autoClear = true;
+                renderer.render(scene, Mode3D._perspCamera);
+                skyMesh.visible = false;
+                if (stageObj) stageObj.visible = true;
+            }
+
+            // --- Pass 1: PerspectiveCamera로 맵만 렌더 ---
             var childVis = [];
             if (stageObj) {
                 for (var ci = 0; ci < stageObj.children.length; ci++) {
@@ -365,10 +516,10 @@
                     stageObj.children[ci].visible = (stageObj.children[ci] === spritesetObj);
                 }
             }
-            renderer.autoClear = true;
+            renderer.autoClear = !skyMesh;  // sky를 그렸으면 clear 안 함
             renderer.render(scene, Mode3D._perspCamera);
 
-            // Pass 2: OrthographicCamera로 UI 합성
+            // --- Pass 2: OrthographicCamera로 UI 합성 ---
             if (stageObj) {
                 for (var ci = 0; ci < stageObj.children.length; ci++) {
                     var child = stageObj.children[ci];
@@ -434,5 +585,66 @@
     // -----------------------------------------------------------------------
 
     RendererStrategy.register('threejs', ThreeRendererStrategy);
+
+    // -----------------------------------------------------------------------
+    // Color Matrix post-processing wrapper for RendererStrategy.render
+    // Applied AFTER any backend-specific render (including Mode3D multi-pass
+    // and PostProcess composer). Intercepts setRenderTarget(null) to redirect
+    // final output to an offscreen buffer, then applies color matrix shader.
+    // -----------------------------------------------------------------------
+
+    var _origRSRender = RendererStrategy.render;
+    RendererStrategy.render = function(rendererObj, stage) {
+        if (!rendererObj || !stage || !rendererObj.renderer) {
+            _origRSRender.call(this, rendererObj, stage);
+            return;
+        }
+
+        // Check for color matrix filters (ToneFilter / Tint Screen)
+        var colorMatrix = _findColorMatrixFilter(stage);
+
+        if (colorMatrix) {
+            _ensureColorMatrixPass(rendererObj);
+
+            var w = rendererObj._width;
+            var h = rendererObj._height;
+            var renderer = rendererObj.renderer;
+
+            // Create or reuse render target
+            if (!rendererObj._colorMatrixRT ||
+                rendererObj._colorMatrixRT.width !== w ||
+                rendererObj._colorMatrixRT.height !== h) {
+                if (rendererObj._colorMatrixRT) rendererObj._colorMatrixRT.dispose();
+                rendererObj._colorMatrixRT = new THREE.WebGLRenderTarget(w, h, {
+                    minFilter: THREE.LinearFilter,
+                    magFilter: THREE.LinearFilter
+                });
+            }
+
+            // Intercept setRenderTarget(null) so that the final output goes
+            // to our offscreen buffer instead of the screen. This works with
+            // PostProcess/Mode3D which internally call setRenderTarget(null)
+            // for the final compositing pass.
+            var rt = rendererObj._colorMatrixRT;
+            var origSetRT = renderer.setRenderTarget.bind(renderer);
+            renderer.setRenderTarget = function(target) {
+                origSetRT(target === null ? rt : target);
+            };
+
+            // Call original render (may include Mode3D + PostProcess)
+            _origRSRender.call(this, rendererObj, stage);
+
+            // Restore original setRenderTarget
+            renderer.setRenderTarget = origSetRT;
+
+            // Apply color matrix post-processing to screen
+            renderer.setRenderTarget(null);
+            _colorMatrixShader.uniforms.tDiffuse.value = rt.texture;
+            _colorMatrixShader.uniforms.colorMatrix.value.set(colorMatrix);
+            renderer.render(_colorMatrixScene, _colorMatrixCamera);
+        } else {
+            _origRSRender.call(this, rendererObj, stage);
+        }
+    };
 
 })();

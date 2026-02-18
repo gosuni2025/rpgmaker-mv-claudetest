@@ -100,7 +100,6 @@
         var from = opts.target[opts.key];
         if (from === undefined || from === null) from = 0;
 
-        console.log('[PluginTween] addColor: key=' + opts.key + ' from=0x' + (from >>> 0).toString(16) + ' to=0x' + (to >>> 0).toString(16) + ' dur=' + duration);
         this._tweens.push({
             target: opts.target,
             key: opts.key,

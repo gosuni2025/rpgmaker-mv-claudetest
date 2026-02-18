@@ -5976,11 +5976,21 @@ Game_Map.prototype.autotileType = function(x, y, z) {
 
 Game_Map.prototype.isPassable = function(x, y, d) {
     if (!this.checkPassage(x, y, (1 << (d / 2 - 1)) & 0x0f)) return false;
+    // customPassage: 맵 단위 커스텀 통행불가
+    var cp = $dataMap.customPassage;
+    if (cp) {
+        var cpVal = cp[y * this.width() + x];
+        if (cpVal) {
+            var bit = (1 << (d / 2 - 1)) & 0x0f;
+            if (cpVal & bit) return false;
+        }
+    }
     var objects = $dataMap.objects;
     if (objects) {
         for (var i = 0; i < objects.length; i++) {
             var obj = objects[i];
             if (!obj || !obj.passability) continue;
+            if (obj.visible === false) continue;
             var col = x - obj.x;
             var row = y - (obj.y - obj.height + 1);
             if (col >= 0 && col < obj.width && row >= 0 && row < obj.height) {

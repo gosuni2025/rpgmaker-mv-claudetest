@@ -38,52 +38,29 @@ if (typeof THREE !== 'undefined' && THREE.ShaderChunk) {
         }
     })();
 
-    // 2) Lambert vertex shader: vLightBack을 vLightFront와 동일하게
+    // 2) Lambert pars fragment: dotNL을 abs()로 감싸서 Y-flip에서도 양면 라이팅
+    //    (r160에서 Lambert가 fragment-based lighting으로 변경됨, lights_lambert_vertex 제거됨)
     (function() {
-        var key = 'lights_lambert_vertex';
+        var key = 'lights_lambert_pars_fragment';
         var chunk = THREE.ShaderChunk[key];
         if (chunk) {
-            var orig = 'saturate( -dotNL )';
-            var patched = 'saturate( dotNL )';
-            var newChunk = chunk.split(orig).join(patched);
-            if (newChunk !== chunk) {
-                THREE.ShaderChunk[key] = newChunk;
-                console.log('[ShadowLight] ShaderChunk patched: lights_lambert_vertex (bilateral)');
+            var orig = 'float dotNL = saturate( dot( geometryNormal, directLight.direction ) );';
+            var patched = 'float dotNL = saturate( abs( dot( geometryNormal, directLight.direction ) ) );';
+            if (chunk.indexOf(orig) >= 0) {
+                THREE.ShaderChunk[key] = chunk.replace(orig, patched);
+                console.log('[ShadowLight] ShaderChunk patched: lights_lambert_pars_fragment (abs dotNL)');
             }
         }
     })();
 
-    // 3) Lambert fragment: gl_FrontFacing 선택을 항상 Front로 고정
-    (function() {
-        var key = 'meshlambert_frag';
-        var chunk = THREE.ShaderChunk[key];
-        if (chunk) {
-            var changed = false;
-            var o1 = 'reflectedLight.directDiffuse = ( gl_FrontFacing ) ? vLightFront : vLightBack;';
-            var o2 = 'reflectedLight.indirectDiffuse += ( gl_FrontFacing ) ? vIndirectFront : vIndirectBack;';
-            if (chunk.indexOf(o1) >= 0) {
-                chunk = chunk.replace(o1, 'reflectedLight.directDiffuse = vLightFront;');
-                changed = true;
-            }
-            if (chunk.indexOf(o2) >= 0) {
-                chunk = chunk.replace(o2, 'reflectedLight.indirectDiffuse += vIndirectFront;');
-                changed = true;
-            }
-            if (changed) {
-                THREE.ShaderChunk[key] = chunk;
-                console.log('[ShadowLight] ShaderChunk patched: meshlambert_frag (bypass gl_FrontFacing)');
-            }
-        }
-    })();
-
-    // 4) Phong fragment: normal_fragment_begin 패치로 커버되지만,
-    //    lights_phong_pars_fragment의 dotNL도 abs()로 감싸서 안전하게 처리
+    // 3) Phong pars fragment: dotNL을 abs()로 감싸서 Y-flip에서도 양면 라이팅
+    //    (r160에서 geometry.normal → geometryNormal로 변경됨)
     (function() {
         var key = 'lights_phong_pars_fragment';
         var chunk = THREE.ShaderChunk[key];
         if (chunk) {
-            var orig = 'float dotNL = saturate( dot( geometry.normal, directLight.direction ) );';
-            var patched = 'float dotNL = saturate( abs( dot( geometry.normal, directLight.direction ) ) );';
+            var orig = 'float dotNL = saturate( dot( geometryNormal, directLight.direction ) );';
+            var patched = 'float dotNL = saturate( abs( dot( geometryNormal, directLight.direction ) ) );';
             if (chunk.indexOf(orig) >= 0) {
                 THREE.ShaderChunk[key] = chunk.replace(orig, patched);
                 console.log('[ShadowLight] ShaderChunk patched: lights_phong_pars_fragment (abs dotNL)');
@@ -118,7 +95,7 @@ ConfigManager.applyData = function(config) {
 var _Window_Options_addGeneralOptions = Window_Options.prototype.addGeneralOptions;
 Window_Options.prototype.addGeneralOptions = function() {
     _Window_Options_addGeneralOptions.call(this);
-    this.addCommand('그림자/광원', 'shadowLight');
+    this.addCommand('그림자/조명', 'shadowLight');
 };
 
 //=============================================================================
@@ -174,6 +151,7 @@ ShadowLight.config = {
     lightDirection: new THREE.Vector3(-1, -1, -2).normalize(), // 광원 방향 (Z 성분 크게)
 
     // 플레이어 포인트 라이트
+    playerLightEnabled: true,
     playerLightColor: 0xa25f06,       // 횃불 색상
     playerLightIntensity: 0.8,
     playerLightDistance: 200,          // 범위 (pixel 단위, decay=0에서 이 범위 밖은 영향 없음)
@@ -287,6 +265,42 @@ ShadowLight._convertMaterial = function(sprite) {
     });
 
     this._convertedMaterials.set(newMat, true);
+
+    // anchorY shader clipping: material 교체 후에도 유지
+    if (sprite._needsAnchorClip) {
+        newMat.onBeforeCompile = function(shader) {
+            shader.vertexShader = shader.vertexShader.replace(
+                'void main() {',
+                'varying float vLocalY;\nvoid main() {\n  vLocalY = position.y;'
+            );
+            shader.fragmentShader = shader.fragmentShader.replace(
+                'void main() {',
+                'varying float vLocalY;\nvoid main() {\n  if (vLocalY > 0.0) discard;'
+            );
+        };
+        newMat.customProgramCacheKey = function() {
+            return 'mapobj-clip-anchor-phong';
+        };
+        newMat.needsUpdate = true;
+        // customDepthMaterial에도 clipping 적용 (그림자도 잘리도록)
+        if (sprite._threeObj.customDepthMaterial) {
+            var depthMat = sprite._threeObj.customDepthMaterial;
+            depthMat.onBeforeCompile = function(shader) {
+                shader.vertexShader = shader.vertexShader.replace(
+                    'void main() {',
+                    'varying float vLocalY;\nvoid main() {\n  vLocalY = position.y;'
+                );
+                shader.fragmentShader = shader.fragmentShader.replace(
+                    'void main() {',
+                    'varying float vLocalY;\nvoid main() {\n  if (vLocalY > 0.0) discard;'
+                );
+            };
+            depthMat.customProgramCacheKey = function() {
+                return 'mapobj-clip-anchor-depth';
+            };
+            depthMat.needsUpdate = true;
+        }
+    }
 };
 
 //=============================================================================
@@ -1176,26 +1190,78 @@ function sunUVToDirection(u, v) {
 ShadowLight._addLightsToScene = function(scene) {
     if (this._ambientLight) return; // 이미 추가됨
 
+    // localStorage에서 인스펙터 config 복구 (사용자가 마지막으로 조절한 값)
+    var CONFIG_STORAGE_KEY = 'devPanel_mapInspector_config';
+    try {
+        var savedConfig = localStorage.getItem(CONFIG_STORAGE_KEY);
+        if (savedConfig) {
+            var parsed = JSON.parse(savedConfig);
+            for (var k in parsed) {
+                if (parsed.hasOwnProperty(k) && this.config.hasOwnProperty(k)) {
+                    // lightDirection은 THREE.Vector3로 복원
+                    if (k === 'lightDirection' && parsed[k] && typeof parsed[k] === 'object') {
+                        var d = parsed[k];
+                        this.config[k] = new THREE.Vector3(d.x || 0, d.y || 0, d.z || 0);
+                    } else {
+                        this.config[k] = parsed[k];
+                    }
+                }
+            }
+        }
+    } catch (e) {}
+
     // editorLights 맵별 설정 (에디터에서 저장한 커스텀 데이터)
-    var el = (typeof $dataMap !== 'undefined' && $dataMap) ? $dataMap.editorLights : null;
+    var elRaw = (typeof $dataMap !== 'undefined' && $dataMap) ? $dataMap.editorLights : null;
+    var elGlobalOff = elRaw && elRaw.enabled === false;
+    var el = (elRaw && !elGlobalOff) ? elRaw : null;
+
+    // 디버그 패널 우선 적용 플래그 로드
+    var ambientOverride = false;
+    var directionalOverride = false;
+    try { ambientOverride = localStorage.getItem('devPanel_ambientOverride') === 'true'; } catch (e) {}
+    try { directionalOverride = localStorage.getItem('devPanel_directionalOverride') === 'true'; } catch (e) {}
+    var playerLightOverride = false;
+    try { playerLightOverride = localStorage.getItem('devPanel_playerLightOverride') === 'true'; } catch (e) {}
+    var spotLightOverride = false;
+    try { spotLightOverride = localStorage.getItem('devPanel_spotLightOverride') === 'true'; } catch (e) {}
+    this._debugAmbientOverride = ambientOverride;
+    this._debugDirectionalOverride = directionalOverride;
+    this._debugPlayerLightOverride = playerLightOverride;
+    this._debugSpotLightOverride = spotLightOverride;
 
     // AmbientLight - 전체적인 환경광
-    var ambColor = el ? parseInt(el.ambient.color.replace('#', ''), 16) : this.config.ambientColor;
-    var ambIntensity = el ? el.ambient.intensity : this.config.ambientIntensity;
+    // 글로벌 OFF → ambient=1 흰색 (조명 없는 상태), 디버그 우선 ON → config, OFF → editorLights
+    var useElAmbient = !elGlobalOff && el && !ambientOverride;
+    var ambColor, ambIntensity, ambEnabled;
+    if (elGlobalOff) {
+        ambColor = 0xffffff;
+        ambIntensity = 1.0;
+        ambEnabled = true;
+    } else if (useElAmbient) {
+        ambColor = parseInt(el.ambient.color.replace('#', ''), 16);
+        ambIntensity = el.ambient.intensity;
+        ambEnabled = el.ambient.enabled !== false;
+    } else {
+        ambColor = this.config.ambientColor;
+        ambIntensity = this.config.ambientIntensity;
+        ambEnabled = true;
+    }
     // config에 동기화 (디버그 패널 초기값과 일치시킴)
-    if (el) {
+    if (useElAmbient) {
         this.config.ambientColor = ambColor;
         this.config.ambientIntensity = ambIntensity;
     }
-    this._ambientLight = new THREE.AmbientLight(ambColor, ambIntensity);
+    this._ambientLight = new THREE.AmbientLight(ambColor, ambEnabled ? ambIntensity : 0);
     scene.add(this._ambientLight);
 
     // DirectionalLight - 태양/달빛 (그림자 방향 결정)
-    var dirEnabled = el ? (el.directional.enabled === true) : true;
-    var dirColor = el ? parseInt(el.directional.color.replace('#', ''), 16) : this.config.directionalColor;
-    var dirIntensity = el ? el.directional.intensity : this.config.directionalIntensity;
+    // 글로벌 OFF → directional 비활성, 디버그 우선 ON → config, OFF → editorLights
+    var useElDir = !elGlobalOff && el && !directionalOverride;
+    var dirEnabled = elGlobalOff ? false : (useElDir ? (el.directional.enabled === true) : true);
+    var dirColor = useElDir ? parseInt(el.directional.color.replace('#', ''), 16) : this.config.directionalColor;
+    var dirIntensity = useElDir ? el.directional.intensity : this.config.directionalIntensity;
     // config에 동기화
-    if (el) {
+    if (useElDir) {
         this.config.directionalColor = dirColor;
         this.config.directionalIntensity = dirIntensity;
     }
@@ -1203,7 +1269,7 @@ ShadowLight._addLightsToScene = function(scene) {
     this._directionalLight.visible = dirEnabled;
     // 위치는 방향의 반대 (광원이 오는 방향)
     var dir;
-    if (el && el.directional.direction) {
+    if (useElDir && el.directional.direction) {
         dir = new THREE.Vector3(el.directional.direction[0], el.directional.direction[1], el.directional.direction[2]).normalize();
     } else {
         dir = this.config.lightDirection;
@@ -1238,6 +1304,33 @@ ShadowLight._addLightsToScene = function(scene) {
     // target을 scene에 추가해야 DirectionalLight 방향이 올바르게 동작
     scene.add(this._directionalLight);
     scene.add(this._directionalLight.target);
+
+    // editorLights에서 playerLight config 동기화
+    // 글로벌 OFF → player/spot light 비활성
+    if (elGlobalOff) {
+        this.config.playerLightEnabled = false;
+        this.config.spotLightEnabled = false;
+    } else if (el && el.playerLight && !playerLightOverride) {
+        var pl = el.playerLight;
+        this.config.playerLightEnabled = pl.enabled !== false;
+        if (pl.color) this.config.playerLightColor = parseInt(pl.color.replace('#', ''), 16);
+        if (pl.intensity != null) this.config.playerLightIntensity = pl.intensity;
+        if (pl.distance != null) this.config.playerLightDistance = pl.distance;
+        if (pl.z != null) this.config.playerLightZ = pl.z;
+    }
+    // editorLights에서 spotLight config 동기화 (디버그 우선 OFF일 때만)
+    if (!elGlobalOff && el && el.spotLight && !spotLightOverride) {
+        var sl = el.spotLight;
+        if (sl.enabled != null) this.config.spotLightEnabled = sl.enabled;
+        if (sl.color) this.config.spotLightColor = parseInt(sl.color.replace('#', ''), 16);
+        if (sl.intensity != null) this.config.spotLightIntensity = sl.intensity;
+        if (sl.distance != null) this.config.spotLightDistance = sl.distance;
+        if (sl.angle != null) this.config.spotLightAngle = sl.angle;
+        if (sl.penumbra != null) this.config.spotLightPenumbra = sl.penumbra;
+        if (sl.z != null) this.config.spotLightZ = sl.z;
+        if (sl.shadowMapSize != null) this.config.spotLightShadowMapSize = sl.shadowMapSize;
+        if (sl.targetDistance != null) this.config.spotLightTargetDistance = sl.targetDistance;
+    }
 
     // SpotLight - 플레이어 방향성 그림자 (항상 생성, visible로 제어)
     this._playerSpotLight = new THREE.SpotLight(
@@ -1323,11 +1416,38 @@ ShadowLight._updateCameraZoneAmbient = function() {
     if (!this._ambientLight) return;
     if (window.__editorMode) return;
 
-    // 타겟 값 결정: 활성 카메라존 → 글로벌 config
-    var targetIntensity = this.config.ambientIntensity;
-    var targetR = ((this.config.ambientColor >> 16) & 0xFF) / 255;
-    var targetG = ((this.config.ambientColor >> 8) & 0xFF) / 255;
-    var targetB = (this.config.ambientColor & 0xFF) / 255;
+    // 디버그 패널 우선 적용 시 → 패널 config 값 직접 사용, lerp 스킵
+    if (this._debugAmbientOverride) {
+        this._ambientLight.intensity = this.config.ambientIntensity;
+        this._ambientLight.color.setHex(this.config.ambientColor);
+        this._currentAmbientIntensity = null; // 해제 시 lerp 재초기화 위해
+        return;
+    }
+
+    // 맵 데이터 기반: editorLights에서 글로벌 ambient 값 가져오기
+    var elRaw = (typeof $dataMap !== 'undefined' && $dataMap) ? $dataMap.editorLights : null;
+    var elGlobalOff = elRaw && elRaw.enabled === false;
+    var el = (elRaw && !elGlobalOff) ? elRaw : null;
+    var baseIntensity, baseColor;
+    var ambEnabled = true;
+    if (elGlobalOff) {
+        // 광원 시스템 OFF → 조명 없는 상태 (ambient=1, 흰색)
+        baseIntensity = 1.0;
+        baseColor = 0xffffff;
+    } else if (el && el.ambient) {
+        ambEnabled = el.ambient.enabled !== false;
+        baseIntensity = el.ambient.intensity;
+        baseColor = parseInt(el.ambient.color.replace('#', ''), 16);
+    } else {
+        baseIntensity = this.config.ambientIntensity;
+        baseColor = this.config.ambientColor;
+    }
+
+    // 타겟 값 결정: 활성 카메라존 → 맵 editorLights 글로벌
+    var targetIntensity = ambEnabled ? baseIntensity : 0;
+    var targetR = ((baseColor >> 16) & 0xFF) / 255;
+    var targetG = ((baseColor >> 8) & 0xFF) / 255;
+    var targetB = (baseColor & 0xFF) / 255;
     var transitionSpeed = 1.0;
 
     if ($gameMap && $gameMap._activeCameraZoneId != null) {
@@ -1779,6 +1899,11 @@ Spriteset_Map.prototype.update = function() {
 Spriteset_Map.prototype._updateShadowLight = function() {
     var enabled = ConfigManager.shadowLight;
 
+    // editorLights.enabled === false이면 ShadowLight 비활성화 (MeshBasicMaterial 복원)
+    var elRaw = (typeof $dataMap !== 'undefined' && $dataMap) ? $dataMap.editorLights : null;
+    var elGlobalOff = elRaw && elRaw.enabled === false;
+    if (elGlobalOff) enabled = false;
+
     if (enabled && !ShadowLight._active) {
         // 활성화
         this._activateShadowLight();
@@ -1869,8 +1994,10 @@ Spriteset_Map.prototype._activateShadowLight = function() {
     ShadowLight._resetTilemapMeshes(this._tilemap);
 
     // upperZLayer를 z 방향으로 상승시켜 PointLight 조명 효과 개선
+    // tileLayerElevation이 비활성화면 상승하지 않음
     if (this._tilemap && this._tilemap.upperZLayer) {
-        this._tilemap.upperZLayer._zIndex = ShadowLight.config.upperLayerZ;
+        var elevationEnabled = $dataMap && $dataMap.tileLayerElevation;
+        this._tilemap.upperZLayer._zIndex = elevationEnabled ? ShadowLight.config.upperLayerZ : 0;
     }
 
     // 디버그 UI 생성 (에디터 모드가 아니고, ?dev=true 일 때만)
@@ -1912,7 +2039,9 @@ Spriteset_Map.prototype._deactivateShadowLight = function() {
 
     // upperZLayer z 위치 복원
     if (this._tilemap && this._tilemap.upperZLayer) {
-        this._tilemap.upperZLayer._threeObj.position.z = 4; // 원래 zIndex
+        var elevationEnabled = $dataMap && $dataMap.tileLayerElevation;
+        this._tilemap.upperZLayer._zIndex = elevationEnabled ? 4 : 0;
+        this._tilemap.upperZLayer._threeObj.position.z = elevationEnabled ? 4 : 0;
     }
 
     // shadow mesh 숨기기 및 씬 그래프에서 제거
@@ -1960,23 +2089,28 @@ Spriteset_Map.prototype._updatePointLights = function() {
 
     // 플레이어 라이트 (PointLight - 횃불 효과, 플레이어가 보일 때만)
     var playerWp = null;
+    var plEnabled = ShadowLight.config.playerLightEnabled !== false;
     if ($gamePlayer) {
         var playerSprite = this._getPlayerSprite();
         if (playerSprite) {
             playerWp = ShadowLight._getWrapperWorldPos(playerSprite);
         }
-        if (!$gamePlayer.isTransparent() && playerWp) {
+        // playerLightEnabled === false이면 스킵
+        if (!$gamePlayer.isTransparent() && playerWp && plEnabled && ShadowLight._debugPlayerLightOverride) {
             var light = ShadowLight._getPointLight();
-            light.color.setHex(ShadowLight.config.playerLightColor);
-            light.intensity = ShadowLight.config.playerLightIntensity;
-            light.distance = ShadowLight.config.playerLightDistance;
+            var plCfg = ShadowLight.config;
+            light.color.setHex(plCfg.playerLightColor);
+            light.intensity = plCfg.playerLightIntensity;
+            light.distance = plCfg.playerLightDistance;
             light.decay = ShadowLight._debugDecay !== undefined ? ShadowLight._debugDecay : 0;
-            light.position.set(playerWp.x, playerWp.y - 24, ShadowLight.config.playerLightZ);
+            light.position.set(playerWp.x, playerWp.y - 24, plCfg.playerLightZ);
         }
     }
 
     // SpotLight 위치/방향 업데이트
-    if (ShadowLight._playerSpotLight && ShadowLight.config.spotLightEnabled && playerWp &&
+    // 디버그 우선 OFF → 스포트라이트 비활성, ON → 패널(config) 값 사용
+    var spotEnabled = ShadowLight._debugSpotLightOverride;
+    if (ShadowLight._playerSpotLight && spotEnabled && playerWp &&
         $gamePlayer && !$gamePlayer.isTransparent()) {
         var spot = ShadowLight._playerSpotLight;
         spot.visible = true;
@@ -1993,7 +2127,8 @@ Spriteset_Map.prototype._updatePointLights = function() {
 
         // target을 플레이어가 바라보는 방향으로 설정
         var dir = $gamePlayer.direction();
-        var off = ShadowLight._directionToOffset(dir, cfg.spotLightTargetDistance);
+        var spotTDist = cfg.spotLightTargetDistance;
+        var off = ShadowLight._directionToOffset(dir, spotTDist);
         ShadowLight._playerSpotTarget.position.set(
             playerWp.x + off.x,
             playerWp.y - 24 + off.y,
@@ -2003,7 +2138,7 @@ Spriteset_Map.prototype._updatePointLights = function() {
     }
 
     // SpotLight가 비활성이면 숨기기
-    if (ShadowLight._playerSpotLight && (!ShadowLight.config.spotLightEnabled || !playerWp)) {
+    if (ShadowLight._playerSpotLight && (!spotEnabled || !playerWp)) {
         ShadowLight._playerSpotLight.visible = false;
     }
 
@@ -2031,7 +2166,8 @@ Spriteset_Map.prototype._updatePointLights = function() {
     }
 
     // 에디터에서 배치한 포인트 라이트 ($dataMap.editorLights.points)
-    var el = (typeof $dataMap !== 'undefined' && $dataMap) ? $dataMap.editorLights : null;
+    var elRaw2 = (typeof $dataMap !== 'undefined' && $dataMap) ? $dataMap.editorLights : null;
+    var el = (elRaw2 && elRaw2.enabled !== false) ? elRaw2 : null;
     if (el && el.points) {
         var tw = $gameMap.tileWidth();
         var th = $gameMap.tileHeight();
@@ -2148,6 +2284,7 @@ ShadowLight._createDebugUI = function() {
 
     var PANEL_ID = 'mapInspector';
     var SECTION_STORAGE_KEY = 'devPanel_mapInspector_sections';
+    var CONFIG_STORAGE_KEY = 'devPanel_mapInspector_config';
 
     // Load/save section collapsed states
     var sectionStates = {};
@@ -2159,6 +2296,12 @@ ShadowLight._createDebugUI = function() {
         try { localStorage.setItem(SECTION_STORAGE_KEY, JSON.stringify(sectionStates)); } catch (e) {}
     }
 
+    // config 변경 시 localStorage에 저장 (새로고침 후 복구용)
+    var self = this;
+    function saveConfigToStorage() {
+        try { localStorage.setItem(CONFIG_STORAGE_KEY, JSON.stringify(self.config)); } catch (e) {}
+    }
+
     var panel = document.createElement('div');
     panel.id = 'sl-debug-panel';
     panel.style.cssText = 'position:fixed;top:10px;right:10px;z-index:99999;background:rgba(0,0,0,0.85);color:#eee;font:12px monospace;padding:10px;border-radius:6px;min-width:220px;pointer-events:auto;';
@@ -2168,7 +2311,6 @@ ShadowLight._createDebugUI = function() {
     title.style.cssText = 'font-weight:bold;margin-bottom:8px;color:#ffcc88;display:flex;align-items:center;';
     panel.appendChild(title);
 
-    var self = this;
     var sectionStyle = 'border-top:1px solid #444;padding-top:6px;margin-top:6px;';
 
     // 정수 색상값을 #rrggbb 문자열로 변환하는 헬퍼
@@ -2241,6 +2383,7 @@ ShadowLight._createDebugUI = function() {
                     self._playerSpotLight.shadow.radius = v;
                 }
             }
+            saveConfigToStorage();
         });
 
         row.appendChild(lbl);
@@ -2299,6 +2442,7 @@ ShadowLight._createDebugUI = function() {
                     });
                 }
             }
+            saveConfigToStorage();
         });
 
         row.appendChild(lbl);
@@ -2440,11 +2584,63 @@ ShadowLight._createDebugUI = function() {
 
     // ── 환경광 섹션 ──
     var envBody = createSection(panel, '환경광', '#88ccff', false);
+
+    // 디버그 패널 우선 적용 체크박스 (환경광)
+    var AMBIENT_OVERRIDE_KEY = 'devPanel_ambientOverride';
+    var ambientOverrideRow = document.createElement('div');
+    ambientOverrideRow.style.cssText = 'margin:4px 0;display:flex;align-items:center;gap:6px;';
+    var ambientOverrideLbl = document.createElement('span');
+    ambientOverrideLbl.textContent = '디버그 우선';
+    ambientOverrideLbl.style.cssText = 'width:70px;font-size:11px;color:#f8a;';
+    var ambientOverrideCheck = document.createElement('input');
+    ambientOverrideCheck.type = 'checkbox';
+    try { ambientOverrideCheck.checked = localStorage.getItem(AMBIENT_OVERRIDE_KEY) === 'true'; } catch (e) {}
+    self._debugAmbientOverride = ambientOverrideCheck.checked;
+    ambientOverrideCheck.addEventListener('change', function() {
+        self._debugAmbientOverride = ambientOverrideCheck.checked;
+        try { localStorage.setItem(AMBIENT_OVERRIDE_KEY, ambientOverrideCheck.checked ? 'true' : 'false'); } catch (e) {}
+        if (!ambientOverrideCheck.checked && self._ambientLight) {
+            // 끄면 맵 데이터로 즉시 복원
+            self._currentAmbientIntensity = null; // lerp 재초기화
+        }
+    });
+    ambientOverrideRow.appendChild(ambientOverrideLbl);
+    ambientOverrideRow.appendChild(ambientOverrideCheck);
+    var ambientOverrideHint = document.createElement('span');
+    ambientOverrideHint.textContent = 'ON: 패널 값 사용';
+    ambientOverrideHint.style.cssText = 'font-size:10px;color:#888;';
+    ambientOverrideRow.appendChild(ambientOverrideHint);
+    envBody.appendChild(ambientOverrideRow);
+
     addSliderRow(envBody, { label: 'Ambient', key: 'ambientIntensity', min: 0, max: 3, step: 0.05 });
     addColorRow(envBody, { label: 'Ambient Color', key: 'ambientColor' });
 
     // ── 디렉셔널 라이트 섹션 ──
-    var dirBody = createSection(panel, '디렉셔널 라이트', '#aaddff', true);
+    var dirBody = createSection(panel, '방향 조명', '#aaddff', true);
+
+    // 디버그 패널 우선 적용 체크박스 (디렉셔널)
+    var DIR_OVERRIDE_KEY = 'devPanel_directionalOverride';
+    var dirOverrideRow = document.createElement('div');
+    dirOverrideRow.style.cssText = 'margin:4px 0;display:flex;align-items:center;gap:6px;';
+    var dirOverrideLbl = document.createElement('span');
+    dirOverrideLbl.textContent = '디버그 우선';
+    dirOverrideLbl.style.cssText = 'width:70px;font-size:11px;color:#f8a;';
+    var dirOverrideCheck = document.createElement('input');
+    dirOverrideCheck.type = 'checkbox';
+    try { dirOverrideCheck.checked = localStorage.getItem(DIR_OVERRIDE_KEY) === 'true'; } catch (e) {}
+    self._debugDirectionalOverride = dirOverrideCheck.checked;
+    dirOverrideCheck.addEventListener('change', function() {
+        self._debugDirectionalOverride = dirOverrideCheck.checked;
+        try { localStorage.setItem(DIR_OVERRIDE_KEY, dirOverrideCheck.checked ? 'true' : 'false'); } catch (e) {}
+    });
+    dirOverrideRow.appendChild(dirOverrideLbl);
+    dirOverrideRow.appendChild(dirOverrideCheck);
+    var dirOverrideHint = document.createElement('span');
+    dirOverrideHint.textContent = 'ON: 패널 값 사용';
+    dirOverrideHint.style.cssText = 'font-size:10px;color:#888;';
+    dirOverrideRow.appendChild(dirOverrideHint);
+    dirBody.appendChild(dirOverrideRow);
+
     addSliderRow(dirBody, { label: 'Dir Int', key: 'directionalIntensity', min: 0, max: 3, step: 0.05 });
     addColorRow(dirBody, { label: 'Dir Color', key: 'directionalColor' });
 
@@ -2475,6 +2671,7 @@ ShadowLight._createDebugUI = function() {
                 var dir = self.config.lightDirection;
                 self._directionalLight.position.set(-dir.x * 1000, -dir.y * 1000, -dir.z * 1000);
             }
+            saveConfigToStorage();
         });
         dirRow.appendChild(dirLbl);
         dirRow.appendChild(dirSlider);
@@ -2521,6 +2718,7 @@ ShadowLight._createDebugUI = function() {
             self._directionalLight.shadow.mapSize.height = sz;
             self._directionalLight.shadow.map = null; // 다시 생성되도록
         }
+        saveConfigToStorage();
     });
     smapRow.appendChild(smapLbl);
     smapRow.appendChild(smapSelect);
@@ -2536,7 +2734,31 @@ ShadowLight._createDebugUI = function() {
     addSliderRow(shadowBody, { label: 'UpperZ', key: 'upperLayerZ', min: 0, max: 100, step: 1 });
 
     // ── 플레이어 라이트 섹션 ──
-    var playerBody = createSection(panel, '플레이어 라이트', '#ffcc66', false);
+    var playerBody = createSection(panel, '플레이어 조명', '#ffcc66', false);
+
+    // 디버그 패널 우선 적용 체크박스 (플레이어 라이트)
+    var PLAYER_OVERRIDE_KEY = 'devPanel_playerLightOverride';
+    var playerOverrideRow = document.createElement('div');
+    playerOverrideRow.style.cssText = 'margin:4px 0;display:flex;align-items:center;gap:6px;';
+    var playerOverrideLbl = document.createElement('span');
+    playerOverrideLbl.textContent = '디버그 우선';
+    playerOverrideLbl.style.cssText = 'width:70px;font-size:11px;color:#f8a;';
+    var playerOverrideCheck = document.createElement('input');
+    playerOverrideCheck.type = 'checkbox';
+    try { playerOverrideCheck.checked = localStorage.getItem(PLAYER_OVERRIDE_KEY) === 'true'; } catch (e) {}
+    self._debugPlayerLightOverride = playerOverrideCheck.checked;
+    playerOverrideCheck.addEventListener('change', function() {
+        self._debugPlayerLightOverride = playerOverrideCheck.checked;
+        try { localStorage.setItem(PLAYER_OVERRIDE_KEY, playerOverrideCheck.checked ? 'true' : 'false'); } catch (e) {}
+    });
+    playerOverrideRow.appendChild(playerOverrideLbl);
+    playerOverrideRow.appendChild(playerOverrideCheck);
+    var playerOverrideHint = document.createElement('span');
+    playerOverrideHint.textContent = 'ON: 활성화';
+    playerOverrideHint.style.cssText = 'font-size:10px;color:#888;';
+    playerOverrideRow.appendChild(playerOverrideHint);
+    playerBody.appendChild(playerOverrideRow);
+
     addSliderRow(playerBody, { label: 'Intensity', key: 'playerLightIntensity', min: 0, max: 5, step: 0.1 });
     addSliderRow(playerBody, { label: 'Distance', key: 'playerLightDistance', min: 50, max: 2000, step: 50 });
     addSliderRow(playerBody, { label: 'Light Z', key: 'playerLightZ', min: 0, max: 500, step: 10 });
@@ -2566,26 +2788,30 @@ ShadowLight._createDebugUI = function() {
     playerBody.appendChild(decayRow);
 
     // ── 스포트라이트 섹션 ──
-    var spotBody = createSection(panel, '스포트라이트', '#ff9966', true);
+    var spotBody = createSection(panel, '집중 조명', '#ff9966', true);
 
-    // SpotLight ON/OFF 토글
-    var spotRow = document.createElement('div');
-    spotRow.style.cssText = 'margin:4px 0;display:flex;align-items:center;gap:6px;';
-    var spotLbl = document.createElement('span');
-    spotLbl.textContent = 'Enabled';
-    spotLbl.style.cssText = 'width:70px;font-size:11px;';
-    var spotCheck = document.createElement('input');
-    spotCheck.type = 'checkbox';
-    spotCheck.checked = self.config.spotLightEnabled;
-    spotCheck.addEventListener('change', function() {
-        self.config.spotLightEnabled = spotCheck.checked;
-        if (self._playerSpotLight) {
-            self._playerSpotLight.visible = spotCheck.checked;
-        }
+    // 디버그 패널 우선 적용 체크박스 (스포트라이트)
+    var SPOT_OVERRIDE_KEY = 'devPanel_spotLightOverride';
+    var spotOverrideRow = document.createElement('div');
+    spotOverrideRow.style.cssText = 'margin:4px 0;display:flex;align-items:center;gap:6px;';
+    var spotOverrideLbl = document.createElement('span');
+    spotOverrideLbl.textContent = '디버그 우선';
+    spotOverrideLbl.style.cssText = 'width:70px;font-size:11px;color:#f8a;';
+    var spotOverrideCheck = document.createElement('input');
+    spotOverrideCheck.type = 'checkbox';
+    try { spotOverrideCheck.checked = localStorage.getItem(SPOT_OVERRIDE_KEY) === 'true'; } catch (e) {}
+    self._debugSpotLightOverride = spotOverrideCheck.checked;
+    spotOverrideCheck.addEventListener('change', function() {
+        self._debugSpotLightOverride = spotOverrideCheck.checked;
+        try { localStorage.setItem(SPOT_OVERRIDE_KEY, spotOverrideCheck.checked ? 'true' : 'false'); } catch (e) {}
     });
-    spotRow.appendChild(spotLbl);
-    spotRow.appendChild(spotCheck);
-    spotBody.appendChild(spotRow);
+    spotOverrideRow.appendChild(spotOverrideLbl);
+    spotOverrideRow.appendChild(spotOverrideCheck);
+    var spotOverrideHint = document.createElement('span');
+    spotOverrideHint.textContent = 'ON: 활성화';
+    spotOverrideHint.style.cssText = 'font-size:10px;color:#888;';
+    spotOverrideRow.appendChild(spotOverrideHint);
+    spotBody.appendChild(spotOverrideRow);
 
     addSliderRow(spotBody, { label: 'Spot Int', key: 'spotLightIntensity', min: 0, max: 10, step: 0.1 });
     addSliderRow(spotBody, { label: 'Spot Dist', key: 'spotLightDistance', min: 50, max: 1000, step: 50 });
@@ -2618,6 +2844,7 @@ ShadowLight._createDebugUI = function() {
             self._playerSpotLight.shadow.mapSize.height = sz;
             self._playerSpotLight.shadow.map = null;
         }
+        saveConfigToStorage();
     });
     spotSmapRow.appendChild(spotSmapLbl);
     spotSmapRow.appendChild(spotSmapSelect);
@@ -2639,7 +2866,7 @@ ShadowLight._createDebugUI = function() {
             '--- 환경광 ---',
             'ambientIntensity: ' + cfg.ambientIntensity,
             'ambientColor: 0x' + ('000000' + ((cfg.ambientColor || 0xffffff) >>> 0).toString(16)).slice(-6),
-            '--- 디렉셔널 라이트 ---',
+            '--- 방향 조명 ---',
             'directionalIntensity: ' + cfg.directionalIntensity,
             'directionalColor: 0x' + ('000000' + ((cfg.directionalColor || 0xffffff) >>> 0).toString(16)).slice(-6),
             'lightDirection: [' + dirArr[0].toFixed(2) + ', ' + dirArr[1].toFixed(2) + ', ' + dirArr[2].toFixed(2) + ']',
@@ -2650,13 +2877,13 @@ ShadowLight._createDebugUI = function() {
             '--- 그림자 설정 ---',
             'shadowRadius: ' + cfg.shadowRadius,
             'upperLayerZ: ' + cfg.upperLayerZ,
-            '--- 플레이어 라이트 ---',
+            '--- 플레이어 조명 ---',
             'playerLightIntensity: ' + cfg.playerLightIntensity,
             'playerLightDistance: ' + cfg.playerLightDistance,
             'playerLightZ: ' + cfg.playerLightZ,
             'playerLightColor: 0x' + ('000000' + ((cfg.playerLightColor || 0xffffff) >>> 0).toString(16)).slice(-6),
             'decay: ' + (self._debugDecay !== undefined ? self._debugDecay : 0),
-            '--- 스포트라이트 ---',
+            '--- 집중 조명 ---',
             'spotLightEnabled: ' + cfg.spotLightEnabled,
             'spotLightIntensity: ' + cfg.spotLightIntensity,
             'spotLightDistance: ' + cfg.spotLightDistance,
@@ -2829,7 +3056,7 @@ ShadowLight._createDebugUI = function() {
         arrowRow.appendChild(arrowCb);
 
         var arrowLabel = document.createElement('span');
-        arrowLabel.textContent = '광원 방향 화살표';
+        arrowLabel.textContent = '방향 조명 화살표';
         arrowLabel.style.cssText = 'color:#ccc;font-size:11px;';
         arrowRow.appendChild(arrowLabel);
 
@@ -2844,7 +3071,7 @@ ShadowLight._createDebugUI = function() {
         skyBody.appendChild(arrowRow);
     })();
 
-    // DoF 섹션 삽입 포인트 (DepthOfField가 여기에 섹션을 추가함)
+    // DoF 섹션 삽입 포인트 (PostProcess.js가 여기에 섹션을 추가함)
     var dofContainer = document.createElement('div');
     dofContainer.id = 'sl-debug-dof-container';
     panel.appendChild(dofContainer);
@@ -2880,15 +3107,91 @@ Game_Interpreter.prototype.pluginCommand = function(command, args) {
         if (args[0] === 'on') ConfigManager.shadowLight = true;
         if (args[0] === 'off') ConfigManager.shadowLight = false;
         if (args[0] === 'ambient' && args[1]) {
-            ShadowLight.config.ambientIntensity = parseFloat(args[1]);
-            if (ShadowLight._ambientLight) {
-                ShadowLight._ambientLight.intensity = parseFloat(args[1]);
+            var ambVal = parseFloat(args[1]);
+            var ambDur = args[2] ? parseFloat(args[2]) : 0;
+            // editorLights.ambient도 함께 업데이트 (_updateCameraZoneAmbient가 이 값을 target으로 사용)
+            var _el = (typeof $dataMap !== 'undefined' && $dataMap) ? $dataMap.editorLights : null;
+            if (ambDur > 0 && window.PluginTween) {
+                PluginTween.add({
+                    target: ShadowLight.config, key: 'ambientIntensity', to: ambVal, duration: ambDur,
+                    onUpdate: function(v) {
+                        if (_el && _el.ambient) _el.ambient.intensity = v;
+                        ShadowLight._currentAmbientIntensity = v;
+                        if (ShadowLight._ambientLight) ShadowLight._ambientLight.intensity = v;
+                    }
+                });
+            } else {
+                ShadowLight.config.ambientIntensity = ambVal;
+                if (_el && _el.ambient) _el.ambient.intensity = ambVal;
+                ShadowLight._currentAmbientIntensity = ambVal;
+                if (ShadowLight._ambientLight) ShadowLight._ambientLight.intensity = ambVal;
+            }
+        }
+        if (args[0] === 'ambientColor' && args[1]) {
+            var hex = parseInt(args[1].replace('#', ''), 16);
+            var colorDur = args[2] ? parseFloat(args[2]) : 0;
+            // editorLights.ambient도 함께 업데이트 (_updateCameraZoneAmbient가 이 값을 target으로 사용)
+            var _el2 = (typeof $dataMap !== 'undefined' && $dataMap) ? $dataMap.editorLights : null;
+            if (!isNaN(hex)) {
+                if (colorDur > 0 && window.PluginTween) {
+                    PluginTween.addColor({
+                        target: ShadowLight.config, key: 'ambientColor', to: hex, duration: colorDur,
+                        onUpdate: function(v) {
+                            // editorLights.ambient.color도 동기화
+                            if (_el2 && _el2.ambient) _el2.ambient.color = '#' + ('000000' + (v >>> 0).toString(16)).slice(-6);
+                            var r = ((v >> 16) & 0xFF) / 255;
+                            var g = ((v >> 8) & 0xFF) / 255;
+                            var b = (v & 0xFF) / 255;
+                            ShadowLight._currentAmbientR = r;
+                            ShadowLight._currentAmbientG = g;
+                            ShadowLight._currentAmbientB = b;
+                            if (ShadowLight._ambientLight) ShadowLight._ambientLight.color.setHex(v);
+                        }
+                    });
+                } else {
+                    ShadowLight.config.ambientColor = hex;
+                    if (_el2 && _el2.ambient) _el2.ambient.color = '#' + ('000000' + (hex >>> 0).toString(16)).slice(-6);
+                    var r2 = ((hex >> 16) & 0xFF) / 255;
+                    var g2 = ((hex >> 8) & 0xFF) / 255;
+                    var b2 = (hex & 0xFF) / 255;
+                    ShadowLight._currentAmbientR = r2;
+                    ShadowLight._currentAmbientG = g2;
+                    ShadowLight._currentAmbientB = b2;
+                    if (ShadowLight._ambientLight) ShadowLight._ambientLight.color.setHex(hex);
+                }
             }
         }
         if (args[0] === 'direction' && args.length >= 4) {
             ShadowLight.config.lightDirection = new THREE.Vector3(
                 parseFloat(args[1]), parseFloat(args[2]), parseFloat(args[3])
             ).normalize();
+        }
+        // ShadowLight pointLight <id> <property> <value> [duration]
+        if (args[0] === 'pointLight' && args[1] && args[2]) {
+            var plId = parseInt(args[1]);
+            var plProp = args[2];
+            var plVal = args[3];
+            var plDur = args[4] ? parseFloat(args[4]) : 0;
+            var el = (typeof $dataMap !== 'undefined' && $dataMap) ? $dataMap.editorLights : null;
+            if (el && el.points) {
+                var plObj = null;
+                for (var pli = 0; pli < el.points.length; pli++) {
+                    if (el.points[pli].id === plId) { plObj = el.points[pli]; break; }
+                }
+                if (plObj) {
+                    if (plProp === 'color' && plVal) {
+                        var plHex = parseInt(plVal.replace('#', ''), 16);
+                        if (!isNaN(plHex)) plObj.color = '#' + plHex.toString(16).padStart(6, '0');
+                    } else if (plProp === 'intensity' || plProp === 'distance' || plProp === 'decay' || plProp === 'z') {
+                        var numVal = parseFloat(plVal);
+                        if (plDur > 0 && window.PluginTween) {
+                            PluginTween.add({ target: plObj, key: plProp, to: numVal, duration: plDur });
+                        } else {
+                            plObj[plProp] = numVal;
+                        }
+                    }
+                }
+            }
         }
     }
 };

@@ -306,6 +306,7 @@ ThreeSprite.prototype._updateTexture = function() {
         this._material.map = threeTexture;
         this._material.visible = true;
         this._material.needsUpdate = true;
+        threeTexture.needsUpdate = true;
 
         // Update frame/UV
         this._updateFrame();
@@ -421,7 +422,7 @@ ThreeSprite.prototype.syncTransform = function() {
     // Position: apply pivot offsets
     obj.position.x = this._x - this._pivotX;
     obj.position.y = this._y - this._pivotY;
-    obj.position.z = this._zIndex;
+    obj.position.z = this._zIndex + (this._heightOffset || 0);
 
     // Scale: only logical scale (scaleX/scaleY), NOT frame dimensions.
     // Frame dimensions are baked into geometry vertices below.
@@ -429,8 +430,11 @@ ThreeSprite.prototype.syncTransform = function() {
     obj.scale.x = this._scaleX;
     obj.scale.y = this._scaleY;
 
-    // Rotation (around Z for 2D). Negate for CW vs CCW convention.
-    obj.rotation.z = -this._rotation;
+    // Rotation (around Z for 2D).
+    // Y-down camera (top=0, bottom=height) naturally flips the visual rotation
+    // direction, making Three.js CCW appear as CW on screen — matching PIXI's
+    // CW convention. So we use the rotation value as-is (no negation).
+    obj.rotation.z = this._rotation;
 
     // Encode frame dimensions and anchor into geometry vertices directly.
     // PlaneGeometry(1,1) has vertices at -0.5..0.5. We replace them with
@@ -611,7 +615,14 @@ ThreeSprite.prototype.destroy = function(options) {
     if (this.parent) {
         this.parent.removeChild(this);
     }
-    this.removeChildren();
+    // 자식 스프라이트의 Three.js 리소스도 재귀적으로 해제
+    var children = this.children.slice();
+    for (var i = 0; i < children.length; i++) {
+        if (children[i].destroy) {
+            children[i].destroy(options);
+        }
+    }
+    this.children.length = 0;
     if (this._geometry) {
         this._geometry.dispose();
         this._geometry = null;

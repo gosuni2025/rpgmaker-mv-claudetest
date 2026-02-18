@@ -52,7 +52,10 @@ PostProcess._tiltShiftPass = null;
 PostProcess._debugSection = null;
 
 window.PostProcess = PostProcess;
-window.DepthOfField = PostProcess; // 하위호환
+window.ShaderPass = ShaderPass;
+window.FullScreenQuad = FullScreenQuad;
+window.MapRenderPass = MapRenderPass;
+window.Simple2DRenderPass = Simple2DRenderPass;
 
 PostProcess.config = {
     focusY: 0.55,       // 포커스 중심 Y위치 (0=상단, 1=하단), 캐릭터 약간 아래
@@ -231,8 +234,7 @@ function SimpleEffectComposer(renderer, renderTarget) {
     if (renderTarget === undefined) {
         var parameters = {
             minFilter: THREE.LinearFilter,
-            magFilter: THREE.LinearFilter,
-            format: THREE.RGBAFormat
+            magFilter: THREE.LinearFilter
         };
         renderTarget = new THREE.WebGLRenderTarget(w * this._pixelRatio, h * this._pixelRatio, parameters);
         renderTarget.texture.name = 'EffectComposer.rt1';
@@ -331,6 +333,18 @@ MapRenderPass.prototype.render = function(renderer, writeBuffer /*, readBuffer, 
     renderer.shadowMap.needsUpdate = true;
 
     // Pass 1: PerspectiveCamera - 맵(Spriteset_Map)만
+    // FOW 메쉬를 숨김 — bloom/postprocess 전에 렌더되면 탐험영역의 bloom이 약해짐
+    // UIRenderPass에서 FOW를 최종 합성함
+    var fowGroup = null, fowGroupWasVisible = false;
+    for (var fi = 0; fi < scene.children.length; fi++) {
+        if (scene.children[fi]._isFogOfWar) {
+            fowGroup = scene.children[fi];
+            fowGroupWasVisible = fowGroup.visible;
+            fowGroup.visible = false;
+            break;
+        }
+    }
+
     // Picture는 Pass 1에서 숨기고 UIRenderPass(2D)에서 렌더
     var picContainer = this.spriteset._pictureContainer;
     var picObj = picContainer && picContainer._threeObj;
@@ -379,6 +393,8 @@ MapRenderPass.prototype.render = function(renderer, writeBuffer /*, readBuffer, 
     if (blackScreenObj) {
         blackScreenObj.visible = blackScreenWasVisible;
     }
+    // FOW 가시성 복원
+    if (fowGroup) fowGroup.visible = fowGroupWasVisible;
     // Picture 가시성 복원
     if (picObj) picObj.visible = picWasVisible;
     // fade/flash/weather 가시성 복원
@@ -614,7 +630,7 @@ function BloomPass(params) {
 BloomPass.prototype.setSize = function(width, height) {
     var bw = Math.max(1, Math.floor(width / this._downscale));
     var bh = Math.max(1, Math.floor(height / this._downscale));
-    var params = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBAFormat };
+    var params = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter };
     if (this._width !== bw || this._height !== bh) {
         this._width = bw;
         this._height = bh;
@@ -921,11 +937,12 @@ BloomPass.prototype.dispose = function() {
 };
 
 // --- UIRenderPass (블러 후 UI를 선명하게 합성) ---
-function UIRenderPass(scene, camera, spriteset, stage) {
+function UIRenderPass(scene, camera, spriteset, stage, perspCamera) {
     this.scene = scene;
     this.camera = camera;
     this.spriteset = spriteset;
     this.stage = stage;
+    this.perspCamera = perspCamera;
     this.enabled = true;
     this.needsSwap = false;
     this.renderToScreen = true;
@@ -1019,13 +1036,24 @@ UIRenderPass.prototype.render = function(renderer, writeBuffer, readBuffer) {
         }
     }
 
-    // 하늘도 숨김
+    // 하늘, FOW, editorGrid 메쉬 숨김 (UIRenderPass는 2D OrthographicCamera이므로)
     var skyWasVisible = false;
+    var fowWasVisible = false;
+    var fowMesh = null;
+    var gridVisibility = [];
     for (var si = 0; si < scene.children.length; si++) {
         if (scene.children[si]._isParallaxSky) {
             skyWasVisible = scene.children[si].visible;
             scene.children[si].visible = false;
-            break;
+        }
+        if (scene.children[si]._isFogOfWar) {
+            fowMesh = scene.children[si];
+            fowWasVisible = fowMesh.visible;
+            fowMesh.visible = false;
+        }
+        if (scene.children[si].userData && scene.children[si].userData.editorGrid) {
+            gridVisibility.push({ idx: si, visible: scene.children[si].visible });
+            scene.children[si].visible = false;
         }
     }
 
@@ -1036,9 +1064,25 @@ UIRenderPass.prototype.render = function(renderer, writeBuffer, readBuffer) {
     this._copyMaterial.uniforms.tDiffuse.value = readBuffer.texture;
     this._copyQuad.render(renderer);
 
-    // 블러된 맵 위에 UI를 합성 (clear 하지 않음)
+    // FOW를 bloom 후, UI 전에 합성 — bloom을 가리지 않으면서 UI 아래에 렌더
     renderer.autoClear = false;
+    if (fowMesh && fowWasVisible && this.perspCamera) {
+        fowMesh.visible = true;
+        var sceneChildVis = [];
+        for (var sci = 0; sci < scene.children.length; sci++) {
+            sceneChildVis.push(scene.children[sci].visible);
+            scene.children[sci].visible = !!scene.children[sci]._isFogOfWar;
+        }
+        renderer.render(scene, this.perspCamera);
+        for (var sci = 0; sci < scene.children.length; sci++) {
+            scene.children[sci].visible = sceneChildVis[sci];
+        }
+        fowMesh.visible = false;
+    }
+
+    // 블러된 맵 + FOW 위에 UI를 합성 (clear 하지 않음)
     renderer.render(scene, this.camera);
+
     renderer.autoClear = prevAutoClear;
 
     // Picture를 원래 spritesetObj로 복원
@@ -1081,8 +1125,13 @@ UIRenderPass.prototype.render = function(renderer, writeBuffer, readBuffer) {
     for (var si = 0; si < scene.children.length; si++) {
         if (scene.children[si]._isParallaxSky) {
             scene.children[si].visible = skyWasVisible;
-            break;
         }
+        if (scene.children[si]._isFogOfWar) {
+            scene.children[si].visible = fowWasVisible;
+        }
+    }
+    for (var gi = 0; gi < gridVisibility.length; gi++) {
+        scene.children[gridVisibility[gi].idx].visible = gridVisibility[gi].visible;
     }
 };
 
@@ -1142,12 +1191,29 @@ Simple2DRenderPass.prototype.render = function(renderer, writeBuffer /*, readBuf
         origSetRT(target === null ? wb : target);
     };
 
+    // FOW 메쉬 숨김 (bloom 전에 렌더되지 않도록)
+    var scene2d = rendererObj.scene;
+    var fowMesh2dRender = null, fowWasVisible2dRender = false;
+    if (scene2d) {
+        for (var fi = 0; fi < scene2d.children.length; fi++) {
+            if (scene2d.children[fi]._isFogOfWar) {
+                fowMesh2dRender = scene2d.children[fi];
+                fowWasVisible2dRender = fowMesh2dRender.visible;
+                fowMesh2dRender.visible = false;
+                break;
+            }
+        }
+    }
+
     renderer.setRenderTarget(writeBuffer);
     if (this.clear) renderer.clear();
 
     this._prevRender.call(this._strategy, rendererObj, stage);
 
     renderer.setRenderTarget = origSetRT;
+
+    // FOW 가시성 복원
+    if (fowMesh2dRender) fowMesh2dRender.visible = fowWasVisible2dRender;
 
     // UI 가시성 복원
     if (uiInfo) {
@@ -1243,9 +1309,38 @@ Simple2DUIRenderPass.prototype.render = function(renderer, writeBuffer, readBuff
         flashObj.visible = true;
     }
 
-    // UI 렌더 (블룸 맵 위에 합성)
+    // FOW 메쉬 숨김 (2D UI 패스에서 중복 렌더 방지)
+    var fowMesh2d = null, fowWasVisible2d = false;
+    for (var si = 0; si < scene.children.length; si++) {
+        if (scene.children[si]._isFogOfWar) {
+            fowMesh2d = scene.children[si];
+            fowWasVisible2d = fowMesh2d.visible;
+            fowMesh2d.visible = false;
+            break;
+        }
+    }
+
+    // FOW를 bloom 후, UI 전에 합성
     renderer.autoClear = false;
+    if (fowMesh2d && fowWasVisible2d) {
+        fowMesh2d.visible = true;
+        var skyVis2d = [];
+        for (var sci = 0; sci < scene.children.length; sci++) {
+            skyVis2d.push(scene.children[sci].visible);
+            scene.children[sci].visible = !!scene.children[sci]._isFogOfWar;
+        }
+        renderer.render(scene, camera);
+        for (var sci = 0; sci < scene.children.length; sci++) {
+            scene.children[sci].visible = skyVis2d[sci];
+        }
+        fowMesh2d.visible = false;
+    }
+
+    // UI 렌더 (블룸 맵 + FOW 위에 합성)
     renderer.render(scene, camera);
+
+    // FOW 메쉬 가시성 복원
+    if (fowMesh2d) fowMesh2d.visible = fowWasVisible2d;
 
     // 복원: Picture, Fade, Flash를 spritesetObj로 되돌림
     if (picObj && picObj.parent === stageObj) {
@@ -1327,7 +1422,7 @@ PostProcess._createComposer = function(rendererObj, stage) {
     composer.addPass(tiltShiftPass);
 
     // UIRenderPass - 블러된 맵 위에 UI를 선명하게 합성
-    var uiPass = new UIRenderPass(scene, camera, Mode3D._spriteset, stage);
+    var uiPass = new UIRenderPass(scene, camera, Mode3D._spriteset, stage, Mode3D._perspCamera);
     composer.addPass(uiPass);
 
     this._composer = composer;
@@ -1954,17 +2049,75 @@ Game_Interpreter.prototype.pluginCommand = function(command, args) {
     if (command === 'DoF' || command === 'DepthOfField' || command === 'PostProcess') {
         if (args[0] === 'on') ConfigManager.depthOfField = true;
         if (args[0] === 'off') ConfigManager.depthOfField = false;
-        if (args[0] === 'focusY' && args[1]) {
-            PostProcess.config.focusY = parseFloat(args[1]);
+        var ppKeyMap = { focusY: '_currentFocusY', focusRange: '_currentFocusRange', maxblur: '_currentMaxBlur', blurPower: '_currentBlurPower' };
+        var ppKeys = ['focusY', 'focusRange', 'maxblur', 'blurPower'];
+        for (var pi = 0; pi < ppKeys.length; pi++) {
+            if (args[0] === ppKeys[pi] && args[1]) {
+                var ppVal = parseFloat(args[1]);
+                var ppDur = args[2] ? parseFloat(args[2]) : 0;
+                var currentKey = ppKeyMap[ppKeys[pi]];
+                if (ppDur > 0 && window.PluginTween) {
+                    (function(cfgKey, curKey) {
+                        PluginTween.add({
+                            target: PostProcess.config, key: cfgKey, to: ppVal, duration: ppDur,
+                            onUpdate: function(v) {
+                                // _updateUniforms의 lerp를 바이패스하기 위해 _current 값도 동기화
+                                PostProcess[curKey] = v;
+                            }
+                        });
+                    })(ppKeys[pi], currentKey);
+                } else {
+                    PostProcess.config[ppKeys[pi]] = ppVal;
+                    PostProcess[currentKey] = ppVal;
+                }
+            }
         }
-        if (args[0] === 'focusRange' && args[1]) {
-            PostProcess.config.focusRange = parseFloat(args[1]);
-        }
-        if (args[0] === 'maxblur' && args[1]) {
-            PostProcess.config.maxblur = parseFloat(args[1]);
-        }
-        if (args[0] === 'blurPower' && args[1]) {
-            PostProcess.config.blurPower = parseFloat(args[1]);
+    }
+
+    // PPEffect <effectKey> <on|off|paramKey> [value] [duration]
+    if (command === 'PPEffect') {
+        var effectKey = args[0];
+        var action = args[1];
+        var PPE = window.PostProcessEffects;
+        if (effectKey && action && PostProcess._ppPasses && PostProcess._ppPasses[effectKey]) {
+            var pass = PostProcess._ppPasses[effectKey];
+            if (action === 'on') {
+                pass.enabled = true;
+                PostProcess._updateRenderToScreen();
+            } else if (action === 'off') {
+                pass.enabled = false;
+                PostProcess._updateRenderToScreen();
+            } else if (args[2] != null && PPE) {
+                var ppEffVal = parseFloat(args[2]);
+                var ppEffDur = args[3] ? parseFloat(args[3]) : 0;
+                if (ppEffDur > 0 && window.PluginTween) {
+                    // 프록시 객체로 매 프레임 applyParam 호출
+                    var _ek = effectKey, _act = action, _pass = pass;
+                    if (!PostProcess._ppTweenProxies) PostProcess._ppTweenProxies = {};
+                    var proxyKey = _ek + '_' + _act;
+                    if (!PostProcess._ppTweenProxies[proxyKey]) {
+                        // 현재 유니폼 값을 시작값으로 사용
+                        var curVal = 0;
+                        var map = PPE._UNIFORM_MAP[_ek];
+                        if (map && map[_act] && _pass.uniforms[map[_act]]) {
+                            var u = _pass.uniforms[map[_act]];
+                            if (u.value && u.value.isVector2) {
+                                curVal = (_act.endsWith('X') || _act === 'lightPosX' || _act === 'centerX') ? u.value.x : u.value.y;
+                            } else {
+                                curVal = u.value;
+                            }
+                        }
+                        PostProcess._ppTweenProxies[proxyKey] = { value: curVal };
+                    }
+                    var proxy = PostProcess._ppTweenProxies[proxyKey];
+                    PluginTween.add({
+                        target: proxy, key: 'value', to: ppEffVal, duration: ppEffDur,
+                        onUpdate: function(v) { PPE.applyParam(_ek, _pass, _act, v); }
+                    });
+                } else {
+                    PPE.applyParam(effectKey, pass, action, ppEffVal);
+                }
+            }
         }
     }
 };
