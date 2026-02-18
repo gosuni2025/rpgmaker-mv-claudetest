@@ -875,7 +875,22 @@
                 this._heightOffset = bz * th;
             } catch (e) { /* ignore */ }
         }
-        // 3D 모드: depth test가 upper layer 가림을 처리하므로 z=5 해킹 불필요
+        // 3D 모드 빌보드: screenY가 타일 하단(bottom)이므로 타일 중심으로 보정
+        if (ConfigManager.mode3d && this._character) {
+            var isBillboard = true;
+            if (typeof this._character.page === 'function') {
+                try {
+                    var page = this._character.page();
+                    if (page && page.billboard === false) {
+                        isBillboard = false;
+                    }
+                } catch (e) { /* ignore */ }
+            }
+            if (isBillboard) {
+                var th = ($gameMap && $gameMap.tileHeight) ? $gameMap.tileHeight() : 48;
+                this.y -= th / 2;
+            }
+        }
     };
 
     var _Spriteset_Map_createCharacters = Spriteset_Map.prototype.createCharacters;
