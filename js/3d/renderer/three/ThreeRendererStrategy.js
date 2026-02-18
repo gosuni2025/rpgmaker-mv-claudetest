@@ -308,7 +308,8 @@
             //   - renderOrder는 동일 z 레이어 내 코플래너 스태킹에 보조 사용
             if (_is3DMode) {
                 var pixiZ = node.z || 0;
-                node._threeObj.position.z = -pixiZ * 0.01;
+                var zStep = (window.DepthDebugConfig && window.DepthDebugConfig.zLayerStep) || -0.01;
+                node._threeObj.position.z = pixiZ * zStep;
             }
             // THREE.Mesh objects get renderOrder for depth-independent sorting
             if (node._threeObj.isMesh) {
