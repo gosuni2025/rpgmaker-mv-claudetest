@@ -12,32 +12,30 @@
         window.DepthDebugConfig = {
             zLayerStep: -0.01,
             drawZStep: -0.001,
-            // 카테고리별 depthTest/depthWrite/alphaTest 토글
-            tile:   { depthTest: true, depthWrite: true, alphaTest: true },
-            sprite: { depthTest: true, depthWrite: true, alphaTest: true },
-            water:  { depthTest: true, depthWrite: true, alphaTest: true },
-            shadow: { depthTest: true, depthWrite: false, alphaTest: false },
+            tile:   { depthTest: false, depthWrite: false, alphaTest: false },
+            sprite: { depthTest: true,  depthWrite: true,  alphaTest: true },
+            water:  { depthTest: true,  depthWrite: true,  alphaTest: true },
+            shadow: { depthTest: true,  depthWrite: false,  alphaTest: false },
         };
     }
 
     var STORAGE_KEY = 'depthDebugPanel';
 
-    var SLIDER_PARAMS = [
-        { key: 'zLayerStep', label: 'ZLayer Step', min: -2, max: 2, step: 0.001, def: -0.01 },
-        { key: 'drawZStep',  label: 'DrawZ Step',  min: -1, max: 1, step: 0.0001, def: -0.001 },
+    var STEP_PARAMS = [
+        { key: 'zLayerStep', label: 'ZLayer Step', step: 0.01, def: -0.01 },
+        { key: 'drawZStep',  label: 'DrawZ Step',  step: 0.01, def: -0.001 },
     ];
 
     var CATEGORIES = [
-        { key: 'tile',   label: 'Tile',   defDepthTest: true, defDepthWrite: true,  defAlphaTest: true },
-        { key: 'sprite', label: 'Sprite', defDepthTest: true, defDepthWrite: true,  defAlphaTest: true },
-        { key: 'water',  label: 'Water',  defDepthTest: true, defDepthWrite: true,  defAlphaTest: true },
-        { key: 'shadow', label: 'Shadow', defDepthTest: true, defDepthWrite: false, defAlphaTest: false },
+        { key: 'tile',   label: 'Tile',   defDepthTest: false, defDepthWrite: false, defAlphaTest: false },
+        { key: 'sprite', label: 'Sprite', defDepthTest: true,  defDepthWrite: true,  defAlphaTest: true },
+        { key: 'water',  label: 'Water',  defDepthTest: true,  defDepthWrite: true,  defAlphaTest: true },
+        { key: 'shadow', label: 'Shadow', defDepthTest: true,  defDepthWrite: false, defAlphaTest: false },
     ];
 
-    // localStorage 저장/복원
     function saveToStorage() {
         var data = { sliders: {}, categories: {} };
-        SLIDER_PARAMS.forEach(function(p) {
+        STEP_PARAMS.forEach(function(p) {
             data.sliders[p.key] = window.DepthDebugConfig[p.key];
         });
         CATEGORIES.forEach(function(c) {
@@ -53,7 +51,7 @@
         var data;
         try { data = JSON.parse(raw); } catch(e) { return; }
         if (data.sliders) {
-            SLIDER_PARAMS.forEach(function(p) {
+            STEP_PARAMS.forEach(function(p) {
                 if (data.sliders[p.key] !== undefined) {
                     window.DepthDebugConfig[p.key] = data.sliders[p.key];
                 }
@@ -75,25 +73,27 @@
     var PANEL_ID = 'depthDebugPanel';
     var panel = null;
     var panelCtrl = null;
-    var sliderEls = {};
+    var stepEls = {};
     var checkboxEls = {};
 
-    function updateSlider(key, val) {
-        var el = sliderEls[key];
+    var BTN_STYLE = 'padding:1px 6px;background:#444;color:#ccc;border:1px solid #666;font:10px monospace;cursor:pointer;border-radius:2px;min-width:20px;text-align:center;';
+
+    function updateStepDisplay(key) {
+        var el = stepEls[key];
         if (!el) return;
-        el.slider.value = val;
-        if (el.valueEl) el.valueEl.textContent = formatVal(val);
+        el.valueEl.textContent = formatVal(window.DepthDebugConfig[key]);
     }
 
     function formatVal(val) {
         if (val === 0) return '0';
         var abs = Math.abs(val);
-        if (abs < 0.01) return val.toFixed(4);
-        if (abs < 0.1) return val.toFixed(3);
-        return val.toFixed(3);
+        if (abs < 0.001) return val.toFixed(4);
+        if (abs < 0.01) return val.toFixed(3);
+        if (abs < 1) return val.toFixed(3);
+        return val.toFixed(2);
     }
 
-    function createSliderRow(param) {
+    function createStepRow(param) {
         var row = document.createElement('div');
         row.style.cssText = 'margin:3px 0;display:flex;align-items:center;gap:4px;';
 
@@ -102,28 +102,47 @@
         label.style.cssText = 'flex:0 0 80px;font-size:10px;color:#aaa;';
         row.appendChild(label);
 
-        var slider = document.createElement('input');
-        slider.type = 'range';
-        slider.min = param.min;
-        slider.max = param.max;
-        slider.step = param.step;
-        slider.value = window.DepthDebugConfig[param.key];
-        slider.style.cssText = 'flex:1;height:14px;cursor:pointer;accent-color:#4af;';
-        row.appendChild(slider);
+        // - 버튼
+        var minusBtn = document.createElement('button');
+        minusBtn.textContent = '-';
+        minusBtn.style.cssText = BTN_STYLE;
+        row.appendChild(minusBtn);
 
+        // 값 표시
         var valEl = document.createElement('span');
         valEl.textContent = formatVal(window.DepthDebugConfig[param.key]);
-        valEl.style.cssText = 'flex:0 0 50px;font-size:10px;color:#ff8;text-align:right;';
+        valEl.style.cssText = 'flex:0 0 60px;font-size:10px;color:#ff8;text-align:center;';
         row.appendChild(valEl);
 
-        slider.addEventListener('input', function() {
-            var val = parseFloat(slider.value);
-            valEl.textContent = formatVal(val);
+        // + 버튼
+        var plusBtn = document.createElement('button');
+        plusBtn.textContent = '+';
+        plusBtn.style.cssText = BTN_STYLE;
+        row.appendChild(plusBtn);
+
+        // 0 리셋 버튼
+        var zeroBtn = document.createElement('button');
+        zeroBtn.textContent = '0';
+        zeroBtn.style.cssText = BTN_STYLE + 'color:#f88;';
+        row.appendChild(zeroBtn);
+
+        function applyStep(delta) {
+            var val = window.DepthDebugConfig[param.key] + delta;
+            val = Math.round(val * 10000) / 10000; // 부동소수점 보정
             window.DepthDebugConfig[param.key] = val;
+            valEl.textContent = formatVal(val);
+            saveToStorage();
+        }
+
+        minusBtn.addEventListener('click', function() { applyStep(-param.step); });
+        plusBtn.addEventListener('click', function() { applyStep(param.step); });
+        zeroBtn.addEventListener('click', function() {
+            window.DepthDebugConfig[param.key] = 0;
+            valEl.textContent = formatVal(0);
             saveToStorage();
         });
 
-        sliderEls[param.key] = { slider: slider, valueEl: valEl };
+        stepEls[param.key] = { valueEl: valEl };
         return row;
     }
 
@@ -181,7 +200,6 @@
             'border:1px solid #555', 'border-radius:4px'
         ].join(';');
 
-        // 타이틀
         var titleBar = document.createElement('div');
         titleBar.style.cssText = 'display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;';
         var titleText = document.createElement('span');
@@ -190,24 +208,22 @@
         titleBar.appendChild(titleText);
         panel.appendChild(titleBar);
 
-        // 바디
         var body = document.createElement('div');
 
-        // 슬라이더 섹션
+        // Z Offsets 섹션
         var sliderSection = document.createElement('div');
         sliderSection.style.cssText = 'margin-bottom:6px;';
         var sliderTitle = document.createElement('div');
         sliderTitle.textContent = '── Z Offsets ──';
         sliderTitle.style.cssText = 'color:#888;font-size:10px;margin-bottom:4px;';
         sliderSection.appendChild(sliderTitle);
-        SLIDER_PARAMS.forEach(function(p) {
-            sliderSection.appendChild(createSliderRow(p));
+        STEP_PARAMS.forEach(function(p) {
+            sliderSection.appendChild(createStepRow(p));
         });
         body.appendChild(sliderSection);
 
-        // 카테고리 토글 섹션
+        // Material 토글 섹션
         var catSection = document.createElement('div');
-        // 헤더
         var catHeader = document.createElement('div');
         catHeader.style.cssText = 'display:flex;align-items:center;gap:6px;margin-bottom:4px;';
         var catTitle = document.createElement('span');
@@ -216,7 +232,6 @@
         catHeader.appendChild(catTitle);
         catSection.appendChild(catHeader);
 
-        // 컬럼 헤더
         var colHeader = document.createElement('div');
         colHeader.style.cssText = 'margin:0 0 2px;display:flex;align-items:center;gap:6px;';
         var spacer = document.createElement('span');
@@ -235,16 +250,17 @@
         });
         body.appendChild(catSection);
 
-        // Reset 버튼
+        // 버튼 행
         var btnRow = document.createElement('div');
         btnRow.style.cssText = 'margin-top:6px;display:flex;gap:4px;';
+
         var resetBtn = document.createElement('button');
         resetBtn.textContent = 'Reset All';
         resetBtn.style.cssText = 'flex:1;padding:2px 8px;background:#444;color:#ccc;border:1px solid #666;font:10px monospace;cursor:pointer;border-radius:2px;';
         resetBtn.addEventListener('click', function() {
-            SLIDER_PARAMS.forEach(function(p) {
+            STEP_PARAMS.forEach(function(p) {
                 window.DepthDebugConfig[p.key] = p.def;
-                updateSlider(p.key, p.def);
+                updateStepDisplay(p.key);
             });
             CATEGORIES.forEach(function(c) {
                 window.DepthDebugConfig[c.key] = {
@@ -291,7 +307,6 @@
         panel.appendChild(body);
         document.body.appendChild(panel);
 
-        // 드래그 + 접기
         if (window.DevPanelUtils) {
             panelCtrl = DevPanelUtils.makeDraggablePanel(panel, PANEL_ID, {
                 defaultPosition: 'top-left',
@@ -302,6 +317,5 @@
         }
     }
 
-    // window.onload 후 생성 (defer 스크립트 모두 실행 완료 보장)
     window.addEventListener('load', createPanel);
 })();
