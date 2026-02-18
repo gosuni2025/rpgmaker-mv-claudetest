@@ -2342,6 +2342,11 @@
       "animationSe": false
     }
   ],
+  "skyBackground": {
+    "type": "parallax",
+    "skyImage": "",
+    "rotationSpeed": 0
+  },
   "animTileSettings": {
     "6": {
       "enabled": true,
