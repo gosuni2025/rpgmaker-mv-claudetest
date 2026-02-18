@@ -305,6 +305,9 @@
         body.appendChild(btnRow);
 
         panel.appendChild(body);
+        // 게임 런타임(TouchInput)이 document에서 mousedown을 캡처하므로
+        // 패널 내 이벤트가 게임으로 전파되지 않도록 차단
+        panel.addEventListener('mousedown', function(e) { e.stopPropagation(); });
         document.body.appendChild(panel);
 
         if (window.DevPanelUtils) {
