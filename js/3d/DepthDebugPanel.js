@@ -13,9 +13,9 @@
             zLayerStep: -0.01,
             drawZStep: -0.001,
             tile:   { depthTest: false, depthWrite: false, alphaTest: false },
-            sprite: { depthTest: true,  depthWrite: true,  alphaTest: true },
-            water:  { depthTest: true,  depthWrite: true,  alphaTest: true },
-            shadow: { depthTest: true,  depthWrite: false,  alphaTest: false },
+            sprite: { depthTest: false, depthWrite: false, alphaTest: false },
+            water:  { depthTest: true,  depthWrite: false, alphaTest: false },
+            shadow: { depthTest: false, depthWrite: false, alphaTest: false },
         };
     }
 
@@ -28,9 +28,9 @@
 
     var CATEGORIES = [
         { key: 'tile',   label: 'Tile',   defDepthTest: false, defDepthWrite: false, defAlphaTest: false },
-        { key: 'sprite', label: 'Sprite', defDepthTest: true,  defDepthWrite: true,  defAlphaTest: true },
-        { key: 'water',  label: 'Water',  defDepthTest: true,  defDepthWrite: true,  defAlphaTest: true },
-        { key: 'shadow', label: 'Shadow', defDepthTest: true,  defDepthWrite: false, defAlphaTest: false },
+        { key: 'sprite', label: 'Sprite', defDepthTest: false, defDepthWrite: false, defAlphaTest: false },
+        { key: 'water',  label: 'Water',  defDepthTest: true,  defDepthWrite: false, defAlphaTest: false },
+        { key: 'shadow', label: 'Shadow', defDepthTest: false, defDepthWrite: false, defAlphaTest: false },
     ];
 
     function saveToStorage() {
