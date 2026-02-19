@@ -583,26 +583,6 @@
         }
         this._syncHierarchy(rendererObj, stage);
 
-        // 3D 모드에서 billboard 캐릭터 renderOrder를 upper tile보다 항상 높게 재할당
-        // _syncHierarchy는 z=0→1→4→5 순서로 처리하지만, Three.js _threeObj.children
-        // 추가 순서가 z 정렬과 다를 수 있어 renderOrder가 역전되는 경우를 방어
-        if (is3D) {
-            for (var _bi = 0; _bi < Mode3D._billboardTargets.length; _bi++) {
-                var _bSpr = Mode3D._billboardTargets[_bi];
-                if (!_bSpr._threeObj || _bSpr._visible === false || _bSpr.visible === false) continue;
-                var _billboardOn = true;
-                if (_bSpr._character && typeof _bSpr._character.page === 'function') {
-                    try {
-                        var _bPage = _bSpr._character.page();
-                        if (_bPage && _bPage.billboard === false) _billboardOn = false;
-                    } catch (_e) {}
-                }
-                if (_billboardOn) {
-                    _bSpr._threeObj.renderOrder = rendererObj._drawOrderCounter++;
-                }
-            }
-        }
-
         if (is3D) {
             // PerspectiveCamera 준비
             if (!Mode3D._perspCamera) {
@@ -901,7 +881,6 @@
                 } catch (e) { /* ignore */ }
             }
             if (isBillboard) {
-                this.z = 5;
                 // screenY가 타일 하단(bottom) 기준이라 빌보드가 타일 경계에 나타남
                 // th/2만큼 보정하여 타일 중심에 위치하도록 수정
                 var th = ($gameMap && $gameMap.tileHeight) ? $gameMap.tileHeight() : 48;
