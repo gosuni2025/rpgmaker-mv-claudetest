@@ -12777,7 +12777,7 @@
               "code": 655,
               "indent": 0,
               "parameters": [
-                "    AudioManager.playBgm({ name: \"Field1\", volume: 90, pitch: 100, pan: 0 });"
+                "    AudioManager.playBgm({ name: \"Castle1\", volume: 90, pitch: 100, pan: 0 });"
               ]
             },
             {
@@ -12840,7 +12840,7 @@
               "code": 655,
               "indent": 0,
               "parameters": [
-                "    AudioManager.playBgs({ name: \"River\", volume: 80, pitch: 100, pan: 0 });"
+                "    AudioManager.playBgs({ name: \"City\", volume: 80, pitch: 100, pan: 0 });"
               ]
             },
             {
@@ -12861,7 +12861,7 @@
               "code": 655,
               "indent": 0,
               "parameters": [
-                "    AudioManager.playMe({ name: \"Item\", volume: 90, pitch: 100, pan: 0 });"
+                "    AudioManager.playMe({ name: \"Fanfare1\", volume: 90, pitch: 100, pan: 0 });"
               ]
             },
             {
@@ -13113,7 +13113,7 @@
               "code": 655,
               "indent": 0,
               "parameters": [
-                "    $gameSystem.windowTone = [-50, 0, 50];"
+                "    $gameSystem.setWindowTone([-50, 0, 50, 0]);"
               ]
             },
             {
@@ -13176,7 +13176,7 @@
               "code": 655,
               "indent": 0,
               "parameters": [
-                "    $gameMap.setDisplayName(\"새로운 지역\");"
+                "    $dataMap.displayName = \"새로운 지역\"; // setDisplayName은 MV에 없음"
               ]
             },
             {
