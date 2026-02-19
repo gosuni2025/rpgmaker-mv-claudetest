@@ -1379,7 +1379,7 @@
       ],
       "width": 4,
       "height": 4,
-      "zHeight": 11.5,
+      "zHeight": 4,
       "passability": [
         [
           true,
@@ -1454,22 +1454,9 @@
     }
   ],
   "skyBackground": {
-    "type": "parallax",
+    "type": "skysphere",
     "skyImage": "Panorama_Sky_15-512x512.png",
-    "rotationSpeed": 0,
-    "sunLights": [
-      {
-        "position": [
-          0.75,
-          0.39166666666666666
-        ],
-        "color": "#fff8ee",
-        "intensity": 0.8,
-        "castShadow": true,
-        "shadowMapSize": 2048,
-        "shadowBias": -0.001
-      }
-    ]
+    "rotationSpeed": 0.3
   },
   "animTileSettings": {
     "6": {
@@ -3075,5 +3062,6 @@
       "name": "NPC테스트",
       "showName": true
     }
-  }
+  },
+  "is3D": true
 }
