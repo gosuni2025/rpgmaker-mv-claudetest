@@ -5,10 +5,10 @@ var $plugins =
 {"name":"Community_Basic","status":true,"description":"Basic plugin for manipulating important parameters.","parameters":{"cacheLimit":"20","screenWidth":"816","screenHeight":"624","changeWindowWidthTo":"","changeWindowHeightTo":"","renderingMode":"auto","alwaysDash":"off"}},
 {"name":"MadeWithMv","status":false,"description":"Show a Splash Screen \"Made with MV\" and/or a Custom Splash Screen before going to main screen.","parameters":{"Show Made With MV":"true","Made with MV Image":"MadeWithMv","Show Custom Splash":"false","Custom Image":"","Fade Out Time":"120","Fade In Time":"120","Wait Time":"160"}},
 {"name":"SkyBox","status":true,"description":"Three.js SkySphere - 3D 모드에서 파노라마 하늘 배경 표시","parameters":{"Skybox Folder":"skybox","Panorama File":"sky_panorama.png"}},
-{"name":"TitleCredit","status":true,"description":"타이틀 화면에 Credit 버튼 추가","parameters":{}},
+{"name":"TitleCredit","status":true,"description":"타이틀 화면에 Credit 버튼 추가","parameters":{"textFile":"data/Credits.txt"}},
 {"name":"WASD_Movement","status":true,"description":"WASD 키로 이동, Q/E 키로 PageUp/PageDown 매핑","parameters":{}},
 {"name":"TouchDestAnimation","status":true,"description":"터치/클릭 목적지에 RPG Maker 애니메이션 재생","parameters":{"Animation ID":"0","Hide Default":"true","Show Path Arrow":"true","Arrow Color":"rgba(255, 255, 255, 0.7)","Arrow Width":"3","Arrow Outline":"true","Arrow Outline Color":"rgba(0, 0, 0, 0.5)","Arrow Outline Width":"2"}},
 {"name":"OcclusionSilhouette","status":true,"description":"플레이어가 오브젝트 뒤에 가려졌을 때 실루엣으로 위치를 표시합니다.","parameters":{"Fill Color":"#0040ff","Fill Opacity":"0.35","Outline Color":"#fd6d6d","Outline Opacity":"0.8","Outline Width":"1","Pattern":"diagonal","Pattern Scale":"8","Include Followers":"false"}},
-{"name":"TouchCameraControl","status":true,"description":"","parameters":{}},
+{"name":"TouchCameraControl","status":true,"description":"","parameters":{"Drag Threshold":"12","Rotation Speed":"0.3","Tilt Min":"20","Tilt Max":"80","Zoom Min":"0.5","Zoom Max":"3.0","Zoom Speed":"0.01","Mouse Wheel Zoom":"true","Wheel Zoom Speed":"0.1"}},
 {"name":"NPCNameDisplay","status":true,"description":"이벤트 캐릭터 머리 위에 NPC 이름을 표시합니다.","parameters":{"Font Size":"16","Text Color":"#ffffff","Outline Color":"rgba(0,0,0,0.85)","Outline Width":"3","Offset Y":"-4"}}
 ];
