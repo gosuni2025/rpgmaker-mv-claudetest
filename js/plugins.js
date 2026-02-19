@@ -10,5 +10,6 @@ var $plugins =
 {"name":"TouchDestAnimation","status":true,"description":"터치/클릭 목적지에 RPG Maker 애니메이션 재생","parameters":{"Animation ID":"0","Hide Default":"true","Show Path Arrow":"true","Arrow Color":"rgba(255, 255, 255, 0.7)","Arrow Width":"3","Arrow Outline":"true","Arrow Outline Color":"rgba(0, 0, 0, 0.5)","Arrow Outline Width":"2"}},
 {"name":"OcclusionSilhouette","status":true,"description":"플레이어가 오브젝트 뒤에 가려졌을 때 실루엣으로 위치를 표시합니다.","parameters":{"Fill Color":"#0040ff","Fill Opacity":"0.35","Outline Color":"#fd6d6d","Outline Opacity":"0.8","Outline Width":"1","Pattern":"diagonal","Pattern Scale":"8","Include Followers":"false"}},
 {"name":"TouchCameraControl","status":true,"description":"","parameters":{"Drag Threshold":"12","Rotation Speed":"0.3","Tilt Min":"20","Tilt Max":"80","Zoom Min":"0.5","Zoom Max":"3.0","Zoom Speed":"0.01","Mouse Wheel Zoom":"true","Wheel Zoom Speed":"0.1"}},
-{"name":"NPCNameDisplay","status":true,"description":"이벤트 캐릭터 머리 위에 NPC 이름을 표시합니다.","parameters":{"Font Size":"16","Text Color":"#ffffff","Outline Color":"rgba(0,0,0,0.85)","Outline Width":"3","Offset Y":"-4"}}
+{"name":"NPCNameDisplay","status":true,"description":"이벤트 캐릭터 머리 위에 NPC 이름을 표시합니다.","parameters":{"Font Size":"16","Text Color":"#ffffff","Outline Color":"rgba(0,0,0,0.85)","Outline Width":"3","Offset Y":"-4"}},
+{"name":"TextLog","status":true,"description":"텍스트 로그 - 메시지 대사 기록을 스크롤하며 볼 수 있는 창","parameters":{"menuName":"텍스트 로그","maxLines":"300","entryGap":"6","showFace":"true","faceSize":"100","bgOpacity":"160","scrollSpeed":"4"}}
 ];
