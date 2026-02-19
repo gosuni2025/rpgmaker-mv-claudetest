@@ -11083,6 +11083,82 @@
               ]
             },
             {
+              "code": 101,
+              "indent": 0,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 0,
+              "parameters": [
+                "▶ 신규 효과 테스트 (gradient-wave / fade / dissolve / blur-fade)"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 0,
+              "parameters": [
+                "<gradient-wave speed=1>무지개 글자 흐름!</gradient-wave>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 0,
+              "parameters": [
+                "<gradient-wave speed=3>빠른 무지개 흐름</gradient-wave>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 0,
+              "parameters": [
+                "<fade duration=90>서서히 나타나는 글자</fade>"
+              ]
+            },
+            {
+              "code": 101,
+              "indent": 0,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 0,
+              "parameters": [
+                "<dissolve speed=1>디졸브 등장!</dissolve>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 0,
+              "parameters": [
+                "<dissolve speed=2>빠른 디졸브</dissolve>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 0,
+              "parameters": [
+                "<blur-fade duration=120>흐릿하게 나타나기</blur-fade>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 0,
+              "parameters": [
+                "<gradient-wave speed=2><shake amplitude=2 speed=1>무지개+흔들림</shake></gradient-wave>"
+              ]
+            },
+            {
               "code": 0,
               "indent": 0,
               "parameters": []
