@@ -15,7 +15,6 @@ ev4.page1.cmd37.ch0,1771323185,,페이드 제거,1771323185,,0
 ev4.page1.cmd37.ch1,1771323185,,와이프 제거,1771323185,,0
 ev4.page1.cmd37.ch2,1771323185,,픽셀 디졸브 제거,1771323185,,0
 ev4.page1.cmd37.ch3,1771323185,,즉시 제거,1771323185,,0
-ev7.page1.cmd3,1771504001,,100\G を手に入れた！,1771504001,,0
 ev8.page1.cmd0,1771504001,,"한 밤에 100\G입니다.
 묵어 가시겠습니까?",1771504001,,0
 ev8.page1.cmd2.ch0,1771504001,,예,1771504001,,0
@@ -23,6 +22,36 @@ ev8.page1.cmd2.ch1,1771504001,,아니오,1771504001,,0
 ev8.page1.cmd11,1771504001,,"좋은 아침입니다.
 또 오세요.",1771504001,,0
 ev8.page1.cmd15,1771504001,,소지금이 부족합니다.,1771504001,,0
+ev9.page1.cmd3,1771505924,,100\G를 손에 넣었다!,1771505924,,0
+ev10.page1.cmd0,1771506765,,"▶ 확장 텍스트 이펙트 테스트
+\C[2]기본 색상\C[0] vs <color value=#ff6600>오렌지 태그</color>
+<outline color=#00ffff thickness=5>청록 외곽선</outline>
+조합: <color value=#aaffaa>초록</color> 과 <color value=#ff8888>빨강</color>",1771506765,,0
+ev10.page1.cmd5,1771506765,,"▶ 그라데이션 태그 테스트
+<gradient color1=#ffff00 color2=#ff0000>노란→빨강 그라데이션</gradient>
+<gradient color1=#00ffff color2=#ff00ff>하늘→마젠타 그라데이션</gradient>
+<gradient color1=#ffffff color2=#888888>흰→회색 그라데이션</gradient>",1771506765,,0
+ev10.page1.cmd10,1771508286,,"▶ 복합 효과 / 패스스루 태그
+<color value=#ffff00>\{큰\} <color value=#ff8800>글자</color></color>
+<shake amplitude=3 speed=2>흔들흔들 흔들림 효과!</shake>
+<hologram scanline=5>홀로그램 이펙트!</hologram>",1771508286,,0
+ev10.page1.cmd15,1771509026,,"▶ 다중 효과 조합 샘플
+<shake amplitude=2 speed=3><color value=#ff4444>흔들리는 빨간 글자</color></shake>
+<hologram scanline=4><gradient color1=#00ffff color2=#0044ff>홀로그램+그라데이션</gradient></hologram>",1771509026,,0
+ev10.page1.cmd19,1771509026,,"<shake amplitude=4 speed=2><hologram scanline=3>흔들리는 홀로그램!</hologram></shake>
+<outline color=#ffff00 thickness=4><gradient color1=#ff8800 color2=#ff0000>황금빛 외곽선+그라데이션</gradient></outline>",1771509026,,0
+ev10.page1.cmd22,1771509026,,"▶ 3중 효과
+<shake amplitude=2 speed=4><hologram scanline=6><color value=#ff00ff>흔들+홀로+마젠타</color></hologram></shake>
+<outline color=#00ff88 thickness=3><shake amplitude=1 speed=5><gradient color1=#ffffff color2=#00ff88>외곽+흔들+그라데이션</gradient></shake></outline>",1771509026,,0
+ev11.page1.cmd1,1771508015,,"스크립트 실행 결과:
+방문 횟수(변수 #1): \V[1]
+소지금: \G",1771508015,,0
+ev12.page1.cmd2,1771508015,,"골드 +100, 아이템 #1 +1 지급!
+현재 소지금: \G",1771508015,,0
+ev14.page1.cmd4,1771508015,,"콘솔에 디버그 정보를 출력했어요.
+F8(개발자 도구)로 확인하세요!",1771508015,,0
+ev15.page1.cmd1,1771508015,,파티 전원 HP·MP를 완전 회복했어요!,1771508015,,0
+ev7.page1.cmd3,1771504001,1,100\G を手に入れた！,1771504001,,0
 ev4.page1.cmd0.ch0,1771377527,1,페이드 나타나기,1771377527,,0
 ev4.page1.cmd0.ch1,1771377527,1,와이프 나타나기,1771377527,,0
 ev4.page1.cmd0.ch2,1771377527,1,블라인드 나타나기,1771377527,,0
