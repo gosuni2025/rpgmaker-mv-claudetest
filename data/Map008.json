@@ -11590,7 +11590,7 @@
     },
     {
       "id": 16,
-      "name": "JS 샘플 테스트 NPC",
+      "name": "JS 샘플 전체 테스트",
       "note": "",
       "pages": [
         {
@@ -11619,3747 +11619,1992 @@
           },
           "list": [
             {
-              "code": 101,
+              "code": 355,
               "indent": 0,
               "parameters": [
-                "People3",
-                7,
-                0,
-                2
+                "(function testAllSamples() {"
               ]
             },
             {
-              "code": 401,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                "\\C[6][JS 샘플 테스트 NPC]\\C[0]\n카테고리를 선택하세요."
+                "  var ok = 0, fail = 0;"
               ]
             },
             {
-              "code": 118,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                "MAIN1"
+                "  function run(name, fn) {"
               ]
             },
             {
-              "code": 102,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                [
-                  "텍스트/메시지",
-                  "변수/스위치",
-                  "파티/아이템/골드",
-                  "액터",
-                  "이동/위치",
-                  "다음 ▶"
-                ],
-                -2
+                "    try { fn(); console.log('[OK] ' + name); ok++; }"
               ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                0,
-                "텍스트/메시지"
+                "    catch(e) { console.error('[FAIL] ' + name + ' -> ' + e.message); fail++; }"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G01"
+                "  }"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                ""
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                1,
-                "변수/스위치"
+                "  // ══ 텍스트 / 메시지 ══"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G02"
+                "  run('메시지 텍스트 표시', function() {"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "    $gameMessage.add(\"첫 번째 줄입니다.\");"
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                2,
-                "파티/아이템/골드"
+                "    $gameMessage.add(\"두 번째 줄입니다.\");"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G03"
+                "  });"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "  run('얼굴이미지 메시지', function() {"
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                3,
-                "액터"
+                "    $gameMessage.setFaceImage(\"Actor1\", 0);"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G04_P1"
+                "    $gameMessage.add(\"\\\\C[6]안녕하세요\\\\C[0], 모험가님!\");"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "  });"
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                4,
-                "이동/위치"
+                "  run('선택지 표시', function() {"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G05"
+                "    $gameMessage.setChoices([\"예\", \"아니오\"], 0, 1);"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "    $gameMessage.setChoiceCallback(function(index) {"
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                5,
-                "다음 ▶"
+                "      $gameVariables.setValue(1, index);"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "MAIN2"
+                "    });"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "    $gameMessage.add(\"계속하시겠습니까?\");"
+              ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "  });"
+              ]
             },
             {
-              "code": 118,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                "MAIN2"
+                "  run('숫자 입력 창', function() {"
               ]
             },
             {
-              "code": 102,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                [
-                  "캐릭터 조작",
-                  "그림(Picture)",
-                  "화면 효과",
-                  "오디오(BGM)",
-                  "오디오(BGS/ME/S",
-                  "다음 ▶"
-                ],
-                -2
+                "    $gameMessage.setNumberInput(1, 4);"
               ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                0,
-                "캐릭터 조작"
+                "  });"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G06"
+                "  run('스크롤 텍스트', function() {"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "    $gameMessage.setScroll(2, false);"
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                1,
-                "그림(Picture)"
+                "    $gameMessage.add(\"첫 번째 스크롤 라인\");"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G07"
+                "    $gameMessage.add(\"두 번째 스크롤 라인\");"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "  });"
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                2,
-                "화면 효과"
+                ""
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G08"
+                "  // ══ 변수 / 스위치 ══"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "  run('변수 값 설정', function() {"
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                3,
-                "오디오(BGM)"
+                "    $gameVariables.setValue(1, 100);"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G09A"
+                "  });"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "  run('변수 읽기/계산', function() {"
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                4,
-                "오디오(BGS/ME/S"
+                "    var v = $gameVariables.value(1);"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G09B"
+                "    $gameVariables.setValue(1, v + 10);"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "  });"
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                5,
-                "다음 ▶"
+                "  run('스위치 켜기/끄기', function() {"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "MAIN3"
+                "    $gameSwitches.setValue(1, true);"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "  });"
+              ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "  run('셀프 스위치 조작', function() {"
+              ]
             },
             {
-              "code": 118,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                "MAIN3"
+                "    var key = [$gameMap.mapId(), this._eventId, 'A'];"
               ]
             },
             {
-              "code": 102,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                [
-                  "씬 전환",
-                  "시스템 설정",
-                  "맵",
-                  "전투(전투씬 전용)",
-                  "디버그/유틸리티",
-                  "◀ 처음으로"
-                ],
-                -2
+                "    $gameSelfSwitches.setValue(key, true);"
               ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                0,
-                "씬 전환"
+                "  });"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G10"
+                "  run('타이머 시작', function() {"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "    $gameTimer.start(60 * 60);"
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                1,
-                "시스템 설정"
+                "  });"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G11"
+                ""
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "  // ══ 파티 / 아이템 / 골드 ══"
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                2,
-                "맵"
+                "  run('소지금 증감', function() {"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G12"
+                "    $gameParty.gainGold(1000);"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "  });"
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                3,
-                "전투(전투씬 전용)"
+                "  run('아이템 획득/소비', function() {"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G13"
+                "    $gameParty.gainItem($dataItems[1], 5);"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "  });"
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                4,
-                "디버그/유틸리티"
+                "  run('무기 획득', function() {"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G14"
+                "    $gameParty.gainItem($dataWeapons[1], 1);"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "  });"
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                5,
-                "◀ 처음으로"
+                "  run('방어구 획득', function() {"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "MAIN1"
+                "    $gameParty.gainItem($dataArmors[1], 1);"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "  });"
+              ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "  run('파티원 추가/제거', function() {"
+              ]
             },
             {
-              "code": 118,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                "G01"
+                "    $gameParty.addActor(2);"
               ]
             },
             {
-              "code": 102,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                [
-                  "메시지 텍스트 표시",
-                  "얼굴이미지 메시지",
-                  "선택지 표시",
-                  "숫자 입력 창",
-                  "스크롤 텍스트",
-                  "◀ 뒤로"
-                ],
-                -2
+                "  });"
               ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                0,
-                "메시지 텍스트 표시"
+                ""
               ]
             },
             {
-              "code": 355,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "$gameMessage.add(\"첫 번째 줄입니다.\");"
+                "  // ══ 액터 ══"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "$gameMessage.add(\"두 번째 줄입니다.\");"
+                "  run('HP/MP/TP 증감', function() {"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G01"
+                "    var actor = $gameActors.actor(1);"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "    actor.gainHp(100);"
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                1,
-                "얼굴이미지 메시지"
+                "    actor.gainMp(50);"
               ]
             },
             {
-              "code": 355,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "// faceImage: img/faces/ 기준 파일명, faceIndex: 0~7"
+                "    actor.gainTp(30);"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "// ※ MV에는 이름 창 기능 없음 (setSpeakerName은 MZ 전용)"
+                "  });"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "$gameMessage.setFaceImage(\"Actor1\", 0);"
+                "  run('전체 회복', function() {"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "$gameMessage.add(\"\\\\C[6]안녕하세요\\\\C[0], 모험가님!\");"
+                "    $gameActors.actor(1).recoverAll();"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G01"
+                "  });"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "  run('파티 전원 회복', function() {"
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                2,
-                "선택지 표시"
+                "    $gameParty.members().forEach(function(a) { a.recoverAll(); });"
               ]
             },
             {
-              "code": 355,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "$gameMessage.setChoices([\"예\", \"아니오\"], 0, 1);"
+                "  });"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "$gameMessage.setChoiceCallback(function(index) {"
+                "  run('EXP/레벨 증감', function() {"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "  $gameVariables.setValue(1, index);"
+                "    $gameActors.actor(1).gainExp(500);"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "});"
+                "  });"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "$gameMessage.add(\"계속하시겠습니까?\");"
+                "  run('스킬 습득/망각', function() {"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G01"
+                "    $gameActors.actor(1).learnSkill(7);"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "  });"
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                3,
-                "숫자 입력 창"
+                "  run('스테이트 부여/해제', function() {"
               ]
             },
             {
-              "code": 355,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "// 4자리 숫자를 입력받아 변수 #1에 저장"
+                "    $gameActors.actor(1).addState(4);"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "$gameMessage.setNumberInput(1, 4);"
+                "  });"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G01"
+                "  run('장비 변경', function() {"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "    $gameActors.actor(1).changeEquip(0, $dataWeapons[2]);"
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                4,
-                "스크롤 텍스트"
+                "  });"
               ]
             },
             {
-              "code": 355,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "$gameMessage.setScroll(2, false);"
+                "  run('이름/닉네임 변경', function() {"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "$gameMessage.add(\"첫 번째 스크롤 라인\");"
+                "    var a = $gameActors.actor(1);"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "$gameMessage.add(\"두 번째 스크롤 라인\");"
+                "    a.setName(\"용사\");"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "$gameMessage.add(\"세 번째 스크롤 라인\");"
+                "    a.setNickname(\"빛의 전사\");"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G01"
+                "  });"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                ""
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                5,
-                "◀ 뒤로"
+                "  // ══ 이동 / 위치 ══"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "MAIN1"
+                "  run('장소 이동(주석-씬전환방지)', function() {"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "    // $gamePlayer.reserveTransfer(1, 10, 8, 2, 0); // 씬 전환되므로 주석"
+              ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "    console.log('  -> reserveTransfer 스킵 (맵 전환 방지)');"
+              ]
             },
             {
-              "code": 118,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                "G02"
+                "  });"
               ]
             },
             {
-              "code": 102,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                [
-                  "변수 값 설정",
-                  "변수 읽기/계산",
-                  "스위치 켜기/끄기",
-                  "셀프 스위치 조작",
-                  "타이머 시작",
-                  "◀ 뒤로"
-                ],
-                -2
+                "  run('이벤트 순간 이동', function() {"
               ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                0,
-                "변수 값 설정"
+                "    var ev = $gameMap.event(2);"
               ]
             },
             {
-              "code": 355,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "// 변수 #1에 값 100 대입"
+                "    if (ev) ev.locate(5, 5);"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "$gameVariables.setValue(1, 100);"
+                "  });"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G02"
+                "  run('맵 스크롤', function() {"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "    $gameMap.startScroll(6, 5, 4);"
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                1,
-                "변수 읽기/계산"
+                "  });"
               ]
             },
             {
-              "code": 355,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "var current = $gameVariables.value(1);"
+                "  run('탈것 위치 설정', function() {"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "$gameVariables.setValue(1, current + 10);"
+                "    $gameMap.vehicle('boat').setLocation(1, 12, 8);"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G02"
+                "  });"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                ""
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                2,
-                "스위치 켜기/끄기"
+                "  // ══ 캐릭터 조작 ══"
               ]
             },
             {
-              "code": 355,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "$gameSwitches.setValue(1, true);   // 스위치 #1 ON"
+                "  run('플레이어 투명', function() {"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "// $gameSwitches.setValue(1, false); // OFF"
+                "    $gamePlayer.setTransparent(true);"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G02"
+                "  });"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "  run('대열 보행 show', function() {"
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                3,
-                "셀프 스위치 조작"
+                "    $gamePlayer.followers().show();"
               ]
             },
             {
-              "code": 355,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "var key = [$gameMap.mapId(), this._eventId, 'A'];"
+                "  });"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "$gameSelfSwitches.setValue(key, true);"
+                "  run('애니메이션 표시', function() {"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G02"
+                "    $gamePlayer.requestAnimation(1);"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "  });"
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                4,
-                "타이머 시작"
+                "  run('말풍선 표시', function() {"
               ]
             },
             {
-              "code": 355,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "// 60초 타이머"
+                "    $gamePlayer.requestBalloon(1);"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "$gameTimer.start(60 * 60);"
+                "  });"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "// 정지: $gameTimer.stop();"
+                ""
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G02"
+                "  // ══ 그림 (Picture) ══"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "  run('그림 표시', function() {"
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                5,
-                "◀ 뒤로"
+                "    $gameScreen.showPicture(1, \"Window\", 0, 100, 100, 100, 100, 255, 0);"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "MAIN1"
+                "  });"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "  run('그림 이동', function() {"
+              ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "    $gameScreen.movePicture(1, 0, 300, 200, 100, 100, 255, 0, 60, 0);"
+              ]
             },
             {
-              "code": 118,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                "G03"
+                "  });"
               ]
             },
             {
-              "code": 102,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                [
-                  "소지금 증감",
-                  "아이템 획득/소비",
-                  "무기 획득",
-                  "방어구 획득",
-                  "파티원 추가/제거",
-                  "◀ 뒤로"
-                ],
-                -2
+                "  run('그림 회전', function() {"
               ]
             },
             {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                0,
-                "소지금 증감"
-              ]
-            },
-            {
-              "code": 355,
-              "indent": 1,
-              "parameters": [
-                "$gameParty.gainGold(1000);   // +1000"
-              ]
-            },
-            {
               "code": 655,
-              "indent": 1,
-              "parameters": [
-                "// $gameParty.gainGold(-500); // -500"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G03"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 402,
               "indent": 0,
-              "parameters": [
-                1,
-                "아이템 획득/소비"
-              ]
-            },
-            {
-              "code": 355,
-              "indent": 1,
               "parameters": [
-                "$gameParty.gainItem($dataItems[1], 5);    // 아이템 #1 +5"
+                "    $gameScreen.rotatePicture(1, 5);"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
-              "parameters": [
-                "// $gameParty.gainItem($dataItems[1], -2); // -2"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G03"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                2,
-                "무기 획득"
-              ]
-            },
-            {
-              "code": 355,
-              "indent": 1,
-              "parameters": [
-                "$gameParty.gainItem($dataWeapons[1], 1); // 무기 #1 +1"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G03"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                3,
-                "방어구 획득"
-              ]
-            },
-            {
-              "code": 355,
-              "indent": 1,
-              "parameters": [
-                "$gameParty.gainItem($dataArmors[1], 1); // 방어구 #1 +1"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G03"
-              ]
-            },
-            {
-              "code": 404,
               "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                4,
-                "파티원 추가/제거"
-              ]
-            },
-            {
-              "code": 355,
-              "indent": 1,
               "parameters": [
-                "$gameParty.addActor(2);    // 액터 #2 추가"
+                "  });"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
-              "parameters": [
-                "// $gameParty.removeActor(2);"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G03"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                5,
-                "◀ 뒤로"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "MAIN1"
-              ]
-            },
-            {
-              "code": 404,
               "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 118,
-              "indent": 0,
-              "parameters": [
-                "G04_P1"
-              ]
-            },
-            {
-              "code": 102,
-              "indent": 0,
-              "parameters": [
-                [
-                  "HP/MP/TP 증감",
-                  "전체 회복",
-                  "파티 전원 회복",
-                  "EXP/레벨 증감",
-                  "스킬 습득/망각",
-                  "다음 ▶"
-                ],
-                -2
-              ]
-            },
-            {
-              "code": 402,
-              "indent": 0,
               "parameters": [
-                0,
-                "HP/MP/TP 증감"
+                "  run('그림 색조 변경', function() {"
               ]
             },
             {
-              "code": 355,
-              "indent": 1,
-              "parameters": [
-                "var actor = $gameActors.actor(1);"
-              ]
-            },
-            {
-              "code": 655,
-              "indent": 1,
-              "parameters": [
-                "actor.gainHp(100);"
-              ]
-            },
-            {
-              "code": 655,
-              "indent": 1,
-              "parameters": [
-                "actor.gainMp(50);"
-              ]
-            },
-            {
               "code": 655,
-              "indent": 1,
-              "parameters": [
-                "actor.gainTp(30);"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G04_P1"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                1,
-                "전체 회복"
-              ]
-            },
-            {
-              "code": 355,
-              "indent": 1,
-              "parameters": [
-                "$gameActors.actor(1).recoverAll();"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G04_P1"
-              ]
-            },
-            {
-              "code": 404,
               "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                2,
-                "파티 전원 회복"
-              ]
-            },
-            {
-              "code": 355,
-              "indent": 1,
               "parameters": [
-                "$gameParty.members().forEach(function(actor) {"
+                "    $gameScreen.tintPicture(1, [-68, -68, 0, 0], 60);"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
-              "parameters": [
-                "  actor.recoverAll();"
-              ]
-            },
-            {
-              "code": 655,
-              "indent": 1,
-              "parameters": [
-                "});"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G04_P1"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 402,
               "indent": 0,
               "parameters": [
-                3,
-                "EXP/레벨 증감"
+                "  });"
               ]
             },
             {
-              "code": 355,
-              "indent": 1,
-              "parameters": [
-                "var actor = $gameActors.actor(1);"
-              ]
-            },
-            {
-              "code": 655,
-              "indent": 1,
-              "parameters": [
-                "actor.gainExp(500);"
-              ]
-            },
-            {
               "code": 655,
-              "indent": 1,
-              "parameters": [
-                "// actor.changeLevel(5, false);"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G04_P1"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 402,
               "indent": 0,
-              "parameters": [
-                4,
-                "스킬 습득/망각"
-              ]
-            },
-            {
-              "code": 355,
-              "indent": 1,
-              "parameters": [
-                "var actor = $gameActors.actor(1);"
-              ]
-            },
-            {
-              "code": 655,
-              "indent": 1,
               "parameters": [
-                "actor.learnSkill(7);"
+                "  run('그림 제거', function() {"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
-              "parameters": [
-                "// actor.forgetSkill(7);"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G04_P1"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                5,
-                "다음 ▶"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G04_P2"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 118,
-              "indent": 0,
-              "parameters": [
-                "G04_P2"
-              ]
-            },
-            {
-              "code": 102,
-              "indent": 0,
-              "parameters": [
-                [
-                  "스테이트 부여/해제",
-                  "장비 변경",
-                  "이름/닉네임/직업",
-                  "◀ 뒤로"
-                ],
-                -2
-              ]
-            },
-            {
-              "code": 402,
               "indent": 0,
-              "parameters": [
-                0,
-                "스테이트 부여/해제"
-              ]
-            },
-            {
-              "code": 355,
-              "indent": 1,
               "parameters": [
-                "var actor = $gameActors.actor(1);"
+                "    $gameScreen.erasePicture(1);"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "actor.addState(4);"
+                "  });"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
-              "parameters": [
-                "// actor.removeState(4);"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "G04_P2"
+                ""
               ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
             },
             {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                1,
-                "장비 변경"
-              ]
-            },
-            {
-              "code": 355,
-              "indent": 1,
-              "parameters": [
-                "// slotId: 0=무기, 1=방패, 2=머리, 3=몸, 4=장신구"
-              ]
-            },
-            {
-              "code": 655,
-              "indent": 1,
-              "parameters": [
-                "$gameActors.actor(1).changeEquip(0, $dataWeapons[2]);"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G04_P2"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                2,
-                "이름/닉네임/직업"
-              ]
-            },
-            {
-              "code": 355,
-              "indent": 1,
-              "parameters": [
-                "var actor = $gameActors.actor(1);"
-              ]
-            },
-            {
-              "code": 655,
-              "indent": 1,
-              "parameters": [
-                "actor.setName(\"용사\");"
-              ]
-            },
-            {
-              "code": 655,
-              "indent": 1,
-              "parameters": [
-                "actor.setNickname(\"빛의 전사\");"
-              ]
-            },
-            {
-              "code": 655,
-              "indent": 1,
-              "parameters": [
-                "// actor.changeClass(2, true);"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G04_P2"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                3,
-                "◀ 뒤로"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "MAIN1"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 118,
-              "indent": 0,
-              "parameters": [
-                "G05"
-              ]
-            },
-            {
-              "code": 102,
-              "indent": 0,
-              "parameters": [
-                [
-                  "장소 이동(맵 전환)",
-                  "이벤트 순간 이동",
-                  "맵 스크롤",
-                  "탈것 위치 설정",
-                  "◀ 뒤로"
-                ],
-                -2
-              ]
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                0,
-                "장소 이동(맵 전환)"
-              ]
-            },
-            {
-              "code": 101,
-              "indent": 1,
-              "parameters": [
-                "",
-                0,
-                0,
-                2
-              ]
-            },
-            {
-              "code": 401,
-              "indent": 1,
-              "parameters": [
-                "⚠ 맵을 이동합니다. 이후 이벤트가 중단됩니다."
-              ]
-            },
-            {
-              "code": 355,
-              "indent": 1,
-              "parameters": [
-                "$gamePlayer.reserveTransfer(1, 10, 8, 2, 0);"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G05"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                1,
-                "이벤트 순간 이동"
-              ]
-            },
-            {
-              "code": 355,
-              "indent": 1,
-              "parameters": [
-                "var ev = $gameMap.event(2);"
-              ]
-            },
-            {
-              "code": 655,
-              "indent": 1,
-              "parameters": [
-                "if (ev) ev.locate(5, 5);"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G05"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                2,
-                "맵 스크롤"
-              ]
-            },
-            {
-              "code": 355,
-              "indent": 1,
-              "parameters": [
-                "$gameMap.startScroll(6, 5, 4); // 오른쪽 5칸, 속도4"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G05"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                3,
-                "탈것 위치 설정"
-              ]
-            },
-            {
-              "code": 355,
-              "indent": 1,
-              "parameters": [
-                "$gameMap.vehicle('boat').setLocation(1, 12, 8);"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G05"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                4,
-                "◀ 뒤로"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "MAIN1"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 118,
-              "indent": 0,
-              "parameters": [
-                "G06"
-              ]
-            },
-            {
-              "code": 102,
-              "indent": 0,
-              "parameters": [
-                [
-                  "플레이어 투명",
-                  "대열 보행 ON/OFF",
-                  "애니메이션 표시",
-                  "말풍선 표시",
-                  "◀ 뒤로"
-                ],
-                -2
-              ]
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                0,
-                "플레이어 투명"
-              ]
-            },
-            {
-              "code": 355,
-              "indent": 1,
-              "parameters": [
-                "$gamePlayer.setTransparent(true);"
-              ]
-            },
-            {
-              "code": 655,
-              "indent": 1,
-              "parameters": [
-                "// false = 불투명"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G06"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                1,
-                "대열 보행 ON/OFF"
-              ]
-            },
-            {
-              "code": 355,
-              "indent": 1,
-              "parameters": [
-                "$gamePlayer.followers().show();"
-              ]
-            },
-            {
-              "code": 655,
-              "indent": 1,
-              "parameters": [
-                "// .hide() = OFF"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G06"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                2,
-                "애니메이션 표시"
-              ]
-            },
-            {
-              "code": 355,
-              "indent": 1,
-              "parameters": [
-                "$gamePlayer.requestAnimation(1);"
-              ]
-            },
-            {
-              "code": 655,
-              "indent": 1,
-              "parameters": [
-                "// 이벤트: $gameMap.event(2).requestAnimation(1)"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G06"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                3,
-                "말풍선 표시"
-              ]
-            },
-            {
-              "code": 355,
-              "indent": 1,
-              "parameters": [
-                "$gamePlayer.requestBalloon(1); // 1=!"
-              ]
-            },
-            {
-              "code": 655,
-              "indent": 1,
-              "parameters": [
-                "// $gameMap.event(2).requestBalloon(2); // 2=?"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G06"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                4,
-                "◀ 뒤로"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "MAIN1"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 118,
-              "indent": 0,
-              "parameters": [
-                "G07"
-              ]
-            },
-            {
-              "code": 102,
-              "indent": 0,
-              "parameters": [
-                [
-                  "그림 표시",
-                  "그림 이동",
-                  "그림 회전",
-                  "그림 색조 변경",
-                  "그림 제거",
-                  "◀ 뒤로"
-                ],
-                -2
-              ]
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                0,
-                "그림 표시"
-              ]
-            },
-            {
-              "code": 355,
-              "indent": 1,
-              "parameters": [
-                "$gameScreen.showPicture(1, \"Window\", 0, 100, 100, 100, 100, 255, 0);"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G07"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                1,
-                "그림 이동"
-              ]
-            },
-            {
-              "code": 355,
-              "indent": 1,
-              "parameters": [
-                "$gameScreen.movePicture(1, 0, 300, 200, 100, 100, 255, 0, 60, 0);"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G07"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                2,
-                "그림 회전"
-              ]
-            },
-            {
-              "code": 355,
-              "indent": 1,
-              "parameters": [
-                "$gameScreen.rotatePicture(1, 5);"
-              ]
-            },
-            {
-              "code": 655,
-              "indent": 1,
-              "parameters": [
-                "// 정지: rotatePicture(1, 0)"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G07"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                3,
-                "그림 색조 변경"
-              ]
-            },
-            {
-              "code": 355,
-              "indent": 1,
-              "parameters": [
-                "$gameScreen.tintPicture(1, [-68, -68, 0, 0], 60);"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G07"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                4,
-                "그림 제거"
-              ]
-            },
-            {
-              "code": 355,
-              "indent": 1,
-              "parameters": [
-                "$gameScreen.erasePicture(1);"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G07"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                5,
-                "◀ 뒤로"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "MAIN1"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 118,
-              "indent": 0,
-              "parameters": [
-                "G08"
-              ]
-            },
-            {
-              "code": 102,
-              "indent": 0,
-              "parameters": [
-                [
-                  "페이드아웃/인",
-                  "화면 색조 변경",
-                  "화면 플래시",
-                  "화면 흔들기",
-                  "날씨 효과",
-                  "◀ 뒤로"
-                ],
-                -2
-              ]
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                0,
-                "페이드아웃/인"
-              ]
-            },
-            {
-              "code": 355,
-              "indent": 1,
-              "parameters": [
-                "$gameScreen.startFadeOut(30);"
-              ]
-            },
-            {
-              "code": 655,
-              "indent": 1,
-              "parameters": [
-                "// 페이드인: startFadeIn(30)"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G08"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                1,
-                "화면 색조 변경"
-              ]
-            },
-            {
-              "code": 355,
-              "indent": 1,
-              "parameters": [
-                "$gameScreen.startTint([-68, -68, -68, 0], 60);"
-              ]
-            },
-            {
-              "code": 655,
-              "indent": 1,
-              "parameters": [
-                "// 원상복구: startTint([0,0,0,0], 60)"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G08"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                2,
-                "화면 플래시"
-              ]
-            },
-            {
-              "code": 355,
-              "indent": 1,
-              "parameters": [
-                "$gameScreen.startFlash([255, 255, 255, 170], 30);"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G08"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                3,
-                "화면 흔들기"
-              ]
-            },
-            {
-              "code": 355,
-              "indent": 1,
-              "parameters": [
-                "$gameScreen.startShake(5, 5, 30);"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G08"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                4,
-                "날씨 효과"
-              ]
-            },
-            {
-              "code": 355,
-              "indent": 1,
-              "parameters": [
-                "$gameScreen.changeWeather('rain', 5, 60);"
-              ]
-            },
-            {
-              "code": 655,
-              "indent": 1,
-              "parameters": [
-                "// 제거: changeWeather('none', 0, 60)"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G08"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                5,
-                "◀ 뒤로"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "MAIN1"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 118,
-              "indent": 0,
-              "parameters": [
-                "G09A"
-              ]
-            },
-            {
-              "code": 102,
-              "indent": 0,
-              "parameters": [
-                [
-                  "BGM 재생",
-                  "BGM 페이드아웃",
-                  "BGM 저장/복원",
-                  "◀ 뒤로"
-                ],
-                -2
-              ]
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                0,
-                "BGM 재생"
-              ]
-            },
-            {
-              "code": 355,
-              "indent": 1,
-              "parameters": [
-                "AudioManager.playBgm({ name: \"Field1\", volume: 90, pitch: 100, pan: 0 });"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G09A"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                1,
-                "BGM 페이드아웃"
-              ]
-            },
-            {
-              "code": 355,
-              "indent": 1,
-              "parameters": [
-                "AudioManager.fadeOutBgm(4); // 4초"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G09A"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                2,
-                "BGM 저장/복원"
-              ]
-            },
-            {
-              "code": 355,
-              "indent": 1,
-              "parameters": [
-                "$gameSystem.saveBgm();"
-              ]
-            },
-            {
-              "code": 655,
-              "indent": 1,
-              "parameters": [
-                "// 복원: $gameSystem.replayBgm()"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G09A"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                3,
-                "◀ 뒤로"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "MAIN1"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 118,
-              "indent": 0,
-              "parameters": [
-                "G09B"
-              ]
-            },
-            {
-              "code": 102,
-              "indent": 0,
-              "parameters": [
-                [
-                  "BGS 재생/정지",
-                  "ME 재생",
-                  "SE 재생/정지",
-                  "◀ 뒤로"
-                ],
-                -2
-              ]
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                0,
-                "BGS 재생/정지"
-              ]
-            },
-            {
-              "code": 355,
-              "indent": 1,
-              "parameters": [
-                "AudioManager.playBgs({ name: \"River\", volume: 80, pitch: 100, pan: 0 });"
-              ]
-            },
-            {
-              "code": 655,
-              "indent": 1,
-              "parameters": [
-                "// AudioManager.fadeOutBgs(2)"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G09B"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                1,
-                "ME 재생"
-              ]
-            },
-            {
-              "code": 355,
-              "indent": 1,
-              "parameters": [
-                "AudioManager.playMe({ name: \"Item\", volume: 90, pitch: 100, pan: 0 });"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G09B"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                2,
-                "SE 재생/정지"
-              ]
-            },
-            {
-              "code": 355,
-              "indent": 1,
-              "parameters": [
-                "AudioManager.playSe({ name: \"Cursor1\", volume: 80, pitch: 100, pan: 0 });"
-              ]
-            },
-            {
-              "code": 655,
-              "indent": 1,
-              "parameters": [
-                "// AudioManager.stopSe()"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G09B"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                3,
-                "◀ 뒤로"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "MAIN1"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 118,
-              "indent": 0,
-              "parameters": [
-                "G10"
-              ]
-            },
-            {
-              "code": 102,
-              "indent": 0,
-              "parameters": [
-                [
-                  "메뉴 화면 열기",
-                  "세이브 화면",
-                  "게임 오버",
-                  "타이틀 화면으로",
-                  "전투 처리",
-                  "◀ 뒤로"
-                ],
-                -2
-              ]
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                0,
-                "메뉴 화면 열기"
-              ]
-            },
-            {
-              "code": 101,
-              "indent": 1,
-              "parameters": [
-                "",
-                0,
-                0,
-                2
-              ]
-            },
-            {
-              "code": 401,
-              "indent": 1,
-              "parameters": [
-                "⚠ 씬을 전환합니다. 이후 이벤트 중단."
-              ]
-            },
-            {
-              "code": 355,
-              "indent": 1,
-              "parameters": [
-                "SceneManager.push(Scene_Menu);"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G10"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                1,
-                "세이브 화면"
-              ]
-            },
-            {
-              "code": 101,
-              "indent": 1,
-              "parameters": [
-                "",
-                0,
-                0,
-                2
-              ]
-            },
-            {
-              "code": 401,
-              "indent": 1,
-              "parameters": [
-                "⚠ 씬을 전환합니다."
-              ]
-            },
-            {
-              "code": 355,
-              "indent": 1,
-              "parameters": [
-                "SceneManager.push(Scene_Save);"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G10"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                2,
-                "게임 오버"
-              ]
-            },
-            {
-              "code": 101,
-              "indent": 1,
-              "parameters": [
-                "",
-                0,
-                0,
-                2
-              ]
-            },
-            {
-              "code": 401,
-              "indent": 1,
-              "parameters": [
-                "⚠ 게임 오버 씬으로 이동합니다."
-              ]
-            },
-            {
-              "code": 355,
-              "indent": 1,
-              "parameters": [
-                "SceneManager.goto(Scene_Gameover);"
-              ]
-            },
-            {
-              "code": 119,
-              "indent": 1,
-              "parameters": [
-                "G10"
-              ]
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                3,
-                "타이틀 화면으로"
-              ]
-            },
-            {
-              "code": 101,
-              "indent": 1,
-              "parameters": [
-                "",
-                0,
-                0,
-                2
-              ]
-            },
-            {
-              "code": 401,
-              "indent": 1,
-              "parameters": [
-                "⚠ 타이틀로 이동합니다."
-              ]
-            },
-            {
-              "code": 355,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "SceneManager.goto(Scene_Title);"
+                "  // ══ 화면 효과 ══"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G10"
+                "  run('페이드아웃', function() {"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "    $gameScreen.startFadeOut(30);"
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                4,
-                "전투 처리"
+                "  });"
               ]
             },
             {
-              "code": 101,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "",
-                0,
-                0,
-                2
+                "  run('화면 색조 변경', function() {"
               ]
             },
             {
-              "code": 401,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "⚠ 전투 씬으로 이동합니다."
+                "    $gameScreen.startTint([-68, -68, -68, 0], 60);"
               ]
             },
             {
-              "code": 355,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "BattleManager.setup(1, true, false);"
+                "  });"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "$gamePlayer.makeEncounterCount();"
+                "  run('화면 플래시', function() {"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "SceneManager.push(Scene_Battle);"
+                "    $gameScreen.startFlash([255, 255, 255, 170], 30);"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G10"
+                "  });"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "  run('화면 흔들기', function() {"
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                5,
-                "◀ 뒤로"
+                "    $gameScreen.startShake(5, 5, 30);"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "MAIN1"
+                "  });"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "  run('날씨 효과', function() {"
+              ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "    $gameScreen.changeWeather('rain', 5, 60);"
+              ]
             },
             {
-              "code": 118,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                "G11"
+                "  });"
               ]
             },
             {
-              "code": 102,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                [
-                  "저장/메뉴/조우 금지",
-                  "창 색깔 변경",
-                  "전투BGM/승리ME",
-                  "◀ 뒤로"
-                ],
-                -2
+                ""
               ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                0,
-                "저장/메뉴/조우 금지"
+                "  // ══ 오디오 ══"
               ]
             },
             {
-              "code": 355,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "$gameSystem.disableSave();"
+                "  run('BGM 재생', function() {"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "$gameSystem.disableMenu();"
+                "    AudioManager.playBgm({ name: \"Field1\", volume: 90, pitch: 100, pan: 0 });"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "$gameSystem.disableEncounter();"
+                "  });"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G11"
+                "  run('BGM 페이드아웃', function() {"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "    AudioManager.fadeOutBgm(4);"
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                1,
-                "창 색깔 변경"
+                "  });"
               ]
             },
             {
-              "code": 355,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "$gameSystem.windowTone = [-50, 0, 50]; // 파란빛"
+                "  run('BGM 저장/복원', function() {"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "// 원상복구: [0, 0, 0]"
+                "    $gameSystem.saveBgm();"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G11"
+                "  });"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "  run('BGS 재생/정지', function() {"
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                2,
-                "전투BGM/승리ME"
+                "    AudioManager.playBgs({ name: \"River\", volume: 80, pitch: 100, pan: 0 });"
               ]
             },
             {
-              "code": 355,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "$gameSystem.setBattleBgm({ name: \"Battle2\", volume: 90, pitch: 100, pan: 0 });"
+                "  });"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "$gameSystem.setVictoryMe({ name: \"Victory1\", volume: 90, pitch: 100, pan: 0 });"
+                "  run('ME 재생', function() {"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G11"
+                "    AudioManager.playMe({ name: \"Item\", volume: 90, pitch: 100, pan: 0 });"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "  });"
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                3,
-                "◀ 뒤로"
+                "  run('SE 재생/정지', function() {"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "MAIN1"
+                "    AudioManager.playSe({ name: \"Cursor1\", volume: 80, pitch: 100, pan: 0 });"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "  });"
+              ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                ""
+              ]
             },
             {
-              "code": 118,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                "G12"
+                "  // ══ 씬 전환 (전부 주석 — 씬 전환되면 이후 코드 죽음) ══"
               ]
             },
             {
-              "code": 102,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                [
-                  "지도 이름 변경",
-                  "타일셋 변경",
-                  "타일 통행 가능",
-                  "위치 정보 획득",
-                  "◀ 뒤로"
-                ],
-                -2
+                "  run('메뉴 화면(주석-씬전환방지)', function() {"
               ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                0,
-                "지도 이름 변경"
+                "    // SceneManager.push(Scene_Menu);"
               ]
             },
             {
-              "code": 355,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "$gameMap.setDisplayName(\"새로운 지역\");"
+                "    console.log('  -> Scene_Menu 스킵');"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G12"
+                "  });"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "  run('세이브 화면(주석)', function() {"
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                1,
-                "타일셋 변경"
+                "    // SceneManager.push(Scene_Save);"
               ]
             },
             {
-              "code": 355,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "$gameMap.changeTileset(2);"
+                "    console.log('  -> Scene_Save 스킵');"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G12"
+                "  });"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "  run('게임 오버(주석)', function() {"
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                2,
-                "타일 통행 가능"
+                "    // SceneManager.goto(Scene_Gameover);"
               ]
             },
             {
-              "code": 355,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "var canPass = $gameMap.isPassable(10, 8, 2);"
+                "    console.log('  -> Scene_Gameover 스킵');"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "console.log(\"통행 가능:\", canPass);"
+                "  });"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G12"
+                "  run('타이틀 화면(주석)', function() {"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "    // SceneManager.goto(Scene_Title);"
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                3,
-                "위치 정보 획득"
+                "    console.log('  -> Scene_Title 스킵');"
               ]
             },
             {
-              "code": 355,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "$gameVariables.setValue(1, $gameMap.regionId(10, 8));"
+                "  });"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "$gameVariables.setValue(2, $gameMap.terrainTag(10, 8));"
+                "  run('전투 처리(주석)', function() {"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "$gameVariables.setValue(3, $gameMap.tileId(10, 8, 0));"
+                "    // BattleManager.setup(1, true, false);"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G12"
+                "    // SceneManager.push(Scene_Battle);"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "    console.log('  -> Scene_Battle 스킵');"
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                4,
-                "◀ 뒤로"
+                "  });"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "MAIN1"
+                ""
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "  // ══ 시스템 설정 ══"
+              ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "  run('저장/메뉴/조우 금지', function() {"
+              ]
             },
             {
-              "code": 118,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                "G13"
+                "    $gameSystem.disableSave();"
               ]
             },
             {
-              "code": 102,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                [
-                  "적 HP/MP/TP 변경",
-                  "적 전체 회복",
-                  "적 출현/변신",
-                  "전투 강제 종료",
-                  "◀ 뒤로"
-                ],
-                -2
+                "    $gameSystem.disableMenu();"
               ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                0,
-                "적 HP/MP/TP 변경"
+                "    $gameSystem.disableEncounter();"
               ]
             },
             {
-              "code": 101,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "",
-                0,
-                0,
-                2
+                "  });"
               ]
             },
             {
-              "code": 401,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "⚠ 전투 씬 전용 코드입니다.\n맵에서 실행해도 오류는 없지만 아무 효과 없음."
+                "  run('창 색깔 변경', function() {"
               ]
             },
             {
-              "code": 355,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "var enemy = $gameTroop.members()[0];"
+                "    $gameSystem.windowTone = [-50, 0, 50];"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "if (enemy) {"
+                "  });"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "  enemy.gainHp(-200);"
+                "  run('전투BGM/승리ME 변경', function() {"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "  enemy.gainMp(-50);"
+                "    $gameSystem.setBattleBgm({ name: \"Battle2\", volume: 90, pitch: 100, pan: 0 });"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "}"
+                "    $gameSystem.setVictoryMe({ name: \"Victory1\", volume: 90, pitch: 100, pan: 0 });"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G13"
+                "  });"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                ""
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                1,
-                "적 전체 회복"
+                "  // ══ 맵 ══"
               ]
             },
             {
-              "code": 101,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "",
-                0,
-                0,
-                2
+                "  run('지도 이름 변경', function() {"
               ]
             },
             {
-              "code": 401,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "⚠ 전투 씬 전용 코드입니다."
+                "    $gameMap.setDisplayName(\"새로운 지역\");"
               ]
             },
             {
-              "code": 355,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "var enemy = $gameTroop.members()[0];"
+                "  });"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "if (enemy) enemy.recoverAll();"
+                "  run('타일셋 변경', function() {"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G13"
+                "    $gameMap.changeTileset(2);"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "  });"
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                2,
-                "적 출현/변신"
+                "  run('타일 통행 가능', function() {"
               ]
             },
             {
-              "code": 101,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "",
-                0,
-                0,
-                2
+                "    var r = $gameMap.isPassable(10, 8, 2);"
               ]
             },
             {
-              "code": 401,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "⚠ 전투 씬 전용 코드입니다."
+                "    console.log('  -> isPassable(10,8,2):', r);"
               ]
             },
             {
-              "code": 355,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "var enemy = $gameTroop.members()[0];"
+                "  });"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "if (enemy) {"
+                "  run('위치 정보 획득', function() {"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "  enemy.appear();"
+                "    $gameVariables.setValue(1, $gameMap.regionId(10, 8));"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "  // enemy.transform(3);"
+                "    $gameVariables.setValue(2, $gameMap.terrainTag(10, 8));"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "}"
+                "    $gameVariables.setValue(3, $gameMap.tileId(10, 8, 0));"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G13"
+                "  });"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                ""
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                3,
-                "전투 강제 종료"
+                "  // ══ 전투 씬 전용 (맵에서는 members()가 비어 있어 무해) ══"
               ]
             },
             {
-              "code": 101,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "",
-                0,
-                0,
-                2
+                "  run('적 HP 변경(전투씬 전용)', function() {"
               ]
             },
             {
-              "code": 401,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "⚠ 전투 씬 전용 코드입니다."
+                "    var enemy = $gameTroop.members()[0];"
               ]
             },
             {
-              "code": 355,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "BattleManager._victoryflag = true;"
+                "    if (enemy) { enemy.gainHp(-200); enemy.gainMp(-50); }"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "$gameTroop.members().forEach(function(e) { e.die(); });"
+                "  });"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G13"
+                "  run('적 전체 회복(전투씬 전용)', function() {"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "    var enemy = $gameTroop.members()[0];"
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                4,
-                "◀ 뒤로"
+                "    if (enemy) enemy.recoverAll();"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "MAIN1"
+                "  });"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "  run('적 출현/변신(전투씬 전용)', function() {"
+              ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "    var enemy = $gameTroop.members()[0];"
+              ]
             },
             {
-              "code": 118,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                "G14"
+                "    if (enemy) enemy.appear();"
               ]
             },
             {
-              "code": 102,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                [
-                  "콘솔 디버그 출력",
-                  "맵/플레이어 정보",
-                  "전체 변수 목록",
-                  "스위치 ON 목록",
-                  "◀ 뒤로"
-                ],
-                -2
+                "  });"
               ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                0,
-                "콘솔 디버그 출력"
+                "  run('전투 강제 종료(전투씬 전용)', function() {"
               ]
             },
             {
-              "code": 355,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "console.log(\"=== 디버그 ===\");"
+                "    BattleManager._victoryflag = true;"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "console.log(\"소지금:\", $gameParty.gold());"
+                "    $gameTroop.members().forEach(function(e) { e.die(); });"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "console.log(\"변수#1:\", $gameVariables.value(1));"
+                "  });"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "console.log(\"스위치#1:\", $gameSwitches.value(1));"
+                ""
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "console.log(\"플레이어 위치:\", $gamePlayer.x, $gamePlayer.y);"
+                "  // ══ 디버그 / 유틸리티 ══"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G14"
+                "  run('콘솔 디버그 출력', function() {"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "    console.log(\"소지금:\", $gameParty.gold());"
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                1,
-                "맵/플레이어 정보"
+                "    console.log(\"변수#1:\", $gameVariables.value(1));"
               ]
             },
             {
-              "code": 355,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "console.log(\"맵 ID:\", $gameMap.mapId());"
+                "    console.log(\"스위치#1:\", $gameSwitches.value(1));"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "console.log(\"맵 이름:\", $gameMap.displayName());"
+                "    console.log(\"플레이어:\", $gamePlayer.x, $gamePlayer.y);"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "console.log(\"플레이어:\", $gamePlayer.x, $gamePlayer.y, \"dir:\", $gamePlayer.direction());"
+                "  });"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "console.log(\"파티원 수:\", $gameParty.size());"
+                "  run('맵/플레이어 정보', function() {"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G14"
+                "    console.log(\"맵 ID:\", $gameMap.mapId());"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "    console.log(\"맵 이름:\", $gameMap.displayName());"
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                2,
-                "전체 변수 목록"
+                "    console.log(\"파티원 수:\", $gameParty.size());"
               ]
             },
             {
-              "code": 355,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "var vars = $dataSystem.variables;"
+                "  });"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "for (var i = 1; i < vars.length; i++) {"
+                "  run('전체 변수 목록', function() {"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "  var val = $gameVariables.value(i);"
+                "    var vars = $dataSystem.variables;"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "  if (val !== 0) console.log(\"[V\" + i + \"] \" + vars[i] + \" = \" + val);"
+                "    for (var i = 1; i < vars.length; i++) {"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "}"
+                "      var v = $gameVariables.value(i);"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G14"
+                "      if (v !== 0) console.log(\"[V\" + i + \"] \" + vars[i] + \" = \" + v);"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "    }"
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                3,
-                "스위치 ON 목록"
+                "  });"
               ]
             },
             {
-              "code": 355,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "var sw = $dataSystem.switches;"
+                "  run('스위치 ON 목록', function() {"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "for (var i = 1; i < sw.length; i++) {"
+                "    var sw = $dataSystem.switches;"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "  if ($gameSwitches.value(i)) console.log(\"[S\" + i + \"] \" + sw[i] + \" = ON\");"
+                "    for (var i = 1; i < sw.length; i++) {"
               ]
             },
             {
               "code": 655,
-              "indent": 1,
+              "indent": 0,
               "parameters": [
-                "}"
+                "      if ($gameSwitches.value(i)) console.log(\"[S\" + i + \"] \" + sw[i]);"
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "G14"
+                "    }"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "  });"
+              ]
             },
             {
-              "code": 402,
+              "code": 655,
               "indent": 0,
               "parameters": [
-                4,
-                "◀ 뒤로"
+                ""
               ]
             },
             {
-              "code": 119,
-              "indent": 1,
+              "code": 655,
+              "indent": 0,
               "parameters": [
-                "MAIN1"
+                "  console.log('');"
               ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "  console.log('=== 결과: OK=' + ok + '  FAIL=' + fail + ' / 총 ' + (ok+fail) + '개 ===');"
+              ]
             },
             {
-              "code": 404,
+              "code": 655,
               "indent": 0,
-              "parameters": []
+              "parameters": [
+                "})();"
+              ]
             },
             {
               "code": 0,
@@ -15388,8 +13633,8 @@
           "walkAnime": true
         }
       ],
-      "x": 18,
-      "y": 25
+      "x": 24,
+      "y": 27
     }
   ]
 }
