@@ -1411,6 +1411,48 @@
       "animationSe": false
     }
   ],
+  "cameraZones": [
+    {
+      "id": 1,
+      "name": "Zone1",
+      "x": 14,
+      "y": 16,
+      "width": 17,
+      "height": 13,
+      "zoom": 1,
+      "tilt": 60,
+      "yaw": 0,
+      "fov": 60,
+      "transitionSpeed": 1,
+      "priority": 0,
+      "enabled": true,
+      "dofEnabled": false,
+      "dofFocusY": 0.55,
+      "dofFocusRange": 0.1,
+      "dofMaxBlur": 0.05,
+      "dofBlurPower": 1.5
+    },
+    {
+      "id": 2,
+      "name": "Zone2",
+      "x": 11,
+      "y": 28,
+      "width": 17,
+      "height": 13,
+      "zoom": 1,
+      "tilt": 14,
+      "yaw": 139,
+      "fov": 98,
+      "transitionSpeed": 1,
+      "priority": 0,
+      "enabled": true,
+      "dofEnabled": false,
+      "dofFocusY": 0.55,
+      "dofFocusRange": 0.1,
+      "dofMaxBlur": 0.05,
+      "dofBlurPower": 1.5
+    }
+  ],
   "skyBackground": {
     "type": "parallax",
     "skyImage": "Panorama_Sky_15-512x512.png",
@@ -3027,5 +3069,11 @@
     0,
     0,
     0
-  ]
+  ],
+  "npcData": {
+    "4": {
+      "name": "NPC테스트",
+      "showName": true
+    }
+  }
 }

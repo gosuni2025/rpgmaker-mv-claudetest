@@ -9,5 +9,6 @@ var $plugins =
 {"name":"WASD_Movement","status":true,"description":"WASD 키로 이동, Q/E 키로 PageUp/PageDown 매핑","parameters":{}},
 {"name":"TouchDestAnimation","status":true,"description":"터치/클릭 목적지에 RPG Maker 애니메이션 재생","parameters":{"Animation ID":"0","Hide Default":"true","Show Path Arrow":"true","Arrow Color":"rgba(255, 255, 255, 0.7)","Arrow Width":"3","Arrow Outline":"true","Arrow Outline Color":"rgba(0, 0, 0, 0.5)","Arrow Outline Width":"2"}},
 {"name":"OcclusionSilhouette","status":true,"description":"플레이어가 오브젝트 뒤에 가려졌을 때 실루엣으로 위치를 표시합니다.","parameters":{"Fill Color":"#0040ff","Fill Opacity":"0.35","Outline Color":"#fd6d6d","Outline Opacity":"0.8","Outline Width":"1","Pattern":"diagonal","Pattern Scale":"8","Include Followers":"false"}},
-{"name":"TouchCameraControl","status":true,"description":"","parameters":{}}
+{"name":"TouchCameraControl","status":true,"description":"","parameters":{}},
+{"name":"NPCNameDisplay","status":true,"description":"이벤트 캐릭터 머리 위에 NPC 이름을 표시합니다.","parameters":{"Font Size":"16","Text Color":"#ffffff","Outline Color":"rgba(0,0,0,0.85)","Outline Width":"3","Offset Y":"-4"}}
 ];
