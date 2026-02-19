@@ -1412,7 +1412,7 @@
     }
   ],
   "skyBackground": {
-    "type": "skysphere",
+    "type": "parallax",
     "skyImage": "Panorama_Sky_15-512x512.png",
     "rotationSpeed": 0,
     "sunLights": [
