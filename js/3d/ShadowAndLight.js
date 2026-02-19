@@ -1158,15 +1158,6 @@ ShadowLight._resetTilemapMeshes = function(tilemap) {
                     }
                 }
                 rectLayer._meshes = {};
-                // 통합 메시도 제거
-                if (rectLayer._unifiedMesh) {
-                    if (rectLayer._unifiedMesh.geometry) rectLayer._unifiedMesh.geometry.dispose();
-                    if (rectLayer._unifiedMesh.material) rectLayer._unifiedMesh.material.dispose();
-                    if (rectLayer._unifiedMesh.customDepthMaterial) rectLayer._unifiedMesh.customDepthMaterial.dispose();
-                    rectLayer._threeObj.remove(rectLayer._unifiedMesh);
-                    rectLayer._unifiedMesh = null;
-                    rectLayer._unifiedShaderRef = null;
-                }
                 rectLayer._needsRebuild = true;
             }
         }
@@ -2220,18 +2211,11 @@ ShadowLight._invalidateTilemapMaterials = function(tilemap) {
             if (!composite || !composite.children) continue;
             for (var r = 0; r < composite.children.length; r++) {
                 var rectLayer = composite.children[r];
-                if (!rectLayer) continue;
-                // 통합 메시의 Phong material 갱신
-                if (rectLayer._unifiedMesh && rectLayer._unifiedMesh.material && rectLayer._unifiedMesh.material.isMeshPhongMaterial) {
-                    rectLayer._unifiedMesh.material.needsUpdate = true;
-                }
-                // 기존 per-setNumber 메시 (water 등)
-                if (rectLayer._meshes) {
-                    for (var key in rectLayer._meshes) {
-                        var mesh = rectLayer._meshes[key];
-                        if (mesh && mesh.material && mesh.material.isMeshPhongMaterial) {
-                            mesh.material.needsUpdate = true;
-                        }
+                if (!rectLayer || !rectLayer._meshes) continue;
+                for (var key in rectLayer._meshes) {
+                    var mesh = rectLayer._meshes[key];
+                    if (mesh && mesh.material && mesh.material.isMeshPhongMaterial) {
+                        mesh.material.needsUpdate = true;
                     }
                 }
             }

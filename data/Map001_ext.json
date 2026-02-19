@@ -1,0 +1,14 @@
+{
+  "animTileSettings": {
+    "0": {
+      "enabled": true,
+      "waveAmplitude": 0.002,
+      "waveFrequency": 1.5,
+      "waveSpeed": 0,
+      "waterAlpha": 0.9,
+      "specularStrength": 1.1,
+      "emissive": 0.45,
+      "emissiveColor": "#9eaeff"
+    }
+  }
+}
