@@ -3088,6 +3088,10 @@
     "19": {
       "name": "카메라 테스트 영역",
       "showName": true
+    },
+    "20": {
+      "name": "모드 전환기",
+      "showName": true
     }
   },
   "is3D": true
