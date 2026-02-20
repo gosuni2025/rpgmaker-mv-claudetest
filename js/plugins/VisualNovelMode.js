@@ -280,11 +280,13 @@
     // 인라인 선택지 추가
     Window_VNText.prototype.addChoiceEntry = function (choices, defaultIdx, cancelIdx) {
         if (this._isTyping) this.skipTyping();
+        this._forceOk = false;  // 이전 메시지에서 남은 forceOk 리셋 (선택지 이후 메시지 자동진행 방지)
         this._entries.push({ type: 'choice', choices: choices, sel: defaultIdx, cancelIndex: cancelIdx });
         this._choiceActive = true;
         this._choiceIndex  = (defaultIdx >= 0) ? defaultIdx : 0;
         this._cancelIndex  = cancelIdx;
         this._choiceResult = -1;
+        this._choiceInputDelay = 3;  // 선택지 추가 직후 3프레임간 입력 무시 (즉시 확정 방지)
         this._vel = 0;
         // skipTyping() 후 _scrollY는 이전 maxScrollY(텍스트만 기준) 값이므로,
         // 선택지가 추가된 후 늘어난 maxScrollY를 추적하지 못해 선택지가 화면 밖으로 밀림.
@@ -511,12 +513,17 @@
 
         // 입력 처리
         if (this._choiceActive) {
+            // 선택지 추가 직후 입력 딜레이 (이전 클릭이 즉시 확정되는 것 방지)
+            if (this._choiceInputDelay > 0) {
+                this._choiceInputDelay--;
+            } else {
             // 선택지 모드
             if (Input.isRepeated('up'))      this.moveChoiceUp();
             if (Input.isRepeated('down'))    this.moveChoiceDown();
             if (Input.isTriggered('ok'))     this.confirmChoice();
             if (Input.isTriggered('cancel')) this.cancelChoice();
             if (TouchInput.isTriggered())    this._handleChoiceTouch();
+            }
         } else {
             // 타이핑 중 또는 완료 후 클릭/OK
             var triggered = Input.isTriggered('ok') || TouchInput.isTriggered();
@@ -652,7 +659,8 @@
         var self = this;
         _vnWheelHandler = function (e) {
             if (!VNManager.isActive()) return;
-            e.preventDefault();  // VN 모드 중에는 항상 배경 3D 줌 차단
+            e.preventDefault();         // 배경 3D 줌 차단
+            e.stopPropagation();        // 캡처 이후 버블링 핸들러(에디터 줌) 차단
             var ctrl = self._vnCtrl;
             if (!ctrl) return;
             var tw = ctrl.getTextWindow();
@@ -661,14 +669,15 @@
                 tw._vel = 0;
             }
         };
-        window.addEventListener('wheel', _vnWheelHandler, { passive: false });
+        // capture: true — 버블링 핸들러보다 먼저 실행되어 에디터 줌을 차단
+        window.addEventListener('wheel', _vnWheelHandler, { passive: false, capture: true });
     };
 
     var _SceneMap_terminate = Scene_Map.prototype.terminate;
     Scene_Map.prototype.terminate = function () {
         _SceneMap_terminate.call(this);
         if (_vnWheelHandler) {
-            window.removeEventListener('wheel', _vnWheelHandler);
+            window.removeEventListener('wheel', _vnWheelHandler, { capture: true });
             _vnWheelHandler = null;
         }
     };
