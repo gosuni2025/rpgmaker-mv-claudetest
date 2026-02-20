@@ -1415,8 +1415,8 @@
     {
       "id": 2,
       "name": "Zone2",
-      "x": 26,
-      "y": 17,
+      "x": 24,
+      "y": 24,
       "width": 17,
       "height": 13,
       "zoom": 1,
@@ -3046,7 +3046,7 @@
   ],
   "npcData": {
     "4": {
-      "name": "NPC테스트",
+      "name": "그림 트렌지션 테스트",
       "showName": true
     },
     "10": {
@@ -3079,6 +3079,14 @@
     },
     "17": {
       "name": "비주얼노벨 테스트",
+      "showName": true
+    },
+    "18": {
+      "name": "카메라 테스트 영역",
+      "showName": true
+    },
+    "19": {
+      "name": "카메라 테스트 영역",
       "showName": true
     }
   },
