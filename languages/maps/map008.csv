@@ -23,34 +23,37 @@ ev8.page1.cmd11,1771504001,,"좋은 아침입니다.
 또 오세요.",1771504001,,0
 ev8.page1.cmd15,1771504001,,소지금이 부족합니다.,1771504001,,0
 ev9.page1.cmd3,1771505924,,100\G를 손에 넣었다!,1771505924,,0
-ev10.page1.cmd0,1771506765,,"▶ 확장 텍스트 이펙트 테스트
+ev10.page1.cmd0,1771553818,,"▶ 확장 텍스트 이펙트 테스트
 \C[2]기본 색상\C[0] vs <color value=#ff6600>오렌지 태그</color>
 <outline color=#00ffff thickness=5>청록 외곽선</outline>
-조합: <color value=#aaffaa>초록</color> 과 <color value=#ff8888>빨강</color>",1771506765,,0
-ev10.page1.cmd5,1771506765,,"▶ 그라데이션 태그 테스트
+조합: <color value=#aaffaa>초록</color> 과 <color value=#ff8888>빨강</color>
+5
+6
+7번째 줄",1771553818,,0
+ev10.page1.cmd8,1771553818,,"▶ 그라데이션 태그 테스트
 <gradient color1=#ffff00 color2=#ff0000>노란→빨강 그라데이션</gradient>
 <gradient color1=#00ffff color2=#ff00ff>하늘→마젠타 그라데이션</gradient>
-<gradient color1=#ffffff color2=#888888>흰→회색 그라데이션</gradient>",1771506765,,0
-ev10.page1.cmd10,1771508286,,"▶ 복합 효과 / 패스스루 태그
+<gradient color1=#ffffff color2=#888888>흰→회색 그라데이션</gradient>",1771553818,,0
+ev10.page1.cmd13,1771553818,,"▶ 복합 효과 / 패스스루 태그
 <color value=#ffff00>\{큰\} <color value=#ff8800>글자</color></color>
 <shake amplitude=3 speed=2>흔들흔들 흔들림 효과!</shake>
-<hologram scanline=5>홀로그램 이펙트!</hologram>",1771508286,,0
-ev10.page1.cmd15,1771509026,,"▶ 다중 효과 조합 샘플
+<hologram scanline=5>홀로그램 이펙트!</hologram>",1771553818,,0
+ev10.page1.cmd18,1771553818,,"▶ 다중 효과 조합 샘플
 <shake amplitude=2 speed=3><color value=#ff4444>흔들리는 빨간 글자</color></shake>
-<hologram scanline=4><gradient color1=#00ffff color2=#0044ff>홀로그램+그라데이션</gradient></hologram>",1771509026,,0
-ev10.page1.cmd19,1771509026,,"<shake amplitude=4 speed=2><hologram scanline=3>흔들리는 홀로그램!</hologram></shake>
-<outline color=#ffff00 thickness=4><gradient color1=#ff8800 color2=#ff0000>황금빛 외곽선+그라데이션</gradient></outline>",1771509026,,0
-ev10.page1.cmd22,1771509026,,"▶ 3중 효과
+<hologram scanline=4><gradient color1=#00ffff color2=#0044ff>홀로그램+그라데이션</gradient></hologram>",1771553818,,0
+ev10.page1.cmd22,1771553818,,"<shake amplitude=4 speed=2><hologram scanline=3>흔들리는 홀로그램!</hologram></shake>
+<outline color=#ffff00 thickness=4><gradient color1=#ff8800 color2=#ff0000>황금빛 외곽선+그라데이션</gradient></outline>",1771553818,,0
+ev10.page1.cmd25,1771553818,,"▶ 3중 효과
 <shake amplitude=2 speed=4><hologram scanline=6><color value=#ff00ff>흔들+홀로+마젠타</color></hologram></shake>
-<outline color=#00ff88 thickness=3><shake amplitude=1 speed=5><gradient color1=#ffffff color2=#00ff88>외곽+흔들+그라데이션</gradient></shake></outline>",1771509026,,0
-ev10.page1.cmd26,1771512564,,"▶ 신규 효과 테스트 (gradient-wave / fade / dissolve / blur-fade)
+<outline color=#00ff88 thickness=3><shake amplitude=1 speed=5><gradient color1=#ffffff color2=#00ff88>외곽+흔들+그라데이션</gradient></shake></outline>",1771553818,,0
+ev10.page1.cmd29,1771553818,,"▶ 신규 효과 테스트 (gradient-wave / fade / dissolve / blur-fade)
 <gradient-wave speed=1>무지개 글자 흐름!</gradient-wave>
 <gradient-wave speed=3>빠른 무지개 흐름</gradient-wave>
-<fade duration=90>서서히 나타나는 글자</fade>",1771512564,,0
-ev10.page1.cmd31,1771512564,,"<dissolve speed=1>디졸브 등장!</dissolve>
+<fade duration=90>서서히 나타나는 글자</fade>",1771553818,,0
+ev10.page1.cmd34,1771553818,,"<dissolve speed=1>디졸브 등장!</dissolve>
 <dissolve speed=2>빠른 디졸브</dissolve>
 <blur-fade duration=120>흐릿하게 나타나기</blur-fade>
-<gradient-wave speed=2><shake amplitude=2 speed=1>무지개+흔들림</shake></gradient-wave>",1771512564,,0
+<gradient-wave speed=2><shake amplitude=2 speed=1>무지개+흔들림</shake></gradient-wave>",1771553818,,0
 ev11.page1.cmd1,1771508015,,"스크립트 실행 결과:
 방문 횟수(변수 #1): \V[1]
 소지금: \G",1771508015,,0
@@ -59,30 +62,73 @@ ev12.page1.cmd2,1771508015,,"골드 +100, 아이템 #1 +1 지급!
 ev14.page1.cmd4,1771508015,,"콘솔에 디버그 정보를 출력했어요.
 F8(개발자 도구)로 확인하세요!",1771508015,,0
 ev15.page1.cmd1,1771508015,,파티 전원 HP·MP를 완전 회복했어요!,1771508015,,0
-ev17.page1.cmd1,1771550307,,"오, 이방인이여. 마침 왔구나.
+ev17.page1.cmd1,1771553818,,"오, 이방인이여. 마침 왔구나.
 나는 레기나드. 이 도시의 역사를
-수십 년간 기록해온 늙은 학자라네.",1771550307,,0
-ev17.page1.cmd5,1771550307,,"오래 전, 이 도시는 황량한 사막 위의
+수십 년간 기록해온 늙은 학자라네.
+오래 전, 이 도시는 황량한 사막 위의
+작은 마을에 불과했다네.
+하지만 한 상인이 땅속 깊은 곳에서
+마법의 수원을 발견하면서 모든 것이 바뀌었지.
+\C[4]그 물이 대지를 적시자\C[0] 숲이 자라고,
+강이 흐르고, 사람들이 몰려들었어.
+지금 네가 밟고 서 있는 이 광장조차
+원래는 모래밭이었다네.
+<shake amplitude=1 speed=2>수원의 마법</shake>은 아직도
+이 도시 깊은 곳에서 흐르고 있다네.
+그것을 아는 사람은 이제... 나 혼자뿐이지.",1771553818,,0
+ev17.page1.cmd16.ch0,1771553818,,수원에 대해 더 알고 싶어요,1771553818,,0
+ev17.page1.cmd16.ch1,1771553818,,직접 찾아보고 싶어요,1771553818,,0
+ev17.page1.cmd16.ch2,1771553818,,이야기 잘 들었어요,1771553818,,0
+ev17.page1.cmd18,1771553818,,"허허, 궁금하다니 좋은 마음가짐이야.
+하지만 그 길은 위험하다네.
+마음의 준비가 됐을 때 다시 찾아오게나.",1771553818,,0
+ev17.page1.cmd23,1771553818,,"오호! 패기가 넘치는군.
+\C[4]도시 북쪽의 지하 동굴\C[0]에 단서가 있을 거야.
+단, 혼자 들어가진 말게. 위험하니까.",1771553818,,0
+ev17.page1.cmd28,1771553818,,"그래, 바쁜 것 같으니 가던 길 가게나.
+언제든 궁금해지면 다시 오게.",1771553818,,0
+ev10.page1.cmd5,1771506765,1,"▶ 그라데이션 태그 테스트
+<gradient color1=#ffff00 color2=#ff0000>노란→빨강 그라데이션</gradient>
+<gradient color1=#00ffff color2=#ff00ff>하늘→마젠타 그라데이션</gradient>
+<gradient color1=#ffffff color2=#888888>흰→회색 그라데이션</gradient>",1771506765,,0
+ev10.page1.cmd10,1771508286,1,"▶ 복합 효과 / 패스스루 태그
+<color value=#ffff00>\{큰\} <color value=#ff8800>글자</color></color>
+<shake amplitude=3 speed=2>흔들흔들 흔들림 효과!</shake>
+<hologram scanline=5>홀로그램 이펙트!</hologram>",1771508286,,0
+ev10.page1.cmd15,1771509026,1,"▶ 다중 효과 조합 샘플
+<shake amplitude=2 speed=3><color value=#ff4444>흔들리는 빨간 글자</color></shake>
+<hologram scanline=4><gradient color1=#00ffff color2=#0044ff>홀로그램+그라데이션</gradient></hologram>",1771509026,,0
+ev10.page1.cmd19,1771509026,1,"<shake amplitude=4 speed=2><hologram scanline=3>흔들리는 홀로그램!</hologram></shake>
+<outline color=#ffff00 thickness=4><gradient color1=#ff8800 color2=#ff0000>황금빛 외곽선+그라데이션</gradient></outline>",1771509026,,0
+ev10.page1.cmd26,1771512564,1,"▶ 신규 효과 테스트 (gradient-wave / fade / dissolve / blur-fade)
+<gradient-wave speed=1>무지개 글자 흐름!</gradient-wave>
+<gradient-wave speed=3>빠른 무지개 흐름</gradient-wave>
+<fade duration=90>서서히 나타나는 글자</fade>",1771512564,,0
+ev10.page1.cmd31,1771512564,1,"<dissolve speed=1>디졸브 등장!</dissolve>
+<dissolve speed=2>빠른 디졸브</dissolve>
+<blur-fade duration=120>흐릿하게 나타나기</blur-fade>
+<gradient-wave speed=2><shake amplitude=2 speed=1>무지개+흔들림</shake></gradient-wave>",1771512564,,0
+ev17.page1.cmd5,1771550307,1,"오래 전, 이 도시는 황량한 사막 위의
 작은 마을에 불과했다네.
 하지만 한 상인이 땅속 깊은 곳에서
 마법의 수원을 발견하면서 모든 것이 바뀌었지.",1771550307,,0
-ev17.page1.cmd10,1771550307,,"\C[4]그 물이 대지를 적시자\C[0] 숲이 자라고,
+ev17.page1.cmd10,1771550307,1,"\C[4]그 물이 대지를 적시자\C[0] 숲이 자라고,
 강이 흐르고, 사람들이 몰려들었어.
 지금 네가 밟고 서 있는 이 광장조차
 원래는 모래밭이었다네.",1771550307,,0
-ev17.page1.cmd15,1771550307,,"<shake amplitude=1 speed=2>수원의 마법</shake>은 아직도
+ev17.page1.cmd15,1771550307,1,"<shake amplitude=1 speed=2>수원의 마법</shake>은 아직도
 이 도시 깊은 곳에서 흐르고 있다네.
 그것을 아는 사람은 이제... 나 혼자뿐이지.",1771550307,,0
-ev17.page1.cmd19.ch0,1771550307,,수원에 대해 더 알고 싶어요,1771550307,,0
-ev17.page1.cmd19.ch1,1771550307,,직접 찾아보고 싶어요,1771550307,,0
-ev17.page1.cmd19.ch2,1771550307,,이야기 잘 들었어요,1771550307,,0
-ev17.page1.cmd21,1771550307,,"허허, 궁금하다니 좋은 마음가짐이야.
+ev17.page1.cmd19.ch0,1771550307,1,수원에 대해 더 알고 싶어요,1771550307,,0
+ev17.page1.cmd19.ch1,1771550307,1,직접 찾아보고 싶어요,1771550307,,0
+ev17.page1.cmd19.ch2,1771550307,1,이야기 잘 들었어요,1771550307,,0
+ev17.page1.cmd21,1771550307,1,"허허, 궁금하다니 좋은 마음가짐이야.
 하지만 그 길은 위험하다네.
 마음의 준비가 됐을 때 다시 찾아오게나.",1771550307,,0
-ev17.page1.cmd26,1771550307,,"오호! 패기가 넘치는군.
+ev17.page1.cmd26,1771550307,1,"오호! 패기가 넘치는군.
 \C[4]도시 북쪽의 지하 동굴\C[0]에 단서가 있을 거야.
 단, 혼자 들어가진 말게. 위험하니까.",1771550307,,0
-ev17.page1.cmd31,1771550307,,"그래, 바쁜 것 같으니 가던 길 가게나.
+ev17.page1.cmd31,1771550307,1,"그래, 바쁜 것 같으니 가던 길 가게나.
 언제든 궁금해지면 다시 오게.",1771550307,,0
 ev16.page1.cmd0,1771511680,1,"\C[6][JS 샘플 테스트 NPC]\C[0]
 카테고리를 선택하세요.",1771511680,,0
