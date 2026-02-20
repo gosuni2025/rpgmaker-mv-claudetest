@@ -10998,21 +10998,21 @@
               "code": 401,
               "indent": 0,
               "parameters": [
-                "<dissolve speed=1>디졸브 등장!</dissolve>"
+                "<dissolve speed=0.3>디졸브 등장!</dissolve>"
               ]
             },
             {
               "code": 401,
               "indent": 0,
               "parameters": [
-                "<dissolve speed=2>빠른 디졸브</dissolve>"
+                "<dissolve speed=1>빠른 디졸브</dissolve>"
               ]
             },
             {
               "code": 401,
               "indent": 0,
               "parameters": [
-                "<blur-fade duration=120>흐릿하게 나타나기</blur-fade>"
+                "<blur-fade duration=240>흐릿하게 나타나기</blur-fade>"
               ]
             },
             {
