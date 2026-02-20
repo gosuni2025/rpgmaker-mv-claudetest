@@ -3092,6 +3092,18 @@
     "20": {
       "name": "모드 전환기",
       "showName": true
+    },
+    "21": {
+      "name": "적 도감 사서",
+      "showName": true
+    },
+    "22": {
+      "name": "수집품 관리인",
+      "showName": true
+    },
+    "23": {
+      "name": "카메라 기사",
+      "showName": true
     }
   },
   "is3D": true
