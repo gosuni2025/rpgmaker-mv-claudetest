@@ -793,6 +793,7 @@
     // =========================================================================
     var _WCL_start = Window_ChoiceList.prototype.start;
     Window_ChoiceList.prototype.start = function () {
+        console.log('[VN] ChoiceList.start — isActive:', VNManager.isActive(), 'style:', VNManager.getChoiceStyle());
         if (VNManager.isActive() && VNManager.getChoiceStyle() === 'inline') {
             this._vnInline = true;
             this._setupVNInline();
@@ -805,6 +806,7 @@
     Window_ChoiceList.prototype._setupVNInline = function () {
         var s  = SceneManager._scene;
         var tw = s && s._vnCtrl ? s._vnCtrl.getTextWindow() : null;
+        console.log('[VN] _setupVNInline — scene:', !!s, 'vnCtrl:', !!(s && s._vnCtrl), 'tw:', !!tw);
         if (!tw) { this._vnInline = false; _WCL_start.call(this); return; }
 
         var choices   = $gameMessage.choices();
