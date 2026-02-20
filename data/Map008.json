@@ -11225,93 +11225,7 @@
         }
       ]
     },
-    {
-      "id": 13,
-      "name": "메시지 직접 출력 테스트",
-      "x": 21,
-      "y": 29,
-      "note": "",
-      "pages": [
-        {
-          "conditions": {
-            "actorId": 1,
-            "actorValid": false,
-            "itemId": 1,
-            "itemValid": false,
-            "selfSwitchCh": "A",
-            "selfSwitchValid": false,
-            "switch1Id": 1,
-            "switch1Valid": false,
-            "switch2Id": 1,
-            "switch2Valid": false,
-            "variableId": 1,
-            "variableValid": false,
-            "variableValue": 0
-          },
-          "directionFix": false,
-          "image": {
-            "characterIndex": 0,
-            "characterName": "Actor1",
-            "direction": 2,
-            "pattern": 0,
-            "tileId": 0
-          },
-          "list": [
-            {
-              "code": 355,
-              "indent": 0,
-              "parameters": [
-                "$gameMessage.setFaceImage('Actor1', 0);"
-              ]
-            },
-            {
-              "code": 655,
-              "indent": 0,
-              "parameters": [
-                "$gameMessage.setSpeakerName('스크립트 NPC');"
-              ]
-            },
-            {
-              "code": 655,
-              "indent": 0,
-              "parameters": [
-                "$gameMessage.add('\\\\C[6]$gameMessage\\\\C[0]로 직접 출력!');"
-              ]
-            },
-            {
-              "code": 655,
-              "indent": 0,
-              "parameters": [
-                "$gameMessage.add('변수 #1 = ' + $gameVariables.value(1));"
-              ]
-            },
-            {
-              "code": 0,
-              "indent": 0,
-              "parameters": []
-            }
-          ],
-          "moveFrequency": 3,
-          "moveRoute": {
-            "list": [
-              {
-                "code": 0
-              }
-            ],
-            "repeat": true,
-            "skippable": false,
-            "wait": false
-          },
-          "moveSpeed": 3,
-          "moveType": 0,
-          "priorityType": 1,
-          "stepAnime": false,
-          "through": false,
-          "trigger": 0,
-          "walkAnime": true
-        }
-      ]
-    },
+    null,
     {
       "id": 14,
       "name": "콘솔 디버그 테스트",
@@ -13553,8 +13467,8 @@
           "walkAnime": true
         }
       ],
-      "x": 24,
-      "y": 27
+      "x": 21,
+      "y": 29
     }
   ]
 }
