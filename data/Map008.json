@@ -14849,7 +14849,7 @@
               "code": 356,
               "indent": 1,
               "parameters": [
-                "ShadowLight ambient 0.5 2"
+                "ShadowLight ambient 1.0 2"
               ]
             },
             {
