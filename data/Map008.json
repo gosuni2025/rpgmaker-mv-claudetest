@@ -13438,6 +13438,13 @@
               "parameters": []
             },
             {
+              "code": 356,
+              "indent": 0,
+              "parameters": [
+                "VisualNovelMode exit"
+              ]
+            },
+            {
               "code": 101,
               "indent": 0,
               "parameters": [
