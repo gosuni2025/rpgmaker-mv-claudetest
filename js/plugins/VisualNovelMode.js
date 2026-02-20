@@ -705,6 +705,7 @@
     var _WM_startMessage = Window_Message.prototype.startMessage;
     Window_Message.prototype.startMessage = function () {
         var isVN = VNManager.isActive();
+        console.log('[VN] startMessage — isVN:', isVN, 'isChoice:', $gameMessage.isChoice(), 'openness:', this.openness, 'isOpening:', this.isOpening());
         var spk = '', txt = '';
         if (isVN) {
             spk = (typeof $gameMessage.speakerName === 'function')
@@ -713,12 +714,10 @@
         }
         _WM_startMessage.call(this);  // 원본 호출 (내부 newPage→clearFlags가 _showFast를 false로 리셋함)
         if (isVN) {
-            // clearFlags() 이후에 _showFast=true 재설정해야 효과 있음
             this._showFast = true;
-            // Window_Message가 opening 상태(openness 0→255 애니메이션)이면
-            // Window_Message.update()의 while 루프가 차단되어 onEndOfText()→startInput()이 호출되지 않음.
-            // VN 모드에서는 Window_Message가 화면 밖에 있으므로 즉시 open 상태로 강제 설정.
             this.openness = 255;
+            this._opening = false;  // open() 호출로 세팅된 _opening 플래그 즉시 해제
+            console.log('[VN] startMessage after — openness:', this.openness, 'isOpening:', this.isOpening(), 'pause:', this.pause);
             var s = SceneManager._scene;
             if (s && s._vnCtrl) {
                 s._vnCtrl.startTyping(spk, txt);
@@ -726,6 +725,14 @@
             }
         }
     };
+
+    var _WM_onEndOfText = Window_Message.prototype.onEndOfText;
+    Window_Message.prototype.onEndOfText = function () {
+        console.log('[VN] onEndOfText — isVN:', VNManager.isActive(), 'isChoice:', $gameMessage.isChoice(), 'pause:', this.pause);
+        _WM_onEndOfText.call(this);
+        console.log('[VN] onEndOfText after — pause:', this.pause, 'isAnySubActive:', this.isAnySubWindowActive());
+    };
+
 
     // VN 모드에서 Window_Message를 화면 밖으로
     var _WM_updatePlacement = Window_Message.prototype.updatePlacement;
@@ -737,6 +744,7 @@
     // 메시지 종료 후 자동 탈출 스케줄
     var _WM_terminateMessage = Window_Message.prototype.terminateMessage;
     Window_Message.prototype.terminateMessage = function () {
+        console.log('[VN] terminateMessage — isVN:', VNManager.isActive(), 'isChoice(before clear):', $gameMessage.isChoice());
         _WM_terminateMessage.call(this);
         if (!VNManager.isActive()) return;
         if ($gameMessage.isChoice() || $gameMessage.isNumberInput() || $gameMessage.isItemChoice()) return;
@@ -785,11 +793,14 @@
     // 선택지 시작 전 자동 탈출 취소
     var _WM_startInput = Window_Message.prototype.startInput;
     Window_Message.prototype.startInput = function () {
+        console.log('[VN] startInput — isChoice:', $gameMessage.isChoice(), 'isVN:', VNManager.isActive());
         if (VNManager.isActive()) {
             var s = SceneManager._scene;
             if (s && s._vnCtrl) s._vnCtrl.cancelAutoExit();
         }
-        return _WM_startInput.call(this);
+        var result = _WM_startInput.call(this);
+        console.log('[VN] startInput result:', result);
+        return result;
     };
 
     // =========================================================================
