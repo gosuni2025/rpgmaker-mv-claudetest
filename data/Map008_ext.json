@@ -434,9 +434,9 @@
         [
           true,
           true,
-          false,
-          false,
-          false,
+          true,
+          true,
+          true,
           true,
           true
         ]
@@ -832,9 +832,9 @@
         [
           true,
           true,
-          false,
-          false,
-          false,
+          true,
+          true,
+          true,
           true,
           true
         ]
@@ -1211,8 +1211,8 @@
           true,
           true,
           true,
-          false,
-          false,
+          true,
+          true,
           true,
           true
         ],
@@ -1220,8 +1220,8 @@
           true,
           true,
           true,
-          false,
-          false,
+          true,
+          true,
           true,
           true
         ]
@@ -3064,6 +3064,14 @@
     },
     "15": {
       "name": "회복 NPC",
+      "showName": true
+    },
+    "16": {
+      "name": "JS 샘플 전체 테스트",
+      "showName": true
+    },
+    "17": {
+      "name": "JS 샘플 전체 테스트",
       "showName": true
     }
   },
