@@ -3104,6 +3104,18 @@
     "23": {
       "name": "카메라 기사",
       "showName": true
+    },
+    "24": {
+      "name": "안개 제어사",
+      "showName": true
+    },
+    "25": {
+      "name": "조명 기사",
+      "showName": true
+    },
+    "26": {
+      "name": "카메라 감독",
+      "showName": true
     }
   },
   "is3D": true
