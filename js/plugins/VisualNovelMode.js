@@ -720,8 +720,13 @@
             console.log('[VN] startMessage after — openness:', this.openness, 'isOpening:', this.isOpening(), 'pause:', this.pause);
             var s = SceneManager._scene;
             if (s && s._vnCtrl) {
-                s._vnCtrl.startTyping(spk, txt);
-                s._vnCtrl.cancelAutoExit();
+                try {
+                    s._vnCtrl.startTyping(spk, txt);
+                    s._vnCtrl.cancelAutoExit();
+                    console.log('[VN] startTyping done — textState:', !!this._textState, 'pause:', this.pause);
+                } catch(e) {
+                    console.error('[VN] startTyping ERROR:', e);
+                }
             }
         }
     };
@@ -808,6 +813,7 @@
     // =========================================================================
     var _WCL_start = Window_ChoiceList.prototype.start;
     Window_ChoiceList.prototype.start = function () {
+        console.log('[VN] ChoiceList.start — isVN:', VNManager.isActive(), 'choiceStyle:', VNManager.getChoiceStyle(), 'choices:', $gameMessage.choices().length);
         if (VNManager.isActive() && VNManager.getChoiceStyle() === 'inline') {
             this._vnInline = true;
             this._setupVNInline();
