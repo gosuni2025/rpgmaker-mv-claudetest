@@ -108,6 +108,35 @@
     };
 
     //=========================================================================
+    // Tilemap._sortChildren - 3D 모드에서 카메라 yaw 반영 depth 정렬
+    // yaw=0: depth = y (기존 동작), yaw=θ: depth = x*sin(θ) + y*cos(θ)
+    //=========================================================================
+
+    var _Tilemap_sortChildren = Tilemap.prototype._sortChildren;
+    Tilemap.prototype._sortChildren = function() {
+        if (!ConfigManager.mode3d) {
+            _Tilemap_sortChildren.call(this);
+            return;
+        }
+        var yaw = Mode3D._yawRad || 0;
+        var cosY = Math.cos(yaw);
+        var sinY = Math.sin(yaw);
+        var children = this.children;
+        if (children.length > 0) {
+            children.sort(function(a, b) {
+                var dA = a.x * sinY + a.y * cosY;
+                var dB = b.x * sinY + b.y * cosY;
+                // 3D 모드에서 z=5(이미지 오브젝트/상위 캐릭터)를 z=3(일반 캐릭터)과
+                // 같은 depth pool로 취급하여 depth만으로 앞뒤 결정.
+                // 단, z=4(upper tile: 지붕)는 항상 캐릭터/오브젝트 위에 유지.
+                var zA = (a.z === 5 ? 3 : a.z);
+                var zB = (b.z === 5 ? 3 : b.z);
+                return (zA - zB) || (dA - dB) || (a.x - b.x);
+            });
+        }
+    };
+
+    //=========================================================================
     // Spriteset_Map 참조 저장
     //=========================================================================
 

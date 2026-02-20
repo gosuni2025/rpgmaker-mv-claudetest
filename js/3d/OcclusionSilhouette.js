@@ -1,7 +1,7 @@
 /*:
  * @pluginname 실루엣 효과
  * @plugindesc 플레이어가 오브젝트 뒤에 가려졌을 때 실루엣으로 위치를 표시합니다.
- * @author Claude
+ * @author gosuni2025
  *
  * @param Fill Color
  * @type color
@@ -319,8 +319,41 @@
             }
         }
 
-        // spriteset 자식 가시성 백업 & baseSprite 외 모두 숨김 (pictureContainer 등)
+        // stage 자식 중 spritesetObj 외 모두 숨김 (Window_MapName, WindowLayer 등 UI 요소)
         var spritesetObj = spriteset._threeObj;
+        var stageChildren = stageObj ? stageObj.children : [];
+        var stageChildVis = [];
+        for (var sti = 0; sti < stageChildren.length; sti++) {
+            stageChildVis.push(stageChildren[sti].visible);
+            // spritesetObj를 직접 포함하거나 spritesetObj의 부모인 경우 유지
+            // (Stage → Scene_Map → Spriteset 계층이므로 Scene_Map._threeObj는 유지)
+            var isSpriteset = stageChildren[sti] === spritesetObj;
+            var containsSpriteset = false;
+            if (!isSpriteset && stageChildren[sti].children) {
+                for (var sci = 0; sci < stageChildren[sti].children.length; sci++) {
+                    if (stageChildren[sti].children[sci] === spritesetObj) {
+                        containsSpriteset = true;
+                        break;
+                    }
+                }
+            }
+            if (!isSpriteset && !containsSpriteset) {
+                stageChildren[sti].visible = false;
+            }
+        }
+
+        // Scene_Map._threeObj 자식 중 spritesetObj 외 모두 숨김 (Window_MapName, WindowLayer 등)
+        var sceneMapObj = spritesetObj ? spritesetObj.parent : null;
+        var sceneMapChildren = sceneMapObj ? sceneMapObj.children : [];
+        var sceneMapChildVis = [];
+        for (var smi = 0; smi < sceneMapChildren.length; smi++) {
+            sceneMapChildVis.push(sceneMapChildren[smi].visible);
+            if (sceneMapChildren[smi] !== spritesetObj) {
+                sceneMapChildren[smi].visible = false;
+            }
+        }
+
+        // spriteset 자식 가시성 백업 & baseSprite 외 모두 숨김 (pictureContainer 등)
         var ssChildren = spritesetObj ? spritesetObj.children : [];
         var ssChildVis = [];
         for (var si = 0; si < ssChildren.length; si++) {
@@ -374,14 +407,33 @@
                 upperZObj.visible = true;
             }
         }
-        // 에디터 이미지 오브젝트
+        // 에디터 이미지 오브젝트 - depth 비교하여 플레이어보다 앞에 있는 것만 마스크에 포함
+        // depth = x*sin(yaw) + y*cos(yaw) (카메라 yaw 반영, yaw=0이면 y 기준)
         if (spriteset._objectSprites) {
+            var _yaw = (typeof ConfigManager !== 'undefined' && ConfigManager.mode3d && Mode3D && Mode3D._yawRad) ? Mode3D._yawRad : 0;
+            var _cosY = Math.cos(_yaw);
+            var _sinY = Math.sin(_yaw);
+
+            // 플레이어 depth 계산 ($gamePlayer 기준, 없으면 첫 번째 캐릭터)
+            var _playerSpr = null;
+            for (var _pi = 0; _pi < charSprites.length; _pi++) {
+                if (charSprites[_pi]._character === $gamePlayer) { _playerSpr = charSprites[_pi]; break; }
+            }
+            if (!_playerSpr && charSprites.length > 0) _playerSpr = charSprites[0];
+            var _playerDepth = (_playerSpr && _playerSpr._threeObj)
+                ? _playerSpr._threeObj.position.x * _sinY + _playerSpr._threeObj.position.y * _cosY
+                : -Infinity;
+
             for (var oi2 = 0; oi2 < spriteset._objectSprites.length; oi2++) {
                 var os = spriteset._objectSprites[oi2];
                 if (os._threeObj) {
                     var idx = tmChildren.indexOf(os._threeObj);
                     if (idx >= 0 && tmChildVis[idx]) {
-                        os._threeObj.visible = true;
+                        // 오브젝트가 플레이어보다 앞에(depth 큰) 있을 때만 마스크에 포함
+                        var _objDepth = os._threeObj.position.x * _sinY + os._threeObj.position.y * _cosY;
+                        if (_objDepth > _playerDepth) {
+                            os._threeObj.visible = true;
+                        }
                     }
                 }
             }
@@ -403,6 +455,14 @@
         }
         for (var ssi = 0; ssi < ssChildren.length; ssi++) {
             ssChildren[ssi].visible = ssChildVis[ssi];
+        }
+        // Scene_Map 자식 가시성 복원 (Window_MapName, WindowLayer 등)
+        for (var smri = 0; smri < sceneMapChildren.length; smri++) {
+            sceneMapChildren[smri].visible = sceneMapChildVis[smri];
+        }
+        // Stage 자식 가시성 복원
+        for (var stri = 0; stri < stageChildren.length; stri++) {
+            stageChildren[stri].visible = stageChildVis[stri];
         }
         for (var ri = 0; ri < scene.children.length; ri++) {
             scene.children[ri].visible = sceneChildVis[ri];
