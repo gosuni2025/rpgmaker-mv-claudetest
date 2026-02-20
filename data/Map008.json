@@ -14628,27 +14628,133 @@
             {
               "code": 402,
               "indent": 0,
-              "parameters": [3, "촉수 설정"]
+              "parameters": [
+                3,
+                "촉수 설정"
+              ]
             },
             {
               "code": 102,
               "indent": 1,
-              "parameters": [["날카롭게 (8.0)", "부드럽게 (1.0)", "길게 (5.0)", "짧게 (1.0)", "빠르게 (3.0)", "기본값 리셋"], 5, 0, 0, 0]
+              "parameters": [
+                [
+                  "날카롭게 (8.0)",
+                  "부드럽게 (1.0)",
+                  "길게 (5.0)",
+                  "짧게 (1.0)",
+                  "빠르게 (3.0)",
+                  "기본값 리셋"
+                ],
+                5,
+                0,
+                0,
+                0
+              ]
             },
-            {"code": 402, "indent": 1, "parameters": [0, "날카롭게 (8.0)"]},
-            {"code": 356, "indent": 2, "parameters": ["FogOfWar TentacleSharpness 8.0"]},
-            {"code": 402, "indent": 1, "parameters": [1, "부드럽게 (1.0)"]},
-            {"code": 356, "indent": 2, "parameters": ["FogOfWar TentacleSharpness 1.0"]},
-            {"code": 402, "indent": 1, "parameters": [2, "길게 (5.0)"]},
-            {"code": 356, "indent": 2, "parameters": ["FogOfWar TentacleLength 5.0"]},
-            {"code": 402, "indent": 1, "parameters": [3, "짧게 (1.0)"]},
-            {"code": 356, "indent": 2, "parameters": ["FogOfWar TentacleLength 1.0"]},
-            {"code": 402, "indent": 1, "parameters": [4, "빠르게 (3.0)"]},
-            {"code": 356, "indent": 2, "parameters": ["FogOfWar TentacleSpeed 3.0"]},
-            {"code": 402, "indent": 1, "parameters": [5, "기본값 리셋"]},
-            {"code": 356, "indent": 2, "parameters": ["FogOfWar TentacleSharpness 3.0"]},
-            {"code": 356, "indent": 2, "parameters": ["FogOfWar TentacleLength 2.0"]},
-            {"code": 356, "indent": 2, "parameters": ["FogOfWar TentacleSpeed 1.0"]},
+            {
+              "code": 402,
+              "indent": 1,
+              "parameters": [
+                0,
+                "날카롭게 (8.0)"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 2,
+              "parameters": [
+                "FogOfWar TentacleSharpness 8.0"
+              ]
+            },
+            {
+              "code": 402,
+              "indent": 1,
+              "parameters": [
+                1,
+                "부드럽게 (1.0)"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 2,
+              "parameters": [
+                "FogOfWar TentacleSharpness 1.0"
+              ]
+            },
+            {
+              "code": 402,
+              "indent": 1,
+              "parameters": [
+                2,
+                "길게 (5.0)"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 2,
+              "parameters": [
+                "FogOfWar TentacleLength 2"
+              ]
+            },
+            {
+              "code": 402,
+              "indent": 1,
+              "parameters": [
+                3,
+                "짧게 (1.0)"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 2,
+              "parameters": [
+                "FogOfWar TentacleLength 1.0"
+              ]
+            },
+            {
+              "code": 402,
+              "indent": 1,
+              "parameters": [
+                4,
+                "빠르게 (3.0)"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 2,
+              "parameters": [
+                "FogOfWar TentacleSpeed 3.0"
+              ]
+            },
+            {
+              "code": 402,
+              "indent": 1,
+              "parameters": [
+                5,
+                "기본값 리셋"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 2,
+              "parameters": [
+                "FogOfWar TentacleSharpness 3.0"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 2,
+              "parameters": [
+                "FogOfWar TentacleLength 2.0"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 2,
+              "parameters": [
+                "FogOfWar TentacleSpeed 1.0"
+              ]
+            },
             {
               "code": 404,
               "indent": 1,
