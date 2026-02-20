@@ -45,6 +45,22 @@ ExtendedText._lerpColor = function(c1, c2, t) {
     ]);
 };
 
+//─── 인접 텍스트 픽셀 보호: clearRect/destination-out이 옆 텍스트를 지우지 않도록
+//    clearRect 직전에 저장하고, 모든 애니메이션 처리 후 복원한다
+ExtendedText._saveAdjacentPixels = function(ctx, startX, endX, charStartX, charEndX, y, h) {
+    var lw = charStartX - startX;
+    var rw = endX - charEndX;
+    return {
+        left:  lw > 0 ? ctx.getImageData(startX, y, lw, h) : null,
+        right: rw > 0 ? ctx.getImageData(charEndX, y, rw, h) : null,
+        lx: startX, rx: charEndX, y: y
+    };
+};
+ExtendedText._restoreAdjacentPixels = function(ctx, saved) {
+    if (saved.left)  ctx.putImageData(saved.left,  saved.lx, saved.y);
+    if (saved.right) ctx.putImageData(saved.right, saved.rx, saved.y);
+};
+
 //=============================================================================
 // Window_Base 오버라이드
 //=============================================================================
@@ -345,13 +361,18 @@ Window_Base.prototype._etRedrawShake = function(seg, time) {
     var chars = seg.chars;
     if (!chars || chars.length === 0 || !this.contents) return;
     var bmp = this.contents;
+    var ctx = bmp._context;
     var lh = chars[0].h || this.lineHeight();
     var amp = seg.amplitude, speed = seg.speed;
     var ow = (bmp.outlineWidth || 4) + 1;
 
     var startX = chars[0].x - ow;
     var endX   = chars[chars.length-1].x + this.textWidth(chars[chars.length-1].c) + ow;
-    bmp.clearRect(startX, chars[0].y - amp - 1, endX - startX, lh + (amp+1)*2);
+    var y0 = chars[0].y - amp - 1, hh = lh + (amp+1)*2;
+    var charStartX = chars[0].x;
+    var charEndX = chars[chars.length-1].x + this.textWidth(chars[chars.length-1].c);
+    var savedAdj = ctx ? ExtendedText._saveAdjacentPixels(ctx, startX, endX, charStartX, charEndX, y0, hh) : null;
+    bmp.clearRect(startX, y0, endX - startX, hh);
 
     var savedColor = bmp.textColor;
     // 현재 outlineColor가 외부 이펙트(다른 줄 outline 등)로 오염될 수 있으므로
@@ -380,6 +401,8 @@ Window_Base.prototype._etRedrawShake = function(seg, time) {
     this.changeTextColor(savedColor);
     bmp.outlineColor = savedOutlineColor;
     bmp.outlineWidth = savedOutlineWidth;
+
+    if (savedAdj) ExtendedText._restoreAdjacentPixels(ctx, savedAdj);
 };
 
 //─── hologram base 재그리기 (clearRect + cyan, outline 없이) ───
@@ -387,12 +410,17 @@ Window_Base.prototype._etRedrawHologramBase = function(seg) {
     var chars = seg.chars;
     if (!chars || chars.length === 0 || !this.contents) return;
     var bmp = this.contents;
+    var ctx = bmp._context;
     var lh = chars[0].h || this.lineHeight();
     var ow = (bmp.outlineWidth || 4) + 1;
     var startX = chars[0].x - ow;
     var endX   = chars[chars.length-1].x + this.textWidth(chars[chars.length-1].c) + ow;
+    var y0 = chars[0].y, yy = y0 - 1, hh = lh + 2;
+    var charStartX = chars[0].x;
+    var charEndX = chars[chars.length-1].x + this.textWidth(chars[chars.length-1].c);
+    var savedAdj = ctx ? ExtendedText._saveAdjacentPixels(ctx, startX, endX, charStartX, charEndX, yy, hh) : null;
 
-    bmp.clearRect(startX, chars[0].y - 1, endX - startX, lh + 2);
+    bmp.clearRect(startX, yy, endX - startX, hh);
 
     var savedColor = bmp.textColor;
     // 외부 outlineColor 오염 방지: hologram은 outline 없이 그리기
@@ -410,6 +438,8 @@ Window_Base.prototype._etRedrawHologramBase = function(seg) {
     this.changeTextColor(savedColor);
     bmp.outlineColor = savedOutlineColor;
     bmp.outlineWidth = savedOutlineWidth;
+
+    if (savedAdj) ExtendedText._restoreAdjacentPixels(ctx, savedAdj);
 };
 
 //─── hologram 스캔라인 오버레이 ───
@@ -450,12 +480,17 @@ Window_Base.prototype._etRedrawGradientWave = function(seg, time) {
     var chars = seg.chars;
     if (!chars || chars.length === 0 || !this.contents) return;
     var bmp = this.contents;
+    var ctx = bmp._context;
     var lh = chars[0].h || this.lineHeight();
     var ow = (bmp.outlineWidth || 4) + 1;
     var startX = chars[0].x - ow;
     var endX   = chars[chars.length-1].x + this.textWidth(chars[chars.length-1].c) + ow;
+    var yy = chars[0].y - 1, hh = lh + 2;
+    var charStartX = chars[0].x;
+    var charEndX = chars[chars.length-1].x + this.textWidth(chars[chars.length-1].c);
+    var savedAdj = ctx ? ExtendedText._saveAdjacentPixels(ctx, startX, endX, charStartX, charEndX, yy, hh) : null;
 
-    bmp.clearRect(startX, chars[0].y - 1, endX - startX, lh + 2);
+    bmp.clearRect(startX, yy, endX - startX, hh);
 
     var savedColor = bmp.textColor;
     var savedOutlineColor = bmp.outlineColor;
@@ -474,6 +509,8 @@ Window_Base.prototype._etRedrawGradientWave = function(seg, time) {
     this.changeTextColor(savedColor);
     bmp.outlineColor = savedOutlineColor;
     bmp.outlineWidth = savedOutlineWidth;
+
+    if (savedAdj) ExtendedText._restoreAdjacentPixels(ctx, savedAdj);
 };
 
 //─── fade: globalAlpha로 서서히 나타나기 ───
@@ -489,9 +526,16 @@ Window_Base.prototype._etRedrawFade = function(seg, time) {
     var ow = (bmp.outlineWidth || 4) + 1;
     var startX = chars[0].x - ow;
     var endX   = chars[chars.length-1].x + this.textWidth(chars[chars.length-1].c) + ow;
+    var yy = chars[0].y - 1, hh = lh + 2;
+    var charStartX = chars[0].x;
+    var charEndX = chars[chars.length-1].x + this.textWidth(chars[chars.length-1].c);
+    var savedAdj = ExtendedText._saveAdjacentPixels(ctx, startX, endX, charStartX, charEndX, yy, hh);
 
-    bmp.clearRect(startX, chars[0].y - 1, endX - startX, lh + 2);
-    if (progress <= 0) return;
+    bmp.clearRect(startX, yy, endX - startX, hh);
+    if (progress <= 0) {
+        ExtendedText._restoreAdjacentPixels(ctx, savedAdj);
+        return;
+    }
 
     var savedAlpha = ctx.globalAlpha;
     ctx.globalAlpha = progress;
@@ -513,6 +557,7 @@ Window_Base.prototype._etRedrawFade = function(seg, time) {
     bmp.outlineColor = savedOutlineColor;
     bmp.outlineWidth = savedOutlineWidth;
 
+    ExtendedText._restoreAdjacentPixels(ctx, savedAdj);
     if (progress >= 1.0) seg._etDone = true;
 };
 
@@ -534,6 +579,9 @@ Window_Base.prototype._etRedrawDissolve = function(seg, time) {
     var endX   = chars[chars.length-1].x + this.textWidth(chars[chars.length-1].c) + ow;
     var y0 = chars[0].y;
     var width = endX - startX;
+    var charStartX = chars[0].x;
+    var charEndX = chars[chars.length-1].x + this.textWidth(chars[chars.length-1].c);
+    var savedAdj = ExtendedText._saveAdjacentPixels(ctx, startX, endX, charStartX, charEndX, y0 - 1, lh + 2);
 
     bmp.clearRect(startX, y0 - 1, width, lh + 2);
 
@@ -555,6 +603,7 @@ Window_Base.prototype._etRedrawDissolve = function(seg, time) {
 
     if (threshold <= 0) {
         seg._etDone = true;
+        ExtendedText._restoreAdjacentPixels(ctx, savedAdj);
         return;
     }
 
@@ -572,6 +621,9 @@ Window_Base.prototype._etRedrawDissolve = function(seg, time) {
         }
     }
     ctx.restore();
+
+    // 인접 텍스트 픽셀 복원 (destination-out이 인접 텍스트를 지우지 않도록)
+    ExtendedText._restoreAdjacentPixels(ctx, savedAdj);
     bmp._setDirty();
 };
 
@@ -588,39 +640,48 @@ Window_Base.prototype._etRedrawBlurFade = function(seg, time) {
     var alpha = 0.2 + progress * 0.8;
 
     var lh = chars[0].h || this.lineHeight();
-    // blur 여백 확보
     var ow = (bmp.outlineWidth || 4) + Math.ceil(blurPx) + 2;
     var startX = chars[0].x - ow;
     var endX   = chars[chars.length-1].x + this.textWidth(chars[chars.length-1].c) + ow;
+    var charStartX = chars[0].x;
+    var charEndX = chars[chars.length-1].x + this.textWidth(chars[chars.length-1].c);
+    var savedAdj = ExtendedText._saveAdjacentPixels(ctx, startX, endX, charStartX, charEndX, chars[0].y, lh);
+
+    // 현재 줄 범위로 클리핑 — 인접 줄(특히 윗줄) clearRect 침범 방지
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(startX, chars[0].y, endX - startX, lh);
+    ctx.clip();
 
     bmp.clearRect(startX, chars[0].y - ow, endX - startX, lh + ow * 2);
-    if (progress <= 0) return;
 
-    var savedFilter = ctx.filter !== undefined ? ctx.filter : 'none';
-    var savedAlpha = ctx.globalAlpha;
+    if (progress > 0) {
+        if (blurPx > 0.1 && 'filter' in ctx) {
+            ctx.filter = 'blur(' + blurPx.toFixed(1) + 'px)';
+        }
+        ctx.globalAlpha = alpha;
 
-    if (blurPx > 0.1 && 'filter' in ctx) {
-        ctx.filter = 'blur(' + blurPx.toFixed(1) + 'px)';
+        var savedColor = bmp.textColor;
+        var savedOutlineColor = bmp.outlineColor;
+        var savedOutlineWidth = bmp.outlineWidth;
+        bmp.outlineColor = seg.outlineColor;
+        bmp.outlineWidth = seg.outlineWidth;
+
+        for (var i = 0; i < chars.length; i++) {
+            var ch = chars[i];
+            this.changeTextColor(ch.finalColor || ch.color || seg.textColor);
+            bmp.drawText(ch.c, ch.x, ch.y, this.textWidth(ch.c) + 4, ch.h || lh);
+        }
+
+        this.changeTextColor(savedColor);
+        bmp.outlineColor = savedOutlineColor;
+        bmp.outlineWidth = savedOutlineWidth;
     }
-    ctx.globalAlpha = alpha;
 
-    var savedColor = bmp.textColor;
-    var savedOutlineColor = bmp.outlineColor;
-    var savedOutlineWidth = bmp.outlineWidth;
-    bmp.outlineColor = seg.outlineColor;
-    bmp.outlineWidth = seg.outlineWidth;
-
-    for (var i = 0; i < chars.length; i++) {
-        var ch = chars[i];
-        this.changeTextColor(ch.finalColor || ch.color || seg.textColor);
-        bmp.drawText(ch.c, ch.x, ch.y, this.textWidth(ch.c) + 4, ch.h || lh);
-    }
-
-    if ('filter' in ctx) ctx.filter = savedFilter;
-    ctx.globalAlpha = savedAlpha;
-    this.changeTextColor(savedColor);
-    bmp.outlineColor = savedOutlineColor;
-    bmp.outlineWidth = savedOutlineWidth;
+    ctx.restore();
+    // 인접 텍스트 픽셀 복원 (blur/clearRect가 옆 텍스트를 지우지 않도록)
+    ExtendedText._restoreAdjacentPixels(ctx, savedAdj);
+    bmp._setDirty();
 
     if (progress >= 1.0) seg._etDone = true;
 };
