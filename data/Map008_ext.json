@@ -1452,8 +1452,8 @@
   },
   "dofConfig": {
     "enabled": true,
-    "focusY": 0.55,
-    "focusRange": 0.1,
+    "focusY": 0.41,
+    "focusRange": 0,
     "maxBlur": 0.13,
     "blurPower": 2.4
   },

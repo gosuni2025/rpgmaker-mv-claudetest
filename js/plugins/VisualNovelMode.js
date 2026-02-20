@@ -715,6 +715,10 @@
         if (isVN) {
             // clearFlags() 이후에 _showFast=true 재설정해야 효과 있음
             this._showFast = true;
+            // Window_Message가 opening 상태(openness 0→255 애니메이션)이면
+            // Window_Message.update()의 while 루프가 차단되어 onEndOfText()→startInput()이 호출되지 않음.
+            // VN 모드에서는 Window_Message가 화면 밖에 있으므로 즉시 open 상태로 강제 설정.
+            this.openness = 255;
             var s = SceneManager._scene;
             if (s && s._vnCtrl) {
                 s._vnCtrl.startTyping(spk, txt);
@@ -793,7 +797,6 @@
     // =========================================================================
     var _WCL_start = Window_ChoiceList.prototype.start;
     Window_ChoiceList.prototype.start = function () {
-        console.log('[VN] ChoiceList.start — isActive:', VNManager.isActive(), 'style:', VNManager.getChoiceStyle());
         if (VNManager.isActive() && VNManager.getChoiceStyle() === 'inline') {
             this._vnInline = true;
             this._setupVNInline();
@@ -806,7 +809,6 @@
     Window_ChoiceList.prototype._setupVNInline = function () {
         var s  = SceneManager._scene;
         var tw = s && s._vnCtrl ? s._vnCtrl.getTextWindow() : null;
-        console.log('[VN] _setupVNInline — scene:', !!s, 'vnCtrl:', !!(s && s._vnCtrl), 'tw:', !!tw);
         if (!tw) { this._vnInline = false; _WCL_start.call(this); return; }
 
         var choices   = $gameMessage.choices();
