@@ -14405,231 +14405,52 @@
             "tileId": 0
           },
           "list": [
-            {
-              "code": 101,
-              "indent": 0,
-              "parameters": [
-                "",
-                0,
-                2,
-                2
-              ]
-            },
-            {
-              "code": 401,
-              "indent": 0,
-              "parameters": [
-                "전쟁의 안개를 관리하는 제어사입니다."
-              ]
-            },
-            {
-              "code": 401,
-              "indent": 0,
-              "parameters": [
-                "\\C[4]3D 모드\\C[0]에서 효과를 확인할 수 있어요."
-              ]
-            },
-            {
-              "code": 102,
-              "indent": 0,
-              "parameters": [
-                [
-                  "안개 켜기",
-                  "안개 끄기",
-                  "시야 넓게 (반경 8)",
-                  "시야 좁게 (반경 3)",
-                  "전체 공개",
-                  "닫기"
-                ],
-                5,
-                0,
-                0,
-                0
-              ]
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                0,
-                "안개 켜기"
-              ]
-            },
-            {
-              "code": 356,
-              "indent": 1,
-              "parameters": [
-                "FogOfWar Enable"
-              ]
-            },
-            {
-              "code": 101,
-              "indent": 1,
-              "parameters": [
-                "",
-                0,
-                2,
-                2
-              ]
-            },
-            {
-              "code": 401,
-              "indent": 1,
-              "parameters": [
-                "안개가 활성화되었습니다."
-              ]
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                1,
-                "안개 끄기"
-              ]
-            },
-            {
-              "code": 356,
-              "indent": 1,
-              "parameters": [
-                "FogOfWar Disable"
-              ]
-            },
-            {
-              "code": 101,
-              "indent": 1,
-              "parameters": [
-                "",
-                0,
-                2,
-                2
-              ]
-            },
-            {
-              "code": 401,
-              "indent": 1,
-              "parameters": [
-                "안개가 비활성화되었습니다."
-              ]
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                2,
-                "시야 넓게 (반경 8)"
-              ]
-            },
-            {
-              "code": 356,
-              "indent": 1,
-              "parameters": [
-                "FogOfWar Radius 8"
-              ]
-            },
-            {
-              "code": 101,
-              "indent": 1,
-              "parameters": [
-                "",
-                0,
-                2,
-                2
-              ]
-            },
-            {
-              "code": 401,
-              "indent": 1,
-              "parameters": [
-                "시야 반경을 8타일로 넓혔습니다."
-              ]
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                3,
-                "시야 좁게 (반경 3)"
-              ]
-            },
-            {
-              "code": 356,
-              "indent": 1,
-              "parameters": [
-                "FogOfWar Radius 3"
-              ]
-            },
-            {
-              "code": 101,
-              "indent": 1,
-              "parameters": [
-                "",
-                0,
-                2,
-                2
-              ]
-            },
-            {
-              "code": 401,
-              "indent": 1,
-              "parameters": [
-                "시야 반경을 3타일로 좁혔습니다."
-              ]
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                4,
-                "전체 공개"
-              ]
-            },
-            {
-              "code": 356,
-              "indent": 1,
-              "parameters": [
-                "FogOfWar RevealAll"
-              ]
-            },
-            {
-              "code": 101,
-              "indent": 1,
-              "parameters": [
-                "",
-                0,
-                2,
-                2
-              ]
-            },
-            {
-              "code": 401,
-              "indent": 1,
-              "parameters": [
-                "맵 전체가 공개되었습니다."
-              ]
-            },
-            {
-              "code": 402,
-              "indent": 0,
-              "parameters": [
-                5,
-                "닫기"
-              ]
-            },
-            {
-              "code": 115,
-              "indent": 1,
-              "parameters": []
-            },
-            {
-              "code": 404,
-              "indent": 0,
-              "parameters": []
-            },
-            {
-              "code": 0,
-              "indent": 0,
-              "parameters": []
-            }
+            {"code": 101, "indent": 0, "parameters": ["", 0, 2, 2]},
+            {"code": 401, "indent": 0, "parameters": ["전쟁의 안개를 관리하는 제어사입니다."]},
+            {"code": 401, "indent": 0, "parameters": ["\\C[4]3D 모드\\C[0]에서 효과를 확인할 수 있어요."]},
+            {"code": 102, "indent": 0, "parameters": [["안개 켜기", "안개 끄기", "안개 색깔", "촉수 강도", "전체 공개", "닫기"], 5, 0, 0, 0]},
+            {"code": 402, "indent": 0, "parameters": [0, "안개 켜기"]},
+            {"code": 356, "indent": 1, "parameters": ["FogOfWar Enable"]},
+            {"code": 101, "indent": 1, "parameters": ["", 0, 2, 2]},
+            {"code": 401, "indent": 1, "parameters": ["안개가 활성화되었습니다."]},
+            {"code": 402, "indent": 0, "parameters": [1, "안개 끄기"]},
+            {"code": 356, "indent": 1, "parameters": ["FogOfWar Disable"]},
+            {"code": 101, "indent": 1, "parameters": ["", 0, 2, 2]},
+            {"code": 401, "indent": 1, "parameters": ["안개가 비활성화되었습니다."]},
+            {"code": 402, "indent": 0, "parameters": [2, "안개 색깔"]},
+            {"code": 102, "indent": 1, "parameters": [["검정 (기본)", "파랑", "보라", "빨강", "초록", "뒤로"], 5, 0, 0, 0]},
+            {"code": 402, "indent": 1, "parameters": [0, "검정 (기본)"]},
+            {"code": 356, "indent": 2, "parameters": ["FogOfWar FogColor #000000"]},
+            {"code": 402, "indent": 1, "parameters": [1, "파랑"]},
+            {"code": 356, "indent": 2, "parameters": ["FogOfWar FogColor #000044"]},
+            {"code": 402, "indent": 1, "parameters": [2, "보라"]},
+            {"code": 356, "indent": 2, "parameters": ["FogOfWar FogColor #1a0033"]},
+            {"code": 402, "indent": 1, "parameters": [3, "빨강"]},
+            {"code": 356, "indent": 2, "parameters": ["FogOfWar FogColor #330000"]},
+            {"code": 402, "indent": 1, "parameters": [4, "초록"]},
+            {"code": 356, "indent": 2, "parameters": ["FogOfWar FogColor #001a00"]},
+            {"code": 402, "indent": 1, "parameters": [5, "뒤로"]},
+            {"code": 404, "indent": 1, "parameters": []},
+            {"code": 402, "indent": 0, "parameters": [3, "촉수 강도"]},
+            {"code": 102, "indent": 1, "parameters": [["부드럽게 (1.0)", "기본 (3.0)", "날카롭게 (8.0)", "매우 날카롭게 (15.0)", "뒤로"], 4, 0, 0, 0]},
+            {"code": 402, "indent": 1, "parameters": [0, "부드럽게 (1.0)"]},
+            {"code": 356, "indent": 2, "parameters": ["FogOfWar TentacleSharpness 1.0"]},
+            {"code": 402, "indent": 1, "parameters": [1, "기본 (3.0)"]},
+            {"code": 356, "indent": 2, "parameters": ["FogOfWar TentacleSharpness 3.0"]},
+            {"code": 402, "indent": 1, "parameters": [2, "날카롭게 (8.0)"]},
+            {"code": 356, "indent": 2, "parameters": ["FogOfWar TentacleSharpness 8.0"]},
+            {"code": 402, "indent": 1, "parameters": [3, "매우 날카롭게 (15.0)"]},
+            {"code": 356, "indent": 2, "parameters": ["FogOfWar TentacleSharpness 15.0"]},
+            {"code": 402, "indent": 1, "parameters": [4, "뒤로"]},
+            {"code": 404, "indent": 1, "parameters": []},
+            {"code": 402, "indent": 0, "parameters": [4, "전체 공개"]},
+            {"code": 356, "indent": 1, "parameters": ["FogOfWar RevealAll"]},
+            {"code": 101, "indent": 1, "parameters": ["", 0, 2, 2]},
+            {"code": 401, "indent": 1, "parameters": ["맵 전체가 공개되었습니다."]},
+            {"code": 402, "indent": 0, "parameters": [5, "닫기"]},
+            {"code": 115, "indent": 1, "parameters": []},
+            {"code": 404, "indent": 0, "parameters": []},
+            {"code": 0, "indent": 0, "parameters": []}
           ],
           "moveFrequency": 3,
           "moveRoute": {
