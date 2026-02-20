@@ -14810,7 +14810,7 @@
               "code": 356,
               "indent": 1,
               "parameters": [
-                "ShadowLight ambient 1.2 2"
+                "ShadowLight ambient 3.0 2"
               ]
             },
             {
@@ -14849,7 +14849,7 @@
               "code": 356,
               "indent": 1,
               "parameters": [
-                "ShadowLight ambient 0.15 2"
+                "ShadowLight ambient 0.5 2"
               ]
             },
             {
@@ -14888,7 +14888,7 @@
               "code": 356,
               "indent": 1,
               "parameters": [
-                "ShadowLight ambient 0.6 2"
+                "ShadowLight ambient 1.8 2"
               ]
             },
             {
