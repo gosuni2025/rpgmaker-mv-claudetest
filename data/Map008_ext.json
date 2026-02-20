@@ -3,7 +3,7 @@
     "ambient": {
       "color": "#667788",
       "intensity": 0.4,
-      "enabled": false
+      "enabled": true
     },
     "directional": {
       "enabled": false,
