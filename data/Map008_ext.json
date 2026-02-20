@@ -1450,6 +1450,13 @@
       "emissiveColor": "#ffffff"
     }
   },
+  "dofConfig": {
+    "enabled": true,
+    "focusY": 0.55,
+    "focusRange": 0.1,
+    "maxBlur": 0.13,
+    "blurPower": 2.4
+  },
   "fogOfWar": {
     "enabled": false,
     "radius": 5,
