@@ -14,5 +14,7 @@ var $plugins =
 {"name":"TextLog","status":true,"description":"텍스트 로그 - 메시지 대사 기록을 스크롤하며 볼 수 있는 창","parameters":{"menuName":"텍스트 로그","maxLines":"300","entryGap":"6","showFace":"true","faceSize":"100","bgOpacity":"160","scrollSpeed":"4"}},
 {"name":"VisualNovelMode","status":true,"description":"비주얼 노벨 모드 - 화면 상단부터 텍스트를 누적 출력하는 VN 스타일 메시지 시스템","parameters":{"overlayOpacity":"120","transitionFrames":"24","textAreaX":"60","textAreaY":"40","textAreaWidth":"700","textAreaHeight":"520","choiceStyle":"inline","speakerColor":"#ffe066","choiceIndicator":">","autoExitDelay":"30"}},
 {"name":"BuildVersion","status":true,"description":"타이틀 화면 오른쪽 하단에 빌드 번호를 표시합니다.","parameters":{"fontSize":"14","textColor":"rgba(255,255,255,0.5)","marginRight":"12","marginBottom":"8"}},
-{"name":"AutoSave","status":true,"description":"오토 세이브 (자동 저장) 기능","parameters":{"enableMapTransferSave":"true","enableAfterBattle":"true","enableOnVariableChange":"false","variableChangeDelay":"500","enableAfterMenu":"true","slotLabel":"오토 세이브","showNotification":"true"}}
+{"name":"AutoSave","status":true,"description":"오토 세이브 (자동 저장) 기능","parameters":{"enableMapTransferSave":"true","enableAfterBattle":"true","enableOnVariableChange":"false","variableChangeDelay":"500","enableAfterMenu":"true","slotLabel":"오토 세이브","showNotification":"true"}},
+{"name":"EnemyBook","status":true,"description":"Displays detailed statuses of enemies.","parameters":{"Unknown Data":"??????"}},
+{"name":"ItemBook","status":true,"description":"Displays detailed statuses of items.","parameters":{"Unknown Data":"??????","Price Text":"Price","Equip Text":"Equip","Type Text":"Type"}}
 ];
