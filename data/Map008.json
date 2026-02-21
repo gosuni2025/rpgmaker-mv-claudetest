@@ -15682,14 +15682,7 @@
               "code": 401,
               "indent": 0,
               "parameters": [
-                "저기요, 여행자이신가요?"
-              ]
-            },
-            {
-              "code": 401,
-              "indent": 0,
-              "parameters": [
-                "잠깐 이야기 나눌 수 있을까요?"
+                "저기요, 여행자이신가요?<picture src=\"enemies/Actor1_3\" imgtype=\"pictures\"/>잠깐 이야기 나눌 수 있을까요?"
               ]
             },
             {
