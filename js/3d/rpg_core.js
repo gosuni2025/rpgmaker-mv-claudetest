@@ -2227,7 +2227,28 @@ Graphics.setVideoVolume = function(value) {
 Graphics.pageToCanvasX = function(x) {
     if (this._canvas) {
         var left = this._canvas.offsetLeft;
-        return Math.round((x - left) / this._realScale);
+        var result = Math.round((x - left) / this._realScale);
+        var rect = this._canvas.getBoundingClientRect();
+        var scrollX = window.pageXOffset || document.documentElement.scrollLeft;
+        var rectLeft = rect.left + scrollX;
+        var resultAlt = Math.round((x - rectLeft) / this._realScale);
+        if (!Graphics._touchLogCount) Graphics._touchLogCount = 0;
+        if (Graphics._touchLogCount < 5) {
+            Graphics._touchLogCount++;
+            console.log('[TouchDebug] pageToCanvasX:', {
+                pageX: x,
+                offsetLeft: left,
+                rectLeft: rectLeft,
+                scrollX: scrollX,
+                realScale: this._realScale,
+                canvasWidth: this._canvas.width,
+                canvasStyleWidth: this._canvas.style.width,
+                graphicsWidth: this._width,
+                result_offsetLeft: result,
+                result_getBCR: resultAlt,
+            });
+        }
+        return result;
     } else {
         return 0;
     }
@@ -2245,7 +2266,26 @@ Graphics.pageToCanvasX = function(x) {
 Graphics.pageToCanvasY = function(y) {
     if (this._canvas) {
         var top = this._canvas.offsetTop;
-        return Math.round((y - top) / this._realScale);
+        var result = Math.round((y - top) / this._realScale);
+        var rect = this._canvas.getBoundingClientRect();
+        var scrollY = window.pageYOffset || document.documentElement.scrollTop;
+        var rectTop = rect.top + scrollY;
+        var resultAlt = Math.round((y - rectTop) / this._realScale);
+        if (Graphics._touchLogCount <= 5) {
+            console.log('[TouchDebug] pageToCanvasY:', {
+                pageY: y,
+                offsetTop: top,
+                rectTop: rectTop,
+                scrollY: scrollY,
+                realScale: this._realScale,
+                canvasHeight: this._canvas.height,
+                canvasStyleHeight: this._canvas.style.height,
+                graphicsHeight: this._height,
+                result_offsetTop: result,
+                result_getBCR: resultAlt,
+            });
+        }
+        return result;
     } else {
         return 0;
     }
