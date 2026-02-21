@@ -44,40 +44,46 @@
  * @text 초기화
  * @desc 도감을 초기화합니다.
  *
- * @command add
+ * @command addItem
  * @text 아이템 등록
- * @desc 특정 아이템/무기/방어구를 도감에 등록합니다.
- * @arg type
- * @text 종류
- * @type select
- * @option 아이템
- * @value item
- * @option 무기
- * @value weapon
- * @option 방어구
- * @value armor
- * @default item
  * @arg dataId
- * @text 번호
- * @type number
+ * @text 아이템
+ * @type item
  * @default 1
  *
- * @command remove
- * @text 아이템 제거
- * @desc 특정 아이템/무기/방어구를 도감에서 제거합니다.
- * @arg type
- * @text 종류
- * @type select
- * @option 아이템
- * @value item
- * @option 무기
- * @value weapon
- * @option 방어구
- * @value armor
- * @default item
+ * @command addWeapon
+ * @text 무기 등록
  * @arg dataId
- * @text 번호
- * @type number
+ * @text 무기
+ * @type weapon
+ * @default 1
+ *
+ * @command addArmor
+ * @text 방어구 등록
+ * @arg dataId
+ * @text 방어구
+ * @type armor
+ * @default 1
+ *
+ * @command removeItem
+ * @text 아이템 제거
+ * @arg dataId
+ * @text 아이템
+ * @type item
+ * @default 1
+ *
+ * @command removeWeapon
+ * @text 무기 제거
+ * @arg dataId
+ * @text 무기
+ * @type weapon
+ * @default 1
+ *
+ * @command removeArmor
+ * @text 방어구 제거
+ * @arg dataId
+ * @text 방어구
+ * @type armor
  * @default 1
  */
 
@@ -99,11 +105,17 @@
         _pluginCommand.call(this, command, args);
         if (command !== 'ItemBook') return;
         switch (args[0]) {
-        case 'open':     SceneManager.push(Scene_ItemBook); break;
-        case 'add':      $gameSystem.addToItemBook(args[1], Number(args[2])); break;
-        case 'remove':   $gameSystem.removeFromItemBook(args[1], Number(args[2])); break;
-        case 'complete': $gameSystem.completeItemBook(); break;
-        case 'clear':    $gameSystem.clearItemBook(); break;
+        case 'open':        SceneManager.push(Scene_ItemBook); break;
+        case 'add':         $gameSystem.addToItemBook(args[1], Number(args[2])); break;
+        case 'remove':      $gameSystem.removeFromItemBook(args[1], Number(args[2])); break;
+        case 'complete':    $gameSystem.completeItemBook(); break;
+        case 'clear':       $gameSystem.clearItemBook(); break;
+        case 'addItem':     $gameSystem.addToItemBook('item',   Number(args[1])); break;
+        case 'addWeapon':   $gameSystem.addToItemBook('weapon', Number(args[1])); break;
+        case 'addArmor':    $gameSystem.addToItemBook('armor',  Number(args[1])); break;
+        case 'removeItem':  $gameSystem.removeFromItemBook('item',   Number(args[1])); break;
+        case 'removeWeapon':$gameSystem.removeFromItemBook('weapon', Number(args[1])); break;
+        case 'removeArmor': $gameSystem.removeFromItemBook('armor',  Number(args[1])); break;
         }
     };
 

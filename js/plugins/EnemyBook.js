@@ -41,16 +41,16 @@
  * @text 적 등록
  * @desc 특정 적을 도감에 등록합니다.
  * @arg enemyId
- * @text 적 번호
- * @type number
+ * @text 적
+ * @type enemy
  * @default 1
  *
  * @command remove
  * @text 적 제거
  * @desc 특정 적을 도감에서 제거합니다.
  * @arg enemyId
- * @text 적 번호
- * @type number
+ * @text 적
+ * @type enemy
  * @default 1
  */
 
