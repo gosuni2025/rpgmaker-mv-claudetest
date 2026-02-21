@@ -15645,12 +15645,19 @@
       "pages": [
         {
           "conditions": {
-            "actorId": 1, "actorValid": false,
-            "itemId": 1, "itemValid": false,
-            "selfSwitchCh": "A", "selfSwitchValid": false,
-            "switch1Id": 1, "switch1Valid": false,
-            "switch2Id": 1, "switch2Valid": false,
-            "variableId": 1, "variableValid": false, "variableValue": 0
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
           },
           "directionFix": false,
           "image": {
@@ -15661,60 +15668,358 @@
             "tileId": 0
           },
           "list": [
-            { "code": 101, "indent": 0, "parameters": ["", 0, 0, 2] },
-            { "code": 401, "indent": 0, "parameters": ["저기요, 여행자이신가요?"] },
-            { "code": 401, "indent": 0, "parameters": ["잠깐 이야기 나눌 수 있을까요?"] },
-            { "code": 356, "indent": 0, "parameters": ["VisualNovel enter"] },
-            { "code": 101, "indent": 0, "parameters": ["", 0, 0, 2] },
-            { "code": 401, "indent": 0, "parameters": ["<color value=#ffe066>루카</color>: 어서오세요! 저는 이 도시 여관 주인"] },
-            { "code": 401, "indent": 0, "parameters": ["<color value=#ffe066>루카</color>라고 합니다. 무엇을 도와드릴까요?"] },
-            { "code": 102, "indent": 0, "parameters": [
-              ["방 하나 부탁해요", "이 도시에 대해 알려주세요", "그냥 지나가는 길이에요"],
-              2
-            ]},
-            { "code": 402, "indent": 0, "parameters": [0, "방 하나 부탁해요"] },
-            { "code": 101, "indent": 1, "parameters": ["", 0, 0, 2] },
-            { "code": 401, "indent": 1, "parameters": ["<color value=#ffe066>루카</color>: 잘됐네요! 마침 좋은 방이 하나 남아 있어요."] },
-            { "code": 401, "indent": 1, "parameters": ["하룻밤에 500골드입니다. 어떻게 하실래요?"] },
-            { "code": 102, "indent": 1, "parameters": [
-              ["예약할게요", "좀 비싸네요..."],
-              -1
-            ]},
-            { "code": 402, "indent": 1, "parameters": [0, "예약할게요"] },
-            { "code": 101, "indent": 2, "parameters": ["", 0, 0, 2] },
-            { "code": 401, "indent": 2, "parameters": ["<color value=#ffe066>루카</color>: 감사합니다~!"] },
-            { "code": 401, "indent": 2, "parameters": ["<fade>2층 3번 방이에요. 편히 쉬세요!</fade>"] },
-            { "code": 356, "indent": 2, "parameters": ["VisualNovel exit"] },
-            { "code": 101, "indent": 2, "parameters": ["", 0, 0, 2] },
-            { "code": 401, "indent": 2, "parameters": ["체크인이 완료되었습니다."] },
-            { "code": 401, "indent": 2, "parameters": ["2층 3번 방으로 안내해 드릴게요!"] },
-            { "code": 402, "indent": 1, "parameters": [1, "좀 비싸네요..."] },
-            { "code": 101, "indent": 2, "parameters": ["", 0, 0, 2] },
-            { "code": 401, "indent": 2, "parameters": ["<color value=#ffe066>루카</color>: 음... 그럼 <color value=#ffdd44>400골드</color>에 드릴게요!"] },
-            { "code": 401, "indent": 2, "parameters": ["그 이상은 어렵답니다!"] },
-            { "code": 356, "indent": 2, "parameters": ["VisualNovel exit"] },
-            { "code": 404, "indent": 1, "parameters": [] },
-            { "code": 402, "indent": 0, "parameters": [1, "이 도시에 대해 알려주세요"] },
-            { "code": 101, "indent": 1, "parameters": ["", 0, 0, 2] },
-            { "code": 401, "indent": 1, "parameters": ["<color value=#ffe066>루카</color>: 이 도시는 100년 전"] },
-            { "code": 401, "indent": 1, "parameters": ["<hologram>마법사 길드</hologram>가 건설했답니다."] },
-            { "code": 401, "indent": 1, "parameters": ["서쪽엔 마법 연구소, 동쪽엔 상인 거리가 있어요."] },
-            { "code": 101, "indent": 1, "parameters": ["", 0, 0, 2] },
-            { "code": 401, "indent": 1, "parameters": ["<color value=#ffe066>루카</color>: <gradient-wave>둘러보시면 정말 재미있을 거예요!</gradient-wave>"] },
-            { "code": 401, "indent": 1, "parameters": ["또 궁금한 거 있으면 언제든 들르세요!"] },
-            { "code": 356, "indent": 1, "parameters": ["VisualNovel exit"] },
-            { "code": 402, "indent": 0, "parameters": [2, "그냥 지나가는 길이에요"] },
-            { "code": 101, "indent": 1, "parameters": ["", 0, 0, 2] },
-            { "code": 401, "indent": 1, "parameters": ["<color value=#ffe066>루카</color>: 그렇군요~ 그래도 언제든지 들르세요!"] },
-            { "code": 401, "indent": 1, "parameters": ["<shake amp=2>요즘 밤길이 좀 위험하다는 소문이 있어요.</shake>"] },
-            { "code": 401, "indent": 1, "parameters": ["조심히 다니세요, 여행자님!"] },
-            { "code": 356, "indent": 1, "parameters": ["VisualNovel exit"] },
-            { "code": 404, "indent": 0, "parameters": [] },
-            { "code": 0, "indent": 0, "parameters": [] }
+            {
+              "code": 101,
+              "indent": 0,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 0,
+              "parameters": [
+                "저기요, 여행자이신가요?"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 0,
+              "parameters": [
+                "잠깐 이야기 나눌 수 있을까요?"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 0,
+              "parameters": [
+                "VisualNovel enter"
+              ]
+            },
+            {
+              "code": 101,
+              "indent": 0,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 0,
+              "parameters": [
+                "<color value=#ffe066>루카</color>: 어서오세요! 저는 이 도시 여관 주인"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 0,
+              "parameters": [
+                "<color value=#ffe066>루카</color>라고 합니다. 무엇을 도와드릴까요?"
+              ]
+            },
+            {
+              "code": 102,
+              "indent": 0,
+              "parameters": [
+                [
+                  "방 하나 부탁해요",
+                  "이 도시에 대해 알려주세요",
+                  "그냥 지나가는 길이에요"
+                ],
+                2
+              ]
+            },
+            {
+              "code": 402,
+              "indent": 0,
+              "parameters": [
+                0,
+                "방 하나 부탁해요"
+              ]
+            },
+            {
+              "code": 101,
+              "indent": 1,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#ffe066>루카</color>: 잘됐네요! 마침 좋은 방이 하나 남아 있어요."
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "하룻밤에 500골드입니다. 어떻게 하실래요?"
+              ]
+            },
+            {
+              "code": 102,
+              "indent": 1,
+              "parameters": [
+                [
+                  "예약할게요",
+                  "좀 비싸네요..."
+                ],
+                -1
+              ]
+            },
+            {
+              "code": 402,
+              "indent": 1,
+              "parameters": [
+                0,
+                "예약할게요"
+              ]
+            },
+            {
+              "code": 101,
+              "indent": 2,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 2,
+              "parameters": [
+                "<color value=#ffe066>루카</color>: 감사합니다~!"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 2,
+              "parameters": [
+                "<fade>2층 3번 방이에요. 편히 쉬세요!</fade>"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 2,
+              "parameters": [
+                "VisualNovel exit"
+              ]
+            },
+            {
+              "code": 101,
+              "indent": 2,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 2,
+              "parameters": [
+                "체크인이 완료되었습니다."
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 2,
+              "parameters": [
+                "2층 3번 방으로 안내해 드릴게요!"
+              ]
+            },
+            {
+              "code": 402,
+              "indent": 1,
+              "parameters": [
+                1,
+                "좀 비싸네요..."
+              ]
+            },
+            {
+              "code": 101,
+              "indent": 2,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 2,
+              "parameters": [
+                "<color value=#ffe066>루카</color>: 음... 그럼 <color value=#ffdd44>400골드</color>에 드릴게요!"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 2,
+              "parameters": [
+                "그 이상은 어렵답니다!"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 2,
+              "parameters": [
+                "VisualNovel exit"
+              ]
+            },
+            {
+              "code": 404,
+              "indent": 1,
+              "parameters": []
+            },
+            {
+              "code": 402,
+              "indent": 0,
+              "parameters": [
+                1,
+                "이 도시에 대해 알려주세요"
+              ]
+            },
+            {
+              "code": 101,
+              "indent": 1,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#ffe066>루카</color>: 이 도시는 100년 전"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<hologram>마법사 길드</hologram>가 건설했답니다."
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "서쪽엔 마법 연구소, 동쪽엔 상인 거리가 있어요."
+              ]
+            },
+            {
+              "code": 101,
+              "indent": 1,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#ffe066>루카</color>: <gradient-wave>둘러보시면 정말 재미있을 거예요!</gradient-wave>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "또 궁금한 거 있으면 언제든 들르세요!"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 1,
+              "parameters": [
+                "VisualNovel exit"
+              ]
+            },
+            {
+              "code": 402,
+              "indent": 0,
+              "parameters": [
+                2,
+                "그냥 지나가는 길이에요"
+              ]
+            },
+            {
+              "code": 101,
+              "indent": 1,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#ffe066>루카</color>: 그렇군요~ 그래도 언제든지 들르세요!"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<shake amp=2>요즘 밤길이 좀 위험하다는 소문이 있어요.</shake>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "조심히 다니세요, 여행자님!"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 1,
+              "parameters": [
+                "VisualNovel exit"
+              ]
+            },
+            {
+              "code": 404,
+              "indent": 0,
+              "parameters": []
+            },
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
           ],
           "moveFrequency": 3,
           "moveRoute": {
-            "list": [{ "code": 0, "parameters": [] }],
+            "list": [
+              {
+                "code": 0,
+                "parameters": []
+              }
+            ],
             "repeat": true,
             "skippable": false,
             "wait": false
