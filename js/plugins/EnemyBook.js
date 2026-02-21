@@ -10,6 +10,14 @@
  * @desc 미확인 적에 표시할 텍스트
  * @default ??????
  *
+ * @param Show In Menu
+ * @desc 메뉴에 몬스터 도감 항목 표시 여부 (true / false)
+ * @default true
+ *
+ * @param Menu Text
+ * @desc 메뉴에 표시할 텍스트
+ * @default 몬스터 도감
+ *
  * @help
  * Plugin Command:
  *   EnemyBook open         # 도감 열기
@@ -28,6 +36,8 @@
 
     var parameters  = PluginManager.parameters('EnemyBook');
     var unknownData = String(parameters['Unknown Data'] || '??????');
+    var showInMenu  = String(parameters['Show In Menu'] || 'true') === 'true';
+    var menuText    = String(parameters['Menu Text']    || '몬스터 도감');
 
     //-------------------------------------------------------------------------
     // Plugin Command
@@ -320,5 +330,26 @@
         if (enemy.meta.desc1) this.drawTextEx(String(enemy.meta.desc1), pad, 0);
         if (enemy.meta.desc2) this.drawTextEx(String(enemy.meta.desc2), pad, lh);
     };
+
+    //-------------------------------------------------------------------------
+    // 메뉴 통합
+    //-------------------------------------------------------------------------
+    if (showInMenu) {
+        var _makeCommandList = Window_MenuCommand.prototype.makeCommandList;
+        Window_MenuCommand.prototype.makeCommandList = function() {
+            _makeCommandList.call(this);
+            this.addCommand(menuText, 'enemyBook');
+        };
+
+        var _createCommandWindow = Scene_Menu.prototype.createCommandWindow;
+        Scene_Menu.prototype.createCommandWindow = function() {
+            _createCommandWindow.call(this);
+            this._commandWindow.setHandler('enemyBook', this.commandEnemyBook.bind(this));
+        };
+
+        Scene_Menu.prototype.commandEnemyBook = function() {
+            SceneManager.push(Scene_EnemyBook);
+        };
+    }
 
 })();

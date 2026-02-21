@@ -19,6 +19,14 @@
  * @param Type Text
  * @default 타입
  *
+ * @param Show In Menu
+ * @desc 메뉴에 아이템 도감 항목 표시 여부 (true / false)
+ * @default true
+ *
+ * @param Menu Text
+ * @desc 메뉴에 표시할 텍스트
+ * @default 아이템 도감
+ *
  * @help
  * Plugin Command:
  *   ItemBook open            # 도감 열기
@@ -39,6 +47,8 @@
     var priceText   = String(parameters['Price Text']   || '가격');
     var equipText   = String(parameters['Equip Text']   || '장비');
     var typeText    = String(parameters['Type Text']    || '타입');
+    var showInMenu  = String(parameters['Show In Menu'] || 'true') === 'true';
+    var menuText    = String(parameters['Menu Text']    || '아이템 도감');
 
     //-------------------------------------------------------------------------
     // Plugin Command
@@ -315,5 +325,26 @@
         if (!item || !$gameSystem.isInItemBook(item)) return;
         this.drawTextEx(item.description, this.textPadding(), 0);
     };
+
+    //-------------------------------------------------------------------------
+    // 메뉴 통합
+    //-------------------------------------------------------------------------
+    if (showInMenu) {
+        var _makeCommandList = Window_MenuCommand.prototype.makeCommandList;
+        Window_MenuCommand.prototype.makeCommandList = function() {
+            _makeCommandList.call(this);
+            this.addCommand(menuText, 'itemBook');
+        };
+
+        var _createCommandWindow = Scene_Menu.prototype.createCommandWindow;
+        Scene_Menu.prototype.createCommandWindow = function() {
+            _createCommandWindow.call(this);
+            this._commandWindow.setHandler('itemBook', this.commandItemBook.bind(this));
+        };
+
+        Scene_Menu.prototype.commandItemBook = function() {
+            SceneManager.push(Scene_ItemBook);
+        };
+    }
 
 })();
