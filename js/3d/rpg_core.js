@@ -2226,26 +2226,23 @@ Graphics.setVideoVolume = function(value) {
  */
 Graphics.pageToCanvasX = function(x) {
     if (this._canvas) {
-        var left = this._canvas.offsetLeft;
-        var result = Math.round((x - left) / this._realScale);
         var rect = this._canvas.getBoundingClientRect();
         var scrollX = window.pageXOffset || document.documentElement.scrollLeft;
-        var rectLeft = rect.left + scrollX;
-        var resultAlt = Math.round((x - rectLeft) / this._realScale);
+        // getBCR 기반: X/Y 스케일을 각각 계산 (가로세로 비율이 달라도 정확)
+        var scaleX = rect.width > 0 ? this._width / rect.width : 1 / this._realScale;
+        var result = Math.round((x - scrollX - rect.left) * scaleX);
         if (!Graphics._touchLogCount) Graphics._touchLogCount = 0;
         if (Graphics._touchLogCount < 5) {
             Graphics._touchLogCount++;
             console.log('[TouchDebug] pageToCanvasX:', {
                 pageX: x,
-                offsetLeft: left,
-                rectLeft: rectLeft,
+                rectLeft: rect.left,
+                rectWidth: rect.width,
                 scrollX: scrollX,
                 realScale: this._realScale,
-                canvasWidth: this._canvas.width,
-                canvasStyleWidth: this._canvas.style.width,
+                scaleX: scaleX,
                 graphicsWidth: this._width,
-                result_offsetLeft: result,
-                result_getBCR: resultAlt,
+                result: result,
             });
         }
         return result;
@@ -2265,24 +2262,21 @@ Graphics.pageToCanvasX = function(x) {
  */
 Graphics.pageToCanvasY = function(y) {
     if (this._canvas) {
-        var top = this._canvas.offsetTop;
-        var result = Math.round((y - top) / this._realScale);
         var rect = this._canvas.getBoundingClientRect();
         var scrollY = window.pageYOffset || document.documentElement.scrollTop;
-        var rectTop = rect.top + scrollY;
-        var resultAlt = Math.round((y - rectTop) / this._realScale);
+        // getBCR 기반: X/Y 스케일을 각각 계산 (가로세로 비율이 달라도 정확)
+        var scaleY = rect.height > 0 ? this._height / rect.height : 1 / this._realScale;
+        var result = Math.round((y - scrollY - rect.top) * scaleY);
         if (Graphics._touchLogCount <= 5) {
             console.log('[TouchDebug] pageToCanvasY:', {
                 pageY: y,
-                offsetTop: top,
-                rectTop: rectTop,
+                rectTop: rect.top,
+                rectHeight: rect.height,
                 scrollY: scrollY,
                 realScale: this._realScale,
-                canvasHeight: this._canvas.height,
-                canvasStyleHeight: this._canvas.style.height,
+                scaleY: scaleY,
                 graphicsHeight: this._height,
-                result_offsetTop: result,
-                result_getBCR: resultAlt,
+                result: result,
             });
         }
         return result;
