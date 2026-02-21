@@ -20,7 +20,8 @@
  * @default 타입
  *
  * @param Show In Menu
- * @desc 메뉴에 아이템 도감 항목 표시 여부 (true / false)
+ * @desc 메뉴에 아이템 도감 항목 표시 여부
+ * @type boolean
  * @default true
  *
  * @param Menu Text
