@@ -11,7 +11,8 @@
  * @default ??????
  *
  * @param Show In Menu
- * @desc 메뉴에 몬스터 도감 항목 표시 여부 (true / false)
+ * @desc 메뉴에 몬스터 도감 항목 표시 여부
+ * @type boolean
  * @default true
  *
  * @param Menu Text
