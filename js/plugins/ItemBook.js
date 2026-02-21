@@ -299,7 +299,80 @@
                 this.resetTextColor();
                 this.drawText(item.params[i], px + 90, py, 50, 'right');
             }
+        } else {
+            // 일반 아이템 — 사용 효과 목록
+            y += lh;
+            var effects = item.effects || [];
+            for (var ei = 0; ei < effects.length; ei++) {
+                var ef = this._parseEffect(effects[ei]);
+                if (ef) {
+                    this.changeTextColor(this.systemColor());
+                    this.drawText(ef.label, x, y, 110);
+                    this.resetTextColor();
+                    this.drawText(ef.value, x + 110, y, cw - x - 110 - pad);
+                    y += lh;
+                }
+            }
         }
+    };
+
+    // effect 코드 → {label, value} 변환
+    Window_ItemBookStatus.prototype._parseEffect = function(effect) {
+        var label, value, parts;
+        switch (effect.code) {
+        case 11: // HP 회복
+            label = 'HP 회복';
+            parts = [];
+            if (effect.value1 !== 0) parts.push(Math.round(effect.value1 * 100) + '%');
+            if (effect.value2 !== 0) parts.push((effect.value2 > 0 ? '+' : '') + effect.value2);
+            value = parts.join(' + ') || '-';
+            break;
+        case 12: // MP 회복
+            label = 'MP 회복';
+            parts = [];
+            if (effect.value1 !== 0) parts.push(Math.round(effect.value1 * 100) + '%');
+            if (effect.value2 !== 0) parts.push((effect.value2 > 0 ? '+' : '') + effect.value2);
+            value = parts.join(' + ') || '-';
+            break;
+        case 13: // TP 증가
+            label = 'TP 증가';
+            value = '+' + effect.value1;
+            break;
+        case 14: // 상태 부여
+            label = '상태 부여';
+            var st14 = $dataStates[effect.dataId];
+            value = (st14 ? st14.name : '?') + ' ' + Math.round(effect.value1 * 100) + '%';
+            break;
+        case 15: // 상태 해제
+            label = '상태 해제';
+            var st15 = $dataStates[effect.dataId];
+            value = st15 ? st15.name : '?';
+            break;
+        case 16: // 버프
+            label = '버프';
+            value = TextManager.param(effect.dataId);
+            break;
+        case 17: // 디버프
+            label = '디버프';
+            value = TextManager.param(effect.dataId);
+            break;
+        case 21: // 특수 (도주 등)
+            label = '특수 효과';
+            value = effect.dataId === 0 ? '도주' : String(effect.dataId);
+            break;
+        case 22: // 성장
+            label = '성장';
+            value = TextManager.param(effect.dataId) + ' +' + effect.value1;
+            break;
+        case 23: // 스킬 습득
+            label = '스킬 습득';
+            var sk = $dataSkills[effect.dataId];
+            value = sk ? sk.name : '?';
+            break;
+        default:
+            return null;
+        }
+        return { label: label, value: value };
     };
 
     //=========================================================================
