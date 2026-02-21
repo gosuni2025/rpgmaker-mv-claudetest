@@ -400,7 +400,9 @@ ThreeWaterShader.createStandaloneMaterial = function(texture, isWaterfall, kindS
         this._STANDALONE_FRAGMENT_WATER;
     var d = this.DEFAULT_UNIFORMS;
     var ks = kindSettings || {};
-    var _wc = (window.DepthDebugConfig) ? window.DepthDebugConfig.water : null;
+    // DepthDebugConfig.water는 3D 모드에서만 적용 (2D 모드는 기본값: transparent=true, depthTest=false)
+    var _isWater3D = typeof ConfigManager !== 'undefined' && ConfigManager.mode3d;
+    var _wc = (_isWater3D && window.DepthDebugConfig) ? window.DepthDebugConfig.water : null;
     var _wDT = _wc ? _wc.depthTest : false;
     var _wDW = _wc ? _wc.depthWrite : false;
     var _wAT = (_wc && _wc.alphaTest) ? 0.5 : 0;
@@ -511,6 +513,7 @@ ThreeWaterShader.updateTime = function(mesh, time) {
 ThreeWaterShader.updateAllWaterMeshes = function(tilemap, time) {
     if (!tilemap) return;
     this._hasWaterMesh = false;
+    var _foundCount = 0;
     // ShaderTilemap → ZLayer(children) → CompositeLayer(children) → RectLayer(children)
     var zLayers = tilemap.children || [];
     for (var zi = 0; zi < zLayers.length; zi++) {
@@ -525,6 +528,7 @@ ThreeWaterShader.updateAllWaterMeshes = function(tilemap, time) {
                     if (mesh && mesh.userData && mesh.userData.isWaterMesh) {
                         this.updateTime(mesh, time);
                         this._hasWaterMesh = true;
+                        _foundCount++;
                         // kind별 설정 실시간 동기화
                         if (mesh.userData.a1Kinds && mesh.userData.a1Kinds.length > 0) {
                             this._syncKindUniforms(mesh);
@@ -532,6 +536,51 @@ ThreeWaterShader.updateAllWaterMeshes = function(tilemap, time) {
                     }
                 }
             }
+        }
+    }
+    // --- [진단] 물 메시 상태 (5초마다 한 번) ---
+    if (!this._dbgLastLog || time - this._dbgLastLog > 5) {
+        this._dbgLastLog = time;
+        if (_foundCount > 0) {
+            // 첫 번째 물 메시 상세 출력
+            var _firstMesh = null;
+            outer: for (var zi2 = 0; zi2 < zLayers.length; zi2++) {
+                var composites2 = zLayers[zi2].children || [];
+                for (var ci2 = 0; ci2 < composites2.length; ci2++) {
+                    var rls2 = composites2[ci2].children || [];
+                    for (var ri2 = 0; ri2 < rls2.length; ri2++) {
+                        var rl2 = rls2[ri2];
+                        if (!rl2._meshes) continue;
+                        for (var k2 in rl2._meshes) {
+                            var m2 = rl2._meshes[k2];
+                            if (m2 && m2.userData && m2.userData.isWaterMesh) {
+                                _firstMesh = { key: k2, mesh: m2 };
+                                break outer;
+                            }
+                        }
+                    }
+                }
+            }
+            if (_firstMesh) {
+                var _mat = _firstMesh.mesh.material;
+                var _mapInfo = _mat.isShaderMaterial ?
+                    ((_mat.uniforms && _mat.uniforms.map) ? (_mat.uniforms.map.value ? 'SET' : 'NULL') : 'noUniform') :
+                    (_mat.map ? 'SET' : 'NULL');
+                console.log('[Water診断@' + time.toFixed(1) + 's] 물 메시 ' + _foundCount + '개 발견.' +
+                    ' key=' + _firstMesh.key +
+                    ' visible=' + _firstMesh.mesh.visible +
+                    ' renderOrder=' + _firstMesh.mesh.renderOrder +
+                    ' matType=' + (_mat.isShaderMaterial ? 'ShaderMaterial' :
+                        (_mat.isMeshPhongMaterial ? 'MeshPhong' : _mat.type)) +
+                    ' transparent=' + _mat.transparent +
+                    ' depthTest=' + _mat.depthTest +
+                    ' alphaTest=' + _mat.alphaTest +
+                    ' map=' + _mapInfo +
+                    ' uTime=' + (_mat.isShaderMaterial && _mat.uniforms && _mat.uniforms.uTime ?
+                        _mat.uniforms.uTime.value.toFixed(2) : 'N/A'));
+            }
+        } else {
+            console.log('[Water診断@' + time.toFixed(1) + 's] 물 메시 없음 (hasWaterMesh=false)');
         }
     }
 };
