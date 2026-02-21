@@ -249,8 +249,7 @@
 
     Window_ItemBookStatus.prototype.setItem = function(item) {
         if (this._item !== item) {
-            this._item     = item;
-            this._showDesc = false; // 아이템 변경 시 효과 보기로 초기화
+            this._item = item;
             this.refresh();
         }
     };

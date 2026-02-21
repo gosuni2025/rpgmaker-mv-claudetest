@@ -233,8 +233,7 @@
 
     Window_EnemyBookStatus.prototype.setEnemy = function(enemy) {
         if (this._enemy !== enemy) {
-            this._enemy    = enemy;
-            this._showDesc = false;
+            this._enemy = enemy;
             this.refresh();
         }
     };
