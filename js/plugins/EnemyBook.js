@@ -20,17 +20,38 @@
  * @default 몬스터 도감
  *
  * @help
- * Plugin Command:
- *   EnemyBook open         # 도감 열기
- *   EnemyBook complete     # 전체 등록
- *   EnemyBook clear        # 등록 초기화
- *   EnemyBook add 3        # 적 #3 등록
- *   EnemyBook remove 4     # 적 #4 제거
- *
  * 적 메모:
  *   <book:no>              # 도감에 표시하지 않음
  *   <desc1:설명 첫째 줄>
  *   <desc2:설명 둘째 줄>
+ *
+ * @command open
+ * @text 도감 열기
+ * @desc 적 도감 화면을 엽니다.
+ *
+ * @command complete
+ * @text 전체 등록
+ * @desc 모든 적을 도감에 등록합니다.
+ *
+ * @command clear
+ * @text 초기화
+ * @desc 도감을 초기화합니다.
+ *
+ * @command add
+ * @text 적 등록
+ * @desc 특정 적을 도감에 등록합니다.
+ * @arg enemyId
+ * @text 적 번호
+ * @type number
+ * @default 1
+ *
+ * @command remove
+ * @text 적 제거
+ * @desc 특정 적을 도감에서 제거합니다.
+ * @arg enemyId
+ * @text 적 번호
+ * @type number
+ * @default 1
  */
 
 (function() {

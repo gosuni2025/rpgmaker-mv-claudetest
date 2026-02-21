@@ -29,16 +29,56 @@
  * @default 아이템 도감
  *
  * @help
- * Plugin Command:
- *   ItemBook open            # 도감 열기
- *   ItemBook complete        # 전 아이템 등록
- *   ItemBook clear           # 등록 초기화
- *   ItemBook add weapon 3    # 무기 #3 등록
- *   ItemBook add armor 4     # 방어구 #4 등록
- *   ItemBook remove item 5   # 아이템 #5 제거
- *
  * 아이템 메모:
  *   <book:no>   # 도감에 표시하지 않음
+ *
+ * @command open
+ * @text 도감 열기
+ * @desc 아이템 도감 화면을 엽니다.
+ *
+ * @command complete
+ * @text 전체 등록
+ * @desc 모든 아이템/무기/방어구를 도감에 등록합니다.
+ *
+ * @command clear
+ * @text 초기화
+ * @desc 도감을 초기화합니다.
+ *
+ * @command add
+ * @text 아이템 등록
+ * @desc 특정 아이템/무기/방어구를 도감에 등록합니다.
+ * @arg type
+ * @text 종류
+ * @type select
+ * @option 아이템
+ * @value item
+ * @option 무기
+ * @value weapon
+ * @option 방어구
+ * @value armor
+ * @default item
+ * @arg dataId
+ * @text 번호
+ * @type number
+ * @default 1
+ *
+ * @command remove
+ * @text 아이템 제거
+ * @desc 특정 아이템/무기/방어구를 도감에서 제거합니다.
+ * @arg type
+ * @text 종류
+ * @type select
+ * @option 아이템
+ * @value item
+ * @option 무기
+ * @value weapon
+ * @option 방어구
+ * @value armor
+ * @default item
+ * @arg dataId
+ * @text 번호
+ * @type number
+ * @default 1
  */
 
 (function() {
