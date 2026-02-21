@@ -117,11 +117,12 @@
     // Scene_ItemBook
     //
     //  ┌────────────┐ ┌─────────────────────────────┐
-    //  │ 001 [i] 이름│ │  stats                      │
+    //  │ 001 [i] 이름│ │  stats / description (토글) │
     //  │ 002 [i] 이름│ │                             │
-    //  │  ...       │ ├─────────────────────────────┤
-    //  │            │ │  description                │
-    //  └────────────┘ └─────────────────────────────┘
+    //  │  ...       │ │                             │
+    //  │            │ │  ─────────────────────────  │
+    //  └────────────┘ │  [ 결정 ] 설명 보기          │
+    //                 └─────────────────────────────┘
     //=========================================================================
     function Scene_ItemBook() { this.initialize.apply(this, arguments); }
     Scene_ItemBook.prototype = Object.create(Scene_MenuBase.prototype);
@@ -136,19 +137,21 @@
 
         var lw = 240;
         var rw = Graphics.boxWidth - lw;
-        var rh = Math.floor(Graphics.boxHeight * 0.55);
 
         this._indexWindow  = new Window_ItemBookIndex(0, 0, lw, Graphics.boxHeight);
-        this._statusWindow = new Window_ItemBookStatus(lw, 0, rw, rh);
-        this._descWindow   = new Window_ItemBookDesc(lw, rh, rw, Graphics.boxHeight - rh);
+        this._statusWindow = new Window_ItemBookStatus(lw, 0, rw, Graphics.boxHeight);
 
         this._indexWindow.setHandler('cancel', this.popScene.bind(this));
+        this._indexWindow.setHandler('ok', this.onIndexOk.bind(this));
         this._indexWindow.setStatusWindow(this._statusWindow);
-        this._indexWindow.setDescWindow(this._descWindow);
 
         this.addWindow(this._indexWindow);
         this.addWindow(this._statusWindow);
-        this.addWindow(this._descWindow);
+    };
+
+    Scene_ItemBook.prototype.onIndexOk = function() {
+        this._statusWindow.toggleView();
+        this._indexWindow.activate();
     };
 
     //=========================================================================
@@ -172,7 +175,6 @@
     Window_ItemBookIndex.prototype.maxItems = function() { return this._list ? this._list.length : 0; };
 
     Window_ItemBookIndex.prototype.setStatusWindow = function(w) { this._statusWindow = w; this._updateRight(); };
-    Window_ItemBookIndex.prototype.setDescWindow   = function(w) { this._descWindow   = w; this._updateRight(); };
 
     Window_ItemBookIndex.prototype.update = function() {
         Window_Selectable.prototype.update.call(this);
@@ -182,7 +184,6 @@
     Window_ItemBookIndex.prototype._updateRight = function() {
         var item = this._list ? this._list[this.index()] : null;
         if (this._statusWindow) this._statusWindow.setItem(item);
-        if (this._descWindow)   this._descWindow.setItem(item);
     };
 
     Window_ItemBookIndex.prototype.refresh = function() {
@@ -241,12 +242,22 @@
 
     Window_ItemBookStatus.prototype.initialize = function(x, y, width, height) {
         Window_Base.prototype.initialize.call(this, x, y, width, height);
-        this._item = null;
+        this._item     = null;
+        this._showDesc = false;
         this.refresh();
     };
 
     Window_ItemBookStatus.prototype.setItem = function(item) {
-        if (this._item !== item) { this._item = item; this.refresh(); }
+        if (this._item !== item) {
+            this._item     = item;
+            this._showDesc = false; // 아이템 변경 시 효과 보기로 초기화
+            this.refresh();
+        }
+    };
+
+    Window_ItemBookStatus.prototype.toggleView = function() {
+        this._showDesc = !this._showDesc;
+        this.refresh();
     };
 
     Window_ItemBookStatus.prototype.refresh = function() {
@@ -254,66 +265,97 @@
         var lh   = this.lineHeight();
         var pad  = this.textPadding();
         var cw   = this.contents.width;
+        var ch   = this.contents.height;
         this.contents.clear();
+
+        // 하단 힌트 (아이템 유무와 상관없이 항상 표시)
+        this._drawHint();
+
         if (!item || !$gameSystem.isInItemBook(item)) return;
 
         var x = pad, y = 0;
-        var col2 = Math.floor(cw / 2) + pad;
+        var maxY = ch - lh * 2; // 힌트 영역 제외
 
         // 이름 + 아이콘
         this.drawItemName(item, x, y, cw - pad);
         y += lh;
 
-        // 가격
-        this.changeTextColor(this.systemColor());
-        this.drawText(priceText, x, y, 90);
-        this.resetTextColor();
-        this.drawText(item.price > 0 ? item.price : '-', x + 90, y, 60, 'right');
-
-        if (DataManager.isWeapon(item) || DataManager.isArmor(item)) {
-            // 장비 슬롯
-            var etype = $dataSystem.equipTypes[item.etypeId];
-            this.changeTextColor(this.systemColor());
-            this.drawText(equipText, col2, y, 90);
-            this.resetTextColor();
-            this.drawText(etype || '-', col2 + 90, y, 110);
-            y += lh;
-
-            // 타입
-            var typeName = DataManager.isWeapon(item)
-                ? $dataSystem.weaponTypes[item.wtypeId]
-                : $dataSystem.armorTypes[item.atypeId];
-            this.changeTextColor(this.systemColor());
-            this.drawText(typeText, x, y, 90);
-            this.resetTextColor();
-            this.drawText(typeName || '-', x + 90, y, 110);
-            y += lh;
-
-            // 파라미터 (ATK~LUK, 인덱스 2~7) — 2열
-            for (var i = 2; i < 8; i++) {
-                var pi = i - 2;
-                var px = (pi % 2 === 0) ? x : col2;
-                var py = y + Math.floor(pi / 2) * lh;
-                this.changeTextColor(this.systemColor());
-                this.drawText(TextManager.param(i), px, py, 90);
-                this.resetTextColor();
-                this.drawText(item.params[i], px + 90, py, 50, 'right');
-            }
+        if (this._showDesc) {
+            // ── 설명 모드 ──
+            this.drawTextEx(item.description, x, y);
         } else {
-            // 일반 아이템 — 사용 효과 목록
-            y += lh;
-            var effects = item.effects || [];
-            for (var ei = 0; ei < effects.length; ei++) {
-                var ef = this._parseEffect(effects[ei]);
-                if (ef) {
+            // ── 효과/스탯 모드 ──
+            var col2 = Math.floor(cw / 2) + pad;
+
+            // 가격
+            this.changeTextColor(this.systemColor());
+            this.drawText(priceText, x, y, 90);
+            this.resetTextColor();
+            this.drawText(item.price > 0 ? item.price : '-', x + 90, y, 60, 'right');
+
+            if (DataManager.isWeapon(item) || DataManager.isArmor(item)) {
+                // 장비 슬롯
+                var etype = $dataSystem.equipTypes[item.etypeId];
+                this.changeTextColor(this.systemColor());
+                this.drawText(equipText, col2, y, 90);
+                this.resetTextColor();
+                this.drawText(etype || '-', col2 + 90, y, 110);
+                y += lh;
+
+                // 타입
+                var typeName = DataManager.isWeapon(item)
+                    ? $dataSystem.weaponTypes[item.wtypeId]
+                    : $dataSystem.armorTypes[item.atypeId];
+                this.changeTextColor(this.systemColor());
+                this.drawText(typeText, x, y, 90);
+                this.resetTextColor();
+                this.drawText(typeName || '-', x + 90, y, 110);
+                y += lh;
+
+                // 파라미터 (ATK~LUK, 인덱스 2~7) — 2열
+                for (var i = 2; i < 8; i++) {
+                    var pi = i - 2;
+                    var px = (pi % 2 === 0) ? x : col2;
+                    var py = y + Math.floor(pi / 2) * lh;
                     this.changeTextColor(this.systemColor());
-                    this.drawText(ef.label, x, y, 110);
+                    this.drawText(TextManager.param(i), px, py, 90);
                     this.resetTextColor();
-                    this.drawText(ef.value, x + 110, y, cw - x - 110 - pad);
-                    y += lh;
+                    this.drawText(item.params[i], px + 90, py, 50, 'right');
+                }
+            } else {
+                // 일반 아이템 — 사용 효과 목록
+                y += lh;
+                var effects = item.effects || [];
+                for (var ei = 0; ei < effects.length; ei++) {
+                    if (y >= maxY) break;
+                    var ef = this._parseEffect(effects[ei]);
+                    if (ef) {
+                        this.changeTextColor(this.systemColor());
+                        this.drawText(ef.label, x, y, 110);
+                        this.resetTextColor();
+                        this.drawText(ef.value, x + 110, y, cw - x - 110 - pad);
+                        y += lh;
+                    }
                 }
             }
         }
+    };
+
+    Window_ItemBookStatus.prototype._drawHint = function() {
+        var lh  = this.lineHeight();
+        var pad = this.textPadding();
+        var cw  = this.contents.width;
+        var ch  = this.contents.height;
+
+        // 구분선
+        var lineY = ch - lh * 2 + 4;
+        this.contents.fillRect(pad, lineY, cw - pad * 2, 1, this.textColor(7));
+
+        // 힌트 텍스트
+        var hintText = this._showDesc ? '[ 결정 ]  효과 보기' : '[ 결정 ]  설명 보기';
+        this.changeTextColor(this.textColor(7));
+        this.drawText(hintText, pad, ch - lh, cw - pad * 2, 'right');
+        this.resetTextColor();
     };
 
     // effect 코드 → {label, value} 변환
@@ -373,30 +415,6 @@
             return null;
         }
         return { label: label, value: value };
-    };
-
-    //=========================================================================
-    // Window_ItemBookDesc — 오른쪽 하단 설명
-    //=========================================================================
-    function Window_ItemBookDesc() { this.initialize.apply(this, arguments); }
-    Window_ItemBookDesc.prototype = Object.create(Window_Base.prototype);
-    Window_ItemBookDesc.prototype.constructor = Window_ItemBookDesc;
-
-    Window_ItemBookDesc.prototype.initialize = function(x, y, width, height) {
-        Window_Base.prototype.initialize.call(this, x, y, width, height);
-        this._item = null;
-        this.refresh();
-    };
-
-    Window_ItemBookDesc.prototype.setItem = function(item) {
-        if (this._item !== item) { this._item = item; this.refresh(); }
-    };
-
-    Window_ItemBookDesc.prototype.refresh = function() {
-        this.contents.clear();
-        var item = this._item;
-        if (!item || !$gameSystem.isInItemBook(item)) return;
-        this.drawTextEx(item.description, this.textPadding(), 0);
     };
 
     //-------------------------------------------------------------------------

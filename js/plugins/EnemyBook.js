@@ -106,10 +106,10 @@
     // Scene_EnemyBook
     //
     //  ┌────────────┐ ┌─────────────────────────────┐
-    //  │ 001  이름   │ │  stats + battler image      │
+    //  │ 001  이름   │ │  stats / description (토글) │
     //  │ 002  이름   │ │                             │
-    //  │  ...       │ ├─────────────────────────────┤
-    //  │            │ │  description                │
+    //  │  ...       │ │  ─────────────────────────  │
+    //  │            │ │  [ 결정 ] 설명 보기          │
     //  └────────────┘ └─────────────────────────────┘
     //=========================================================================
     function Scene_EnemyBook() { this.initialize.apply(this, arguments); }
@@ -125,19 +125,21 @@
 
         var lw = 240;
         var rw = Graphics.boxWidth - lw;
-        var rh = Math.floor(Graphics.boxHeight * 0.65);
 
         this._indexWindow  = new Window_EnemyBookIndex(0, 0, lw, Graphics.boxHeight);
-        this._statusWindow = new Window_EnemyBookStatus(lw, 0, rw, rh);
-        this._descWindow   = new Window_EnemyBookDesc(lw, rh, rw, Graphics.boxHeight - rh);
+        this._statusWindow = new Window_EnemyBookStatus(lw, 0, rw, Graphics.boxHeight);
 
         this._indexWindow.setHandler('cancel', this.popScene.bind(this));
+        this._indexWindow.setHandler('ok', this.onIndexOk.bind(this));
         this._indexWindow.setStatusWindow(this._statusWindow);
-        this._indexWindow.setDescWindow(this._descWindow);
 
         this.addWindow(this._indexWindow);
         this.addWindow(this._statusWindow);
-        this.addWindow(this._descWindow);
+    };
+
+    Scene_EnemyBook.prototype.onIndexOk = function() {
+        this._statusWindow.toggleView();
+        this._indexWindow.activate();
     };
 
     //=========================================================================
@@ -161,7 +163,6 @@
     Window_EnemyBookIndex.prototype.maxItems = function() { return this._list ? this._list.length : 0; };
 
     Window_EnemyBookIndex.prototype.setStatusWindow = function(w) { this._statusWindow = w; this._updateRight(); };
-    Window_EnemyBookIndex.prototype.setDescWindow   = function(w) { this._descWindow   = w; this._updateRight(); };
 
     Window_EnemyBookIndex.prototype.update = function() {
         Window_Selectable.prototype.update.call(this);
@@ -171,7 +172,6 @@
     Window_EnemyBookIndex.prototype._updateRight = function() {
         var enemy = this._list ? this._list[this.index()] : null;
         if (this._statusWindow) this._statusWindow.setEnemy(enemy);
-        if (this._descWindow)   this._descWindow.setEnemy(enemy);
     };
 
     Window_EnemyBookIndex.prototype.refresh = function() {
@@ -219,7 +219,8 @@
 
     Window_EnemyBookStatus.prototype.initialize = function(x, y, width, height) {
         Window_Base.prototype.initialize.call(this, x, y, width, height);
-        this._enemy = null;
+        this._enemy    = null;
+        this._showDesc = false;
         // 배틀러 스프라이트
         this._enemySprite = new Sprite();
         this._enemySprite.anchor.x = 0.5;
@@ -231,7 +232,16 @@
     };
 
     Window_EnemyBookStatus.prototype.setEnemy = function(enemy) {
-        if (this._enemy !== enemy) { this._enemy = enemy; this.refresh(); }
+        if (this._enemy !== enemy) {
+            this._enemy    = enemy;
+            this._showDesc = false;
+            this.refresh();
+        }
+    };
+
+    Window_EnemyBookStatus.prototype.toggleView = function() {
+        this._showDesc = !this._showDesc;
+        this.refresh();
     };
 
     Window_EnemyBookStatus.prototype.update = function() {
@@ -253,82 +263,87 @@
         var lh    = this.lineHeight();
         var pad   = this.textPadding();
         var cw    = this.contents.width;
+        var ch    = this.contents.height;
         this.contents.clear();
         this._enemySprite.bitmap = null;
+        this._enemySprite.visible = false;
+
+        // 하단 힌트
+        this._drawHint();
 
         if (!enemy || !$gameSystem.isInEnemyBook(enemy)) return;
 
-        // 배틀러 이미지 로드
-        this._enemySprite.bitmap = $gameSystem.isSideView()
-            ? ImageManager.loadSvEnemy(enemy.battlerName, enemy.battlerHue)
-            : ImageManager.loadEnemy(enemy.battlerName, enemy.battlerHue);
-
-        // 텍스트는 왼쪽 절반에
-        var textW = Math.floor(cw / 2) - pad;
         var x = pad, y = 0;
 
-        // 이름
-        this.resetTextColor();
-        this.drawText(enemy.name, x, y, textW);
-        y += lh;
-
-        // 8개 파라미터
-        for (var i = 0; i < 8; i++) {
-            this.changeTextColor(this.systemColor());
-            this.drawText(TextManager.param(i), x, y, 90);
+        if (this._showDesc) {
+            // ── 설명 모드 ──
             this.resetTextColor();
-            this.drawText(enemy.params[i], x + 90, y, 50, 'right');
+            this.drawText(enemy.name, x, y, cw - pad);
             y += lh;
-        }
+            if (enemy.meta.desc1) this.drawTextEx(String(enemy.meta.desc1), x, y);
+            y += lh;
+            if (enemy.meta.desc2) this.drawTextEx(String(enemy.meta.desc2), x, y);
+        } else {
+            // ── 스탯 모드 (배틀러 이미지 표시) ──
+            this._enemySprite.visible = true;
+            this._enemySprite.bitmap = $gameSystem.isSideView()
+                ? ImageManager.loadSvEnemy(enemy.battlerName, enemy.battlerHue)
+                : ImageManager.loadEnemy(enemy.battlerName, enemy.battlerHue);
 
-        // EXP / Gold
-        y += 4;
-        this.changeTextColor(this.systemColor());
-        this.drawText(TextManager.expA,       x, y, 70);
-        this.drawText(TextManager.currencyUnit, x + 80, y, 20);
-        this.resetTextColor();
-        this.drawText(enemy.exp,  x + 70, y, 40, 'right');
-        this.drawText(enemy.gold, x + 80 + 24, y, 50, 'right');
-        y += lh;
+            // 텍스트는 왼쪽 절반에
+            var textW = Math.floor(cw / 2) - pad;
 
-        // 드롭 아이템
-        for (var j = 0; j < enemy.dropItems.length; j++) {
-            var di = enemy.dropItems[j];
-            if (di.kind > 0) {
-                var dropItem = Game_Enemy.prototype.itemObject(di.kind, di.dataId);
-                if (dropItem) {
-                    this.drawItemName(dropItem, x, y, textW);
-                    y += lh;
+            // 이름
+            this.resetTextColor();
+            this.drawText(enemy.name, x, y, textW);
+            y += lh;
+
+            // 8개 파라미터
+            for (var i = 0; i < 8; i++) {
+                this.changeTextColor(this.systemColor());
+                this.drawText(TextManager.param(i), x, y, 90);
+                this.resetTextColor();
+                this.drawText(enemy.params[i], x + 90, y, 50, 'right');
+                y += lh;
+            }
+
+            // EXP / Gold
+            y += 4;
+            this.changeTextColor(this.systemColor());
+            this.drawText(TextManager.expA,          x,      y, 70);
+            this.drawText(TextManager.currencyUnit,  x + 80, y, 50);
+            this.resetTextColor();
+            this.drawText(enemy.exp,  x + 70,      y, 40, 'right');
+            this.drawText(enemy.gold, x + 80 + 50, y, 50, 'right');
+            y += lh;
+
+            // 드롭 아이템
+            for (var j = 0; j < enemy.dropItems.length; j++) {
+                var di = enemy.dropItems[j];
+                if (di.kind > 0) {
+                    var dropItem = Game_Enemy.prototype.itemObject(di.kind, di.dataId);
+                    if (dropItem) {
+                        this.drawItemName(dropItem, x, y, textW);
+                        y += lh;
+                    }
                 }
             }
         }
     };
 
-    //=========================================================================
-    // Window_EnemyBookDesc — 오른쪽 하단 설명
-    //=========================================================================
-    function Window_EnemyBookDesc() { this.initialize.apply(this, arguments); }
-    Window_EnemyBookDesc.prototype = Object.create(Window_Base.prototype);
-    Window_EnemyBookDesc.prototype.constructor = Window_EnemyBookDesc;
-
-    Window_EnemyBookDesc.prototype.initialize = function(x, y, width, height) {
-        Window_Base.prototype.initialize.call(this, x, y, width, height);
-        this._enemy = null;
-        this.refresh();
-    };
-
-    Window_EnemyBookDesc.prototype.setEnemy = function(enemy) {
-        if (this._enemy !== enemy) { this._enemy = enemy; this.refresh(); }
-    };
-
-    Window_EnemyBookDesc.prototype.refresh = function() {
-        this.contents.clear();
-        var enemy = this._enemy;
-        if (!enemy || !$gameSystem.isInEnemyBook(enemy)) return;
-        var pad = this.textPadding();
+    Window_EnemyBookStatus.prototype._drawHint = function() {
         var lh  = this.lineHeight();
-        if (enemy.meta.desc1) this.drawTextEx(String(enemy.meta.desc1), pad, 0);
-        if (enemy.meta.desc2) this.drawTextEx(String(enemy.meta.desc2), pad, lh);
+        var pad = this.textPadding();
+        var cw  = this.contents.width;
+        var ch  = this.contents.height;
+
+        var lineY = ch - lh * 2 + 4;
+        this.contents.fillRect(pad, lineY, cw - pad * 2, 1, this.textColor(7));
+
+        var hintText = this._showDesc ? '[ 결정 ]  스탯 보기' : '[ 결정 ]  설명 보기';
+        this.changeTextColor(this.textColor(7));
+        this.drawText(hintText, pad, ch - lh, cw - pad * 2, 'right');
+        this.resetTextColor();
     };
 
     //-------------------------------------------------------------------------
