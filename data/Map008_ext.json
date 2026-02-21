@@ -1436,7 +1436,20 @@
   "skyBackground": {
     "type": "skysphere",
     "skyImage": "Panorama_Sky_15-512x512.png",
-    "rotationSpeed": 0.3
+    "rotationSpeed": 0.5,
+    "sunLights": [
+      {
+        "position": [
+          0.7458333333333333,
+          0.375
+        ],
+        "color": "#fff8ee",
+        "intensity": 1.45,
+        "castShadow": true,
+        "shadowMapSize": 2048,
+        "shadowBias": -0.001
+      }
+    ]
   },
   "animTileSettings": {
     "6": {
