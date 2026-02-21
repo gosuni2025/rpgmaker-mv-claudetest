@@ -263,6 +263,7 @@ var _Window_Base_convertEscapeCharacters = Window_Base.prototype.convertEscapeCh
 Window_Base.prototype.convertEscapeCharacters = function(text) {
     text = _Window_Base_convertEscapeCharacters.call(this, text);
     this._etTags = [];
+    this._etInlineItems = [];
     var self = this;
     var result = '';
     var i = 0;
@@ -270,6 +271,19 @@ Window_Base.prototype.convertEscapeCharacters = function(text) {
 
     while (i < text.length) {
         if (text[i] === '<') {
+            // 자기 닫힘 태그 우선 확인: <tag ... />  (icon, picture 등 void 요소)
+            var selfCloseMatch = text.slice(i).match(/^<([a-zA-Z][a-zA-Z0-9-]*)(\s[^>]*)?\s*\/>/);
+            if (selfCloseMatch) {
+                var scTag = selfCloseMatch[1];
+                if (scTag === 'icon' || scTag === 'picture') {
+                    var scParams = ExtendedText._parseParams(selfCloseMatch[2] || '');
+                    var itemIdx = self._etInlineItems.length;
+                    self._etInlineItems.push({ type: scTag, params: scParams });
+                    result += '\x1bETITEM[' + itemIdx + ']';
+                    i += selfCloseMatch[0].length;
+                    continue;
+                }
+            }
             var openMatch = text.slice(i).match(/^<([a-zA-Z][a-zA-Z0-9-]*)(\s[^>]*)?\s*>/);
             if (openMatch) {
                 var tag = openMatch[1];
@@ -307,7 +321,79 @@ Window_Base.prototype.processEscapeCharacter = function(code, textState) {
     switch (code) {
     case 'ETSTART': this._etProcessStart(textState); break;
     case 'ETEND':   this._etProcessEnd(textState);   break;
+    case 'ETITEM':  this._etProcessInlineItem(textState); break;
     default: _Window_Base_processEscapeCharacter.call(this, code, textState); break;
+    }
+};
+
+//─── 인라인 아이템 처리 (icon / picture) ───
+Window_Base.prototype._etProcessInlineItem = function(textState) {
+    var idx = this.obtainEscapeParam(textState);
+    var item = this._etInlineItems && this._etInlineItems[idx];
+    if (!item) return;
+
+    var lh = this.lineHeight ? this.lineHeight() : 36;
+    var beforeX = textState.x;
+
+    if (item.type === 'icon') {
+        // 표준 RPG Maker MV 아이콘 그리기
+        var iconIndex = parseInt(item.params.index || '0', 10);
+        this.processDrawIcon(iconIndex, textState);
+    } else if (item.type === 'picture') {
+        var src = item.params.src || '';
+        var imgtype = item.params.imgtype || 'pictures';
+        var bmp = null;
+        try {
+            if (imgtype === 'pictures') bmp = ImageManager.loadPicture(src);
+            else if (imgtype === 'system') bmp = ImageManager.loadSystem(src);
+            else bmp = ImageManager.loadPicture(src);
+        } catch(e) { bmp = null; }
+
+        if (bmp && bmp.isReady() && bmp.width > 0 && bmp.height > 0) {
+            // 폰트 높이(lh)에 맞춰 원본 비율로 축소
+            var drawW = Math.round(bmp.width / bmp.height * lh);
+            if (this.contents) {
+                this.contents.blt(bmp, 0, 0, bmp.width, bmp.height,
+                    textState.x, textState.y, drawW, lh);
+            }
+            textState.x += drawW;
+        } else {
+            // 미로딩: 빈 사각형 플레이스홀더
+            var phW = lh;
+            if (this.contents && this.contents._context) {
+                var ctx = this.contents._context;
+                ctx.save();
+                ctx.strokeStyle = '#888';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(textState.x + 1, textState.y + 1, phW - 2, lh - 2);
+                ctx.restore();
+            }
+            // 비트맵 로드 완료 시 재렌더 요청
+            if (bmp && typeof bmp.addLoadListener === 'function') {
+                var selfWin = this;
+                bmp.addLoadListener(function() { selfWin._etNeedRebuild = true; });
+            }
+            textState.x += phW;
+        }
+    }
+
+    // 활성화된 이펙트 세그먼트에 이 아이템의 위치/크기를 'char'로 등록
+    var chW = textState.x - beforeX;
+    if (this._etEffectStack && this._etEffectStack.length > 0) {
+        for (var i = 0; i < this._etEffectStack.length; i++) {
+            var seg = this._etEffectStack[i];
+            if (seg.gradientActive || seg.shakeActive || seg.hologramActive ||
+                seg.gradientWaveActive || seg.fadeActive || seg.dissolveActive || seg.blurFadeActive) {
+                seg.chars.push({
+                    c: item.type === 'icon' ? 'ETICON' : 'ETPIC',
+                    x: beforeX, y: textState.y, h: lh,
+                    _width: chW,
+                    _isInline: true,
+                    _inlineType: item.type,
+                    _inlineParams: item.params,
+                });
+            }
+        }
     }
 };
 
@@ -491,7 +577,8 @@ Window_Base.prototype._etRedrawGradient = function(saved) {
     var bmp = this.contents;
     var lh = chars[0].h || this.lineHeight();
     var startX = saved.startX;
-    var endX = chars[chars.length-1].x + this.textWidth(chars[chars.length-1].c);
+    var lastCh = chars[chars.length-1];
+    var endX = lastCh.x + (lastCh._width !== undefined ? lastCh._width : this.textWidth(lastCh.c));
     var y0 = saved.startY;
     var ow = bmp.outlineWidth || 4;
     if (bmp.clearRect && !this._etNoClearRect) bmp.clearRect(startX - ow, y0, endX - startX + ow*2, lh);
@@ -499,10 +586,11 @@ Window_Base.prototype._etRedrawGradient = function(saved) {
     var savedColor = bmp.textColor;
     var count = chars.length;
     for (var i = 0; i < count; i++) {
+        var ch = chars[i];
+        if (ch._isInline) continue; // 인라인 아이템 (icon/picture)은 색상 재그리기 스킵
         var t = count > 1 ? i / (count-1) : 0;
         var color = (saved.direction === 'v') ? saved.color1 : ExtendedText._lerpColor(saved.color1, saved.color2, t);
         this.changeTextColor(color);
-        var ch = chars[i];
         bmp.drawText(ch.c, ch.x, ch.y, this.textWidth(ch.c)*2, ch.h || lh);
         ch.finalColor = color;
     }
@@ -517,7 +605,8 @@ Window_Base.prototype._etRedrawGradientWave = function(saved) {
     var bmp = this.contents;
     var lh = chars[0].h || this.lineHeight();
     var startX = saved.startX;
-    var endX = chars[chars.length-1].x + this.textWidth(chars[chars.length-1].c);
+    var lastChGW = chars[chars.length-1];
+    var endX = lastChGW.x + (lastChGW._width !== undefined ? lastChGW._width : this.textWidth(lastChGW.c));
     var totalW = endX - startX;
     var y0 = saved.startY;
     var ow = bmp.outlineWidth || 4;
@@ -526,6 +615,7 @@ Window_Base.prototype._etRedrawGradientWave = function(saved) {
     var savedColor = bmp.textColor;
     for (var i = 0; i < chars.length; i++) {
         var ch = chars[i];
+        if (ch._isInline) continue; // 인라인 아이템 스킵
         // HSV hue: 글자 위치 기반 (0~1, GLSL shader와 동일 공식)
         var hue = totalW > 0 ? (ch.x - startX) / totalW : 0;
         var color = ExtendedText._hsv2css(hue, 1.0, 0.62);
@@ -578,7 +668,9 @@ Window_Base.prototype._etEnsureOverlay = function(seg) {
 
     var segX = chars[0].x;
     var segY = chars[0].y;
-    var segEndX = chars[chars.length-1].x + this.textWidth(chars[chars.length-1].c);
+    var lastCh = chars[chars.length-1];
+    var lastW = lastCh._width !== undefined ? lastCh._width : this.textWidth(lastCh.c);
+    var segEndX = lastCh.x + lastW;
     var segW = Math.max(1, segEndX - segX + clearL * 2);
     var segH = Math.max(1, lh + 4);
     var srcX = segX - clearL;
@@ -592,29 +684,36 @@ Window_Base.prototype._etEnsureOverlay = function(seg) {
 
     if (offCtx) {
         offCtx.clearRect(0, 0, offCanvas.width, offCanvas.height);
-        var fontSize   = bmp.fontSize   || 28;
-        var fontFace   = bmp.fontFace   || 'GameFont';
-        var outlineCol = bmp.outlineColor  || 'rgba(0,0,0,0.5)';
-        var baselineY = lh - (lh - fontSize * 0.7) / 2;
+        // 원본 비트맵 내용을 그대로 복사 (그라데이션/외곽선 등 실제 그려진 모습을 텍스처로 사용)
+        var srcBmpCanvas = bmp._canvas || (bmp._context && bmp._context.canvas);
+        if (srcBmpCanvas && srcX >= 0 && srcY >= 0) {
+            offCtx.drawImage(srcBmpCanvas, srcX, srcY, segW, segH, 0, 0, segW, segH);
+        } else {
+            // fallback: 글자 직접 재그리기
+            var fontSize   = bmp.fontSize   || 28;
+            var fontFace   = bmp.fontFace   || 'GameFont';
+            var outlineCol = bmp.outlineColor  || 'rgba(0,0,0,0.5)';
+            var baselineY = lh - (lh - fontSize * 0.7) / 2;
 
-        offCtx.save();
-        offCtx.font = fontSize + 'px ' + fontFace;
-        offCtx.textBaseline = 'alphabetic';
-        offCtx.textAlign    = 'left';
-        offCtx.lineJoin     = 'round';
+            offCtx.save();
+            offCtx.font = fontSize + 'px ' + fontFace;
+            offCtx.textBaseline = 'alphabetic';
+            offCtx.textAlign    = 'left';
+            offCtx.lineJoin     = 'round';
 
-        for (var ci = 0; ci < chars.length; ci++) {
-            var ch = chars[ci];
-            var drawX = ch.x - segX + clearL;
-            if (outlineW > 0) {
-                offCtx.strokeStyle = outlineCol;
-                offCtx.lineWidth   = outlineW;
-                offCtx.strokeText(ch.c, drawX, baselineY);
+            for (var ci = 0; ci < chars.length; ci++) {
+                var ch = chars[ci];
+                var drawX = ch.x - segX + clearL;
+                if (outlineW > 0) {
+                    offCtx.strokeStyle = outlineCol;
+                    offCtx.lineWidth   = outlineW;
+                    offCtx.strokeText(ch.c, drawX, baselineY);
+                }
+                offCtx.fillStyle = ch.finalColor || ch.color || '#ffffff';
+                offCtx.fillText(ch.c, drawX, baselineY);
             }
-            offCtx.fillStyle = ch.finalColor || ch.color || '#ffffff';
-            offCtx.fillText(ch.c, drawX, baselineY);
+            offCtx.restore();
         }
-        offCtx.restore();
         if (bmp.clearRect) bmp.clearRect(srcX, srcY, segW, segH);
     }
 
@@ -634,7 +733,10 @@ Window_Base.prototype._etEnsureOverlay = function(seg) {
     mat.uniforms.tTex.value = tex;
     if (mat.uniforms.uTexH) mat.uniforms.uTexH.value = segH;
     if (mat.uniforms.uTexelSize) mat.uniforms.uTexelSize.value.set(1/Math.max(1,segW), 1/Math.max(1,segH));
-    if (mat.uniforms.uStartTime) mat.uniforms.uStartTime.value = ExtendedText._time;
+    // 복원된 _overlayStartTime이 있으면 유지 (스크롤/타이핑 중 재생성 시 애니메이션 연속성 보장)
+    // 없으면 현재 시간으로 새 애니메이션 시작
+    var startT = seg._overlayStartTime || ExtendedText._time;
+    if (mat.uniforms.uStartTime) mat.uniforms.uStartTime.value = startT;
 
     var geo = new THREE.PlaneGeometry(1, 1);
     var mesh = new THREE.Mesh(geo, mat);
@@ -649,7 +751,7 @@ Window_Base.prototype._etEnsureOverlay = function(seg) {
     target.parent.add(mesh);
     seg._overlayMesh      = mesh;
     seg._overlayTex       = tex;
-    seg._overlayStartTime = ExtendedText._time;
+    seg._overlayStartTime = startT;
     seg._overlayParent    = target.parent;
     seg._etBaseWorldY = oY;
     seg._etSegH       = segH;
@@ -676,7 +778,7 @@ Window_Base.prototype._etEnsureShakeMeshes = function(seg, THREE, target) {
 
     for (var ci = 0; ci < chars.length; ci++) {
         var ch    = chars[ci];
-        var rawW  = this.textWidth ? this.textWidth(ch.c) : fontSize;
+        var rawW  = ch._width !== undefined ? ch._width : (this.textWidth ? this.textWidth(ch.c) : fontSize);
         var charW = Math.max(1, Math.ceil(rawW) + clearL * 2);
 
         // 글자 하나짜리 오프스크린 캔버스
@@ -686,19 +788,30 @@ Window_Base.prototype._etEnsureShakeMeshes = function(seg, THREE, target) {
         var offCtx = offCanvas.getContext('2d');
         if (offCtx) {
             offCtx.clearRect(0, 0, charW, segH);
-            offCtx.save();
-            offCtx.font         = fontSize + 'px ' + fontFace;
-            offCtx.textBaseline = 'alphabetic';
-            offCtx.textAlign    = 'left';
-            offCtx.lineJoin     = 'round';
-            if (outlineW > 0) {
-                offCtx.strokeStyle = outlineCol;
-                offCtx.lineWidth   = outlineW;
-                offCtx.strokeText(ch.c, clearL, baselineY);
+            if (ch._isInline) {
+                // 인라인 아이템: 메인 비트맵에서 이미 그려진 내용을 복사
+                var srcBmpCanvasSh = bmp._canvas || (bmp._context && bmp._context.canvas);
+                if (srcBmpCanvasSh) {
+                    var shDrawY = (segH - lh) / 2;
+                    offCtx.drawImage(srcBmpCanvasSh,
+                        ch.x - clearL, ch.y, charW, lh,
+                        0, shDrawY, charW, lh);
+                }
+            } else {
+                offCtx.save();
+                offCtx.font         = fontSize + 'px ' + fontFace;
+                offCtx.textBaseline = 'alphabetic';
+                offCtx.textAlign    = 'left';
+                offCtx.lineJoin     = 'round';
+                if (outlineW > 0) {
+                    offCtx.strokeStyle = outlineCol;
+                    offCtx.lineWidth   = outlineW;
+                    offCtx.strokeText(ch.c, clearL, baselineY);
+                }
+                offCtx.fillStyle = ch.finalColor || ch.color || '#ffffff';
+                offCtx.fillText(ch.c, clearL, baselineY);
+                offCtx.restore();
             }
-            offCtx.fillStyle = ch.finalColor || ch.color || '#ffffff';
-            offCtx.fillText(ch.c, clearL, baselineY);
-            offCtx.restore();
         }
 
         var tex = new THREE.CanvasTexture(offCanvas);
@@ -723,8 +836,9 @@ Window_Base.prototype._etEnsureShakeMeshes = function(seg, THREE, target) {
         target.parent.add(mesh);
 
         // Bitmap에서 해당 글자 영역 투명화
+        // segH(=lh+amp*2+4)가 아닌 lh만큼만 지워야 아랫줄 텍스트를 침범하지 않음
         if (bmp.clearRect) {
-            bmp.clearRect(ch.x - clearL, ch.y, charW, segH);
+            bmp.clearRect(ch.x - clearL, ch.y, charW, lh);
         }
 
         seg._charMeshes.push({ mesh: mesh, tex: tex, baseX: baseX, baseY: baseY, charIdx: ci });
@@ -759,11 +873,19 @@ Window_Base.prototype._etUpdateOverlayUniforms = function(seg, t) {
         seg._overlayMesh.position.y = (seg._etBaseWorldY - scrollY) + (seg._etSegH || 0) / 2;
     }
 
-    // 애니메이션 완료 후 frozen 상태 — 위치만 갱신하고 종료
-    if (seg._etFrozen) return;
-
     var uniforms = seg._overlayMesh.material.uniforms;
+
+    // 애니메이션 완료 후 frozen 상태 — uStartTime/uTime을 완성값으로 고정 후 종료
+    // (오버레이 재생성 후에도 shader가 완성 상태 progress=1로 표시되도록)
+    if (seg._etFrozen) {
+        if (uniforms.uStartTime) uniforms.uStartTime.value = seg._overlayStartTime || 0;
+        if (uniforms.uTime) uniforms.uTime.value = (seg._overlayStartTime || 0) + 100;
+        return;
+    }
+
     if (uniforms.uTime) uniforms.uTime.value = t;
+    // _overlayStartTime은 스크롤 시 _redraw()에서 복원될 수 있으므로 매 프레임 동기화
+    if (uniforms.uStartTime) uniforms.uStartTime.value = seg._overlayStartTime || 0;
 
     // 완료 판정: dispose 대신 freeze (메시 유지 → 글자가 사라지지 않음)
     // uTime += 1/60 per frame, duration in frames → 60/dur converts frames→seconds ratio
