@@ -73,6 +73,16 @@
       "specularStrength": 0.8,
       "emissive": 0.8,
       "emissiveColor": "#ffffff"
+    },
+    "5": {
+      "enabled": true,
+      "waveAmplitude": 0.004,
+      "waveFrequency": 6,
+      "waveSpeed": 3,
+      "waterAlpha": 0.9,
+      "specularStrength": 0.4,
+      "emissive": 0.6,
+      "emissiveColor": "#ffffff"
     }
   },
   "bloomConfig": {
