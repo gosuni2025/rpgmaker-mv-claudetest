@@ -15682,7 +15682,21 @@
               "code": 401,
               "indent": 0,
               "parameters": [
-                "<shake amplitude=3 speed=1>저기요, <icon index=\"117\"/>여행자이신가요?</shake><picture src=\"enemies/Actor1_3\" imgtype=\"pictures\"/>잠깐 이야기 나눌 수 있을까요?"
+                "<shake amplitude=3 speed=1>저기요, <icon index=\"117\"/>여행자이신가요?</shake><picture src=\"enemies/Actor1_3\" imgtype=\"pictures\"/>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 0,
+              "parameters": [
+                ""
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 0,
+              "parameters": [
+                "잠깐 이야기 나눌 수 있을까요?<shake amplitude=3 speed=1>저기요, <icon index=\"117\"/>여행자이신가요?</shake><picture src=\"enemies/Actor1_3\" imgtype=\"pictures\"/>"
               ]
             },
             {
