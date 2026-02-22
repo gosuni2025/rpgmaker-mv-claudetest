@@ -15682,7 +15682,7 @@
               "code": 401,
               "indent": 0,
               "parameters": [
-                "저기요, <icon index=\"117\"/>여행자이신가요?<picture src=\"enemies/Actor1_3\" imgtype=\"pictures\"/>잠깐 이야기 나눌 수 있을까요?"
+                "<shake amplitude=3 speed=1>저기요, <icon index=\"117\"/>여행자이신가요?</shake><picture src=\"enemies/Actor1_3\" imgtype=\"pictures\"/>잠깐 이야기 나눌 수 있을까요?"
               ]
             },
             {
@@ -16127,17 +16127,6 @@
               ]
             },
             {
-              "code": 605,
-              "indent": 1,
-              "parameters": [
-                0,
-                4,
-                0,
-                0,
-                10
-              ]
-            },
-            {
               "code": 402,
               "indent": 0,
               "parameters": [
@@ -16149,7 +16138,7 @@
               "code": 356,
               "indent": 1,
               "parameters": [
-                "ShopStock addItem 28 4 0 4 0 0 10"
+                "ShopStock addItem 28 4 0 4 0 0 0"
               ]
             },
             {
@@ -16247,7 +16236,7 @@
         }
       ],
       "x": 18,
-      "y": 27
+      "y": 25
     }
   ]
 }
