@@ -929,9 +929,36 @@ ImageManager.loadTitle2 = function(filename, hue) {
     return this.loadBitmap('img/titles2/', filename, hue, true);
 };
 
+// WebP ↔ PNG 폴백: .webp 로드 실패 시 .png 재시도 (또는 반대)
+(function() {
+    var _origOnError = Bitmap.prototype._onError;
+    Bitmap.prototype._onError = function() {
+        var url = this._url || '';
+        var webpMatch = url.match(/^(.*)\.(webp|png)(\?.*)?$/i);
+        if (webpMatch) {
+            var base = webpMatch[1], ext = webpMatch[2].toLowerCase(), query = webpMatch[3] || '';
+            var altExt = ext === 'webp' ? 'png' : 'webp';
+            var altUrl = base + '.' + altExt + query;
+            if (!this._webpFallbackTried) {
+                this._webpFallbackTried = true;
+                this._url = altUrl;
+                this._loadingState = 'requesting';
+                this._image.removeEventListener('load', this._loadListener);
+                this._image.removeEventListener('error', this._errorListener);
+                this._image.addEventListener('load', this._loadListener = Bitmap.prototype._onLoad.bind(this));
+                this._image.addEventListener('error', this._errorListener = _origOnError.bind(this));
+                this._image.src = altUrl;
+                return;
+            }
+        }
+        _origOnError.call(this);
+    };
+})();
+
 ImageManager.loadBitmap = function(folder, filename, hue, smooth) {
     if (filename) {
-        var path = folder + encodeURIComponent(filename) + '.png';
+        var _ext = (window.__CACHE_BUST__ && window.__CACHE_BUST__.webp) ? '.webp' : '.png';
+        var path = folder + encodeURIComponent(filename) + _ext;
         var bitmap = this.loadNormalBitmap(path, hue || 0);
         bitmap.smooth = smooth;
         return bitmap;
@@ -1050,7 +1077,8 @@ ImageManager.reserveTitle2 = function(filename, hue, reservationId) {
 
 ImageManager.reserveBitmap = function(folder, filename, hue, smooth, reservationId) {
     if (filename) {
-        var path = folder + encodeURIComponent(filename) + '.png';
+        var _ext = (window.__CACHE_BUST__ && window.__CACHE_BUST__.webp) ? '.webp' : '.png';
+        var path = folder + encodeURIComponent(filename) + _ext;
         var bitmap = this.reserveNormalBitmap(path, hue || 0, reservationId || this._defaultReservationId);
         bitmap.smooth = smooth;
         return bitmap;
@@ -1133,7 +1161,8 @@ ImageManager.requestTitle2 = function(filename, hue) {
 
 ImageManager.requestBitmap = function(folder, filename, hue, smooth) {
     if (filename) {
-        var path = folder + encodeURIComponent(filename) + '.png';
+        var _ext = (window.__CACHE_BUST__ && window.__CACHE_BUST__.webp) ? '.webp' : '.png';
+        var path = folder + encodeURIComponent(filename) + _ext;
         var bitmap = this.requestNormalBitmap(path, hue || 0);
         bitmap.smooth = smooth;
         return bitmap;
@@ -1899,7 +1928,7 @@ SceneManager.initGraphics = function() {
     Graphics.initialize(this._screenWidth, this._screenHeight, type);
     Graphics.boxWidth = this._boxWidth;
     Graphics.boxHeight = this._boxHeight;
-    Graphics.setLoadingImage('img/system/Loading.png');
+    Graphics.setLoadingImage((window.__CACHE_BUST__ && window.__CACHE_BUST__.webp) ? 'img/system/Loading.webp' : 'img/system/Loading.png');
     if (Utils.isOptionValid('showfps')) {
         Graphics.showFps();
     }
