@@ -16,5 +16,6 @@ var $plugins =
 {"name":"BuildVersion","status":true,"description":"타이틀 화면 오른쪽 하단에 빌드 번호를 표시합니다.","parameters":{"fontSize":"14","textColor":"rgba(255,255,255,0.5)","marginRight":"12","marginBottom":"8"}},
 {"name":"AutoSave","status":true,"description":"오토 세이브 (자동 저장) 기능","parameters":{"enableMapTransferSave":"true","enableAfterBattle":"true","enableOnVariableChange":"false","variableChangeDelay":"500","enableAfterMenu":"true","slotLabel":"오토 세이브","showNotification":"true"}},
 {"name":"EnemyBook","status":true,"description":"적 도감","parameters":{"Unknown Data":"??????","Show In Menu":"true","Menu Text":"몬스터 도감"}},
-{"name":"ItemBook","status":true,"description":"아이템 도감","parameters":{"Unknown Data":"??????","Price Text":"가격","Equip Text":"장비","Type Text":"타입","Show In Menu":"true","Menu Text":"아이템 도감"}}
+{"name":"ItemBook","status":true,"description":"아이템 도감","parameters":{"Unknown Data":"??????","Price Text":"가격","Equip Text":"장비","Type Text":"타입","Show In Menu":"true","Menu Text":"아이템 도감"}},
+{"name":"ShopStock","status":true,"description":"상점 재고 관리 - 상품별 재고, 동적 증감, 상품 추가/제거 지원","parameters":{}}
 ];
