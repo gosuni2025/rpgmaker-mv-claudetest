@@ -16255,8 +16255,8 @@
     {
       "id": 29,
       "name": "EV029",
-      "x": 18,
-      "y": 27,
+      "x": 26,
+      "y": 28,
       "note": "",
       "pages": [
         {
@@ -16277,10 +16277,10 @@
           },
           "directionFix": false,
           "image": {
-            "characterIndex": 0,
-            "characterName": "",
+            "characterIndex": 6,
+            "characterName": "Actor3",
             "direction": 2,
-            "pattern": 1,
+            "pattern": 0,
             "tileId": 0
           },
           "list": [

@@ -3133,6 +3133,14 @@
     "27": {
       "name": "VN 테스트",
       "showName": true
+    },
+    "28": {
+      "name": "상점 재고 테스트 NPC",
+      "showName": true
+    },
+    "29": {
+      "name": "숫자 입력 처리",
+      "showName": true
     }
   },
   "is3D": true
