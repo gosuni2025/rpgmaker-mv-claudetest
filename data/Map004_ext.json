@@ -77,9 +77,9 @@
   },
   "bloomConfig": {
     "enabled": true,
-    "threshold": 0.25,
-    "strength": 1.6,
-    "radius": 0.9,
+    "threshold": 0.75,
+    "strength": 1.9,
+    "radius": 2.5,
     "downscale": 1
   },
   "postProcessConfig": {
