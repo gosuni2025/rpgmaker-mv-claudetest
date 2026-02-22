@@ -357,9 +357,6 @@ Window_Base.prototype._etProcessInlineItem = function(textState) {
             }
         } catch(e) { console.error('[ExtText] loadBitmap 예외:', e); bmp = null; }
 
-        console.log('[ExtText] picture:', src, 'imgtype:', imgtype,
-            'bmp:', bmp ? ('ready:'+bmp.isReady()+' w:'+bmp.width+' url:'+bmp._url) : 'null');
-
         if (bmp && bmp.isReady() && bmp.width > 0 && bmp.height > 0) {
             // 폰트 높이(lh)에 맞춰 원본 비율로 축소
             var drawW = Math.round(bmp.width / bmp.height * lh);
@@ -379,21 +376,24 @@ Window_Base.prototype._etProcessInlineItem = function(textState) {
                 ctx.strokeRect(textState.x + 1, textState.y + 1, phW - 2, lh - 2);
                 ctx.restore();
             }
-            // 비트맵 로드 완료 시 재렌더 요청
+            // 비트맵 로드 완료 시: 캔버스에 직접 패치 + MessagePreview용 rebuild 요청
             if (bmp && typeof bmp.addLoadListener === 'function') {
                 var selfWin = this;
+                var patchX = textState.x;
+                var patchY = textState.y;
+                var patchLh = lh;
                 bmp.addLoadListener(function() {
-                    console.log('[ExtText] 로드완료:', src, 'w:', bmp.width, 'h:', bmp.height, '_etNeedRebuild 설정');
+                    if (selfWin.contents && bmp.width > 0 && bmp.height > 0) {
+                        // 플레이스홀더 사각형 지우기
+                        if (selfWin.contents._context) {
+                            selfWin.contents._context.clearRect(patchX, patchY, patchLh, patchLh);
+                        }
+                        var patchW = Math.round(bmp.width / bmp.height * patchLh);
+                        selfWin.contents.blt(bmp, 0, 0, bmp.width, bmp.height,
+                            patchX, patchY, patchW, patchLh);
+                    }
                     selfWin._etNeedRebuild = true;
                 });
-            } else {
-                console.warn('[ExtText] addLoadListener 없음. bmp:', !!bmp);
-            }
-            // 이미지 로드 에러 감지
-            if (bmp && bmp._image) {
-                bmp._image.onerror = function() {
-                    console.error('[ExtText] 이미지 로드 실패 (404?):', bmp._url);
-                };
             }
             textState.x += phW;
         }
