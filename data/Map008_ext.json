@@ -1483,7 +1483,7 @@
     "edgeAnimation": true,
     "edgeAnimationSpeed": 1,
     "fogMode": "2d",
-    "enabled2D": false
+    "enabled2D": true
   },
   "testStartPosition": {
     "x": 19,
