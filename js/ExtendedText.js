@@ -355,7 +355,10 @@ Window_Base.prototype._etProcessInlineItem = function(textState) {
             } else {
                 bmp = ImageManager.loadPicture(src);
             }
-        } catch(e) { bmp = null; }
+        } catch(e) { console.error('[ExtText] loadBitmap 예외:', e); bmp = null; }
+
+        console.log('[ExtText] picture:', src, 'imgtype:', imgtype,
+            'bmp:', bmp ? ('ready:'+bmp.isReady()+' w:'+bmp.width+' url:'+bmp._url) : 'null');
 
         if (bmp && bmp.isReady() && bmp.width > 0 && bmp.height > 0) {
             // 폰트 높이(lh)에 맞춰 원본 비율로 축소
@@ -379,7 +382,18 @@ Window_Base.prototype._etProcessInlineItem = function(textState) {
             // 비트맵 로드 완료 시 재렌더 요청
             if (bmp && typeof bmp.addLoadListener === 'function') {
                 var selfWin = this;
-                bmp.addLoadListener(function() { selfWin._etNeedRebuild = true; });
+                bmp.addLoadListener(function() {
+                    console.log('[ExtText] 로드완료:', src, 'w:', bmp.width, 'h:', bmp.height, '_etNeedRebuild 설정');
+                    selfWin._etNeedRebuild = true;
+                });
+            } else {
+                console.warn('[ExtText] addLoadListener 없음. bmp:', !!bmp);
+            }
+            // 이미지 로드 에러 감지
+            if (bmp && bmp._image) {
+                bmp._image.onerror = function() {
+                    console.error('[ExtText] 이미지 로드 실패 (404?):', bmp._url);
+                };
             }
             textState.x += phW;
         }
