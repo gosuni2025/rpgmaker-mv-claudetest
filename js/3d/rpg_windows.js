@@ -4055,7 +4055,7 @@ Window_NumberInput.prototype.placeButtons = function() {
 };
 
 Window_NumberInput.prototype.updateButtonsVisiblity = function() {
-    if (TouchInput.date > Input.date) {
+    if (this.isOpen()) {
         this.showButtons();
     } else {
         this.hideButtons();
@@ -4086,6 +4086,7 @@ Window_NumberInput.prototype.buttonY = function() {
 Window_NumberInput.prototype.update = function() {
     Window_Selectable.prototype.update.call(this);
     this.processDigitChange();
+    this.updateButtonsVisiblity();
 };
 
 Window_NumberInput.prototype.processDigitChange = function() {
