@@ -273,6 +273,7 @@
   };
 
   var _ov = _config.overrides || {};
+  console.log('[RESET-DEBUG][UITheme] 플러그인 초기화 — _ov keys:', Object.keys(_ov));
 
   /** 전역(Global) 설정값 취득 */
   function G(key, defaultVal) {
@@ -292,6 +293,8 @@
 
   /** 런타임에서 _ov 업데이트 (에디터 원본값 가져오기 시 사용) */
   window._uiThemeUpdateOv = function(className, prop, value) {
+    console.log('[RESET-DEBUG][UITheme] updateOv 호출:', className, prop, '=', value);
+    console.trace('[RESET-DEBUG] updateOv 스택');
     if (!_ov[className]) _ov[className] = { className: className };
     _ov[className][prop] = value;
   };
