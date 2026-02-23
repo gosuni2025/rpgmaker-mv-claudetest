@@ -1,3 +1,16 @@
 {
-  "overrides": {}
+  "overrides": {
+    "Window_MenuStatus": {
+      "className": "Window_MenuStatus",
+      "windowStyle": "frame",
+      "windowskinName": "Window",
+      "skinId": "Window"
+    },
+    "Window_Status": {
+      "className": "Window_Status",
+      "windowStyle": "frame",
+      "windowskinName": "Window",
+      "skinId": "Window"
+    }
+  }
 }
