@@ -28,7 +28,11 @@
       "fillH": 6,
       "useCenterFill": true,
       "file": "kenney_ui-pack-pixel-adventure/Tilesheets/Small tiles/Thick outline/tilemap",
-      "label": "kenney_ui-pack-pixel-adventure/Tilesheets/Small tiles/Thick outline/tilemap"
+      "label": "kenney_ui-pack-pixel-adventure/Tilesheets/Small tiles/Thick outline/tilemap",
+      "cursorX": 206,
+      "cursorY": 0,
+      "cursorW": 48,
+      "cursorH": 48
     }
   ]
 }
