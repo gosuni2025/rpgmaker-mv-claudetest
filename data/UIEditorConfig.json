@@ -2,10 +2,10 @@
   "overrides": {
     "Window_Options": {
       "className": "Window_Options",
-      "x": 27,
-      "y": 30,
-      "width": 763,
-      "height": 564
+      "x": 168,
+      "y": 137,
+      "width": 481,
+      "height": 351
     }
   }
 }
