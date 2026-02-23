@@ -7,8 +7,8 @@
     },
     "Window_Options": {
       "className": "Window_Options",
-      "x": 208,
-      "y": 168,
+      "x": 30,
+      "y": 36,
       "width": 400,
       "height": 288,
       "opacity": 255,
