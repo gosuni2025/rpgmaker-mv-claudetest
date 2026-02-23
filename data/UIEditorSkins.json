@@ -27,11 +27,11 @@
     {
       "name": "kenny",
       "cornerSize": 5,
-      "frameX": 221,
-      "frameY": 18,
+      "frameX": 85,
+      "frameY": 17,
       "frameW": 16,
       "frameH": 16,
-      "fillX": 209,
+      "fillX": 90,
       "fillY": 22,
       "fillW": 6,
       "fillH": 6,
@@ -41,7 +41,16 @@
       "cursorX": 187,
       "cursorY": 0,
       "cursorW": 16,
-      "cursorH": 16
+      "cursorH": 16,
+      "cursorCornerSize": 4,
+      "cursorRenderMode": "nineSlice",
+      "cursorBlendMode": "normal",
+      "cursorOpacity": 192,
+      "cursorBlink": true,
+      "cursorPadding": 2,
+      "cursorToneR": 0,
+      "cursorToneG": 0,
+      "cursorToneB": 0
     }
   ]
 }

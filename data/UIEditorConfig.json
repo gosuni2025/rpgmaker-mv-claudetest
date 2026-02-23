@@ -1,3 +1,19 @@
 {
-  "overrides": {}
+  "overrides": {
+    "Window_MenuCommand": {
+      "className": "Window_MenuCommand",
+      "x": 579,
+      "y": 144
+    },
+    "Window_MenuStatus": {
+      "className": "Window_MenuStatus",
+      "x": 8,
+      "y": -11
+    },
+    "Window_Gold": {
+      "className": "Window_Gold",
+      "x": 587,
+      "y": 0
+    }
+  }
 }
