@@ -447,5 +447,6 @@
   "testStartPosition": {
     "x": 61,
     "y": 57
-  }
+  },
+  "is3D": true
 }
