@@ -12,7 +12,8 @@
       "fillX": 0,
       "fillY": 0,
       "fillW": 96,
-      "fillH": 96
+      "fillH": 96,
+      "file": "Window"
     },
     {
       "name": "kenney_ui-pack-pixel-adventure/Tilesheets/Small tiles/Thick outline/tilemap",
@@ -25,7 +26,9 @@
       "fillY": 22,
       "fillW": 6,
       "fillH": 6,
-      "useCenterFill": true
+      "useCenterFill": true,
+      "file": "kenney_ui-pack-pixel-adventure/Tilesheets/Small tiles/Thick outline/tilemap",
+      "label": "kenney_ui-pack-pixel-adventure/Tilesheets/Small tiles/Thick outline/tilemap"
     }
   ]
 }
