@@ -7,11 +7,15 @@
     },
     {
       "name": "kenney_ui-pack-pixel-adventure/Tilesheets/Small tiles/Thick outline/tilemap",
-      "cornerSize": 23,
-      "frameX": 148,
-      "frameY": 0,
-      "frameW": 58,
-      "frameH": 49
+      "cornerSize": 4,
+      "frameX": 170,
+      "frameY": 17,
+      "frameW": 16,
+      "frameH": 16,
+      "fillX": 179,
+      "fillY": 11,
+      "fillW": 16,
+      "fillH": 12
     }
   ]
 }
