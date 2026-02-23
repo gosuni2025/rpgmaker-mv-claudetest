@@ -29,7 +29,7 @@
   (function () {
     try {
       var xhr = new XMLHttpRequest();
-      xhr.open('GET', 'data/UIEditorConfig.json', false);
+      xhr.open('GET', 'data/UIEditorConfig.json?_=' + Date.now(), false);
       xhr.send();
       if (xhr.status === 200 || xhr.status === 0) {
         _config = JSON.parse(xhr.responseText);
@@ -43,7 +43,7 @@
   (function () {
     try {
       var xhr = new XMLHttpRequest();
-      xhr.open('GET', 'data/UIEditorSkins.json', false);
+      xhr.open('GET', 'data/UIEditorSkins.json?_=' + Date.now(), false);
       xhr.send();
       if (xhr.status === 200 || xhr.status === 0) {
         _skins = JSON.parse(xhr.responseText);
@@ -273,7 +273,6 @@
   };
 
   var _ov = _config.overrides || {};
-  console.log('[RESET-DEBUG][UITheme] 플러그인 초기화 — _ov keys:', Object.keys(_ov));
 
   /** 전역(Global) 설정값 취득 */
   function G(key, defaultVal) {
@@ -293,18 +292,13 @@
 
   /** 런타임에서 _ov 업데이트 (에디터 원본값 가져오기 시 사용) */
   window._uiThemeUpdateOv = function(className, prop, value) {
-    console.log('[RESET-DEBUG][UITheme] updateOv 호출:', className, prop, '=', value);
-    console.trace('[RESET-DEBUG] updateOv 스택');
     if (!_ov[className]) _ov[className] = { className: className };
     _ov[className][prop] = value;
   };
 
   /** 런타임에서 _ov 항목 삭제 (RMMV 기본값으로 리셋 시 사용) */
   window._uiThemeClearOv = function(className) {
-    console.log('[RESET-DEBUG][UITheme] clearOv 호출:', className,
-      '| _ov 현재값:', JSON.stringify(_ov[className]));
     delete _ov[className];
-    console.log('[RESET-DEBUG][UITheme] clearOv 삭제 후 _ov[' + className + ']:', _ov[className]);
   };
 
   /** 클래스 내 요소 오버라이드 취득 */
@@ -530,18 +524,13 @@
     var _WOpt_up = Window_Options.prototype.updatePlacement;
     Window_Options.prototype.updatePlacement = function () {
       _WOpt_up.call(this);
-      console.log('[RESET-DEBUG][UITheme] Window_Options updatePlacement',
-        '| RMMV기본값 x:', this.x, 'y:', this.y,
-        '| _ov:', JSON.stringify(_ov['Window_Options']));
       // RMMV 원본값 보존 (오버라이드 적용 전, 최초 1회)
       if (!this._uiThemeOriginal) {
         this._uiThemeOriginal = { x: this.x, y: this.y, width: this.width, height: this.height };
-        console.log('[RESET-DEBUG][UITheme] Window_Options _uiThemeOriginal 저장:', JSON.stringify(this._uiThemeOriginal));
       }
       var x = OV('Window_Options', 'x'), y = OV('Window_Options', 'y');
       if (x !== undefined) this.x = x;
       if (y !== undefined) this.y = y;
-      console.log('[RESET-DEBUG][UITheme] Window_Options 최종 x:', this.x, 'y:', this.y);
     };
   }
 

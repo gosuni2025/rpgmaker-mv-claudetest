@@ -1,9 +1,3 @@
 {
-  "overrides": {
-    "Window_MenuCommand": {
-      "className": "Window_MenuCommand",
-      "x": 579,
-      "y": 144
-    }
-  }
+  "overrides": {}
 }

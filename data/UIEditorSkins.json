@@ -1,5 +1,5 @@
 {
-  "defaultSkin": "kenny",
+  "defaultSkin": "Window",
   "skins": [
     {
       "name": "Window",
@@ -27,11 +27,11 @@
     {
       "name": "kenny",
       "cornerSize": 5,
-      "frameX": 85,
+      "frameX": 187,
       "frameY": 17,
       "frameW": 16,
       "frameH": 16,
-      "fillX": 90,
+      "fillX": 192,
       "fillY": 22,
       "fillW": 6,
       "fillH": 6,
