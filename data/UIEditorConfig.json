@@ -5,15 +5,16 @@
       "x": 579,
       "y": 144
     },
-    "Window_MenuStatus": {
-      "className": "Window_MenuStatus",
-      "x": 8,
-      "y": -11
-    },
-    "Window_Gold": {
-      "className": "Window_Gold",
-      "x": 587,
-      "y": 0
+    "Window_Options": {
+      "className": "Window_Options",
+      "x": 208,
+      "y": 168,
+      "width": 400,
+      "height": 288,
+      "opacity": 255,
+      "backOpacity": 192,
+      "padding": 18,
+      "fontSize": 28
     }
   }
 }
