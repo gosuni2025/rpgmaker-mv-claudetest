@@ -1,5 +1,5 @@
 {
-  "defaultSkin": "kenney_ui-pack-pixel-adventure/Tilesheets/Small tiles/Thick outline/tilemap",
+  "defaultSkin": "kenny",
   "skins": [
     {
       "name": "Window",
@@ -16,7 +16,7 @@
       "file": "Window"
     },
     {
-      "name": "kenney_ui-pack-pixel-adventure/Tilesheets/Small tiles/Thick outline/tilemap",
+      "name": "kenny",
       "cornerSize": 5,
       "frameX": 170,
       "frameY": 17,
