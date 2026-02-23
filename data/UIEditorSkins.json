@@ -21,10 +21,11 @@
       "frameY": 17,
       "frameW": 16,
       "frameH": 16,
-      "fillX": 179,
-      "fillY": 11,
-      "fillW": 16,
-      "fillH": 12
+      "fillX": 175,
+      "fillY": 22,
+      "fillW": 6,
+      "fillH": 6,
+      "useCenterFill": true
     }
   ]
 }
