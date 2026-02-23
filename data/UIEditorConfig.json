@@ -1,11 +1,19 @@
 {
   "overrides": {
-    "Window_Options": {
-      "className": "Window_Options",
-      "x": 168,
-      "y": 137,
-      "width": 481,
-      "height": 351
+    "Window_MenuStatus": {
+      "className": "Window_MenuStatus",
+      "x": -3,
+      "y": 4
+    },
+    "Window_MenuCommand": {
+      "className": "Window_MenuCommand",
+      "x": 573,
+      "y": 199
+    },
+    "Window_Gold": {
+      "className": "Window_Gold",
+      "x": 568,
+      "y": 47
     }
   }
 }
