@@ -3,16 +3,16 @@
   "skins": [
     {
       "name": "Window",
-      "cornerSize": 23,
+      "cornerSize": 24,
       "frameX": 96,
       "frameY": 0,
       "frameW": 96,
       "frameH": 96,
       "useCenterFill": false,
       "fillX": 0,
-      "fillY": 23,
-      "fillW": 50,
-      "fillH": 50
+      "fillY": 0,
+      "fillW": 96,
+      "fillH": 96
     },
     {
       "name": "kenney_ui-pack-pixel-adventure/Tilesheets/Small tiles/Thick outline/tilemap",
