@@ -1,0 +1,9 @@
+{
+  "overrides": {
+    "Window_Options": {
+      "className": "Window_Options",
+      "x": 208,
+      "y": 168
+    }
+  }
+}
