@@ -4,17 +4,6 @@
       "className": "Window_MenuCommand",
       "x": 579,
       "y": 144
-    },
-    "Window_Options": {
-      "className": "Window_Options",
-      "x": 30,
-      "y": 36,
-      "width": 400,
-      "height": 288,
-      "opacity": 255,
-      "backOpacity": 192,
-      "padding": 18,
-      "fontSize": 28
     }
   }
 }
