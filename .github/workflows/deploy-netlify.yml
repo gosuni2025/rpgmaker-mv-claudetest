@@ -26,6 +26,7 @@ jobs:
             --exclude='save' \
             --exclude='node_modules' \
             --exclude='.github' \
+            --exclude='demo' \
             ./ demo/demo-project/
           cd demo
           git config user.name "github-actions[bot]"
@@ -74,34 +75,29 @@ jobs:
       - name: Install Netlify CLI
         run: npm install -g netlify-cli
 
-      - name: Get or create site ID
-        id: site
+      - name: Deploy to Netlify
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          SITE_NAME: rpgmaker-mv-claudetest
         run: |
+          # 이름으로 사이트 조회
           SITE_ID=$(curl -s -H "Authorization: Bearer $NETLIFY_AUTH_TOKEN" \
             "https://api.netlify.com/api/v1/sites" | \
             python3 -c "
           import json, sys
           sites = json.load(sys.stdin)
-          s = next((s for s in sites if 'claudetest' in s.get('name', '')), None)
+          s = next((s for s in sites if s.get('name') == '$SITE_NAME'), None)
           print(s['id'] if s else '')
           ")
-          echo "site_id=$SITE_ID" >> $GITHUB_OUTPUT
 
-      - name: Deploy to Netlify
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-        run: |
-          SITE_ID="${{ steps.site.outputs.site_id }}"
           if [ -z "$SITE_ID" ]; then
-            echo "새 사이트 생성..."
+            echo "새 사이트 생성: $SITE_NAME"
             SITE_ID=$(netlify api createSite \
               --auth=$NETLIFY_AUTH_TOKEN \
-              --data '{"name":"rpgmaker-mv-claudetest"}' | \
+              --data "{\"name\":\"$SITE_NAME\"}" | \
               python3 -c "import json,sys; print(json.load(sys.stdin)['id'])")
-            echo "생성된 Site ID: $SITE_ID"
           fi
+
           netlify deploy --dir=. --prod \
             --site=$SITE_ID \
             --auth=$NETLIFY_AUTH_TOKEN
