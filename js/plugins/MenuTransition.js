@@ -142,14 +142,19 @@
     ].join('\n');
 
     function blurBitmapThreeJS(srcBitmap, blurPx) {
-        var renderer = PostProcess._composer && PostProcess._composer.renderer;
+        console.log('[MT] blurBitmapThreeJS start, blurPx=', blurPx);
+
+        var composer = PostProcess._composer;
+        console.log('[MT] PostProcess._composer=', composer);
+        var renderer = composer && composer.renderer;
+        console.log('[MT] renderer=', renderer);
         if (!renderer) {
             console.warn('[MT] renderer 없음 → 블러 스킵');
             return null;
         }
 
         var w = srcBitmap.width, h = srcBitmap.height;
-        if (!w || !h) return null;
+        console.log('[MT] src size:', w, h, 'srcBitmap._canvas=', srcBitmap._canvas);
 
         // flipY=false: canvas top → GPU bottom → readback 시 y=0 = canvas top (flip 불필요)
         var srcTex = new THREE.CanvasTexture(srcBitmap._canvas);
@@ -157,12 +162,15 @@
         srcTex.minFilter = THREE.LinearFilter;
         srcTex.magFilter = THREE.LinearFilter;
         srcTex.needsUpdate = true;
+        console.log('[MT] srcTex created');
 
         var rtOpts = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter };
         var rt1 = new THREE.WebGLRenderTarget(w, h, rtOpts);
         var rt2 = new THREE.WebGLRenderTarget(w, h, rtOpts);
+        console.log('[MT] render targets created', rt1, rt2);
 
         var sigma = Math.max(1.0, blurPx / 3.5);
+        console.log('[MT] sigma=', sigma);
 
         // Pass 1: 수평 블러
         var hMat = new THREE.ShaderMaterial({
@@ -179,6 +187,7 @@
         renderer.setRenderTarget(rt1);
         renderer.clear();
         fsq.render(renderer);
+        console.log('[MT] H blur pass done');
 
         // Pass 2: 수직 블러
         var vMat = new THREE.ShaderMaterial({
@@ -196,16 +205,33 @@
         renderer.clear();
         fsq.render(renderer);
         renderer.setRenderTarget(null);
+        console.log('[MT] V blur pass done');
+
+        // 원본 픽셀 샘플링 (중앙)
+        var cx = (w / 2 | 0) * 4, cy = h / 2 | 0;
+        try {
+            var srcData = srcBitmap._context.getImageData(w / 2 | 0, cy, 1, 1).data;
+            console.log('[MT] 원본 중앙 pixel:', srcData[0], srcData[1], srcData[2], srcData[3]);
+        } catch(e) { console.warn('[MT] 원본 getImageData 실패:', e); }
 
         // 픽셀 읽기 (flipY=false → y=0 이 canvas 상단, Y flip 불필요)
         var pixels = new Uint8Array(w * h * 4);
-        renderer.readRenderTargetPixels(rt2, 0, 0, w, h, pixels);
+        try {
+            renderer.readRenderTargetPixels(rt2, 0, 0, w, h, pixels);
+            // 중앙 픽셀 (y=cy 행, x=w/2 열)
+            var midOff = cy * w * 4 + (w / 2 | 0) * 4;
+            console.log('[MT] 블러 중앙 pixel:', pixels[midOff], pixels[midOff+1], pixels[midOff+2], pixels[midOff+3]);
+            console.log('[MT] 블러 좌상단 pixel:', pixels[0], pixels[1], pixels[2], pixels[3]);
+        } catch(e) {
+            console.error('[MT] readRenderTargetPixels 에러:', e);
+        }
 
         var dst = new Bitmap(w, h);
         var imgData = dst._context.createImageData(w, h);
         imgData.data.set(pixels);
         dst._context.putImageData(imgData, 0, 0);
         dst._setDirty();
+        console.log('[MT] dst bitmap created, 최종 처리 완료');
 
         // 정리
         rt1.dispose(); rt2.dispose();
@@ -308,6 +334,8 @@
     // createBackground: 원본 스프라이트(불투명) + 후처리 스프라이트(opacity 0→255)
     Scene_MenuBase.prototype.createBackground = function () {
         var raw = SceneManager.backgroundBitmap();
+        console.log('[MT] createBackground, raw=', raw && raw.width, raw && raw.height,
+                    'effect=', Cfg.effect, 'blur=', Cfg.blur, 'duration=', this._mtDurationMs);
         this._backgroundSprite = new Sprite();
         this._backgroundSprite.bitmap = raw;
         this.addChild(this._backgroundSprite);

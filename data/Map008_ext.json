@@ -3204,6 +3204,14 @@
     "48": {
       "name": "이미지 변환 테스트",
       "showName": true
+    },
+    "49": {
+      "name": "파일 참조 기능 테스트",
+      "showName": true
+    },
+    "50": {
+      "name": "조건 스크립트 샘플 테스트",
+      "showName": true
     }
   },
   "is3D": true
