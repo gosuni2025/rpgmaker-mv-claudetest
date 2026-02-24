@@ -1472,13 +1472,13 @@
   },
   "postProcessConfig": {
     "scanlines": {
-      "enabled": true
+      "enabled": false
     },
     "posterize": {
-      "enabled": true
+      "enabled": false
     },
     "barrelDistort": {
-      "enabled": true
+      "enabled": false
     }
   },
   "fogOfWar": {
