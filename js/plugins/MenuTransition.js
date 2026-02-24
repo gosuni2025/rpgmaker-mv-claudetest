@@ -142,78 +142,106 @@
         '}'
     ].join('\n');
 
+    var _COPY_FS = 'uniform sampler2D tDiffuse; varying vec2 vUv; void main() { gl_FragColor = texture2D(tDiffuse, vUv); }';
+
     function blurBitmapThreeJS(srcBitmap, blurPx) {
         var composer = PostProcess._composer;
         var renderer = composer && composer.renderer;
-        console.log('[MT] blur start: blurPx=', blurPx, 'composer=', !!composer, 'renderer=', !!renderer);
+        console.log('[MT] blur start: blurPx=', blurPx, 'renderer=', !!renderer);
         if (!renderer) return null;
 
         var w = srcBitmap.width, h = srcBitmap.height;
 
-        // flipY=false: readback 시 Y flip 불필요
         var srcTex = new THREE.CanvasTexture(srcBitmap._canvas);
         srcTex.flipY = false;
         srcTex.minFilter = THREE.LinearFilter;
         srcTex.magFilter = THREE.LinearFilter;
         srcTex.needsUpdate = true;
 
+        // ── 1/8 다운스케일 → 블러 → 업스케일 ──────────────────────────────
+        // 동일 ±20 커널이 full-res 기준 ±160px 커버 → 극적인 블러 효과
+        var SCALE = 8;
+        var sw = Math.max(1, Math.round(w / SCALE));
+        var sh = Math.max(1, Math.round(h / SCALE));
         var rtOpts = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter };
-        var rt1 = new THREE.WebGLRenderTarget(w, h, rtOpts);
-        var rt2 = new THREE.WebGLRenderTarget(w, h, rtOpts);
-
-        // sigma 크게 — 3회 반복이므로 sigma_total = sigma * sqrt(3)
-        var sigma = Math.max(1.0, blurPx / 2.0);
-        var PASSES = 3;
+        var rtS1   = new THREE.WebGLRenderTarget(sw, sh, rtOpts);
+        var rtS2   = new THREE.WebGLRenderTarget(sw, sh, rtOpts);
+        var rtFull = new THREE.WebGLRenderTarget(w,  h,  rtOpts);
 
         var fsq = new FullScreenQuad(new THREE.MeshBasicMaterial());
 
-        for (var pass = 0; pass < PASSES; pass++) {
-            var inputTex = (pass === 0) ? srcTex : rt2.texture;
+        // 단계1: srcTex → rtS1 (다운스케일)
+        var downMat = new THREE.ShaderMaterial({
+            uniforms: { tDiffuse: { value: srcTex } },
+            vertexShader: _BLUR_VS, fragmentShader: _COPY_FS,
+            depthTest: false, depthWrite: false
+        });
+        fsq.material = downMat;
+        renderer.setRenderTarget(rtS1);
+        renderer.clear();
+        fsq.render(renderer);
+        downMat.dispose();
 
-            // H pass: input → rt1
+        // 단계2: 소형 텍스처에서 3회 H+V 블러 (ping-pong rtS1 ↔ rtS2)
+        // sigma_small << ±20 → 실제 가우시안 모양, full-res 환산 sigma ≈ sigma_small * SCALE
+        var sigma = Math.max(1.0, blurPx / (SCALE * 2.0));
+        var PASSES = 3;
+
+        for (var pass = 0; pass < PASSES; pass++) {
+            // H: rtS1 → rtS2
             var hMat = new THREE.ShaderMaterial({
                 uniforms: {
-                    tDiffuse: { value: inputTex },
+                    tDiffuse: { value: rtS1.texture },
                     sigma:    { value: sigma },
-                    stepX:    { value: 1.0 / w }
+                    stepX:    { value: 1.0 / sw }
                 },
-                vertexShader:   _BLUR_VS,
-                fragmentShader: _BLUR_H_FS,
+                vertexShader: _BLUR_VS, fragmentShader: _BLUR_H_FS,
                 depthTest: false, depthWrite: false
             });
             fsq.material = hMat;
-            renderer.setRenderTarget(rt1);
+            renderer.setRenderTarget(rtS2);
             renderer.clear();
             fsq.render(renderer);
             hMat.dispose();
 
-            // V pass: rt1 → rt2
+            // V: rtS2 → rtS1
             var vMat = new THREE.ShaderMaterial({
                 uniforms: {
-                    tDiffuse: { value: rt1.texture },
+                    tDiffuse: { value: rtS2.texture },
                     sigma:    { value: sigma },
-                    stepY:    { value: 1.0 / h }
+                    stepY:    { value: 1.0 / sh }
                 },
-                vertexShader:   _BLUR_VS,
-                fragmentShader: _BLUR_V_FS,
+                vertexShader: _BLUR_VS, fragmentShader: _BLUR_V_FS,
                 depthTest: false, depthWrite: false
             });
             fsq.material = vMat;
-            renderer.setRenderTarget(rt2);
+            renderer.setRenderTarget(rtS1);
             renderer.clear();
             fsq.render(renderer);
             vMat.dispose();
         }
+        // 최종 블러 결과: rtS1
+
+        // 단계3: rtS1 → rtFull (업스케일, LinearFilter로 부드럽게)
+        var upMat = new THREE.ShaderMaterial({
+            uniforms: { tDiffuse: { value: rtS1.texture } },
+            vertexShader: _BLUR_VS, fragmentShader: _COPY_FS,
+            depthTest: false, depthWrite: false
+        });
+        fsq.material = upMat;
+        renderer.setRenderTarget(rtFull);
+        renderer.clear();
+        fsq.render(renderer);
+        upMat.dispose();
 
         renderer.setRenderTarget(null);
-        console.log('[MT] 모든 패스 완료 (' + PASSES + '회)');
 
-        // 픽셀 읽기 (rt2 → Uint8Array → Bitmap)
+        // 픽셀 읽기
         var pixels = new Uint8Array(w * h * 4);
-        renderer.readRenderTargetPixels(rt2, 0, 0, w, h, pixels);
-        // 중앙 픽셀 샘플
+        renderer.readRenderTargetPixels(rtFull, 0, 0, w, h, pixels);
         var mOff = (h / 2 | 0) * w * 4 + (w / 2 | 0) * 4;
-        console.log('[MT] readback 중앙 pixel:', pixels[mOff], pixels[mOff+1], pixels[mOff+2], pixels[mOff+3]);
+        console.log('[MT] readback 중앙 pixel:', pixels[mOff], pixels[mOff+1], pixels[mOff+2], pixels[mOff+3],
+                    '(sigma_small=', sigma.toFixed(2), ', full-res≈', (sigma * SCALE).toFixed(0), 'px)');
 
         var dst = new Bitmap(w, h);
         var imgData = dst._context.createImageData(w, h);
@@ -221,7 +249,7 @@
         dst._context.putImageData(imgData, 0, 0);
         dst._setDirty();
 
-        rt1.dispose(); rt2.dispose();
+        rtS1.dispose(); rtS2.dispose(); rtFull.dispose();
         srcTex.dispose(); fsq.dispose();
 
         return dst;
