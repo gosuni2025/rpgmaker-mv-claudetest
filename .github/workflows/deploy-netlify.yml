@@ -1,0 +1,48 @@
+name: Deploy to Netlify
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Netlify CLI
+        run: npm install -g netlify-cli
+
+      - name: Get or create site ID
+        id: site
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+        run: |
+          SITE_ID=$(curl -s -H "Authorization: Bearer $NETLIFY_AUTH_TOKEN" \
+            "https://api.netlify.com/api/v1/sites" | \
+            python3 -c "
+          import json, sys
+          sites = json.load(sys.stdin)
+          s = next((s for s in sites if 'claudetest' in s.get('name', '')), None)
+          print(s['id'] if s else '')
+          ")
+          echo "site_id=$SITE_ID" >> $GITHUB_OUTPUT
+
+      - name: Deploy to Netlify
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+        run: |
+          SITE_ID="${{ steps.site.outputs.site_id }}"
+          if [ -z "$SITE_ID" ]; then
+            echo "새 사이트 생성 후 배포..."
+            netlify deploy --dir=. --prod \
+              --site-name=rpgmaker-mv-claudetest \
+              --auth=$NETLIFY_AUTH_TOKEN
+          else
+            echo "기존 사이트($SITE_ID)에 배포..."
+            netlify deploy --dir=. --prod \
+              --site=$SITE_ID \
+              --auth=$NETLIFY_AUTH_TOKEN
+          fi
