@@ -58,7 +58,7 @@
       "exits": [
         {
           "type": "fade",
-          "duration": 300,
+          "duration": 996,
           "easing": "easeOut",
           "delay": 0
         },
@@ -67,8 +67,17 @@
           "duration": 300,
           "easing": "easeOut",
           "delay": 0
+        },
+        {
+          "type": "rotate",
+          "duration": 300,
+          "easing": "easeOut",
+          "delay": 0,
+          "fromAngle": 82
         }
-      ]
+      ],
+      "x": 208,
+      "y": 168
     },
     "Window_MenuCommand": {
       "className": "Window_MenuCommand",
