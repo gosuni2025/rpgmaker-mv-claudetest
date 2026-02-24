@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "rpgmaker-mv-editor": {
+      "type": "sse",
+      "url": "http://localhost:3002/sse"
+    }
+  }
+}
