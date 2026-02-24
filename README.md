@@ -16,4 +16,4 @@ RPG Maker MV 웹 에디터 데모입니다. 이 프로젝트를 에디터에서 
 
 ## 관련 저장소
 
-- **에디터 소스**: [gosuni2025/rpgmaker-mv-editor-demo](https://github.com/gosuni2025/rpgmaker-mv-editor-demo)
+- **에디터 소스**: [gosuni2025/rpgmaker-mv-editor](https://github.com/gosuni2025/rpgmaker-mv-editor)
