@@ -77,7 +77,8 @@
         }
       ],
       "x": 208,
-      "y": 168
+      "y": 168,
+      "renderCamera": "perspective"
     },
     "Window_MenuCommand": {
       "className": "Window_MenuCommand",
