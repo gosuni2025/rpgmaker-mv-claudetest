@@ -3153,6 +3153,10 @@
       "name": "숫자 입력 처리",
       "showName": true
     },
+    "33": {
+      "name": "전투 훈련관",
+      "showName": true
+    },
     "34": {
       "name": "CRT 스캔라인 데모",
       "showName": true
@@ -3175,6 +3179,22 @@
     },
     "39": {
       "name": "불꽃 그림 셰이더 데모",
+      "showName": true
+    },
+    "43": {
+      "name": "CRT 반사광 기사",
+      "showName": true
+    },
+    "45": {
+      "name": "CRT 잡음 기사",
+      "showName": true
+    },
+    "46": {
+      "name": "CRT 모서리 기사",
+      "showName": true
+    },
+    "47": {
+      "name": "CRT 마스터",
       "showName": true
     }
   },
