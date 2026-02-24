@@ -1,5 +1,7 @@
 {
-  "defaultSkin": "kenny",
+  "defaultSkin": "Window",
+  "defaultFrameSkin": "kenny",
+  "defaultCursorSkin": "Window",
   "skins": [
     {
       "name": "Window",

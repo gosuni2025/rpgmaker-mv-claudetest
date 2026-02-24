@@ -493,6 +493,196 @@
  * PPEffectBarrel off 1               → 1초에 걸쳐 서서히 끄기
  * PPEffectBarrel curvature 0.15 0.5  → 강도를 0.15로 0.5초 보간
  */
+
+/*:
+ * @plugindesc CRT 형광체 마스크 이펙트 커맨드
+ * @plugincommand PPEffectCRTPhosphor
+ *
+ * @command on
+ * @text 켜기
+ * @desc CRT 형광체 마스크를 활성화합니다.
+ *
+ * @arg type
+ * @text 마스크 유형 (0=Shadow Mask, 1=Aperture Grille)
+ * @type number
+ * @min 0
+ * @max 1
+ * @default 0
+ *
+ * @arg strength
+ * @text 강도 (0~1)
+ * @type number
+ * @min 0
+ * @max 1
+ * @decimals 2
+ * @default 0.3
+ *
+ * @command off
+ * @text 끄기
+ * @desc CRT 형광체 마스크를 비활성화합니다.
+ *
+ * @command strength
+ * @text 강도 설정
+ * @desc 형광체 마스크 강도를 설정합니다.
+ *
+ * @arg value
+ * @text 강도 (0~1)
+ * @type number
+ * @min 0
+ * @max 1
+ * @decimals 2
+ * @default 0.3
+ *
+ * @help
+ * PPEffectCRTPhosphor on 0 0.3   → Shadow Mask, 강도 0.3으로 켜기
+ * PPEffectCRTPhosphor on 1 0.4   → Aperture Grille, 강도 0.4로 켜기
+ * PPEffectCRTPhosphor off        → 끄기
+ * PPEffectCRTPhosphor strength 0.5 → 강도를 0.5로 변경
+ */
+
+/*:
+ * @plugindesc CRT 화면 반사광 이펙트 커맨드
+ * @plugincommand PPEffectCRTGlare
+ *
+ * @command on
+ * @text 켜기
+ * @desc CRT 화면 유리 반사광을 활성화합니다.
+ *
+ * @arg intensity
+ * @text 강도 (0~1)
+ * @type number
+ * @min 0
+ * @max 1
+ * @decimals 2
+ * @default 0.25
+ *
+ * @command off
+ * @text 끄기
+ * @desc CRT 반사광을 비활성화합니다.
+ *
+ * @command intensity
+ * @text 강도 설정
+ *
+ * @arg value
+ * @text 강도 (0~1)
+ * @type number
+ * @min 0
+ * @max 1
+ * @decimals 2
+ * @default 0.25
+ *
+ * @help
+ * PPEffectCRTGlare on 0.25  → 강도 0.25로 켜기
+ * PPEffectCRTGlare off      → 끄기
+ * PPEffectCRTGlare intensity 0.4 → 강도를 0.4로 변경
+ */
+
+/*:
+ * @plugindesc CRT 형광 번짐 이펙트 커맨드
+ * @plugincommand PPEffectCRTGlow
+ *
+ * @command on
+ * @text 켜기
+ * @desc CRT 형광 번짐(글로우) 효과를 활성화합니다.
+ *
+ * @arg intensity
+ * @text 강도 (0~2)
+ * @type number
+ * @min 0
+ * @max 2
+ * @decimals 2
+ * @default 0.5
+ *
+ * @command off
+ * @text 끄기
+ * @desc CRT 형광 번짐을 비활성화합니다.
+ *
+ * @command intensity
+ * @text 강도 설정
+ *
+ * @arg value
+ * @text 강도 (0~2)
+ * @type number
+ * @min 0
+ * @max 2
+ * @decimals 2
+ * @default 0.5
+ *
+ * @help
+ * PPEffectCRTGlow on 0.5   → 강도 0.5로 켜기
+ * PPEffectCRTGlow off      → 끄기
+ * PPEffectCRTGlow intensity 1.0 → 강도를 1.0으로 변경
+ */
+
+/*:
+ * @plugindesc CRT 신호 잡음 이펙트 커맨드
+ * @plugincommand PPEffectCRTNoise
+ *
+ * @command on
+ * @text 켜기
+ * @desc CRT 수평 지터 및 신호 잡음을 활성화합니다.
+ *
+ * @arg jitter
+ * @text 수평 지터 (0~0.02)
+ * @type number
+ * @min 0
+ * @max 0.02
+ * @decimals 3
+ * @default 0.003
+ *
+ * @arg noise
+ * @text 노이즈 강도 (0~0.2)
+ * @type number
+ * @min 0
+ * @max 0.2
+ * @decimals 2
+ * @default 0.04
+ *
+ * @command off
+ * @text 끄기
+ * @desc CRT 신호 잡음을 비활성화합니다.
+ *
+ * @help
+ * PPEffectCRTNoise on 0.003 0.04  → 켜기 (지터 0.003, 노이즈 0.04)
+ * PPEffectCRTNoise off            → 끄기
+ */
+
+/*:
+ * @plugindesc CRT 모서리 마스크 이펙트 커맨드
+ * @plugincommand PPEffectCRTCorner
+ *
+ * @command on
+ * @text 켜기
+ * @desc CRT 둥근 모서리 마스크를 활성화합니다.
+ *
+ * @arg radius
+ * @text 모서리 반경 (0~0.2)
+ * @type number
+ * @min 0
+ * @max 0.2
+ * @decimals 2
+ * @default 0.05
+ *
+ * @command off
+ * @text 끄기
+ * @desc CRT 모서리 마스크를 비활성화합니다.
+ *
+ * @command radius
+ * @text 반경 설정
+ *
+ * @arg value
+ * @text 모서리 반경 (0~0.2)
+ * @type number
+ * @min 0
+ * @max 0.2
+ * @decimals 2
+ * @default 0.05
+ *
+ * @help
+ * PPEffectCRTCorner on 0.05  → 반경 0.05로 켜기
+ * PPEffectCRTCorner off      → 끄기
+ * PPEffectCRTCorner radius 0.1 → 반경을 0.1로 변경
+ */
 //=============================================================================
 // PostProcess.js - 포스트 프로세싱 파이프라인 (Bloom, DoF, PP Effects)
 //=============================================================================
@@ -2318,6 +2508,7 @@ _ThreeStrategy.render = function(rendererObj, stage) {
             if (pp.waveDistortion && pp.waveDistortion.enabled) pp.waveDistortion.uniforms.uTime.value = ppTime;
             if (pp.heatHaze && pp.heatHaze.enabled) pp.heatHaze.uniforms.uTime.value = ppTime;
             if (pp.scanlines && pp.scanlines.enabled) pp.scanlines.uniforms.uTime.value = ppTime;
+            if (pp.crtNoise && pp.crtNoise.enabled) pp.crtNoise.uniforms.uTime.value = ppTime;
         }
 
         var scene = rendererObj.scene;
@@ -2414,6 +2605,7 @@ _ThreeStrategy.render = function(rendererObj, stage) {
             if (pp.waveDistortion && pp.waveDistortion.enabled) pp.waveDistortion.uniforms.uTime.value = ppTime;
             if (pp.heatHaze && pp.heatHaze.enabled) pp.heatHaze.uniforms.uTime.value = ppTime;
             if (pp.scanlines && pp.scanlines.enabled) pp.scanlines.uniforms.uTime.value = ppTime;
+            if (pp.crtNoise && pp.crtNoise.enabled) pp.crtNoise.uniforms.uTime.value = ppTime;
         }
 
         // Composer 크기 동기화
@@ -2929,6 +3121,102 @@ Game_Interpreter.prototype.pluginCommand = function(command, args) {
             } else if (sub === 'applyOverUI') {
                 barrelPass._applyOverUI = (args[1] === 'true' || args[1] === '1');
                 PostProcess._rebuildPassOrder(); PostProcess._updateRenderToScreen();
+            }
+        }
+    }
+
+    // ── CRT 형광체 마스크: PPEffectCRTPhosphor on/off/strength ──────────────
+    if (command === 'PPEffectCRTPhosphor') {
+        var sub = args[0];
+        if (PostProcess._ppPasses && PostProcess._ppPasses['crtPhosphor']) {
+            var phosphorPass = PostProcess._ppPasses['crtPhosphor'];
+            if (sub === 'on') {
+                if (args[1] != null) phosphorPass.uniforms.uType.value     = parseFloat(args[1]);
+                if (args[2] != null) phosphorPass.uniforms.uStrength.value = parseFloat(args[2]);
+                phosphorPass.enabled = true; PostProcess._updateRenderToScreen();
+            } else if (sub === 'off') {
+                phosphorPass.enabled = false; PostProcess._updateRenderToScreen();
+            } else if (sub === 'strength') {
+                if (args[1] != null) phosphorPass.uniforms.uStrength.value = parseFloat(args[1]);
+            } else if (sub === 'type') {
+                if (args[1] != null) phosphorPass.uniforms.uType.value = parseFloat(args[1]);
+            } else if (sub === 'scale') {
+                if (args[1] != null) phosphorPass.uniforms.uScale.value = parseFloat(args[1]);
+            }
+        }
+    }
+
+    // ── CRT 반사광: PPEffectCRTGlare on/off/intensity ────────────────────────
+    if (command === 'PPEffectCRTGlare') {
+        var sub = args[0];
+        if (PostProcess._ppPasses && PostProcess._ppPasses['crtGlare']) {
+            var glarePass = PostProcess._ppPasses['crtGlare'];
+            if (sub === 'on') {
+                if (args[1] != null) glarePass.uniforms.uIntensity.value = parseFloat(args[1]);
+                glarePass.enabled = true; PostProcess._updateRenderToScreen();
+            } else if (sub === 'off') {
+                glarePass.enabled = false; PostProcess._updateRenderToScreen();
+            } else if (sub === 'intensity') {
+                if (args[1] != null) glarePass.uniforms.uIntensity.value = parseFloat(args[1]);
+            } else if (sub === 'posX') {
+                if (args[1] != null) glarePass.uniforms.uPosX.value = parseFloat(args[1]);
+            } else if (sub === 'posY') {
+                if (args[1] != null) glarePass.uniforms.uPosY.value = parseFloat(args[1]);
+            }
+        }
+    }
+
+    // ── CRT 형광 번짐: PPEffectCRTGlow on/off/intensity ──────────────────────
+    if (command === 'PPEffectCRTGlow') {
+        var sub = args[0];
+        if (PostProcess._ppPasses && PostProcess._ppPasses['crtGlow']) {
+            var glowPass = PostProcess._ppPasses['crtGlow'];
+            if (sub === 'on') {
+                if (args[1] != null) glowPass.uniforms.uIntensity.value = parseFloat(args[1]);
+                glowPass.enabled = true; PostProcess._updateRenderToScreen();
+            } else if (sub === 'off') {
+                glowPass.enabled = false; PostProcess._updateRenderToScreen();
+            } else if (sub === 'intensity') {
+                if (args[1] != null) glowPass.uniforms.uIntensity.value = parseFloat(args[1]);
+            } else if (sub === 'threshold') {
+                if (args[1] != null) glowPass.uniforms.uThreshold.value = parseFloat(args[1]);
+            }
+        }
+    }
+
+    // ── CRT 신호 잡음: PPEffectCRTNoise on/off/jitter/noise ──────────────────
+    if (command === 'PPEffectCRTNoise') {
+        var sub = args[0];
+        if (PostProcess._ppPasses && PostProcess._ppPasses['crtNoise']) {
+            var noisePass = PostProcess._ppPasses['crtNoise'];
+            if (sub === 'on') {
+                if (args[1] != null) noisePass.uniforms.uJitter.value = parseFloat(args[1]);
+                if (args[2] != null) noisePass.uniforms.uNoise.value  = parseFloat(args[2]);
+                noisePass.enabled = true; PostProcess._updateRenderToScreen();
+            } else if (sub === 'off') {
+                noisePass.enabled = false; PostProcess._updateRenderToScreen();
+            } else if (sub === 'jitter') {
+                if (args[1] != null) noisePass.uniforms.uJitter.value = parseFloat(args[1]);
+            } else if (sub === 'noise') {
+                if (args[1] != null) noisePass.uniforms.uNoise.value = parseFloat(args[1]);
+            }
+        }
+    }
+
+    // ── CRT 모서리 마스크: PPEffectCRTCorner on/off/radius ────────────────────
+    if (command === 'PPEffectCRTCorner') {
+        var sub = args[0];
+        if (PostProcess._ppPasses && PostProcess._ppPasses['crtCorner']) {
+            var cornerPass = PostProcess._ppPasses['crtCorner'];
+            if (sub === 'on') {
+                if (args[1] != null) cornerPass.uniforms.uRadius.value = parseFloat(args[1]);
+                cornerPass.enabled = true; PostProcess._updateRenderToScreen();
+            } else if (sub === 'off') {
+                cornerPass.enabled = false; PostProcess._updateRenderToScreen();
+            } else if (sub === 'radius') {
+                if (args[1] != null) cornerPass.uniforms.uRadius.value = parseFloat(args[1]);
+            } else if (sub === 'softness') {
+                if (args[1] != null) cornerPass.uniforms.uSoftness.value = parseFloat(args[1]);
             }
         }
     }

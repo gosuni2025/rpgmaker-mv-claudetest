@@ -300,6 +300,116 @@ ev41.page1.cmd2,1771922442,,"\c[6][ParallaxUV 효과 데모]\c[0]
 입체감 있는 시차 효과를 연출합니다.",1771922442,,0
 ev41.page1.cmd7,1771922442,,회전 속도를 빠르게 바꿔봅니다...,1771922442,,0
 ev41.page1.cmd10,1771922442,,깊이감도 더 강하게 설정됩니다!,1771922442,,0
+ev42.page1.cmd0,1771929461,,"<color value=#aa88ff>◈ 형광체 기사 / 필립</color>
+CRT 브라운관의 핵심 — <color value=#ddbbff>형광체 마스크</color>입니다.
+Shadow Mask는 삼각 배열, Aperture Grille는
+수직 스트라이프 패턴으로 RGB 픽셀을 구현합니다.",1771929461,,0
+ev42.page1.cmd5.ch0,1771929461,,Shadow Mask (삼각 배열),1771929461,,0
+ev42.page1.cmd5.ch1,1771929461,,Aperture Grille (수직 스트라이프),1771929461,,0
+ev42.page1.cmd5.ch2,1771929461,,끄기,1771929461,,0
+ev42.page1.cmd5.ch3,1771929461,,취소,1771929461,,0
+ev42.page1.cmd8,1771929461,,"<color value=#aa88ff>◈ 형광체 기사 / 필립</color>
+<color value=#aaffaa>Shadow Mask 활성화!</color>
+홀수·짝수 행이 교대 배열된 RGB 도트입니다.",1771929461,,0
+ev42.page1.cmd14,1771929461,,"<color value=#aa88ff>◈ 형광체 기사 / 필립</color>
+<color value=#aaffaa>Aperture Grille 활성화!</color>
+Trinitron 방식의 수직 RGB 줄무늬입니다.",1771929461,,0
+ev42.page1.cmd20,1771929461,,"<color value=#aa88ff>◈ 형광체 기사 / 필립</color>
+<color value=#ffaa88>형광체 마스크 해제.</color>",1771929461,,0
+ev43.page1.cmd0,1771929461,,"<color value=#ffdd88>◈ 반사광 기사 / 루미나</color>
+유리 패널 표면에서 반사되는 <color value=#ffeeaa>조명 반사광</color>입니다.
+왼쪽 상단에 주 하이라이트, 그 아래에 보조
+반사광이 배치됩니다. 실제 CRT의 그 느낌!",1771929461,,0
+ev43.page1.cmd5.ch0,1771929461,,기본 반사 (켜기),1771929461,,0
+ev43.page1.cmd5.ch1,1771929461,,강한 반사,1771929461,,0
+ev43.page1.cmd5.ch2,1771929461,,위치 이동 (우하),1771929461,,0
+ev43.page1.cmd5.ch3,1771929461,,끄기,1771929461,,0
+ev43.page1.cmd5.ch4,1771929461,,취소,1771929461,,0
+ev43.page1.cmd8,1771929461,,"<color value=#ffdd88>◈ 반사광 기사 / 루미나</color>
+<color value=#aaffaa>기본 반사광 활성화!</color>
+왼쪽 상단의 은은한 유리 반사입니다.",1771929461,,0
+ev43.page1.cmd14,1771929461,,"<color value=#ffdd88>◈ 반사광 기사 / 루미나</color>
+<color value=#aaffaa>강한 반사광!</color>
+조명이 강할 때의 반사 효과입니다.",1771929461,,0
+ev43.page1.cmd22,1771929461,,"<color value=#ffdd88>◈ 반사광 기사 / 루미나</color>
+<color value=#aaffaa>우하단으로 위치 이동!</color>",1771929461,,0
+ev43.page1.cmd27,1771929461,,"<color value=#ffdd88>◈ 반사광 기사 / 루미나</color>
+<color value=#ffaa88>반사광 해제.</color>",1771929461,,0
+ev44.page1.cmd0,1771929461,,"<color value=#88ddff>◈ 글로우 기사 / 루멘</color>
+<color value=#b3e5ff>형광 번짐(Phosphor Glow)</color> 효과입니다.
+밝은 픽셀 주변으로 인광이 번져나오는
+브라운관 특유의 부드러운 빛 효과입니다.",1771929461,,0
+ev44.page1.cmd5.ch0,1771929461,,약한 글로우 (0.4),1771929461,,0
+ev44.page1.cmd5.ch1,1771929461,,중간 글로우 (0.8),1771929461,,0
+ev44.page1.cmd5.ch2,1771929461,,강한 글로우 (1.5),1771929461,,0
+ev44.page1.cmd5.ch3,1771929461,,황금빛 글로우,1771929461,,0
+ev44.page1.cmd5.ch4,1771929461,,끄기,1771929461,,0
+ev44.page1.cmd5.ch5,1771929461,,취소,1771929461,,0
+ev44.page1.cmd8,1771929461,,"<color value=#88ddff>◈ 글로우 기사 / 루멘</color>
+<color value=#aaffaa>약한 형광 번짐 활성화!</color>
+은은하게 빛이 번집니다.",1771929461,,0
+ev44.page1.cmd14,1771929461,,"<color value=#88ddff>◈ 글로우 기사 / 루멘</color>
+<color value=#aaffaa>중간 형광 번짐!</color>",1771929461,,0
+ev44.page1.cmd19,1771929461,,"<color value=#88ddff>◈ 글로우 기사 / 루멘</color>
+<color value=#aaffaa>강한 형광 번짐!</color>
+형광등이 타는 것 같은 느낌입니다.",1771929461,,0
+ev44.page1.cmd25,1771929461,,"<color value=#88ddff>◈ 글로우 기사 / 루멘</color>
+<color value=#aaffaa>황금빛 글로우 (warm CRT)!</color>",1771929461,,0
+ev44.page1.cmd30,1771929461,,"<color value=#88ddff>◈ 글로우 기사 / 루멘</color>
+<color value=#ffaa88>형광 번짐 해제.</color>",1771929461,,0
+ev45.page1.cmd0,1771929461,,"<color value=#ff9977>◈ 잡음 기사 / 스태틱</color>
+<color value=#ffccaa>수평 지터</color>와 <color value=#ffccaa>신호 잡음</color> 효과입니다.
+TV 수신 불량 시 나타나는 스캔라인 흔들림과
+랜덤 노이즈를 재현합니다.",1771929461,,0
+ev45.page1.cmd5.ch0,1771929461,,약한 잡음,1771929461,,0
+ev45.page1.cmd5.ch1,1771929461,,강한 잡음 (눈보라),1771929461,,0
+ev45.page1.cmd5.ch2,1771929461,,지터만 (흔들림),1771929461,,0
+ev45.page1.cmd5.ch3,1771929461,,끄기,1771929461,,0
+ev45.page1.cmd5.ch4,1771929461,,취소,1771929461,,0
+ev45.page1.cmd8,1771929461,,"<color value=#ff9977>◈ 잡음 기사 / 스태틱</color>
+<color value=#aaffaa>약한 잡음 활성화!</color>
+거의 눈치채기 어려운 미세한 잡음입니다.",1771929461,,0
+ev45.page1.cmd14,1771929461,,"<color value=#ff9977>◈ 잡음 기사 / 스태틱</color>
+<color value=#aaffaa>강한 잡음!</color>
+수신 불량처럼 강하게 흔들립니다.",1771929461,,0
+ev45.page1.cmd20,1771929461,,"<color value=#ff9977>◈ 잡음 기사 / 스태틱</color>
+<color value=#aaffaa>수평 지터 활성화!</color>
+일부 스캔라인이 수평으로 밀립니다.",1771929461,,0
+ev45.page1.cmd26,1771929461,,"<color value=#ff9977>◈ 잡음 기사 / 스태틱</color>
+<color value=#ffaa88>신호 잡음 해제.</color>",1771929461,,0
+ev46.page1.cmd0,1771929461,,"<color value=#88ffcc>◈ 모서리 기사 / 라운도</color>
+CRT 화면의 <color value=#aaffdd>둥근 모서리</color> 마스크입니다.
+실제 브라운관은 유리 곡면 때문에 화면 모서리가
+어둡게 처리됩니다. 그 특징을 재현합니다.",1771929461,,0
+ev46.page1.cmd5.ch0,1771929461,,약한 라운드 (0.05),1771929461,,0
+ev46.page1.cmd5.ch1,1771929461,,중간 라운드 (0.1),1771929461,,0
+ev46.page1.cmd5.ch2,1771929461,,강한 라운드 (0.18),1771929461,,0
+ev46.page1.cmd5.ch3,1771929461,,끄기,1771929461,,0
+ev46.page1.cmd5.ch4,1771929461,,취소,1771929461,,0
+ev46.page1.cmd8,1771929461,,"<color value=#88ffcc>◈ 모서리 기사 / 라운도</color>
+<color value=#aaffaa>약한 모서리 마스크!</color>
+살짝 둥근 모서리입니다.",1771929461,,0
+ev46.page1.cmd14,1771929461,,"<color value=#88ffcc>◈ 모서리 기사 / 라운도</color>
+<color value=#aaffaa>중간 모서리 마스크!</color>",1771929461,,0
+ev46.page1.cmd19,1771929461,,"<color value=#88ffcc>◈ 모서리 기사 / 라운도</color>
+<color value=#aaffaa>강한 모서리 마스크!</color>
+초기 CRT처럼 모서리가 크게 잘립니다.",1771929461,,0
+ev46.page1.cmd25,1771929461,,"<color value=#88ffcc>◈ 모서리 기사 / 라운도</color>
+<color value=#ffaa88>모서리 마스크 해제.</color>",1771929461,,0
+ev47.page1.cmd0,1771929461,,"<color value=#ffff44>★ CRT 마스터 / 레트로</color>
+모든 CRT 효과를 종합한 <color value=#ffff99>""올드 브라운관""</color> 프리셋.
+형광체·반사광·글로우·잡음·모서리·스캔라인·배럴
+7가지 효과를 한번에 적용합니다.",1771929461,,0
+ev47.page1.cmd5.ch0,1771929461,,■ CRT 모드 ON,1771929461,,0
+ev47.page1.cmd5.ch1,1771929461,,□ CRT 모드 OFF,1771929461,,0
+ev47.page1.cmd5.ch2,1771929461,,취소,1771929461,,0
+ev47.page1.cmd14,1771929461,,"<color value=#ffff44>★ CRT 마스터 / 레트로</color>
+<color value=#aaffaa>✓ 올드 브라운관 모드 ON!</color>
+모서리·배럴·스캔라인·형광체·반사광
+글로우·신호잡음 — 전부 활성화!",1771929461,,0
+ev47.page1.cmd27,1771929461,,"<color value=#ffff44>★ CRT 마스터 / 레트로</color>
+<color value=#ffaa88>✗ CRT 모드 해제.</color>
+모든 CRT 효과가 비활성화되었습니다.",1771929461,,0
 ev34.page1.cmd3.ch0,1771918435,1,켜기 (서서히),1771918435,,0
 ev34.page1.cmd3.ch1,1771918435,1,끄기 (서서히),1771918435,,0
 ev34.page1.cmd3.ch2,1771918435,1,채널 분리 조절,1771918435,,0

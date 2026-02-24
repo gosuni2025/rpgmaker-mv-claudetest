@@ -18520,6 +18520,1808 @@
       ],
       "x": 32,
       "y": 13
+    },
+    {
+      "id": 42,
+      "name": "CRT 형광체 기사",
+      "note": "",
+      "x": 23,
+      "y": 31,
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 0,
+            "characterName": "People3",
+            "direction": 2,
+            "pattern": 1,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 101,
+              "indent": 0,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 0,
+              "parameters": [
+                "<color value=#aa88ff>◈ 형광체 기사 / 필립</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 0,
+              "parameters": [
+                "CRT 브라운관의 핵심 — <color value=#ddbbff>형광체 마스크</color>입니다."
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 0,
+              "parameters": [
+                "Shadow Mask는 삼각 배열, Aperture Grille는"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 0,
+              "parameters": [
+                "수직 스트라이프 패턴으로 RGB 픽셀을 구현합니다."
+              ]
+            },
+            {
+              "code": 102,
+              "indent": 0,
+              "parameters": [
+                [
+                  "Shadow Mask (삼각 배열)",
+                  "Aperture Grille (수직 스트라이프)",
+                  "끄기",
+                  "취소"
+                ],
+                3
+              ]
+            },
+            {
+              "code": 402,
+              "indent": 0,
+              "parameters": [
+                0,
+                "Shadow Mask"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 1,
+              "parameters": [
+                "PPEffectCRTPhosphor on 0 0.3"
+              ]
+            },
+            {
+              "code": 101,
+              "indent": 1,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#aa88ff>◈ 형광체 기사 / 필립</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#aaffaa>Shadow Mask 활성화!</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "홀수·짝수 행이 교대 배열된 RGB 도트입니다."
+              ]
+            },
+            {
+              "code": 402,
+              "indent": 0,
+              "parameters": [
+                1,
+                "Aperture Grille"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 1,
+              "parameters": [
+                "PPEffectCRTPhosphor on 1 0.35"
+              ]
+            },
+            {
+              "code": 101,
+              "indent": 1,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#aa88ff>◈ 형광체 기사 / 필립</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#aaffaa>Aperture Grille 활성화!</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "Trinitron 방식의 수직 RGB 줄무늬입니다."
+              ]
+            },
+            {
+              "code": 402,
+              "indent": 0,
+              "parameters": [
+                2,
+                "끄기"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 1,
+              "parameters": [
+                "PPEffectCRTPhosphor off"
+              ]
+            },
+            {
+              "code": 101,
+              "indent": 1,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#aa88ff>◈ 형광체 기사 / 필립</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#ffaa88>형광체 마스크 해제.</color>"
+              ]
+            },
+            {
+              "code": 402,
+              "indent": 0,
+              "parameters": [
+                3,
+                "취소"
+              ]
+            },
+            {
+              "code": 404,
+              "indent": 0,
+              "parameters": []
+            },
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0,
+                "parameters": []
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ]
+    },
+    {
+      "id": 43,
+      "name": "CRT 반사광 기사",
+      "note": "",
+      "x": 23,
+      "y": 33,
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 2,
+            "characterName": "People3",
+            "direction": 2,
+            "pattern": 1,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 101,
+              "indent": 0,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 0,
+              "parameters": [
+                "<color value=#ffdd88>◈ 반사광 기사 / 루미나</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 0,
+              "parameters": [
+                "유리 패널 표면에서 반사되는 <color value=#ffeeaa>조명 반사광</color>입니다."
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 0,
+              "parameters": [
+                "왼쪽 상단에 주 하이라이트, 그 아래에 보조"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 0,
+              "parameters": [
+                "반사광이 배치됩니다. 실제 CRT의 그 느낌!"
+              ]
+            },
+            {
+              "code": 102,
+              "indent": 0,
+              "parameters": [
+                [
+                  "기본 반사 (켜기)",
+                  "강한 반사",
+                  "위치 이동 (우하)",
+                  "끄기",
+                  "취소"
+                ],
+                4
+              ]
+            },
+            {
+              "code": 402,
+              "indent": 0,
+              "parameters": [
+                0,
+                "기본 반사 (켜기)"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 1,
+              "parameters": [
+                "PPEffectCRTGlare on 0.25"
+              ]
+            },
+            {
+              "code": 101,
+              "indent": 1,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#ffdd88>◈ 반사광 기사 / 루미나</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#aaffaa>기본 반사광 활성화!</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "왼쪽 상단의 은은한 유리 반사입니다."
+              ]
+            },
+            {
+              "code": 402,
+              "indent": 0,
+              "parameters": [
+                1,
+                "강한 반사"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 1,
+              "parameters": [
+                "PPEffectCRTGlare on 0.5"
+              ]
+            },
+            {
+              "code": 101,
+              "indent": 1,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#ffdd88>◈ 반사광 기사 / 루미나</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#aaffaa>강한 반사광!</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "조명이 강할 때의 반사 효과입니다."
+              ]
+            },
+            {
+              "code": 402,
+              "indent": 0,
+              "parameters": [
+                2,
+                "위치 이동 (우하)"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 1,
+              "parameters": [
+                "PPEffectCRTGlare on 0.3"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 1,
+              "parameters": [
+                "PPEffect crtGlare posX 0.7"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 1,
+              "parameters": [
+                "PPEffect crtGlare posY 0.7"
+              ]
+            },
+            {
+              "code": 101,
+              "indent": 1,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#ffdd88>◈ 반사광 기사 / 루미나</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#aaffaa>우하단으로 위치 이동!</color>"
+              ]
+            },
+            {
+              "code": 402,
+              "indent": 0,
+              "parameters": [
+                3,
+                "끄기"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 1,
+              "parameters": [
+                "PPEffectCRTGlare off"
+              ]
+            },
+            {
+              "code": 101,
+              "indent": 1,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#ffdd88>◈ 반사광 기사 / 루미나</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#ffaa88>반사광 해제.</color>"
+              ]
+            },
+            {
+              "code": 402,
+              "indent": 0,
+              "parameters": [
+                4,
+                "취소"
+              ]
+            },
+            {
+              "code": 404,
+              "indent": 0,
+              "parameters": []
+            },
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0,
+                "parameters": []
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ]
+    },
+    {
+      "id": 44,
+      "name": "CRT 글로우 기사",
+      "note": "",
+      "x": 23,
+      "y": 35,
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 4,
+            "characterName": "People3",
+            "direction": 2,
+            "pattern": 1,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 101,
+              "indent": 0,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 0,
+              "parameters": [
+                "<color value=#88ddff>◈ 글로우 기사 / 루멘</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 0,
+              "parameters": [
+                "<color value=#b3e5ff>형광 번짐(Phosphor Glow)</color> 효과입니다."
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 0,
+              "parameters": [
+                "밝은 픽셀 주변으로 인광이 번져나오는"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 0,
+              "parameters": [
+                "브라운관 특유의 부드러운 빛 효과입니다."
+              ]
+            },
+            {
+              "code": 102,
+              "indent": 0,
+              "parameters": [
+                [
+                  "약한 글로우 (0.4)",
+                  "중간 글로우 (0.8)",
+                  "강한 글로우 (1.5)",
+                  "황금빛 글로우",
+                  "끄기",
+                  "취소"
+                ],
+                5
+              ]
+            },
+            {
+              "code": 402,
+              "indent": 0,
+              "parameters": [
+                0,
+                "약한 글로우 (0.4)"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 1,
+              "parameters": [
+                "PPEffectCRTGlow on 0.4"
+              ]
+            },
+            {
+              "code": 101,
+              "indent": 1,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#88ddff>◈ 글로우 기사 / 루멘</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#aaffaa>약한 형광 번짐 활성화!</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "은은하게 빛이 번집니다."
+              ]
+            },
+            {
+              "code": 402,
+              "indent": 0,
+              "parameters": [
+                1,
+                "중간 글로우 (0.8)"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 1,
+              "parameters": [
+                "PPEffectCRTGlow on 0.8"
+              ]
+            },
+            {
+              "code": 101,
+              "indent": 1,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#88ddff>◈ 글로우 기사 / 루멘</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#aaffaa>중간 형광 번짐!</color>"
+              ]
+            },
+            {
+              "code": 402,
+              "indent": 0,
+              "parameters": [
+                2,
+                "강한 글로우 (1.5)"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 1,
+              "parameters": [
+                "PPEffectCRTGlow on 1.5"
+              ]
+            },
+            {
+              "code": 101,
+              "indent": 1,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#88ddff>◈ 글로우 기사 / 루멘</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#aaffaa>강한 형광 번짐!</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "형광등이 타는 것 같은 느낌입니다."
+              ]
+            },
+            {
+              "code": 402,
+              "indent": 0,
+              "parameters": [
+                3,
+                "황금빛 글로우"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 1,
+              "parameters": [
+                "PPEffectCRTGlow on 0.6"
+              ]
+            },
+            {
+              "code": 101,
+              "indent": 1,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#88ddff>◈ 글로우 기사 / 루멘</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#aaffaa>황금빛 글로우 (warm CRT)!</color>"
+              ]
+            },
+            {
+              "code": 402,
+              "indent": 0,
+              "parameters": [
+                4,
+                "끄기"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 1,
+              "parameters": [
+                "PPEffectCRTGlow off"
+              ]
+            },
+            {
+              "code": 101,
+              "indent": 1,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#88ddff>◈ 글로우 기사 / 루멘</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#ffaa88>형광 번짐 해제.</color>"
+              ]
+            },
+            {
+              "code": 402,
+              "indent": 0,
+              "parameters": [
+                5,
+                "취소"
+              ]
+            },
+            {
+              "code": 404,
+              "indent": 0,
+              "parameters": []
+            },
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0,
+                "parameters": []
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ]
+    },
+    {
+      "id": 45,
+      "name": "CRT 잡음 기사",
+      "note": "",
+      "x": 19,
+      "y": 31,
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 2,
+            "characterName": "Actor2",
+            "direction": 2,
+            "pattern": 1,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 101,
+              "indent": 0,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 0,
+              "parameters": [
+                "<color value=#ff9977>◈ 잡음 기사 / 스태틱</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 0,
+              "parameters": [
+                "<color value=#ffccaa>수평 지터</color>와 <color value=#ffccaa>신호 잡음</color> 효과입니다."
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 0,
+              "parameters": [
+                "TV 수신 불량 시 나타나는 스캔라인 흔들림과"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 0,
+              "parameters": [
+                "랜덤 노이즈를 재현합니다."
+              ]
+            },
+            {
+              "code": 102,
+              "indent": 0,
+              "parameters": [
+                [
+                  "약한 잡음",
+                  "강한 잡음 (눈보라)",
+                  "지터만 (흔들림)",
+                  "끄기",
+                  "취소"
+                ],
+                4
+              ]
+            },
+            {
+              "code": 402,
+              "indent": 0,
+              "parameters": [
+                0,
+                "약한 잡음"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 1,
+              "parameters": [
+                "PPEffectCRTNoise on 0.002 0.03"
+              ]
+            },
+            {
+              "code": 101,
+              "indent": 1,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#ff9977>◈ 잡음 기사 / 스태틱</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#aaffaa>약한 잡음 활성화!</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "거의 눈치채기 어려운 미세한 잡음입니다."
+              ]
+            },
+            {
+              "code": 402,
+              "indent": 0,
+              "parameters": [
+                1,
+                "강한 잡음 (눈보라)"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 1,
+              "parameters": [
+                "PPEffectCRTNoise on 0.008 0.12"
+              ]
+            },
+            {
+              "code": 101,
+              "indent": 1,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#ff9977>◈ 잡음 기사 / 스태틱</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#aaffaa>강한 잡음!</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "수신 불량처럼 강하게 흔들립니다."
+              ]
+            },
+            {
+              "code": 402,
+              "indent": 0,
+              "parameters": [
+                2,
+                "지터만 (흔들림)"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 1,
+              "parameters": [
+                "PPEffectCRTNoise on 0.006 0.02"
+              ]
+            },
+            {
+              "code": 101,
+              "indent": 1,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#ff9977>◈ 잡음 기사 / 스태틱</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#aaffaa>수평 지터 활성화!</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "일부 스캔라인이 수평으로 밀립니다."
+              ]
+            },
+            {
+              "code": 402,
+              "indent": 0,
+              "parameters": [
+                3,
+                "끄기"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 1,
+              "parameters": [
+                "PPEffectCRTNoise off"
+              ]
+            },
+            {
+              "code": 101,
+              "indent": 1,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#ff9977>◈ 잡음 기사 / 스태틱</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#ffaa88>신호 잡음 해제.</color>"
+              ]
+            },
+            {
+              "code": 402,
+              "indent": 0,
+              "parameters": [
+                4,
+                "취소"
+              ]
+            },
+            {
+              "code": 404,
+              "indent": 0,
+              "parameters": []
+            },
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0,
+                "parameters": []
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ]
+    },
+    {
+      "id": 46,
+      "name": "CRT 모서리 기사",
+      "note": "",
+      "x": 19,
+      "y": 35,
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 4,
+            "characterName": "Actor2",
+            "direction": 2,
+            "pattern": 1,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 101,
+              "indent": 0,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 0,
+              "parameters": [
+                "<color value=#88ffcc>◈ 모서리 기사 / 라운도</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 0,
+              "parameters": [
+                "CRT 화면의 <color value=#aaffdd>둥근 모서리</color> 마스크입니다."
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 0,
+              "parameters": [
+                "실제 브라운관은 유리 곡면 때문에 화면 모서리가"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 0,
+              "parameters": [
+                "어둡게 처리됩니다. 그 특징을 재현합니다."
+              ]
+            },
+            {
+              "code": 102,
+              "indent": 0,
+              "parameters": [
+                [
+                  "약한 라운드 (0.05)",
+                  "중간 라운드 (0.1)",
+                  "강한 라운드 (0.18)",
+                  "끄기",
+                  "취소"
+                ],
+                4
+              ]
+            },
+            {
+              "code": 402,
+              "indent": 0,
+              "parameters": [
+                0,
+                "약한 라운드 (0.05)"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 1,
+              "parameters": [
+                "PPEffectCRTCorner on 0.05"
+              ]
+            },
+            {
+              "code": 101,
+              "indent": 1,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#88ffcc>◈ 모서리 기사 / 라운도</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#aaffaa>약한 모서리 마스크!</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "살짝 둥근 모서리입니다."
+              ]
+            },
+            {
+              "code": 402,
+              "indent": 0,
+              "parameters": [
+                1,
+                "중간 라운드 (0.1)"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 1,
+              "parameters": [
+                "PPEffectCRTCorner on 0.1"
+              ]
+            },
+            {
+              "code": 101,
+              "indent": 1,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#88ffcc>◈ 모서리 기사 / 라운도</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#aaffaa>중간 모서리 마스크!</color>"
+              ]
+            },
+            {
+              "code": 402,
+              "indent": 0,
+              "parameters": [
+                2,
+                "강한 라운드 (0.18)"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 1,
+              "parameters": [
+                "PPEffectCRTCorner on 0.18"
+              ]
+            },
+            {
+              "code": 101,
+              "indent": 1,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#88ffcc>◈ 모서리 기사 / 라운도</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#aaffaa>강한 모서리 마스크!</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "초기 CRT처럼 모서리가 크게 잘립니다."
+              ]
+            },
+            {
+              "code": 402,
+              "indent": 0,
+              "parameters": [
+                3,
+                "끄기"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 1,
+              "parameters": [
+                "PPEffectCRTCorner off"
+              ]
+            },
+            {
+              "code": 101,
+              "indent": 1,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#88ffcc>◈ 모서리 기사 / 라운도</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#ffaa88>모서리 마스크 해제.</color>"
+              ]
+            },
+            {
+              "code": 402,
+              "indent": 0,
+              "parameters": [
+                4,
+                "취소"
+              ]
+            },
+            {
+              "code": 404,
+              "indent": 0,
+              "parameters": []
+            },
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0,
+                "parameters": []
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ]
+    },
+    {
+      "id": 47,
+      "name": "CRT 마스터",
+      "note": "",
+      "x": 19,
+      "y": 33,
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 4,
+            "characterName": "Actor3",
+            "direction": 2,
+            "pattern": 1,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 101,
+              "indent": 0,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 0,
+              "parameters": [
+                "<color value=#ffff44>★ CRT 마스터 / 레트로</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 0,
+              "parameters": [
+                "모든 CRT 효과를 종합한 <color value=#ffff99>\"올드 브라운관\"</color> 프리셋."
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 0,
+              "parameters": [
+                "형광체·반사광·글로우·잡음·모서리·스캔라인·배럴"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 0,
+              "parameters": [
+                "7가지 효과를 한번에 적용합니다."
+              ]
+            },
+            {
+              "code": 102,
+              "indent": 0,
+              "parameters": [
+                [
+                  "■ CRT 모드 ON",
+                  "□ CRT 모드 OFF",
+                  "취소"
+                ],
+                2
+              ]
+            },
+            {
+              "code": 402,
+              "indent": 0,
+              "parameters": [
+                0,
+                "■ CRT 모드 ON"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 1,
+              "parameters": [
+                "PPEffectCRTCorner on 0.07"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 1,
+              "parameters": [
+                "PPEffectBarrel on 0.05 1"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 1,
+              "parameters": [
+                "PPEffectScanlines on 0.25 1"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 1,
+              "parameters": [
+                "PPEffectCRTPhosphor on 0 0.25"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 1,
+              "parameters": [
+                "PPEffectCRTGlare on 0.22"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 1,
+              "parameters": [
+                "PPEffectCRTGlow on 0.45"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 1,
+              "parameters": [
+                "PPEffectCRTNoise on 0.002 0.03"
+              ]
+            },
+            {
+              "code": 101,
+              "indent": 1,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#ffff44>★ CRT 마스터 / 레트로</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#aaffaa>✓ 올드 브라운관 모드 ON!</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "모서리·배럴·스캔라인·형광체·반사광"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "글로우·신호잡음 — 전부 활성화!"
+              ]
+            },
+            {
+              "code": 402,
+              "indent": 0,
+              "parameters": [
+                1,
+                "□ CRT 모드 OFF"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 1,
+              "parameters": [
+                "PPEffectCRTCorner off"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 1,
+              "parameters": [
+                "PPEffectBarrel off 1"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 1,
+              "parameters": [
+                "PPEffectScanlines off 1"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 1,
+              "parameters": [
+                "PPEffectCRTPhosphor off"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 1,
+              "parameters": [
+                "PPEffectCRTGlare off"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 1,
+              "parameters": [
+                "PPEffectCRTGlow off"
+              ]
+            },
+            {
+              "code": 356,
+              "indent": 1,
+              "parameters": [
+                "PPEffectCRTNoise off"
+              ]
+            },
+            {
+              "code": 101,
+              "indent": 1,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#ffff44>★ CRT 마스터 / 레트로</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "<color value=#ffaa88>✗ CRT 모드 해제.</color>"
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 1,
+              "parameters": [
+                "모든 CRT 효과가 비활성화되었습니다."
+              ]
+            },
+            {
+              "code": 402,
+              "indent": 0,
+              "parameters": [
+                2,
+                "취소"
+              ]
+            },
+            {
+              "code": 404,
+              "indent": 0,
+              "parameters": []
+            },
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0,
+                "parameters": []
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ]
     }
   ]
 }
