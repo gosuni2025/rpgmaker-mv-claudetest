@@ -3181,6 +3181,10 @@
       "name": "불꽃 그림 셰이더 데모",
       "showName": true
     },
+    "40": {
+      "name": "애너글리프 기사",
+      "showName": true
+    },
     "43": {
       "name": "CRT 반사광 기사",
       "showName": true
@@ -3195,6 +3199,10 @@
     },
     "47": {
       "name": "CRT 마스터",
+      "showName": true
+    },
+    "48": {
+      "name": "이미지 변환 테스트",
       "showName": true
     }
   },
