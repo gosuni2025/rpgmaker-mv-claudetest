@@ -1817,6 +1817,21 @@ PostProcess._updateUniforms = function() {
         return;
     }
 
+    // Scene_Map이 활성 씬이 아니거나 맵 로드가 완료되지 않은 경우 FoW를 숨김
+    // _mapLoaded: Scene_Map.isReady()에서 onMapLoaded 호출 후 true로 설정됨
+    // → 씬 전환 후 새 Scene_Map이 create되었지만 로드 전 프레임에서 FoW가 잠깐 보이는 현상 방지
+    var _isMapScene = typeof SceneManager !== 'undefined' &&
+                      typeof Scene_Map !== 'undefined' &&
+                      SceneManager._scene instanceof Scene_Map &&
+                      SceneManager._scene._mapLoaded;
+    if (!_isMapScene) {
+        if (FogOfWar._fogGroup) FogOfWar._fogGroup.visible = false;
+        _fowProf.total += performance.now() - _t0;
+        _fowProf.frameCount++;
+        _fowProf.log();
+        return;
+    }
+
     // enabled2D/enabled3D에 따라 현재 모드에서 FoW를 숨김
     var _is3D = typeof Mode3D !== 'undefined' && Mode3D._active;
     if ((_is3D && !FogOfWar._enabled3D) || (!_is3D && !FogOfWar._enabled2D)) {
