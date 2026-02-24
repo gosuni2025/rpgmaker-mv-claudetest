@@ -988,6 +988,12 @@
     win.rotation = totalRotation;
     if (win.rotationX !== undefined) win.rotationX = totalRotationX;
     if (win.rotationY !== undefined) win.rotationY = totalRotationY;
+    // DEBUG
+    if ((totalRotationX !== 0 || totalRotationY !== 0) && win._threeObj) {
+      console.log('[UITheme rotateXY] set rotX='+totalRotationX.toFixed(3)+' rotY='+totalRotationY.toFixed(3)+
+        ' | _rotY='+win._rotationY+' | threeRotY='+win._threeObj.rotation.y+
+        ' | threeRotX='+win._threeObj.rotation.x);
+    }
   }
 
   /** 등장 애니메이션이 완전히 끝났는지 확인 */
