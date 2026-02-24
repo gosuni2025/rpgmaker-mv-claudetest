@@ -1470,6 +1470,17 @@
     "maxBlur": 0.13,
     "blurPower": 2.4
   },
+  "postProcessConfig": {
+    "scanlines": {
+      "enabled": true
+    },
+    "posterize": {
+      "enabled": true
+    },
+    "barrelDistort": {
+      "enabled": true
+    }
+  },
   "fogOfWar": {
     "enabled": false,
     "radius": 5,
