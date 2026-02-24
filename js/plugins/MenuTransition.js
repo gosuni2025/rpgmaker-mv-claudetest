@@ -30,8 +30,8 @@
  * @text 블러 강도 (px)
  * @type number
  * @min 0
- * @max 30
- * @default 12
+ * @max 200
+ * @default 24
  *
  * @param overlayColor
  * @text 오버레이 색상 (R,G,B)
@@ -96,9 +96,10 @@
         return (EasingFn[Cfg.easing] || EasingFn.easeOut)(t);
     }
 
-    // ── Three.js 2-pass Gaussian Blur ─────────────────────────────────────────
+    // ── Three.js Multi-pass Gaussian Blur ────────────────────────────────────
     // PostProcess._composer.renderer (THREE.WebGLRenderer) 로 렌더링.
     // flipY=false → readRenderTargetPixels 에서 Y flip 불필요.
+    // 3회 H+V 반복: sigma_total = sigma_per_pass * sqrt(3) → 강한 블러.
 
     var _BLUR_VS = [
         'varying vec2 vUv;',
@@ -108,7 +109,7 @@
         '}'
     ].join('\n');
 
-    // 25-tap 가우시안: sigma = blurPx / 3.5, ±12 샘플
+    // 41-tap 가우시안: sigma = blurPx / 2.0, ±20 샘플
     var _BLUR_H_FS = [
         'uniform sampler2D tDiffuse;',
         'uniform float sigma;',
@@ -116,7 +117,7 @@
         'varying vec2 vUv;',
         'void main() {',
         '    vec4 c = vec4(0.0); float t = 0.0;',
-        '    for (int i = -12; i <= 12; i++) {',
+        '    for (int i = -20; i <= 20; i++) {',
         '        float w = exp(-float(i * i) / (2.0 * sigma * sigma));',
         '        c += texture2D(tDiffuse, vUv + vec2(float(i) * stepX, 0.0)) * w;',
         '        t += w;',
@@ -132,7 +133,7 @@
         'varying vec2 vUv;',
         'void main() {',
         '    vec4 c = vec4(0.0); float t = 0.0;',
-        '    for (int i = -12; i <= 12; i++) {',
+        '    for (int i = -20; i <= 20; i++) {',
         '        float w = exp(-float(i * i) / (2.0 * sigma * sigma));',
         '        c += texture2D(tDiffuse, vUv + vec2(0.0, float(i) * stepY)) * w;',
         '        t += w;',
@@ -142,100 +143,86 @@
     ].join('\n');
 
     function blurBitmapThreeJS(srcBitmap, blurPx) {
-        console.log('[MT] blurBitmapThreeJS start, blurPx=', blurPx);
-
         var composer = PostProcess._composer;
-        console.log('[MT] PostProcess._composer=', composer);
         var renderer = composer && composer.renderer;
-        console.log('[MT] renderer=', renderer);
-        if (!renderer) {
-            console.warn('[MT] renderer 없음 → 블러 스킵');
-            return null;
-        }
+        console.log('[MT] blur start: blurPx=', blurPx, 'composer=', !!composer, 'renderer=', !!renderer);
+        if (!renderer) return null;
 
         var w = srcBitmap.width, h = srcBitmap.height;
-        console.log('[MT] src size:', w, h, 'srcBitmap._canvas=', srcBitmap._canvas);
 
-        // flipY=false: canvas top → GPU bottom → readback 시 y=0 = canvas top (flip 불필요)
+        // flipY=false: readback 시 Y flip 불필요
         var srcTex = new THREE.CanvasTexture(srcBitmap._canvas);
         srcTex.flipY = false;
         srcTex.minFilter = THREE.LinearFilter;
         srcTex.magFilter = THREE.LinearFilter;
         srcTex.needsUpdate = true;
-        console.log('[MT] srcTex created');
 
         var rtOpts = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter };
         var rt1 = new THREE.WebGLRenderTarget(w, h, rtOpts);
         var rt2 = new THREE.WebGLRenderTarget(w, h, rtOpts);
-        console.log('[MT] render targets created', rt1, rt2);
 
-        var sigma = Math.max(1.0, blurPx / 3.5);
-        console.log('[MT] sigma=', sigma);
+        // sigma 크게 — 3회 반복이므로 sigma_total = sigma * sqrt(3)
+        var sigma = Math.max(1.0, blurPx / 2.0);
+        var PASSES = 3;
 
-        // Pass 1: 수평 블러
-        var hMat = new THREE.ShaderMaterial({
-            uniforms: {
-                tDiffuse: { value: srcTex },
-                sigma:    { value: sigma },
-                stepX:    { value: 1.0 / w }
-            },
-            vertexShader:   _BLUR_VS,
-            fragmentShader: _BLUR_H_FS,
-            depthTest: false, depthWrite: false
-        });
-        var fsq = new FullScreenQuad(hMat);
-        renderer.setRenderTarget(rt1);
-        renderer.clear();
-        fsq.render(renderer);
-        console.log('[MT] H blur pass done');
+        var fsq = new FullScreenQuad(new THREE.MeshBasicMaterial());
 
-        // Pass 2: 수직 블러
-        var vMat = new THREE.ShaderMaterial({
-            uniforms: {
-                tDiffuse: { value: rt1.texture },
-                sigma:    { value: sigma },
-                stepY:    { value: 1.0 / h }
-            },
-            vertexShader:   _BLUR_VS,
-            fragmentShader: _BLUR_V_FS,
-            depthTest: false, depthWrite: false
-        });
-        fsq.material = vMat;
-        renderer.setRenderTarget(rt2);
-        renderer.clear();
-        fsq.render(renderer);
-        renderer.setRenderTarget(null);
-        console.log('[MT] V blur pass done');
+        for (var pass = 0; pass < PASSES; pass++) {
+            var inputTex = (pass === 0) ? srcTex : rt2.texture;
 
-        // 원본 픽셀 샘플링 (중앙)
-        var cx = (w / 2 | 0) * 4, cy = h / 2 | 0;
-        try {
-            var srcData = srcBitmap._context.getImageData(w / 2 | 0, cy, 1, 1).data;
-            console.log('[MT] 원본 중앙 pixel:', srcData[0], srcData[1], srcData[2], srcData[3]);
-        } catch(e) { console.warn('[MT] 원본 getImageData 실패:', e); }
+            // H pass: input → rt1
+            var hMat = new THREE.ShaderMaterial({
+                uniforms: {
+                    tDiffuse: { value: inputTex },
+                    sigma:    { value: sigma },
+                    stepX:    { value: 1.0 / w }
+                },
+                vertexShader:   _BLUR_VS,
+                fragmentShader: _BLUR_H_FS,
+                depthTest: false, depthWrite: false
+            });
+            fsq.material = hMat;
+            renderer.setRenderTarget(rt1);
+            renderer.clear();
+            fsq.render(renderer);
+            hMat.dispose();
 
-        // 픽셀 읽기 (flipY=false → y=0 이 canvas 상단, Y flip 불필요)
-        var pixels = new Uint8Array(w * h * 4);
-        try {
-            renderer.readRenderTargetPixels(rt2, 0, 0, w, h, pixels);
-            // 중앙 픽셀 (y=cy 행, x=w/2 열)
-            var midOff = cy * w * 4 + (w / 2 | 0) * 4;
-            console.log('[MT] 블러 중앙 pixel:', pixels[midOff], pixels[midOff+1], pixels[midOff+2], pixels[midOff+3]);
-            console.log('[MT] 블러 좌상단 pixel:', pixels[0], pixels[1], pixels[2], pixels[3]);
-        } catch(e) {
-            console.error('[MT] readRenderTargetPixels 에러:', e);
+            // V pass: rt1 → rt2
+            var vMat = new THREE.ShaderMaterial({
+                uniforms: {
+                    tDiffuse: { value: rt1.texture },
+                    sigma:    { value: sigma },
+                    stepY:    { value: 1.0 / h }
+                },
+                vertexShader:   _BLUR_VS,
+                fragmentShader: _BLUR_V_FS,
+                depthTest: false, depthWrite: false
+            });
+            fsq.material = vMat;
+            renderer.setRenderTarget(rt2);
+            renderer.clear();
+            fsq.render(renderer);
+            vMat.dispose();
         }
+
+        renderer.setRenderTarget(null);
+        console.log('[MT] 모든 패스 완료 (' + PASSES + '회)');
+
+        // 픽셀 읽기 (rt2 → Uint8Array → Bitmap)
+        var pixels = new Uint8Array(w * h * 4);
+        renderer.readRenderTargetPixels(rt2, 0, 0, w, h, pixels);
+        // 중앙 픽셀 샘플
+        var mOff = (h / 2 | 0) * w * 4 + (w / 2 | 0) * 4;
+        console.log('[MT] readback 중앙 pixel:', pixels[mOff], pixels[mOff+1], pixels[mOff+2], pixels[mOff+3]);
 
         var dst = new Bitmap(w, h);
         var imgData = dst._context.createImageData(w, h);
         imgData.data.set(pixels);
         dst._context.putImageData(imgData, 0, 0);
         dst._setDirty();
-        console.log('[MT] dst bitmap created, 최종 처리 완료');
 
-        // 정리
         rt1.dispose(); rt2.dispose();
-        srcTex.dispose(); hMat.dispose(); vMat.dispose(); fsq.dispose();
+        srcTex.dispose(); fsq.dispose();
 
         return dst;
     }
@@ -262,8 +249,20 @@
         }
 
         // --- Three.js blur ---
-        var blurredBitmap = (blurPx > 0) ? blurBitmapThreeJS(rawBitmap, blurPx) : null;
+        var blurredBitmap = null;
+        if (blurPx > 0) {
+            blurredBitmap = blurBitmapThreeJS(rawBitmap, blurPx);
+            // 원본 vs 블러 중앙 픽셀 비교
+            try {
+                var cy = h / 2 | 0, cx = w / 2 | 0;
+                var orig = rawBitmap._context.getImageData(cx, cy, 1, 1).data;
+                var blrd = blurredBitmap && blurredBitmap._context.getImageData(cx, cy, 1, 1).data;
+                console.log('[MT] 원본 중앙:', orig[0], orig[1], orig[2],
+                            '/ 블러 결과:', blrd ? blrd[0]+','+blrd[1]+','+blrd[2] : 'null');
+            } catch(e) { console.warn('[MT] pixel check 실패:', e); }
+        }
         var srcBitmap = blurredBitmap || rawBitmap;
+        console.log('[MT] blurPx=', blurPx, 'blurredBitmap=', !!blurredBitmap, 'srcBitmap===raw:', srcBitmap === rawBitmap);
 
         // --- dst 에 복사 + 오버레이 ---
         var dst = new Bitmap(w, h);
@@ -334,8 +333,6 @@
     // createBackground: 원본 스프라이트(불투명) + 후처리 스프라이트(opacity 0→255)
     Scene_MenuBase.prototype.createBackground = function () {
         var raw = SceneManager.backgroundBitmap();
-        console.log('[MT] createBackground, raw=', raw && raw.width, raw && raw.height,
-                    'effect=', Cfg.effect, 'blur=', Cfg.blur, 'duration=', this._mtDurationMs);
         this._backgroundSprite = new Sprite();
         this._backgroundSprite.bitmap = raw;
         this.addChild(this._backgroundSprite);
@@ -367,7 +364,8 @@
             // ── 열기 애니메이션: wall-clock 기반
             if (!this._mtStartTime) this._mtStartTime = now;
             var t = Math.min(1, (now - this._mtStartTime) / this._mtDurationMs);
-            spr.opacity = Math.round(applyEase(t) * 255);
+            var newOp = Math.round(applyEase(t) * 255);
+            spr.opacity = newOp;
         } else {
             // ── 닫기 애니메이션: 시작 시각 기록 후 역방향
             if (!this._mtCloseTime) {

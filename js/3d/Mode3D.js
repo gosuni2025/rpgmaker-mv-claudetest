@@ -1333,7 +1333,54 @@
                     Mode3D._yawDeg = yawVal;
                 }
             }
+
+            // transition_on / transition_off: 페이드 아웃 → 모드 전환 → 페이드 인
+            // 사용법: Mode3D transition_on [frames]   (기본 30프레임, 페이드 아웃+인 각각)
+            //         Mode3D transition_off [frames]
+            if (args[0] === 'transition_on' || args[0] === 'transition_off') {
+                var dur = args[1] ? parseInt(args[1]) : 30;
+                var toOn = (args[0] === 'transition_on');
+                $gameScreen.startFadeOut(dur);
+                this._mode3dTransitionTo = toOn;
+                this._mode3dFadeDur = dur;
+                this.setWaitMode('mode3dFade');
+            }
         }
+    };
+
+    //=========================================================================
+    // Game_Interpreter.updateWaitMode — mode3dFade 대기 처리
+    // 페이드 아웃 완료 시 모드 전환 후 페이드 인, 페이드 인 완료 시 대기 해제
+    //=========================================================================
+    var _updateWaitMode_m3d = Game_Interpreter.prototype.updateWaitMode;
+    Game_Interpreter.prototype.updateWaitMode = function() {
+        if (this._waitMode === 'mode3dFade') {
+            if ($gameScreen.brightness() > 0) {
+                // 아직 페이드 아웃 중 — 대기
+                return true;
+            }
+            // 화면이 완전히 검어짐 → 모드 전환
+            if (this._mode3dTransitionTo) {
+                ConfigManager.mode3d = true;
+                if ($gameSystem) $gameSystem._mode3dOverride = true;
+            } else {
+                ConfigManager.mode3d = false;
+                if ($gameSystem) $gameSystem._mode3dOverride = false;
+            }
+            $gameScreen.startFadeIn(this._mode3dFadeDur);
+            this._waitMode = 'mode3dFadeIn';
+            return true;
+        }
+        if (this._waitMode === 'mode3dFadeIn') {
+            if ($gameScreen.brightness() < 255) {
+                // 아직 페이드 인 중 — 대기
+                return true;
+            }
+            // 페이드 인 완료
+            this._waitMode = '';
+            return false;
+        }
+        return _updateWaitMode_m3d.call(this);
     };
 
 })();

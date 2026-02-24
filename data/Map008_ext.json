@@ -1494,7 +1494,7 @@
     "edgeAnimation": true,
     "edgeAnimationSpeed": 1,
     "fogMode": "2d",
-    "enabled2D": true
+    "enabled2D": false
   },
   "testStartPosition": {
     "x": 19,
@@ -3183,6 +3183,10 @@
     },
     "40": {
       "name": "애너글리프 기사",
+      "showName": true
+    },
+    "41": {
+      "name": "ParallaxUV 데모",
       "showName": true
     },
     "43": {
