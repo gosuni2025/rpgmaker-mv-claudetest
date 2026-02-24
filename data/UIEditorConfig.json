@@ -17,7 +17,15 @@
       "windowskinName": "kenney_ui-pack-pixel-adventure/Tilesheets/Small tiles/Thick outline/tilemap",
       "windowStyle": "image",
       "skinId": "kenny",
-      "imageFile": "Window_Options_img"
+      "imageFile": "Window_Options_img",
+      "entrances": [
+        {
+          "type": "fade",
+          "duration": 996,
+          "easing": "easeOut",
+          "delay": 0
+        }
+      ]
     }
   }
 }

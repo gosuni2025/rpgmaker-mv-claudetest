@@ -555,6 +555,11 @@
       if (win.createContents) win.createContents();
       if (win.refresh) win.refresh();
     }
+
+    // 등장 효과 시작
+    if (Array.isArray(ov.entrances) && ov.entrances.length > 0) {
+      startEntranceAnimation(win, ov.entrances, className);
+    }
   }
 
   //===========================================================================
@@ -830,5 +835,154 @@
   // ── Window_MenuStatus (perActor — y 오버라이드 안 함) ────────────────────
   wrapDraw(Window_MenuStatus, 'Window_MenuStatus', 'drawActorFace',    'actorFace',    3, null, 5, 6);
   wrapDraw(Window_MenuStatus, 'Window_MenuStatus', 'drawSimpleStatus', 'simpleStatus', 1, null, 3, null);
+
+  //===========================================================================
+  // 창 등장 효과 (Entrance Animation)
+  //===========================================================================
+
+  /** 이징 함수 */
+  function uiEase(t, easing) {
+    t = Math.max(0, Math.min(1, t));
+    switch (easing) {
+      case 'linear':   return t;
+      case 'easeIn':   return t * t;
+      case 'easeInOut':return t < 0.5 ? 2 * t * t : 1 - 2 * (1 - t) * (1 - t);
+      case 'bounce':
+        if (t < 1 / 2.75)       return 7.5625 * t * t;
+        else if (t < 2 / 2.75)  return 7.5625 * (t -= 1.5 / 2.75) * t + 0.75;
+        else if (t < 2.5 / 2.75)return 7.5625 * (t -= 2.25 / 2.75) * t + 0.9375;
+        else                     return 7.5625 * (t -= 2.625 / 2.75) * t + 0.984375;
+      default: /* easeOut */     return 1 - (1 - t) * (1 - t);
+    }
+  }
+
+  /** 등장 애니메이션 시작 — applyLayout 후 호출 */
+  function startEntranceAnimation(win, entrances, className) {
+    if (!entrances || entrances.length === 0) return;
+
+    // zoom / bounce / rotate 효과가 있으면 창 중심 pivot 설정
+    var needPivot = entrances.some(function (e) {
+      return e.type === 'zoom' || e.type === 'rotate' || e.type === 'bounce';
+    });
+    var pivotX = 0, pivotY = 0;
+    var originalX = win.x, originalY = win.y;
+    if (needPivot && win.pivot) {
+      pivotX = Math.floor((win.width || 0) / 2);
+      pivotY = Math.floor((win.height || 0) / 2);
+      win.pivot.x = pivotX;
+      win.pivot.y = pivotY;
+      // pivot 변경 시 화면 위치 보정
+      win.x = originalX + pivotX;
+      win.y = originalY + pivotY;
+    }
+
+    win._uiEntrance = {
+      effects: entrances,
+      elapsed: 0,
+      screenX: originalX,          // 원래 화면 좌표 (slide 기준)
+      screenY: originalY,
+      baseX: win.x,                // pivot 보정 후 x
+      baseY: win.y,
+      baseAlpha: win.alpha !== undefined ? win.alpha : 1,
+      pivotX: pivotX,
+      pivotY: pivotY,
+      className: className,
+    };
+    _applyEntranceFrame(win, 0);
+  }
+
+  /** 매 프레임 등장 상태 계산 및 적용 */
+  function _applyEntranceFrame(win, elapsed) {
+    var state = win._uiEntrance;
+    if (!state) return;
+
+    var effects = state.effects;
+    // slide 계산은 pivot 보정 전 화면 좌표 기준
+    var totalX = state.screenX, totalY = state.screenY;
+    var totalAlpha = 1;
+    var totalScaleX = 1, totalScaleY = 1;
+    var totalRotation = 0;
+    var sw = (typeof Graphics !== 'undefined' ? Graphics.width : 816);
+    var sh = (typeof Graphics !== 'undefined' ? Graphics.height : 624);
+
+    for (var i = 0; i < effects.length; i++) {
+      var eff = effects[i];
+      var delay = eff.delay || 0;
+      var localElapsed = elapsed - delay;
+      var p = localElapsed <= 0 ? 0 : uiEase(Math.min(localElapsed / eff.duration, 1), eff.easing);
+
+      switch (eff.type) {
+        case 'fade':
+          totalAlpha *= p;
+          break;
+        case 'slideLeft':
+          totalX += -(1 - p) * (state.screenX + (win.width || 0));
+          break;
+        case 'slideRight':
+          totalX += (1 - p) * (sw - state.screenX);
+          break;
+        case 'slideTop':
+          totalY += -(1 - p) * (state.screenY + (win.height || 0));
+          break;
+        case 'slideBottom':
+          totalY += (1 - p) * (sh - state.screenY);
+          break;
+        case 'zoom':
+        case 'bounce': {
+          var from = (eff.fromScale !== undefined ? eff.fromScale : 0);
+          var s = from + p * (1 - from);
+          totalScaleX *= s; totalScaleY *= s;
+          break;
+        }
+        case 'rotate': {
+          var angle = (eff.fromAngle !== undefined ? eff.fromAngle : 180);
+          totalRotation += angle * (1 - p) * Math.PI / 180;
+          break;
+        }
+      }
+    }
+
+    // 전체 alpha — win.alpha로 컨텐츠 포함 모든 자식에 적용
+    win.alpha = state.baseAlpha * totalAlpha;
+    // 위치: pivot 보정 복원
+    win.x = Math.round(totalX) + state.pivotX;
+    win.y = Math.round(totalY) + state.pivotY;
+    if (win.scale) { win.scale.x = totalScaleX; win.scale.y = totalScaleY; }
+    win.rotation = totalRotation;
+  }
+
+  /** 등장 애니메이션이 완전히 끝났는지 확인 */
+  function _isEntranceDone(elapsed, effects) {
+    for (var i = 0; i < effects.length; i++) {
+      if (elapsed < (effects[i].delay || 0) + effects[i].duration) return false;
+    }
+    return true;
+  }
+
+  /** Window_Base.prototype.update 훅 — 매 프레임 등장 애니메이션 처리 */
+  var _WB_update = Window_Base.prototype.update;
+  Window_Base.prototype.update = function () {
+    _WB_update.call(this);
+    if (!this._uiEntrance) return;
+    var state = this._uiEntrance;
+    state.elapsed += 1000 / 60;
+    if (_isEntranceDone(state.elapsed, state.effects)) {
+      // 최종값으로 정리 + pivot 복원
+      if (this.pivot && state.pivotX) {
+        this.pivot.x = 0; this.pivot.y = 0;
+        this.x = state.screenX;
+        this.y = state.screenY;
+      } else {
+        this.x = state.baseX;
+        this.y = state.baseY;
+      }
+      this.alpha = state.baseAlpha;
+      if (this.scale) { this.scale.x = 1; this.scale.y = 1; }
+      this.rotation = 0;
+      this._uiEntrance = null;
+    } else {
+      _applyEntranceFrame(this, state.elapsed);
+    }
+  };
 
 })();
