@@ -94,11 +94,13 @@ jobs:
         run: |
           SITE_ID="${{ steps.site.outputs.site_id }}"
           if [ -z "$SITE_ID" ]; then
-            netlify deploy --dir=. --prod \
-              --site-name=rpgmaker-mv-claudetest \
-              --auth=$NETLIFY_AUTH_TOKEN
-          else
-            netlify deploy --dir=. --prod \
-              --site=$SITE_ID \
-              --auth=$NETLIFY_AUTH_TOKEN
+            echo "새 사이트 생성..."
+            SITE_ID=$(netlify api createSite \
+              --auth=$NETLIFY_AUTH_TOKEN \
+              --data '{"name":"rpgmaker-mv-claudetest"}' | \
+              python3 -c "import json,sys; print(json.load(sys.stdin)['id'])")
+            echo "생성된 Site ID: $SITE_ID"
           fi
+          netlify deploy --dir=. --prod \
+            --site=$SITE_ID \
+            --auth=$NETLIFY_AUTH_TOKEN
