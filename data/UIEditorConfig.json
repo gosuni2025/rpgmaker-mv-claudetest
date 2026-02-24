@@ -11,6 +11,11 @@
       "windowStyle": "frame",
       "windowskinName": "Window",
       "skinId": "Window"
+    },
+    "Window_Options": {
+      "className": "Window_Options",
+      "windowStyle": "image",
+      "windowskinName": "Window_Options_img"
     }
   }
 }
