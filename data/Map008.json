@@ -16746,7 +16746,7 @@
             "wait": false
           },
           "moveSpeed": 3,
-          "moveType": 0,
+          "moveType": 3,
           "priorityType": 1,
           "stepAnime": false,
           "through": false,
