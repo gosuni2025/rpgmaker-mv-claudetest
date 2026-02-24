@@ -48,11 +48,11 @@
           "delay": 0
         },
         {
-          "type": "rotate",
+          "type": "rotateX",
           "duration": 300,
           "easing": "easeOut",
           "delay": 0,
-          "fromAngle": 82
+          "fromAngle": 30
         }
       ],
       "exits": [
