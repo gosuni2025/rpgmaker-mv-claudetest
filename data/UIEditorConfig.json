@@ -48,7 +48,7 @@
           "delay": 0
         },
         {
-          "type": "rotateX",
+          "type": "rotateY",
           "duration": 300,
           "easing": "easeOut",
           "delay": 0,
