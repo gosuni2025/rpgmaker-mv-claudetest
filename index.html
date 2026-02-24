@@ -2,28 +2,141 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
         <meta name="viewport" content="user-scalable=no">
         <link rel="icon" href="icon/icon.png" type="image/png">
         <link rel="apple-touch-icon" href="icon/icon.png">
         <link rel="stylesheet" type="text/css" href="fonts/gamefont.css">
-        <title>claudetest</title>
+        <title>Game</title>
     </head>
     <body style="background-color: black">
-        <script type="text/javascript" src="js/libs/pixi.js"></script>
-        <script type="text/javascript" src="js/libs/pixi-tilemap.js"></script>
-        <script type="text/javascript" src="js/libs/pixi-picture.js"></script>
+        <script type="text/javascript" src="js/libs/three.global.min.js"></script>
         <script type="text/javascript" src="js/libs/fpsmeter.js"></script>
         <script type="text/javascript" src="js/libs/lz-string.js"></script>
         <script type="text/javascript" src="js/libs/iphone-inline-video.browser.js"></script>
-        <script type="text/javascript" src="js/rpg_core.js"></script>
-        <script type="text/javascript" src="js/rpg_managers.js"></script>
-        <script type="text/javascript" src="js/rpg_objects.js"></script>
-        <script type="text/javascript" src="js/rpg_scenes.js"></script>
-        <script type="text/javascript" src="js/rpg_sprites.js"></script>
-        <script type="text/javascript" src="js/rpg_windows.js"></script>
+        <script type="text/javascript" src="js/3d/renderer/RendererFactory.js"></script>
+        <script type="text/javascript" src="js/3d/renderer/RendererStrategy.js"></script>
+        <script type="text/javascript" src="js/3d/renderer/three/ThreeRendererFactory.js"></script>
+        <script type="text/javascript" src="js/3d/renderer/three/ThreeRendererStrategy.js"></script>
+        <script type="text/javascript" src="js/3d/renderer/three/ThreeContainer.js"></script>
+        <script type="text/javascript" src="js/3d/renderer/three/ThreeSprite.js"></script>
+        <script type="text/javascript" src="js/3d/renderer/three/ThreeGraphicsNode.js"></script>
+        <script type="text/javascript" src="js/3d/renderer/three/ThreeTilemap.js"></script>
+        <script type="text/javascript" src="js/3d/renderer/three/ThreeWaterShader.js"></script>
+        <script type="text/javascript" src="js/3d/renderer/three/ThreeFilters.js"></script>
+        <script type="text/javascript" src="js/3d/rpg_core.js"></script>
+        <script type="text/javascript" src="js/3d/rpg_managers.js"></script>
+        <script type="text/javascript" src="js/3d/DevPanelUtils.js"></script>
+        <script type="text/javascript" src="js/3d/ThreeDevOverlay.js"></script>
+        <script type="text/javascript" src="js/3d/RenderModeDevPanel.js"></script>
+        <script type="text/javascript" src="js/3d/TileIdDevOverlay.js"></script>
+        <script type="text/javascript" src="js/3d/MemoryDevPanel.js"></script>
+        <script type="text/javascript" src="js/3d/DepthDebugPanel.js"></script>
+        <script type="text/javascript" src="js/3d/FogOfWarDevPanel.js"></script>
+        <script type="text/javascript" src="js/3d/CameraZoneDevOverlay.js"></script>
+        <script type="text/javascript" src="js/3d/rpg_objects.js"></script>
+        <script type="text/javascript" src="js/3d/rpg_scenes.js"></script>
+        <script type="text/javascript" src="js/3d/rpg_sprites.js"></script>
+        <script type="text/javascript" src="js/3d/rpg_windows.js"></script>
+        <script type="text/javascript" src="js/3d/PluginTween.js"></script>
+        <script type="text/javascript" src="js/3d/Mode3D.js"></script>
+        <script type="text/javascript" src="js/3d/ShadowAndLight.js"></script>
+        <script type="text/javascript" src="js/3d/PostProcessEffects.js"></script>
+        <script type="text/javascript" src="js/3d/PostProcess.js"></script>
+        <script type="text/javascript" src="js/3d/PictureShader.js"></script>
+        <script type="text/javascript" src="js/3d/FogOfWar.js"></script>
+        <script type="text/javascript" src="js/3d/FogOfWar3DVolume.js"></script>
+        <script type="text/javascript" src="js/3d/ExtendedText.js"></script>
         <script type="text/javascript" src="js/plugins.js"></script>
-        <script type="text/javascript" src="js/main.js"></script>
+        <script type="text/javascript">
+        // ── ServiceWorker 번들 초기화 ─────────────────────────────────────────
+        // SW가 img/audio/data ZIP을 Cache API에 저장한 뒤 main.js를 로드.
+        // SW 미지원 환경이거나 번들 API 없으면 바로 main.js 로드.
+        (function() {
+            var overlay = null;
+            var mainLoaded = false;  // loadMain() 이중 호출 방지
+
+            function createOverlay() {
+                overlay = document.createElement('div');
+                overlay.id = 'bundle-overlay';
+                overlay.style.cssText = [
+                    'position:fixed;inset:0;background:#000;z-index:9999',
+                    'display:flex;flex-direction:column;align-items:center;justify-content:center',
+                    'font-family:"Segoe UI",Arial,sans-serif;color:#ccc',
+                ].join(';');
+                overlay.innerHTML = [
+                    '<div style="font-size:15px;margin-bottom:20px;">리소스 다운로드 중...</div>',
+                    '<div id="bo-bar-wrap" style="width:360px;background:#222;border-radius:4px;overflow:hidden;height:8px">',
+                    '  <div id="bo-bar" style="height:8px;width:0%;background:linear-gradient(90deg,#2c6fc7,#55aaff);transition:width 0.15s"></div>',
+                    '</div>',
+                    '<div id="bo-text" style="font-size:12px;margin-top:10px;color:#888"></div>',
+                ].join('');
+                document.body.appendChild(overlay);
+            }
+
+            function setProgress(loaded, total) {
+                if (!overlay) return;
+                var pct = total > 0 ? Math.round(loaded / total * 100) : 0;
+                document.getElementById('bo-bar').style.width = pct + '%';
+                document.getElementById('bo-text').textContent = loaded + ' / ' + total + '  (' + pct + '%)';
+            }
+
+            function removeOverlay() {
+                if (overlay) { overlay.remove(); overlay = null; }
+            }
+
+            function loadMain() {
+                if (mainLoaded) return;
+                mainLoaded = true;
+                removeOverlay();
+                var s = document.createElement('script');
+                s.type = 'text/javascript';
+                s.src = 'js/3d/main.js';
+                document.body.appendChild(s);
+            }
+
+            if (!('serviceWorker' in navigator)) {
+                console.warn('[SW] navigator.serviceWorker 없음 (iframe sandbox 제한 또는 미지원 환경) → 번들 없이 로드');
+                loadMain();
+                return;
+            }
+
+            // SW 메시지 수신
+            // bundle-ready / bundle-skip / bundle-error → 캐시 준비 완료(또는 스킵) → 게임 시작
+            // bundle-error의 경우도 게임 시작 (캐시 없이 네트워크에서 로드)
+            navigator.serviceWorker.addEventListener('message', function(e) {
+                var msg = e.data;
+                if (!msg) return;
+                if (msg.type === 'bundle-progress') {
+                    setProgress(msg.loadedFiles, msg.totalFiles);
+                } else if (msg.type === 'bundle-ready' || msg.type === 'bundle-skip' || msg.type === 'bundle-error') {
+                    if (msg.type === 'bundle-skip')  console.warn('[SW] bundle-skip (번들 없음 → 직접 네트워크 로드):', msg.reason);
+                    if (msg.type === 'bundle-error') console.warn('[SW] bundle error:', msg.file, msg.error);
+                    loadMain();
+                }
+            });
+
+            // 안전망 타임아웃: SW가 응답하지 않아도 120초 후 게임 강제 시작
+            var fallbackTimer = setTimeout(loadMain, 120000);
+
+            createOverlay();
+
+            navigator.serviceWorker.register('sw.js', { scope: './' })
+                .then(function(reg) {
+                    if (reg.active && !reg.installing && !reg.waiting) {
+                        // 이미 활성화된 SW, 새 설치 없음 → 번들 캐시 이미 준비됨 → 바로 시작
+                        clearTimeout(fallbackTimer);
+                        loadMain();
+                    }
+                    // installing / waiting → SW install 이벤트에서 bundle-ready 메시지가 오면 loadMain()
+                })
+                .catch(function(err) {
+                    console.warn('[SW] 등록 실패:', err);
+                    clearTimeout(fallbackTimer);
+                    loadMain();
+                });
+        })();
+        </script>
     </body>
 </html>

@@ -24,6 +24,26 @@
           "duration": 996,
           "easing": "easeOut",
           "delay": 0
+        },
+        {
+          "type": "slideLeft",
+          "duration": 300,
+          "easing": "easeOut",
+          "delay": 0
+        }
+      ],
+      "exits": [
+        {
+          "type": "fade",
+          "duration": 300,
+          "easing": "easeOut",
+          "delay": 0
+        },
+        {
+          "type": "slideLeft",
+          "duration": 300,
+          "easing": "easeOut",
+          "delay": 0
         }
       ]
     }
