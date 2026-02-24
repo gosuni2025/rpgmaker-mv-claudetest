@@ -1138,12 +1138,16 @@ PostProcessEffects.EFFECT_PARAMS = {
         { key: 'color',   label: '안개 색상', type: 'color', default: '#ccd9e6' }
     ],
     godRays: [
-        { key: 'lightPosX', label: '조명 X', min: 0, max: 1, step: 0.01, default: 0.5 },
-        { key: 'lightPosY', label: '조명 Y', min: 0, max: 1, step: 0.01, default: 0 },
-        { key: 'exposure',  label: '노출',   min: 0, max: 1, step: 0.01, default: 0.3 },
-        { key: 'decay',     label: '감쇠',   min: 0.8, max: 1, step: 0.005, default: 0.95 },
-        { key: 'density',   label: '밀도',   min: 0, max: 2, step: 0.05, default: 0.8 },
-        { key: 'weight',    label: '가중치', min: 0, max: 1, step: 0.05, default: 0.4 }
+        { key: 'lightPosX',    label: '조명 X',    min: 0, max: 1,   step: 0.01,  default: 0.5 },
+        { key: 'lightPosY',    label: '조명 Y',    min: 0, max: 1,   step: 0.01,  default: 0 },
+        { key: 'exposure',     label: '노출',      min: 0, max: 1,   step: 0.01,  default: 0.3 },
+        { key: 'decay',        label: '감쇠',      min: 0.8, max: 1, step: 0.005, default: 0.95 },
+        { key: 'density',      label: '밀도',      min: 0, max: 2,   step: 0.05,  default: 0.8 },
+        { key: 'weight',       label: '가중치',    min: 0, max: 1,   step: 0.05,  default: 0.4 },
+        { key: 'threshold',    label: '임계값',    min: 0, max: 1,   step: 0.05,  default: 0.5 },
+        { key: 'rayColor',     label: '빛 색상',   type: 'color',    default: '#ffe8c0' },
+        { key: 'maxDistance',  label: '거리 감쇠', min: 0.3, max: 3, step: 0.1,   default: 1.5 },
+        { key: 'useOcclusion', label: '오클루전',  type: 'select', options: [{v:0,l:'루미넌스'},{v:1,l:'오클루전(3D)'}], default: 0 }
     ],
     radialBlur: [
         { key: 'centerX',  label: '중심 X', min: 0, max: 1, step: 0.01, default: 0.5 },
@@ -1218,7 +1222,9 @@ PostProcessEffects._UNIFORM_MAP = {
     toneMapping:  { exposure: 'uExposure', mode: 'uMode' },
     fog:          { density: 'uDensity', start: 'uStart', end: 'uEnd' },
     godRays:      { lightPosX: 'uLightPos', lightPosY: 'uLightPos', exposure: 'uExposure',
-                    decay: 'uDecay', density: 'uDensity', weight: 'uWeight' },
+                    decay: 'uDecay', density: 'uDensity', weight: 'uWeight',
+                    threshold: 'uThreshold', rayColor: 'uRayColor', maxDistance: 'uMaxDistance'
+                    /* useOcclusion: pass 플래그 — applyParam에서 특수 처리 */ },
     radialBlur:   { centerX: 'uCenter', centerY: 'uCenter', strength: 'uStrength' },
     waveDistortion: { amplitude: 'uAmplitude', waveWidth: 'uWaveWidth', speed: 'uSpeed' },
     anamorphic:   { threshold: 'uThreshold', intensity: 'uIntensity', streakLength: 'uStreakLength' },
@@ -1236,6 +1242,12 @@ PostProcessEffects._UNIFORM_MAP = {
 
 // 런타임에서 파라미터를 pass의 uniform에 적용
 PostProcessEffects.applyParam = function(effectKey, pass, paramKey, value) {
+    // godRays 특수 처리: useOcclusion은 uniform이 아닌 pass 플래그
+    if (effectKey === 'godRays' && paramKey === 'useOcclusion') {
+        if (pass._occlusionEnabled !== undefined) pass._occlusionEnabled = !!value;
+        return;
+    }
+
     var map = this._UNIFORM_MAP[effectKey];
     if (!map) return;
     var uniformName = map[paramKey];
@@ -1249,14 +1261,12 @@ PostProcessEffects.applyParam = function(effectKey, pass, paramKey, value) {
         } else if (paramKey.endsWith('Y') || paramKey === 'lightPosY' || paramKey === 'centerY') {
             u.value.y = value;
         }
-    } else if (uniformName === 'uColor' && u.value && u.value.isVector3) {
-        // fog color: parse hex string
-        if (typeof value === 'string' && value[0] === '#') {
-            var r = parseInt(value.substr(1,2),16)/255;
-            var g = parseInt(value.substr(3,2),16)/255;
-            var b = parseInt(value.substr(5,2),16)/255;
-            u.value.set(r, g, b);
-        }
+    } else if (u.value && u.value.isVector3 && typeof value === 'string' && value[0] === '#') {
+        // Vector3 색상 uniform: hex 문자열 파싱 (uColor, uRayColor 등 모든 색상 uniform에 적용)
+        var r = parseInt(value.substr(1,2),16)/255;
+        var g = parseInt(value.substr(3,2),16)/255;
+        var b = parseInt(value.substr(5,2),16)/255;
+        u.value.set(r, g, b);
     } else {
         u.value = value;
     }
