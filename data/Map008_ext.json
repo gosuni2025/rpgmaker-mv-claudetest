@@ -3141,6 +3141,18 @@
     "29": {
       "name": "숫자 입력 처리",
       "showName": true
+    },
+    "37": {
+      "name": "아지랑이 데모",
+      "showName": true
+    },
+    "38": {
+      "name": "용암 그림 셰이더 데모",
+      "showName": true
+    },
+    "39": {
+      "name": "불꽃 그림 셰이더 데모",
+      "showName": true
     }
   },
   "is3D": true
