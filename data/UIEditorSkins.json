@@ -1,5 +1,5 @@
 {
-  "defaultSkin": "kenny",
+  "defaultSkin": "Window",
   "skins": [
     {
       "name": "Window",
@@ -22,7 +22,11 @@
       "cursorRenderMode": "nineSlice",
       "cursorBlendMode": "normal",
       "cursorOpacity": 192,
-      "cursorBlink": true
+      "cursorBlink": true,
+      "cursorPadding": 2,
+      "cursorToneR": 0,
+      "cursorToneG": 0,
+      "cursorToneB": 0
     },
     {
       "name": "kenny",
