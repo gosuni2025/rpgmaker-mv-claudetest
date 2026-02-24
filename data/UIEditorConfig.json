@@ -96,7 +96,8 @@
           "easing": "easeOut",
           "delay": 0
         }
-      ]
+      ],
+      "renderCamera": "perspective"
     },
     "Window_Gold": {
       "className": "Window_Gold",
