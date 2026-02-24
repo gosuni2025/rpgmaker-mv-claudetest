@@ -35,6 +35,7 @@ jobs:
             echo "No changes to sync"
           else
             git commit -m "sync: demo-project update from $(cd .. && git rev-parse --short HEAD)"
+            git pull --rebase origin main
             git push
           fi
 
