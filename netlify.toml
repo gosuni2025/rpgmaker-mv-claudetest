@@ -1,0 +1,4 @@
+[[redirects]]
+  from = "/"
+  to = "/index_3d.html"
+  status = 200
