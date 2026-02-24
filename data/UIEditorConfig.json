@@ -14,8 +14,9 @@
     },
     "Window_Options": {
       "className": "Window_Options",
-      "windowStyle": "image",
-      "windowskinName": "Window_Options_img"
+      "windowskinName": "kenney_ui-pack-pixel-adventure/Tilesheets/Small tiles/Thick outline/tilemap",
+      "windowStyle": "frame",
+      "skinId": "kenny"
     }
   }
 }
