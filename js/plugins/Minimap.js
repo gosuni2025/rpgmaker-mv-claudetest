@@ -970,6 +970,10 @@
     // 표시/숨김
     // ----------------------------------------------------------
     setVisible(visible) {
+      if (!visible) {
+        var _stack = new Error().stack.split('\n').slice(1, 5).join(' | ');
+        console.warn('[Minimap] setVisible(false) called from: ' + _stack);
+      }
       this._visible = visible;
       if ($gameSystem) $gameSystem._minimapVisible = visible;
       if (this._sprite)   this._sprite.visible   = visible;

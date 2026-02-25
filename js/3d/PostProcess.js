@@ -2520,6 +2520,15 @@ Simple2DUIRenderPass.prototype.render = function(renderer, writeBuffer, readBuff
     }
 
     // UI 렌더 (블룸 맵 + FOW 위에 합성)
+    // DEBUG: 미니맵 상태 로그 (3D→2D 전환 후 사라지는 버그 추적)
+    if (typeof MinimapManager !== 'undefined' && MinimapManager._sprite) {
+        var _ms = MinimapManager._sprite;
+        var _dbgKey = (_ms._visible ? '1' : '0') + '|' + (_ms._threeObj ? (_ms._threeObj.visible ? '1' : '0') : 'X') + '|' + (_ms._material ? (_ms._material.visible ? '1' : '0') : 'X');
+        if (!PostProcess._dbgLastKey || PostProcess._dbgLastKey !== _dbgKey) {
+            PostProcess._dbgLastKey = _dbgKey;
+            console.warn('[MiniMap UIPass] _visible=' + _ms._visible + ' threeObj.visible=' + (_ms._threeObj && _ms._threeObj.visible) + ' material.visible=' + (_ms._material && _ms._material.visible) + ' fw=' + _ms._frameWidth + ' fh=' + _ms._frameHeight);
+        }
+    }
     renderer.render(scene, camera);
 
     // layer 1 (perspective) UI 창 렌더 (renderCamera='perspective' 설정 창)
