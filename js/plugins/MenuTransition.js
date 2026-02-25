@@ -110,10 +110,11 @@
 
     // ── 상태 ─────────────────────────────────────────────────────────────────
 
-    var _phase   = 0;   // 0=비활성, 1=열기, 2=열림, 3=닫기
-    var _t       = 0;
-    var _elapsed = 0;   // 게임 루프 update() 호출 횟수 (프레임 카운터)
-    var _closeCb = null;
+    var _phase        = 0;   // 0=비활성, 1=열기, 2=열림, 3=닫기
+    var _t            = 0;
+    var _elapsed      = 0;   // 게임 루프 update() 호출 횟수 (프레임 카운터)
+    var _closeCb      = null;
+    var _pendingClose = false;  // true: 닫기 완료 후 t=0 렌더 1프레임 대기 중
 
     var _srcCanvas = null;  // 스냅샷 캔버스 (PostProcess._captureCanvas 복사본)
 
@@ -126,6 +127,7 @@
 
     function _setMenuBgHook(active) {
         if (typeof PostProcess === 'undefined') return;
+        console.log('[MT] menuBgHook', active ? 'SET' : 'CLEAR', '(phase=' + _phase + ')');
         if (active) {
             PostProcess.menuBgHook = {
                 preRender: function (renderer, composer) {
@@ -167,6 +169,7 @@
         _elapsed = 0;
         _phase = 1;
         _t = 0;
+        _pendingClose = false;
         _setMenuBgHook(true);
     }
 
@@ -174,6 +177,7 @@
         if (_phase === 0) { if (cb) cb(); return; }
         _elapsed = 0;
         _phase = 3;
+        _pendingClose = false;
         _closeCb = cb || null;
     }
 
@@ -238,6 +242,7 @@
 
     var _SMB_terminate = Scene_MenuBase.prototype.terminate;
     Scene_MenuBase.prototype.terminate = function () {
+        console.log('[MT] Scene_MenuBase.terminate() phase=' + _phase);
         _SMB_terminate.call(this);
         _setMenuBgHook(false);
     };
@@ -273,8 +278,13 @@
     };
 
     // update: 게임 루프 프레임마다 _t 계산 + 배경 비트맵 업데이트
+    var _lastUpdateTime = 0;
     var _SMB_update = Scene_MenuBase.prototype.update;
     Scene_MenuBase.prototype.update = function () {
+        var now = Date.now();
+        var dt = _lastUpdateTime ? (now - _lastUpdateTime) : 0;
+        _lastUpdateTime = now;
+
         _SMB_update.call(this);
 
         if (_phase === 0 || !this._backgroundSprite) return;
@@ -288,10 +298,27 @@
                 if (raw >= 1) { _t = 1; _phase = 2; }
             } else {  // phase === 3
                 _t = applyEase(1 - raw);
+                // 마지막 5프레임 + 완료 시 로그
+                if (raw > 0.85 || raw >= 1) {
+                    console.log('[MT] close elapsed=' + _elapsed + ' raw=' + raw.toFixed(3) +
+                        ' t=' + _t.toFixed(3) + ' dt=' + dt + 'ms pendingClose=' + _pendingClose);
+                }
                 if (raw >= 1) {
-                    _t = 0; _phase = 0;
-                    if (_closeCb) { var cb = _closeCb; _closeCb = null; cb(); }
-                    return;  // _srcCanvas=null 직후이므로 bitmap 업데이트 불필요
+                    _t = 0;
+                    if (!_pendingClose) {
+                        // 1프레임 대기: t=0(raw 스냅샷)으로 비트맵 갱신 후 renderScene이
+                        // 이 프레임에서 한 번 더 그리도록 → 게임씬과의 시각적 연속성 확보
+                        _pendingClose = true;
+                        console.log('[MT] close at t=0, waiting 1 frame for render');
+                        // (아래 공통 updateBgBitmap에서 t=0으로 렌더됨)
+                    } else {
+                        // 다음 프레임: 실제 종료
+                        _pendingClose = false;
+                        _phase = 0;
+                        console.log('[MT] close DONE → calling cb');
+                        if (_closeCb) { var cb = _closeCb; _closeCb = null; cb(); }
+                        return;
+                    }
                 }
             }
         }
