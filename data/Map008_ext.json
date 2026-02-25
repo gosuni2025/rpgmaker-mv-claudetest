@@ -3153,6 +3153,10 @@
       "name": "숫자 입력 처리",
       "showName": true
     },
+    "32": {
+      "name": "이미지NPC테스트",
+      "showName": true
+    },
     "33": {
       "name": "전투 훈련관",
       "showName": true
@@ -3216,6 +3220,18 @@
     "50": {
       "name": "조건 스크립트 샘플 테스트",
       "showName": true
+    },
+    "51": {
+      "name": "미니맵 설정사",
+      "showName": true
+    }
+  },
+  "minimapData": {
+    "33": {
+      "enabled": true,
+      "color": "#ffcc00",
+      "shape": "circle",
+      "iconIndex": 96
     }
   },
   "is3D": true
