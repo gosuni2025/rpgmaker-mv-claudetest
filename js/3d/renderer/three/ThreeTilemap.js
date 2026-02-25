@@ -662,7 +662,10 @@ ThreeTilemapRectLayer.prototype._buildWaterTypeMesh = function(setNumber, meshKe
         }
     }
 
-    var needsPhong = (window.ShadowLight && window.ShadowLight._active);
+    // 2D 모드에서는 ShadowLight가 active이더라도 StandaloneShaderMaterial 사용
+    // (2D에서 PhongMaterial은 조명 없이 검게 보이거나 불필요한 그림자 처리가 발생)
+    var _is3DForPhong = typeof ConfigManager !== 'undefined' && ConfigManager.mode3d;
+    var needsPhong = _is3DForPhong && (window.ShadowLight && window.ShadowLight._active);
     var mesh = this._meshes[meshKey];
     // kind별 설정 조회
     var kindSettings = null;
