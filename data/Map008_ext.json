@@ -3263,5 +3263,6 @@
       "shape": "circle",
       "iconIndex": 96
     }
-  }
+  },
+  "is3D": true
 }
