@@ -121,13 +121,13 @@
     var _suppressNextFadeOut = false;  // 닫기 후 메뉴씬 검정 페이드아웃 억제
     var _suppressNextFadeIn  = false;  // 닫기 후 복귀씬(맵 등) 페이드인 억제
 
-    // ── PostProcess.menuBgHook: 메뉴 씬 렌더링 중 bloom/PP 비활성화 ──────────
-    // 스냅샷에 이미 bloom이 적용되어 있으므로 2D composer의 bloom을 비활성화.
-    // 비활성화하지 않으면 bloom이 이중 적용되어 화면이 밝아지는("광원이 쌔짐") 현상 발생.
+    // ── PostProcess.menuBgHook: 메뉴 씬 렌더링 중 bloom만 비활성화 ─────────────
+    // 스냅샷에 이미 bloom이 적용되어 있으므로 2D composer의 bloomPass만 비활성화.
+    // ppPasses(godRays, waveDistortion 등)는 계속 활성화하여 배경에 효과가 유지되도록 함.
+    // 비활성화하면 메뉴 닫힐 때 효과가 갑자기 켜지는 현상 발생.
 
     function _setMenuBgHook(active) {
         if (typeof PostProcess === 'undefined') return;
-        console.log('[MT] menuBgHook', active ? 'SET' : 'CLEAR', '(phase=' + _phase + ')');
         if (active) {
             PostProcess.menuBgHook = {
                 preRender: function (renderer, composer) {
@@ -135,24 +135,11 @@
                         PostProcess._bloomPass._mt_was = PostProcess._bloomPass.enabled;
                         PostProcess._bloomPass.enabled = false;
                     }
-                    if (PostProcess._ppPasses) {
-                        for (var k in PostProcess._ppPasses) {
-                            var p = PostProcess._ppPasses[k];
-                            p._mt_was = p.enabled;
-                            p.enabled = false;
-                        }
-                    }
                 },
                 postRender: function () {
                     if (PostProcess._bloomPass && '_mt_was' in PostProcess._bloomPass) {
                         PostProcess._bloomPass.enabled = PostProcess._bloomPass._mt_was;
                         delete PostProcess._bloomPass._mt_was;
-                    }
-                    if (PostProcess._ppPasses) {
-                        for (var k in PostProcess._ppPasses) {
-                            var p = PostProcess._ppPasses[k];
-                            if ('_mt_was' in p) { p.enabled = p._mt_was; delete p._mt_was; }
-                        }
                     }
                 }
             };
@@ -242,7 +229,6 @@
 
     var _SMB_terminate = Scene_MenuBase.prototype.terminate;
     Scene_MenuBase.prototype.terminate = function () {
-        console.log('[MT] Scene_MenuBase.terminate() phase=' + _phase);
         _SMB_terminate.call(this);
         _setMenuBgHook(false);
     };
@@ -278,13 +264,8 @@
     };
 
     // update: 게임 루프 프레임마다 _t 계산 + 배경 비트맵 업데이트
-    var _lastUpdateTime = 0;
     var _SMB_update = Scene_MenuBase.prototype.update;
     Scene_MenuBase.prototype.update = function () {
-        var now = Date.now();
-        var dt = _lastUpdateTime ? (now - _lastUpdateTime) : 0;
-        _lastUpdateTime = now;
-
         _SMB_update.call(this);
 
         if (_phase === 0 || !this._backgroundSprite) return;
@@ -298,24 +279,14 @@
                 if (raw >= 1) { _t = 1; _phase = 2; }
             } else {  // phase === 3
                 _t = applyEase(1 - raw);
-                // 마지막 5프레임 + 완료 시 로그
-                if (raw > 0.85 || raw >= 1) {
-                    console.log('[MT] close elapsed=' + _elapsed + ' raw=' + raw.toFixed(3) +
-                        ' t=' + _t.toFixed(3) + ' dt=' + dt + 'ms pendingClose=' + _pendingClose);
-                }
                 if (raw >= 1) {
                     _t = 0;
                     if (!_pendingClose) {
-                        // 1프레임 대기: t=0(raw 스냅샷)으로 비트맵 갱신 후 renderScene이
-                        // 이 프레임에서 한 번 더 그리도록 → 게임씬과의 시각적 연속성 확보
+                        // 1프레임 대기: t=0으로 비트맵 갱신 후 renderScene이 한 번 더 그리도록
                         _pendingClose = true;
-                        console.log('[MT] close at t=0, waiting 1 frame for render');
-                        // (아래 공통 updateBgBitmap에서 t=0으로 렌더됨)
                     } else {
-                        // 다음 프레임: 실제 종료
                         _pendingClose = false;
                         _phase = 0;
-                        console.log('[MT] close DONE → calling cb');
                         if (_closeCb) { var cb = _closeCb; _closeCb = null; cb(); }
                         return;
                     }
