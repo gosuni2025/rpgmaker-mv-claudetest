@@ -3232,6 +3232,31 @@
       "color": "#ff0000",
       "shape": "circle"
     },
+    "10": {
+      "enabled": true,
+      "color": "#ffcc00",
+      "shape": "heart"
+    },
+    "21": {
+      "enabled": true,
+      "color": "#ffcc00",
+      "shape": "diamond"
+    },
+    "22": {
+      "enabled": true,
+      "color": "#ffcc00",
+      "shape": "square"
+    },
+    "24": {
+      "enabled": true,
+      "color": "#ffcc00",
+      "shape": "star"
+    },
+    "25": {
+      "enabled": true,
+      "color": "#ffcc00",
+      "shape": "triangle"
+    },
     "33": {
       "enabled": true,
       "color": "#ffcc00",
