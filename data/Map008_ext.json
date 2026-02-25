@@ -3227,6 +3227,11 @@
     }
   },
   "minimapData": {
+    "4": {
+      "enabled": true,
+      "color": "#ff0000",
+      "shape": "circle"
+    },
     "33": {
       "enabled": true,
       "color": "#ffcc00",
