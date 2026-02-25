@@ -76,10 +76,10 @@
           "fromAngle": 30
         }
       ],
-      "x": 9,
+      "x": 208,
       "y": 168,
       "renderCamera": "perspective",
-      "rotationY": 58,
+      "rotationY": 0,
       "animPivot": "center"
     },
     "Window_MenuCommand": {
@@ -100,7 +100,10 @@
           "delay": 0
         }
       ],
-      "renderCamera": "perspective"
+      "renderCamera": "perspective",
+      "rotationY": 32,
+      "x": 74,
+      "y": 15
     },
     "Window_Gold": {
       "className": "Window_Gold",
