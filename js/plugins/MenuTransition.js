@@ -321,13 +321,15 @@
     RendererStrategy.render = function (rendererObj, stage) {
 
         // ── 캡처 플래그: PostProcess._captureCanvas로 스냅샷 취득 ──────────
+        // 먼저 렌더 실행 (PostProcess._captureLastFrame이 canvas를 최신 상태로 갱신)
+        // 렌더 완료 후 _captureCanvas에서 스냅샷 취득
         if (_MT_captureNext) {
             _MT_captureNext = false;
+            _origRSRender.call(this, rendererObj, stage);
             var renderer = rendererObj && rendererObj.renderer;
             if (renderer) {
                 MT_captureSnapshot(renderer);
             }
-            _origRSRender.call(this, rendererObj, stage);
             return;
         }
 
