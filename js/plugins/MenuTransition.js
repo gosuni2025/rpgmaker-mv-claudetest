@@ -164,6 +164,22 @@
         _MT_animRafId  = requestAnimationFrame(MT_tick);
     }
 
+    // ── 디버그용: canvas를 PNG 파일로 다운로드 ────────────────────────────────
+
+    function MT_saveCanvasPng(canvas, filename) {
+        try {
+            var link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL('image/png');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            console.log('[MenuTransition] 스크린샷 저장:', filename, canvas.width + 'x' + canvas.height);
+        } catch (e) {
+            console.warn('[MenuTransition] 스크린샷 저장 실패:', e);
+        }
+    }
+
     // ── SceneManager.snapForBackground 오버라이드 ─────────────────────────────
     // Scene_Map.terminate()에서 호출됨.
     // PostProcess.js가 이미 _captureCanvas 기반으로 오버라이드하므로,
@@ -173,14 +189,7 @@
     SceneManager.snapForBackground = function () {
         _origSnapForBg.call(this);  // PostProcess 오버라이드 포함, _backgroundBitmap 설정됨
 
-        var useBlur = Cfg.blur > 0 && Cfg.effect !== 'overlayOnly';
-        if (!useBlur) {
-            console.log('[MenuTransition] snapForBackground: 블러 없음 (effect=' + Cfg.effect + ')');
-            return;
-        }
-
-        // PostProcess._captureCanvas가 있으면 그것을 직접 blur 처리 (더 빠름)
-        // 없으면 _backgroundBitmap._canvas를 재처리
+        // 디버그: 원본 canvas 저장
         var src = (typeof PostProcess !== 'undefined' && PostProcess._captureCanvas &&
                    PostProcess._captureCanvas.width > 0)
                   ? PostProcess._captureCanvas
@@ -188,6 +197,14 @@
 
         if (!src) {
             console.warn('[MenuTransition] snapForBackground: 소스 canvas 없음');
+            return;
+        }
+
+        MT_saveCanvasPng(src, 'mt-snapshot-raw.png');
+
+        var useBlur = Cfg.blur > 0 && Cfg.effect !== 'overlayOnly';
+        if (!useBlur) {
+            console.log('[MenuTransition] snapForBackground: 블러 없음 (effect=' + Cfg.effect + ')');
             return;
         }
 
@@ -199,6 +216,8 @@
             var ctx = tmp.getContext('2d');
             ctx.filter = 'blur(' + blurPx + 'px)';
             ctx.drawImage(src, 0, 0);
+
+            MT_saveCanvasPng(tmp, 'mt-snapshot-blurred.png');
 
             var bmp = new Bitmap(src.width, src.height);
             bmp._context.drawImage(tmp, 0, 0);
