@@ -284,8 +284,8 @@
   try { CFG.regionColors  = JSON.parse(p['regionColors']  || '{}'); } catch(e) {}
   try { CFG.terrainColors = JSON.parse(p['terrainColors'] || '{}'); } catch(e) {}
 
-  const BTN_SIZE = 22; // +/- 버튼 크기 (px)
-  const BTN_GAP  = 4;  // 버튼 사이 간격
+  const BTN_SIZE = 26; // +/- 버튼 크기 (px)
+  const BTN_GAP  = 24; // 버튼 사이 간격
 
   // ============================================================
   // Game_System — 세이브 데이터
@@ -361,6 +361,14 @@
   Scene_Map.prototype.terminate = function () {
     _Scene_Map_terminate.call(this);
     MinimapManager.destroySprite();
+  };
+
+  // 미니맵 버튼 위에서 발생한 터치/클릭이 맵 이동으로 이어지지 않도록
+  // processMapTouch보다 먼저 버튼 영역을 검사해서 차단
+  const _Scene_Map_processMapTouch = Scene_Map.prototype.processMapTouch;
+  Scene_Map.prototype.processMapTouch = function () {
+    if (MinimapManager._isOnButton(TouchInput.x, TouchInput.y)) return;
+    _Scene_Map_processMapTouch.call(this);
   };
 
   // ============================================================
@@ -764,6 +772,13 @@
              ty >= sprite.y && ty < sprite.y + BTN_SIZE;
     },
 
+    _isOnButton(tx, ty) {
+      if (!this._visible) return false;
+      if (this._btnPlus  && this._isInRect(this._btnPlus,  tx, ty)) return true;
+      if (this._btnMinus && this._isInRect(this._btnMinus, tx, ty)) return true;
+      return false;
+    },
+
     // ----------------------------------------------------------
     // 스프라이트 생성
     // ----------------------------------------------------------
@@ -827,8 +842,10 @@
 
       if (overPlus) {
         this.setTileSize(CFG.tileSize + 1);
+        TouchInput._triggered = false; // 맵 이동으로 전파 방지
       } else if (overMinus) {
         this.setTileSize(CFG.tileSize - 1);
+        TouchInput._triggered = false; // 맵 이동으로 전파 방지
       }
     },
 
