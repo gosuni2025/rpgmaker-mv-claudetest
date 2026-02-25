@@ -114,22 +114,23 @@
       "className": "Window_Gold",
       "entrances": [
         {
-          "type": "slideBottom",
-          "duration": 300,
+          "type": "fadeIn",
+          "duration": 518,
           "easing": "easeOut",
           "delay": 0
         }
       ],
       "exits": [
         {
-          "type": "slideBottom",
-          "duration": 300,
+          "type": "fadeOut",
+          "duration": 584,
           "easing": "easeOut",
           "delay": 0
         }
       ],
-      "x": 60,
-      "y": 511
+      "x": 45,
+      "y": 495,
+      "rotationZ": 17
     }
   }
 }
