@@ -76,9 +76,11 @@
           "fromAngle": 30
         }
       ],
-      "x": 208,
+      "x": 9,
       "y": 168,
-      "renderCamera": "perspective"
+      "renderCamera": "perspective",
+      "rotationY": 58,
+      "animPivot": "center"
     },
     "Window_MenuCommand": {
       "className": "Window_MenuCommand",
