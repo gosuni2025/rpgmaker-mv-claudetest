@@ -16859,6 +16859,47 @@
               ]
             },
             {
+              "code": 205,
+              "indent": 0,
+              "parameters": [
+                -1,
+                {
+                  "list": [
+                    {
+                      "code": 1
+                    },
+                    {
+                      "code": 1
+                    },
+                    {
+                      "code": 1
+                    },
+                    {
+                      "code": 2
+                    },
+                    {
+                      "code": 2
+                    },
+                    {
+                      "code": 4
+                    },
+                    {
+                      "code": 4
+                    },
+                    {
+                      "code": 4
+                    },
+                    {
+                      "code": 0
+                    }
+                  ],
+                  "repeat": false,
+                  "skippable": false,
+                  "wait": true
+                }
+              ]
+            },
+            {
               "code": 0,
               "indent": 0,
               "parameters": []
