@@ -30,26 +30,46 @@
             "width": 240,
             "maxCols": 1,
             "items": [
-              {
-                "name": "아이템",
-                "symbol": "item",
-                "enabled": true
-              },
-              {
-                "name": "닫기",
-                "symbol": "cancel",
-                "enabled": true
-              }
+              { "name": "아이템",    "symbol": "item",      "enabled": true  },
+              { "name": "스킬",     "symbol": "skill",     "enabled": true  },
+              { "name": "장비",     "symbol": "equip",     "enabled": true  },
+              { "name": "상태",     "symbol": "status",    "enabled": true  },
+              { "name": "대형",     "symbol": "formation", "enabled": false },
+              { "name": "옵션",     "symbol": "options",   "enabled": true  },
+              { "name": "세이브",   "symbol": "save",      "enabled": true  },
+              { "name": "게임 종료", "symbol": "gameEnd",   "enabled": true  }
             ],
             "handlers": {
-              "item": {
-                "action": "gotoScene",
-                "target": "Scene_Item"
-              },
-              "cancel": {
-                "action": "popScene"
-              }
+              "item":      { "action": "gotoScene", "target": "Scene_Item" },
+              "skill":     { "action": "script", "code": "$gameParty.setMenuActor($gameParty.members()[0]); SceneManager.push(Scene_Skill);" },
+              "equip":     { "action": "script", "code": "$gameParty.setMenuActor($gameParty.members()[0]); SceneManager.push(Scene_Equip);" },
+              "status":    { "action": "script", "code": "$gameParty.setMenuActor($gameParty.members()[0]); SceneManager.push(Scene_Status);" },
+              "options":   { "action": "gotoScene", "target": "Scene_Options" },
+              "save":      { "action": "gotoScene", "target": "Scene_Save" },
+              "gameEnd":   { "action": "gotoScene", "target": "Scene_GameEnd" },
+              "cancel":    { "action": "popScene" }
             }
+          },
+          {
+            "id": "gold_win",
+            "type": "panel",
+            "x": 0,
+            "y": 552,
+            "width": 240,
+            "height": 72,
+            "windowed": true,
+            "children": [
+              {
+                "id": "gold_label",
+                "type": "label",
+                "x": 6,
+                "y": 6,
+                "width": 192,
+                "height": 36,
+                "text": "{gold}G",
+                "align": "right"
+              }
+            ]
           },
           {
             "id": "status_panel",
@@ -57,46 +77,42 @@
             "x": 240,
             "y": 0,
             "width": 576,
-            "height": 400,
+            "height": 624,
             "windowed": true,
             "children": [
-              {
-                "id": "face",
-                "type": "actorFace",
-                "x": 0,
-                "y": 0,
-                "width": 144,
-                "height": 144,
-                "actorIndex": 0
-              },
-              {
-                "id": "name_lbl",
-                "type": "label",
-                "x": 160,
-                "y": 10,
-                "width": 200,
-                "height": 36,
-                "text": "{actor[0].name}"
-              },
-              {
-                "id": "hp_bar",
-                "type": "gauge",
-                "x": 160,
-                "y": 50,
-                "width": 200,
-                "height": 36,
-                "gaugeType": "hp",
-                "actorIndex": 0
-              },
-              {
-                "id": "greeting",
-                "type": "label",
-                "x": 160,
-                "y": 90,
-                "width": 200,
-                "height": 36,
-                "text": "소지금: {gold}G"
-              }
+              { "id": "face0",  "type": "actorFace", "x": 7,   "y": 1,   "width": 144, "height": 144, "actorIndex": 0 },
+              { "id": "name0",  "type": "label",     "x": 194, "y": 2,   "width": 174, "height": 36,  "text": "{actor[0].name}" },
+              { "id": "class0", "type": "label",     "x": 374, "y": 2,   "width": 166, "height": 36,  "text": "{actor[0].class}" },
+              { "id": "level0", "type": "label",     "x": 194, "y": 38,  "width": 174, "height": 36,  "text": "Lv.{actor[0].level}" },
+              { "id": "hp0",    "type": "gauge",     "x": 374, "y": 38,  "width": 166, "height": 36,  "gaugeType": "hp", "actorIndex": 0 },
+              { "id": "mp0",    "type": "gauge",     "x": 374, "y": 74,  "width": 166, "height": 36,  "gaugeType": "mp", "actorIndex": 0 },
+
+              { "id": "sep0",   "type": "separator", "x": 0,   "y": 154, "width": 540, "height": 4 },
+
+              { "id": "face1",  "type": "actorFace", "x": 7,   "y": 157, "width": 144, "height": 144, "actorIndex": 1 },
+              { "id": "name1",  "type": "label",     "x": 194, "y": 158, "width": 174, "height": 36,  "text": "{actor[1].name}" },
+              { "id": "class1", "type": "label",     "x": 374, "y": 158, "width": 166, "height": 36,  "text": "{actor[1].class}" },
+              { "id": "level1", "type": "label",     "x": 194, "y": 194, "width": 174, "height": 36,  "text": "Lv.{actor[1].level}" },
+              { "id": "hp1",    "type": "gauge",     "x": 374, "y": 194, "width": 166, "height": 36,  "gaugeType": "hp", "actorIndex": 1 },
+              { "id": "mp1",    "type": "gauge",     "x": 374, "y": 230, "width": 166, "height": 36,  "gaugeType": "mp", "actorIndex": 1 },
+
+              { "id": "sep1",   "type": "separator", "x": 0,   "y": 310, "width": 540, "height": 4 },
+
+              { "id": "face2",  "type": "actorFace", "x": 7,   "y": 313, "width": 144, "height": 144, "actorIndex": 2 },
+              { "id": "name2",  "type": "label",     "x": 194, "y": 314, "width": 174, "height": 36,  "text": "{actor[2].name}" },
+              { "id": "class2", "type": "label",     "x": 374, "y": 314, "width": 166, "height": 36,  "text": "{actor[2].class}" },
+              { "id": "level2", "type": "label",     "x": 194, "y": 350, "width": 174, "height": 36,  "text": "Lv.{actor[2].level}" },
+              { "id": "hp2",    "type": "gauge",     "x": 374, "y": 350, "width": 166, "height": 36,  "gaugeType": "hp", "actorIndex": 2 },
+              { "id": "mp2",    "type": "gauge",     "x": 374, "y": 386, "width": 166, "height": 36,  "gaugeType": "mp", "actorIndex": 2 },
+
+              { "id": "sep2",   "type": "separator", "x": 0,   "y": 466, "width": 540, "height": 4 },
+
+              { "id": "face3",  "type": "actorFace", "x": 7,   "y": 469, "width": 144, "height": 144, "actorIndex": 3 },
+              { "id": "name3",  "type": "label",     "x": 194, "y": 470, "width": 174, "height": 36,  "text": "{actor[3].name}" },
+              { "id": "class3", "type": "label",     "x": 374, "y": 470, "width": 166, "height": 36,  "text": "{actor[3].class}" },
+              { "id": "level3", "type": "label",     "x": 194, "y": 506, "width": 174, "height": 36,  "text": "Lv.{actor[3].level}" },
+              { "id": "hp3",    "type": "gauge",     "x": 374, "y": 506, "width": 166, "height": 36,  "gaugeType": "hp", "actorIndex": 3 },
+              { "id": "mp3",    "type": "gauge",     "x": 374, "y": 542, "width": 166, "height": 36,  "gaugeType": "mp", "actorIndex": 3 }
             ]
           }
         ]
