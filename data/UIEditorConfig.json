@@ -131,21 +131,6 @@
       "x": 45,
       "y": 495,
       "rotationZ": 17
-    },
-    "Window_CS_commands": {
-      "className": "Window_CS_commands",
-      "x": 0,
-      "y": 200
-    },
-    "Window_CS_values": {
-      "className": "Window_CS_values",
-      "x": 0,
-      "y": 0
-    },
-    "Window_CS_opts_bg": {
-      "className": "Window_CS_opts_bg",
-      "x": 208,
-      "y": 0
     }
   },
   "sceneRedirects": {
