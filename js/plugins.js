@@ -3,6 +3,7 @@
 var $plugins =
 [
 {"name":"UITheme","status":true,"description":"UI 테마 (에디터 관리)","parameters":{}},
+{"name":"CustomSceneEngine","status":true,"description":"커스텀 씬 엔진 (에디터 관리)","parameters":{}},
 {"name":"Community_Basic","status":true,"description":"Basic plugin for manipulating important parameters.","parameters":{"cacheLimit":"20","screenWidth":"816","screenHeight":"624","changeWindowWidthTo":"","changeWindowHeightTo":"","renderingMode":"auto","alwaysDash":"off"}},
 {"name":"MadeWithMv","status":false,"description":"Show a Splash Screen \"Made with MV\" and/or a Custom Splash Screen before going to main screen.","parameters":{"Show Made With MV":"true","Made with MV Image":"MadeWithMv","Show Custom Splash":"false","Custom Image":"","Fade Out Time":"120","Fade In Time":"120","Wait Time":"160"}},
 {"name":"SkyBox","status":true,"description":"Three.js SkySphere - 3D 모드에서 파노라마 하늘 배경 표시","parameters":{"Skybox Folder":"skybox","Panorama File":"sky_panorama.png"}},

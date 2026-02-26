@@ -1,0 +1,48 @@
+{
+  "scenes": {
+    "my_menu": {
+      "id": "my_menu",
+      "displayName": "커스텀 메뉴",
+      "baseScene": "MenuBase",
+      "prepareArgs": [],
+      "windows": [
+        {
+          "id": "commands",
+          "displayName": "커맨드",
+          "windowType": "command",
+          "x": 0,
+          "y": 0,
+          "width": 240,
+          "height": null,
+          "maxCols": 1,
+          "commands": [
+            { "name": "아이템", "symbol": "item", "enabled": true },
+            { "name": "닫기", "symbol": "cancel", "enabled": true }
+          ],
+          "handlers": {
+            "item": { "action": "gotoScene", "target": "Scene_Item" },
+            "cancel": { "action": "popScene" }
+          }
+        },
+        {
+          "id": "status",
+          "displayName": "상태",
+          "windowType": "display",
+          "x": 240,
+          "y": 0,
+          "width": 576,
+          "height": 400,
+          "elements": [
+            { "type": "actorFace", "x": 0, "y": 0, "width": 144, "height": 144 },
+            { "type": "actorName", "x": 160, "y": 10, "width": 200, "height": 36 },
+            { "type": "actorHp", "x": 160, "y": 50, "width": 200, "height": 36 },
+            { "type": "text", "x": 160, "y": 90, "width": 200, "height": 36, "content": "안녕하세요" }
+          ]
+        }
+      ],
+      "windowLinks": {
+        "commands": { "activateDefault": true }
+      }
+    }
+  }
+}
