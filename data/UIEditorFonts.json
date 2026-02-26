@@ -1,3 +1,6 @@
 {
-  "defaultFontFace": "Georgia, serif"
+  "defaultFontFace": "Georgia, serif",
+  "sceneFonts": {
+    "Scene_Options": "GameFont"
+  }
 }
