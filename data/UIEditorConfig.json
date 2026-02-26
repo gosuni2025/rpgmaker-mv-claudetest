@@ -141,9 +141,11 @@
       "className": "Window_CS_values",
       "x": 0,
       "y": 0
+    },
+    "Window_CS_opts_bg": {
+      "className": "Window_CS_opts_bg",
+      "x": 208,
+      "y": 0
     }
-  },
-  "sceneRedirects": {
-    "Scene_Menu": "Scene_CS_menu_v2"
   }
 }

@@ -4824,6 +4824,11 @@
       "color": "#ffcc00",
       "shape": "circle",
       "iconIndex": 96
+    },
+    "52": {
+      "enabled": true,
+      "color": "#ffcc00",
+      "shape": "circle"
     }
   },
   "is3D": true
