@@ -143,7 +143,5 @@
       "y": 0
     }
   },
-  "sceneRedirects": {
-    "Scene_Options": "Scene_CS_menu_v2"
-  }
+  "sceneRedirects": {}
 }
