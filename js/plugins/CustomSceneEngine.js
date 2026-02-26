@@ -631,6 +631,24 @@
       if (padding !== undefined) win._padding = padding;
       if (def.backOpacity !== undefined) win.backOpacity = def.backOpacity;
       win._customClassName = 'Window_CS_' + this._id;
+      // 프레임 스타일 처리 (기본 이외)
+      if (def.windowStyle && def.windowStyle !== 'default') {
+        var csOv = { windowStyle: def.windowStyle };
+        if (def.windowStyle === 'frame') {
+          if (def.windowskinName) csOv.windowskinName = def.windowskinName;
+          if (def.skinId) csOv.skinId = def.skinId;
+          if (def.colorTone) csOv.colorTone = def.colorTone;
+        } else if (def.windowStyle === 'image') {
+          if (def.imageFile) {
+            csOv.imageFile = def.imageFile;
+            win._themeSkin = ImageManager.loadSystem(def.imageFile);
+          }
+          if (def.imageRenderMode) csOv.imageRenderMode = def.imageRenderMode;
+        }
+        if (typeof window._uiThemeSetWindowOverride === 'function') {
+          window._uiThemeSetWindowOverride(win._customClassName, csOv);
+        }
+      }
       this._displayObject = win;
       this._padding = win._padding;
     } else {
