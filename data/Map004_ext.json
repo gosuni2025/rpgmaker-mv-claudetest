@@ -177,5 +177,6 @@
     "vortex": false,
     "dissolveStrength": 3,
     "fogMode": "3dbox"
-  }
+  },
+  "is3D": true
 }
