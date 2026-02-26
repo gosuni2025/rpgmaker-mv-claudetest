@@ -81,6 +81,44 @@
           }
         ]
       }
+    },
+    "options": {
+      "id": "options",
+      "displayName": "옵션 씬 (위젯)",
+      "baseScene": "MenuBase",
+      "formatVersion": 2,
+      "prepareArgs": [],
+      "navigation": {
+        "defaultFocus": "opts",
+        "cancelWidget": "opts",
+        "focusOrder": ["opts"]
+      },
+      "root": {
+        "id": "root",
+        "type": "panel",
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 624,
+        "windowed": false,
+        "children": [
+          {
+            "id": "opts",
+            "type": "options",
+            "x": 208,
+            "y": 0,
+            "width": 400,
+            "options": [
+              { "name": "항상 대시",       "symbol": "alwaysDash" },
+              { "name": "커맨드 기억",     "symbol": "commandRemember" },
+              { "name": "BGM 볼륨",        "symbol": "bgmVolume" },
+              { "name": "BGS 볼륨",        "symbol": "bgsVolume" },
+              { "name": "ME 볼륨",         "symbol": "meVolume" },
+              { "name": "SE 볼륨",         "symbol": "seVolume" }
+            ]
+          }
+        ]
+      }
     }
   }
 }
