@@ -218,12 +218,12 @@
               },
               {
                 "id": "val_alwaysDash",
-                "type": "configValue",
+                "type": "label",
                 "x": 252,
                 "y": 8,
                 "width": 136,
                 "height": 36,
-                "configKey": "alwaysDash",
+                "text": "{ConfigManager.alwaysDash ? 'ON' : 'OFF'}",
                 "align": "right"
               }
             ]
@@ -252,12 +252,12 @@
               },
               {
                 "id": "val_commandRemember",
-                "type": "configValue",
+                "type": "label",
                 "x": 252,
                 "y": 8,
                 "width": 136,
                 "height": 36,
-                "configKey": "commandRemember",
+                "text": "{ConfigManager.commandRemember ? 'ON' : 'OFF'}",
                 "align": "right"
               }
             ]
@@ -294,12 +294,12 @@
               },
               {
                 "id": "val_bgmVolume",
-                "type": "configValue",
+                "type": "label",
                 "x": 252,
                 "y": 8,
                 "width": 136,
                 "height": 36,
-                "configKey": "bgmVolume",
+                "text": "{ConfigManager.bgmVolume + '%'}",
                 "align": "right"
               }
             ]
@@ -336,12 +336,12 @@
               },
               {
                 "id": "val_bgsVolume",
-                "type": "configValue",
+                "type": "label",
                 "x": 252,
                 "y": 8,
                 "width": 136,
                 "height": 36,
-                "configKey": "bgsVolume",
+                "text": "{ConfigManager.bgsVolume + '%'}",
                 "align": "right"
               }
             ]
@@ -378,12 +378,12 @@
               },
               {
                 "id": "val_meVolume",
-                "type": "configValue",
+                "type": "label",
                 "x": 252,
                 "y": 8,
                 "width": 136,
                 "height": 36,
-                "configKey": "meVolume",
+                "text": "{ConfigManager.meVolume + '%'}",
                 "align": "right"
               }
             ]
@@ -420,12 +420,12 @@
               },
               {
                 "id": "val_seVolume",
-                "type": "configValue",
+                "type": "label",
                 "x": 252,
                 "y": 8,
                 "width": 136,
                 "height": 36,
-                "configKey": "seVolume",
+                "text": "{ConfigManager.seVolume + '%'}",
                 "align": "right"
               }
             ]
