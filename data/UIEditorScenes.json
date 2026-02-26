@@ -84,37 +84,105 @@
     },
     "options": {
       "id": "options",
-      "displayName": "옵션 씬 (위젯)",
+      "displayName": "옵션 씬 (개별 위젯)",
       "baseScene": "MenuBase",
       "formatVersion": 2,
+      "saveConfigOnExit": true,
       "prepareArgs": [],
       "navigation": {
-        "defaultFocus": "opts",
-        "cancelWidget": "opts",
-        "focusOrder": ["opts"]
+        "defaultFocus": "row_alwaysDash",
+        "cancelWidget": "row_alwaysDash",
+        "upDownNavigation": true,
+        "focusOrder": [
+          "row_alwaysDash", "row_commandRemember",
+          "row_bgmVolume", "row_bgsVolume", "row_meVolume", "row_seVolume"
+        ]
       },
       "root": {
         "id": "root",
         "type": "panel",
-        "x": 0,
-        "y": 0,
-        "width": 816,
-        "height": 624,
+        "x": 0, "y": 0, "width": 816, "height": 624,
         "windowed": false,
         "children": [
           {
-            "id": "opts",
-            "type": "options",
-            "x": 208,
-            "y": 0,
-            "width": 400,
-            "options": [
-              { "name": "항상 대시",       "symbol": "alwaysDash" },
-              { "name": "커맨드 기억",     "symbol": "commandRemember" },
-              { "name": "BGM 볼륨",        "symbol": "bgmVolume" },
-              { "name": "BGS 볼륨",        "symbol": "bgsVolume" },
-              { "name": "ME 볼륨",         "symbol": "meVolume" },
-              { "name": "SE 볼륨",         "symbol": "seVolume" }
+            "id": "opts_bg",
+            "type": "panel",
+            "x": 208, "y": 0, "width": 400, "height": 312,
+            "windowed": true,
+            "children": []
+          },
+          {
+            "id": "row_alwaysDash",
+            "type": "button",
+            "x": 208, "y": 0, "width": 400, "height": 52,
+            "label": "",
+            "action": { "action": "toggleConfig", "configKey": "alwaysDash" },
+            "children": [
+              { "id": "name_alwaysDash", "type": "label", "x": 12, "y": 8, "width": 240, "height": 36, "text": "항상 대시" },
+              { "id": "val_alwaysDash", "type": "configValue", "x": 252, "y": 8, "width": 136, "height": 36, "configKey": "alwaysDash", "align": "right" }
+            ]
+          },
+          {
+            "id": "row_commandRemember",
+            "type": "button",
+            "x": 208, "y": 52, "width": 400, "height": 52,
+            "label": "",
+            "action": { "action": "toggleConfig", "configKey": "commandRemember" },
+            "children": [
+              { "id": "name_commandRemember", "type": "label", "x": 12, "y": 8, "width": 240, "height": 36, "text": "커맨드 기억" },
+              { "id": "val_commandRemember", "type": "configValue", "x": 252, "y": 8, "width": 136, "height": 36, "configKey": "commandRemember", "align": "right" }
+            ]
+          },
+          {
+            "id": "row_bgmVolume",
+            "type": "button",
+            "x": 208, "y": 104, "width": 400, "height": 52,
+            "label": "",
+            "action": { "action": "incrementConfig", "configKey": "bgmVolume" },
+            "leftAction": { "action": "decrementConfig", "configKey": "bgmVolume" },
+            "rightAction": { "action": "incrementConfig", "configKey": "bgmVolume" },
+            "children": [
+              { "id": "name_bgmVolume", "type": "label", "x": 12, "y": 8, "width": 240, "height": 36, "text": "BGM 볼륨" },
+              { "id": "val_bgmVolume", "type": "configValue", "x": 252, "y": 8, "width": 136, "height": 36, "configKey": "bgmVolume", "align": "right" }
+            ]
+          },
+          {
+            "id": "row_bgsVolume",
+            "type": "button",
+            "x": 208, "y": 156, "width": 400, "height": 52,
+            "label": "",
+            "action": { "action": "incrementConfig", "configKey": "bgsVolume" },
+            "leftAction": { "action": "decrementConfig", "configKey": "bgsVolume" },
+            "rightAction": { "action": "incrementConfig", "configKey": "bgsVolume" },
+            "children": [
+              { "id": "name_bgsVolume", "type": "label", "x": 12, "y": 8, "width": 240, "height": 36, "text": "BGS 볼륨" },
+              { "id": "val_bgsVolume", "type": "configValue", "x": 252, "y": 8, "width": 136, "height": 36, "configKey": "bgsVolume", "align": "right" }
+            ]
+          },
+          {
+            "id": "row_meVolume",
+            "type": "button",
+            "x": 208, "y": 208, "width": 400, "height": 52,
+            "label": "",
+            "action": { "action": "incrementConfig", "configKey": "meVolume" },
+            "leftAction": { "action": "decrementConfig", "configKey": "meVolume" },
+            "rightAction": { "action": "incrementConfig", "configKey": "meVolume" },
+            "children": [
+              { "id": "name_meVolume", "type": "label", "x": 12, "y": 8, "width": 240, "height": 36, "text": "ME 볼륨" },
+              { "id": "val_meVolume", "type": "configValue", "x": 252, "y": 8, "width": 136, "height": 36, "configKey": "meVolume", "align": "right" }
+            ]
+          },
+          {
+            "id": "row_seVolume",
+            "type": "button",
+            "x": 208, "y": 260, "width": 400, "height": 52,
+            "label": "",
+            "action": { "action": "incrementConfig", "configKey": "seVolume" },
+            "leftAction": { "action": "decrementConfig", "configKey": "seVolume" },
+            "rightAction": { "action": "incrementConfig", "configKey": "seVolume" },
+            "children": [
+              { "id": "name_seVolume", "type": "label", "x": 12, "y": 8, "width": 240, "height": 36, "text": "SE 볼륨" },
+              { "id": "val_seVolume", "type": "configValue", "x": 252, "y": 8, "width": 136, "height": 36, "configKey": "seVolume", "align": "right" }
             ]
           }
         ]
