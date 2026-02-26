@@ -134,6 +134,6 @@
     }
   },
   "sceneRedirects": {
-    "Scene_Options": "Scene_CS_menu_v2"
+    "Scene_Options": "Scene_CS_options"
   }
 }
