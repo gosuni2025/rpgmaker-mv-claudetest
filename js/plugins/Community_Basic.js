@@ -4,30 +4,50 @@
  *
  * @help This plugin does not provide plugin commands.
  *
-* @param cacheLimit
+ * @param cacheLimit
+ * @type number
+ * @min 1
  * @desc For setting the upper limit of image memory cache. (MPix)
  * @default 10
  *
  * @param screenWidth
-* @desc For setting the screen width.
+ * @type number
+ * @min 1
+ * @desc For setting the screen width.
  * @default 816
  *
  * @param screenHeight
+ * @type number
+ * @min 1
  * @desc For setting the screen height.
  * @default 624
  *
  * @param changeWindowWidthTo
- * @desc If set, change window width to this value
+ * @type number
+ * @min 0
+ * @desc If set, change window width to this value (0 = disabled)
+ * @default 0
  *
  * @param changeWindowHeightTo
- * @desc If set, change window height to this value
+ * @type number
+ * @min 0
+ * @desc If set, change window height to this value (0 = disabled)
+ * @default 0
  *
  * @param renderingMode
- * @desc Rendering mode (canvas/webgl/auto/threejs)
+ * @type select
+ * @option auto
+ * @option canvas
+ * @option webgl
+ * @option threejs
+ * @desc Rendering mode
  * @default auto
  *
  * @param alwaysDash
- * @desc To set initial value as to whether the player always dashes. (on/off)
+ * @type select
+ * @option on
+ * @option off
+ * @desc Initial value for always dash.
  * @default off
  */
 
@@ -39,29 +59,49 @@
  * @help 이 플러그인에는 플러그인 커맨드가 없습니다.
  *
  * @param cacheLimit
+ * @type number
+ * @min 1
  * @desc 이미지 메모리 캐시 상한값 (MPix)
  * @default 10
  *
  * @param screenWidth
+ * @type number
+ * @min 1
  * @desc 화면 너비
  * @default 816
  *
  * @param screenHeight
+ * @type number
+ * @min 1
  * @desc 화면 높이
  * @default 624
  *
  * @param changeWindowWidthTo
- * @desc 설정 시 창 너비를 이 값으로 변경
+ * @type number
+ * @min 0
+ * @desc 설정 시 창 너비를 이 값으로 변경 (0 = 비활성)
+ * @default 0
  *
  * @param changeWindowHeightTo
- * @desc 설정 시 창 높이를 이 값으로 변경
+ * @type number
+ * @min 0
+ * @desc 설정 시 창 높이를 이 값으로 변경 (0 = 비활성)
+ * @default 0
  *
  * @param renderingMode
- * @desc 렌더링 모드 (canvas/webgl/auto/threejs)
+ * @type select
+ * @option auto
+ * @option canvas
+ * @option webgl
+ * @option threejs
+ * @desc 렌더링 모드
  * @default auto
  *
  * @param alwaysDash
- * @desc 플레이어가 항상 대시할지 여부 초기값 (on/off)
+ * @type select
+ * @option on
+ * @option off
+ * @desc 항상 대시 초기값
  * @default off
  */
 
