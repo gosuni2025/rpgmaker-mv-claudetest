@@ -43,6 +43,55 @@
       "windowLinks": {
         "commands": { "activateDefault": true }
       }
+    },
+    "custom_options": {
+      "id": "custom_options",
+      "displayName": "커스텀 옵션",
+      "baseScene": "MenuBase",
+      "prepareArgs": [],
+      "windows": [
+        {
+          "id": "values",
+          "displayName": "현재 설정값",
+          "windowType": "display",
+          "x": 0, "y": 0, "width": 816, "height": 200,
+          "elements": [
+            { "type": "label",       "x": 20,  "y": 10, "width": 200, "height": 36, "content": "BGM 볼륨" },
+            { "type": "configValue", "x": 580, "y": 10, "width": 180, "height": 36, "configKey": "bgmVolume", "align": "right", "suffix": " %" },
+            { "type": "label",       "x": 20,  "y": 50, "width": 200, "height": 36, "content": "SE 볼륨" },
+            { "type": "configValue", "x": 580, "y": 50, "width": 180, "height": 36, "configKey": "seVolume",  "align": "right", "suffix": " %" },
+            { "type": "label",       "x": 20,  "y": 90, "width": 200, "height": 36, "content": "항상 대시" },
+            { "type": "configValue", "x": 580, "y": 90, "width": 180, "height": 36, "configKey": "alwaysDash", "align": "right" },
+            { "type": "separator",   "x": 0, "y": 136, "width": 780, "height": 2 }
+          ]
+        },
+        {
+          "id": "commands",
+          "displayName": "옵션 조작",
+          "windowType": "command",
+          "x": 0, "y": 200, "width": 816, "height": null,
+          "maxCols": 2,
+          "commands": [
+            { "name": "BGM 볼륨 ▲",  "symbol": "bgm_up",    "enabled": true },
+            { "name": "BGM 볼륨 ▼",  "symbol": "bgm_down",  "enabled": true },
+            { "name": "SE 볼륨 ▲",   "symbol": "se_up",     "enabled": true },
+            { "name": "SE 볼륨 ▼",   "symbol": "se_down",   "enabled": true },
+            { "name": "항상 대시 전환", "symbol": "dash_toggle", "enabled": true },
+            { "name": "닫기",         "symbol": "cancel",    "enabled": true }
+          ],
+          "handlers": {
+            "bgm_up":     { "action": "script", "code": "ConfigManager.bgmVolume = Math.min(100, (ConfigManager.bgmVolume ?? 100) + 10); ConfigManager.save(); AudioManager.updateBgmParameters(AudioManager._currentBgm, AudioManager._bgmBuffer);" },
+            "bgm_down":   { "action": "script", "code": "ConfigManager.bgmVolume = Math.max(0, (ConfigManager.bgmVolume ?? 100) - 10); ConfigManager.save(); AudioManager.updateBgmParameters(AudioManager._currentBgm, AudioManager._bgmBuffer);" },
+            "se_up":      { "action": "script", "code": "ConfigManager.seVolume = Math.min(100, (ConfigManager.seVolume ?? 100) + 10); ConfigManager.save();" },
+            "se_down":    { "action": "script", "code": "ConfigManager.seVolume = Math.max(0, (ConfigManager.seVolume ?? 100) - 10); ConfigManager.save();" },
+            "dash_toggle":{ "action": "script", "code": "ConfigManager.alwaysDash = !ConfigManager.alwaysDash; ConfigManager.save();" },
+            "cancel":     { "action": "popScene" }
+          }
+        }
+      ],
+      "windowLinks": {
+        "commands": { "activateDefault": true }
+      }
     }
   }
 }
