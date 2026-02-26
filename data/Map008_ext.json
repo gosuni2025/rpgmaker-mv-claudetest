@@ -4786,6 +4786,10 @@
     "51": {
       "name": "미니맵 설정사",
       "showName": true
+    },
+    "52": {
+      "name": "픽셀 아트 데모",
+      "showName": true
     }
   },
   "minimapData": {
@@ -4824,11 +4828,6 @@
       "color": "#ffcc00",
       "shape": "circle",
       "iconIndex": 96
-    },
-    "52": {
-      "enabled": true,
-      "color": "#ffcc00",
-      "shape": "circle"
     }
   },
   "is3D": true
