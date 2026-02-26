@@ -360,7 +360,8 @@
                     return (a.userData.maxDrawZ || 0) - (b.userData.maxDrawZ || 0);
                 });
                 for (var t = 0; t < normalMeshes.length; t++) {
-                    normalMeshes[t].renderOrder = rendererObj._drawOrderCounter++;
+                    normalMeshes[t].renderOrder = forceOrder !== undefined
+                        ? forceOrder : rendererObj._drawOrderCounter++;
                 }
             }
         }
