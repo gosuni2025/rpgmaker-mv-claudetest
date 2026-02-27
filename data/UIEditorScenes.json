@@ -409,15 +409,13 @@
               },
               {
                 "id": "actor_select",
-                "type": "actorList",
+                "type": "rowSelector",
                 "x": 0,
                 "y": 0,
                 "width": 576,
                 "height": 624,
-                "numVisibleRows": 4,
+                "numRows": "party",
                 "transparent": true,
-                "showFace": false,
-                "showStatus": false,
                 "padding": 0
               }
             ]
