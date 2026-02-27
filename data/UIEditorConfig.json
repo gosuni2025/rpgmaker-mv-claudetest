@@ -132,5 +132,8 @@
       "y": 495,
       "rotationZ": 17
     }
+  },
+  "sceneRedirects": {
+    "Scene_Menu": "Scene_CS_menu_v2"
   }
 }
