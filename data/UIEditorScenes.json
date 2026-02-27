@@ -520,7 +520,10 @@
       "navigation": {
         "defaultFocus": "questCategoryWidget",
         "cancelWidget": "questCategoryWidget",
-        "focusOrder": ["questCategoryWidget", "questListWidget"]
+        "focusOrder": [
+          "questCategoryWidget",
+          "questListWidget"
+        ]
       },
       "root": {
         "id": "root",
@@ -547,8 +550,13 @@
             "width": 180,
             "height": 624,
             "handlers": {
-              "ok": { "action": "focusWidget", "target": "questListWidget" },
-              "cancel": { "action": "cancel" }
+              "ok": {
+                "action": "focusWidget",
+                "target": "questListWidget"
+              },
+              "cancel": {
+                "action": "cancel"
+              }
             }
           },
           {
@@ -559,7 +567,9 @@
             "width": 220,
             "height": 624,
             "handlers": {
-              "cancel": { "action": "cancel" }
+              "cancel": {
+                "action": "cancel"
+              }
             }
           },
           {
