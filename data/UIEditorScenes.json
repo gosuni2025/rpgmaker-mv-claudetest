@@ -562,7 +562,7 @@
             "height": 624,
             "dataScript": "QS._buildQuestItems()",
             "onCursor": {
-              "code": "var lw=this._widgetMap['questListWidget'];if(lw&&lw._window){var sym=lw._window.currentSymbol();window._qs_currentQuestId=(sym&&sym!=='__no_quests__')?sym:null;}"
+              "code": "var lw=this._widgetMap['questListWidget'];if(lw&&lw._window){var sym=lw._window.currentSymbol();window._qs_currentQuestId=(sym&&sym!=='__no_quests__')?sym:null;}var oo=this._widgetMap['qd_objectives'];if(oo&&oo._rebuildFromScript)oo._rebuildFromScript();var rr=this._widgetMap['qd_rewards'];if(rr&&rr._rebuildFromScript)rr._rebuildFromScript();"
             },
             "handlers": {
               "ok": {
@@ -576,12 +576,89 @@
             }
           },
           {
-            "id": "questDetailWidget",
-            "type": "questDetail",
-            "x": 400,
-            "y": 0,
-            "width": 416,
-            "height": 624
+            "id": "questDetailBg",
+            "type": "panel",
+            "x": 400, "y": 0, "width": 416, "height": 624,
+            "windowed": true,
+            "children": [
+              {
+                "id": "qd_title",
+                "type": "label",
+                "x": 8, "y": 8, "width": 392, "height": 36,
+                "text": "{QS._getSelectedQuestTitle()}",
+                "color": "#e8d080",
+                "fontSize": 24
+              },
+              {
+                "id": "qd_meta",
+                "type": "label",
+                "x": 8, "y": 44, "width": 392, "height": 28,
+                "text": "{QS._getSelectedQuestMeta()}",
+                "color": "#aaaaaa",
+                "fontSize": 18
+              },
+              {
+                "id": "qd_sep",
+                "type": "separator",
+                "x": 8, "y": 74, "width": 392, "height": 4
+              },
+              {
+                "id": "qd_desc",
+                "type": "textArea",
+                "x": 8, "y": 82, "width": 392, "height": 84,
+                "text": "{QS._getSelectedQuestDesc()}",
+                "fontSize": 18,
+                "lineHeight": 28
+              },
+              {
+                "id": "qd_obj_header",
+                "type": "label",
+                "x": 8, "y": 170, "width": 392, "height": 28,
+                "text": "[ 목표 ]",
+                "color": "#e8d080",
+                "fontSize": 20
+              },
+              {
+                "id": "qd_objectives",
+                "type": "list",
+                "x": 0, "y": 198, "width": 416, "height": 180,
+                "windowed": false,
+                "dataScript": "QS._buildObjectiveItems()"
+              },
+              {
+                "id": "qd_rew_header",
+                "type": "label",
+                "x": 8, "y": 382, "width": 392, "height": 28,
+                "text": "{QS._getSelectedQuestRewardsLabel()}",
+                "color": "#e8d080",
+                "fontSize": 20
+              },
+              {
+                "id": "qd_rewards",
+                "type": "list",
+                "x": 0, "y": 410, "width": 416, "height": 140,
+                "windowed": false,
+                "dataScript": "QS._buildRewardItems()"
+              },
+              {
+                "id": "qd_status_ok",
+                "type": "label",
+                "x": 8, "y": 560, "width": 392, "height": 28,
+                "text": "{QS._getSelectedQuestStatusOk()}",
+                "color": "#88ff88",
+                "align": "center",
+                "fontSize": 20
+              },
+              {
+                "id": "qd_status_fail",
+                "type": "label",
+                "x": 8, "y": 560, "width": 392, "height": 28,
+                "text": "{QS._getSelectedQuestStatusFail()}",
+                "color": "#ff8888",
+                "align": "center",
+                "fontSize": 20
+              }
+            ]
           }
         ]
       }
