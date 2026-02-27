@@ -10,7 +10,7 @@
         "cancelWidget": "cmd_main",
         "focusOrder": [
           "cmd_main",
-          "actor_list"
+          "actor_select"
         ]
       },
       "root": {
@@ -86,7 +86,7 @@
               },
               "skill": {
                 "action": "selectActor",
-                "widget": "actor_list",
+                "widget": "actor_select",
                 "thenAction": {
                   "action": "gotoScene",
                   "target": "Scene_Skill"
@@ -94,7 +94,7 @@
               },
               "equip": {
                 "action": "selectActor",
-                "widget": "actor_list",
+                "widget": "actor_select",
                 "thenAction": {
                   "action": "gotoScene",
                   "target": "Scene_Equip"
@@ -102,7 +102,7 @@
               },
               "status": {
                 "action": "selectActor",
-                "widget": "actor_list",
+                "widget": "actor_select",
                 "thenAction": {
                   "action": "gotoScene",
                   "target": "Scene_Status"
@@ -110,7 +110,7 @@
               },
               "formation": {
                 "action": "formation",
-                "widget": "actor_list"
+                "widget": "actor_select"
               },
               "options": {
                 "action": "gotoScene",
@@ -151,13 +151,261 @@
             ]
           },
           {
-            "id": "actor_list",
+            "id": "actor_row_0",
+            "type": "panel",
+            "x": 240,
+            "y": 0,
+            "width": 576,
+            "height": 156,
+            "windowed": false,
+            "children": [
+              {
+                "id": "face0",
+                "type": "actorFace",
+                "actorIndex": 0,
+                "x": 2,
+                "y": 6,
+                "width": 140,
+                "height": 140
+              },
+              {
+                "id": "name0",
+                "type": "label",
+                "x": 148,
+                "y": 4,
+                "width": 400,
+                "height": 36,
+                "text": "{actor[0].name}",
+                "fontSize": 26
+              },
+              {
+                "id": "lv0",
+                "type": "label",
+                "x": 148,
+                "y": 40,
+                "width": 400,
+                "height": 32,
+                "text": "Lv {actor[0].level}  {actor[0].class}",
+                "fontSize": 22,
+                "color": "#aaaaaa"
+              },
+              {
+                "id": "hp0",
+                "type": "gauge",
+                "actorIndex": 0,
+                "gaugeType": "hp",
+                "x": 148,
+                "y": 74,
+                "width": 400,
+                "height": 36
+              },
+              {
+                "id": "mp0",
+                "type": "gauge",
+                "actorIndex": 0,
+                "gaugeType": "mp",
+                "x": 148,
+                "y": 110,
+                "width": 400,
+                "height": 36
+              }
+            ]
+          },
+          {
+            "id": "actor_row_1",
+            "type": "panel",
+            "x": 240,
+            "y": 156,
+            "width": 576,
+            "height": 156,
+            "windowed": false,
+            "children": [
+              {
+                "id": "face1",
+                "type": "actorFace",
+                "actorIndex": 1,
+                "x": 2,
+                "y": 6,
+                "width": 140,
+                "height": 140
+              },
+              {
+                "id": "name1",
+                "type": "label",
+                "x": 148,
+                "y": 4,
+                "width": 400,
+                "height": 36,
+                "text": "{actor[1].name}",
+                "fontSize": 26
+              },
+              {
+                "id": "lv1",
+                "type": "label",
+                "x": 148,
+                "y": 40,
+                "width": 400,
+                "height": 32,
+                "text": "Lv {actor[1].level}  {actor[1].class}",
+                "fontSize": 22,
+                "color": "#aaaaaa"
+              },
+              {
+                "id": "hp1",
+                "type": "gauge",
+                "actorIndex": 1,
+                "gaugeType": "hp",
+                "x": 148,
+                "y": 74,
+                "width": 400,
+                "height": 36
+              },
+              {
+                "id": "mp1",
+                "type": "gauge",
+                "actorIndex": 1,
+                "gaugeType": "mp",
+                "x": 148,
+                "y": 110,
+                "width": 400,
+                "height": 36
+              }
+            ]
+          },
+          {
+            "id": "actor_row_2",
+            "type": "panel",
+            "x": 240,
+            "y": 312,
+            "width": 576,
+            "height": 156,
+            "windowed": false,
+            "children": [
+              {
+                "id": "face2",
+                "type": "actorFace",
+                "actorIndex": 2,
+                "x": 2,
+                "y": 6,
+                "width": 140,
+                "height": 140
+              },
+              {
+                "id": "name2",
+                "type": "label",
+                "x": 148,
+                "y": 4,
+                "width": 400,
+                "height": 36,
+                "text": "{actor[2].name}",
+                "fontSize": 26
+              },
+              {
+                "id": "lv2",
+                "type": "label",
+                "x": 148,
+                "y": 40,
+                "width": 400,
+                "height": 32,
+                "text": "Lv {actor[2].level}  {actor[2].class}",
+                "fontSize": 22,
+                "color": "#aaaaaa"
+              },
+              {
+                "id": "hp2",
+                "type": "gauge",
+                "actorIndex": 2,
+                "gaugeType": "hp",
+                "x": 148,
+                "y": 74,
+                "width": 400,
+                "height": 36
+              },
+              {
+                "id": "mp2",
+                "type": "gauge",
+                "actorIndex": 2,
+                "gaugeType": "mp",
+                "x": 148,
+                "y": 110,
+                "width": 400,
+                "height": 36
+              }
+            ]
+          },
+          {
+            "id": "actor_row_3",
+            "type": "panel",
+            "x": 240,
+            "y": 468,
+            "width": 576,
+            "height": 156,
+            "windowed": false,
+            "children": [
+              {
+                "id": "face3",
+                "type": "actorFace",
+                "actorIndex": 3,
+                "x": 2,
+                "y": 6,
+                "width": 140,
+                "height": 140
+              },
+              {
+                "id": "name3",
+                "type": "label",
+                "x": 148,
+                "y": 4,
+                "width": 400,
+                "height": 36,
+                "text": "{actor[3].name}",
+                "fontSize": 26
+              },
+              {
+                "id": "lv3",
+                "type": "label",
+                "x": 148,
+                "y": 40,
+                "width": 400,
+                "height": 32,
+                "text": "Lv {actor[3].level}  {actor[3].class}",
+                "fontSize": 22,
+                "color": "#aaaaaa"
+              },
+              {
+                "id": "hp3",
+                "type": "gauge",
+                "actorIndex": 3,
+                "gaugeType": "hp",
+                "x": 148,
+                "y": 74,
+                "width": 400,
+                "height": 36
+              },
+              {
+                "id": "mp3",
+                "type": "gauge",
+                "actorIndex": 3,
+                "gaugeType": "mp",
+                "x": 148,
+                "y": 110,
+                "width": 400,
+                "height": 36
+              }
+            ]
+          },
+          {
+            "id": "actor_select",
             "type": "actorList",
             "x": 240,
             "y": 0,
             "width": 576,
             "height": 624,
-            "numVisibleRows": 4
+            "numVisibleRows": 4,
+            "transparent": true,
+            "showFace": false,
+            "showStatus": false,
+            "padding": 0
           }
         ]
       }
