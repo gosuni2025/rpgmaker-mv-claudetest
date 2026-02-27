@@ -157,7 +157,7 @@
             "y": 0,
             "width": 576,
             "height": 624,
-            "windowed": false,
+            "windowed": true,
             "children": [
               {
                 "id": "actor_row_0",
