@@ -790,12 +790,15 @@
         "windowed": false,
         "children": [
           {
-            "id": "questTrackerWidget",
-            "type": "questTracker",
+            "id": "trackerList",
+            "type": "list",
             "x": 0,
             "y": 0,
             "width": 300,
-            "height": 200
+            "windowed": true,
+            "autoHeight": true,
+            "bgAlpha": 0.7,
+            "dataScript": "QS._buildTrackerItems()"
           }
         ]
       }

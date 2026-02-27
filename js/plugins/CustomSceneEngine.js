@@ -998,7 +998,10 @@
   Widget_Gauge.prototype.constructor = Widget_Gauge;
   Widget_Gauge.prototype.initialize = function(def, parentWidget) {
     Widget_Base.prototype.initialize.call(this, def, parentWidget);
-    this._gaugeType = def.gaugeType || 'hp';
+    this._valueExpr  = def.valueExpr  || null;
+    this._maxExpr    = def.maxExpr    || null;
+    this._labelExpr  = def.labelExpr  || null;
+    this._gaugeType  = def.gaugeType  || 'hp';
     this._actorIndex = def.actorIndex || 0;
     this._gaugeRenderMode = def.gaugeRenderMode || 'palette';
     this._gaugeSkinId = def.gaugeSkinId || null;
@@ -1029,6 +1032,29 @@
     if (!this._skinData) {
       this._windowSkin = ImageManager.loadSystem('Window');
     }
+    // 텍스트 서브스프라이트 (이름/현재값/최대값)
+    var h0 = this._height || 36;
+    var barH0 = Math.max(6, Math.round(h0 * 0.35));
+    var textH0 = h0 - barH0;
+    this._barH = barH0;
+    this._textH = textH0;
+    if (textH0 >= 8) {
+      var nw = Math.max(24, Math.round(this._width * 0.28));
+      var cw = Math.max(24, Math.round(this._width * 0.36));
+      var mw = Math.max(8, this._width - nw - cw);
+      this._nameSprite = new Sprite(new Bitmap(nw, textH0));
+      this._nameSprite.x = 0; this._nameSprite.y = 0;
+      sprite.addChild(this._nameSprite);
+      this._curSprite = new Sprite(new Bitmap(cw, textH0));
+      this._curSprite.x = nw; this._curSprite.y = 0;
+      sprite.addChild(this._curSprite);
+      this._maxSprite = new Sprite(new Bitmap(mw, textH0));
+      this._maxSprite.x = nw + cw; this._maxSprite.y = 0;
+      sprite.addChild(this._maxSprite);
+      this._nSprW = nw; this._cSprW = cw; this._mSprW = mw;
+    } else {
+      this._nameSprite = this._curSprite = this._maxSprite = null;
+    }
     this.refresh();
   };
   Widget_Gauge.prototype.refresh = function() {
@@ -1036,19 +1062,25 @@
     var w = this._width; var h = this._height || 36;
     this._bitmap.clear();
     this._drawDecoBg(this._bitmap, w, h, this._def);
-    var actor = null;
-    if (typeof $gameParty !== 'undefined') {
-      actor = $gameParty.members()[this._actorIndex];
-    }
-    if (actor) {
-      var w = this._width;
-      var h = this._height || 36;
-      var label = '', cur = 0, max = 1;
-      switch (this._gaugeType) {
-        case 'hp': label='HP'; cur=actor.hp; max=actor.mhp; break;
-        case 'mp': label='MP'; cur=actor.mp; max=actor.mmp; break;
-        case 'tp': label='TP'; cur=actor.tp; max=actor.maxTp(); break;
+    var label = '', cur = 0, max = 1;
+    var hasValue = false;
+    if (this._valueExpr) {
+      try { cur = Number(eval(this._valueExpr)) || 0; } catch(e) { cur = 0; }
+      try { max = Number(eval(this._maxExpr))   || 1; } catch(e) { max = 1; }
+      try { label = this._labelExpr ? String(eval(this._labelExpr)) : ''; } catch(e) { label = ''; }
+      hasValue = true;
+    } else if (typeof $gameParty !== 'undefined') {
+      var actor = $gameParty.members()[this._actorIndex];
+      if (actor) {
+        switch (this._gaugeType) {
+          case 'hp': label='HP'; cur=actor.hp; max=actor.mhp; break;
+          case 'mp': label='MP'; cur=actor.mp; max=actor.mmp; break;
+          case 'tp': label='TP'; cur=actor.tp; max=actor.maxTp(); break;
+        }
+        hasValue = true;
       }
+    }
+    if (hasValue) {
       var rate = max > 0 ? cur / max : 0;
       // 이미지 기반 게이지 렌더링
       if (this._gaugeRenderMode === 'image' && this._skinData && this._skinBitmap && this._skinBitmap.isReady()) {
@@ -1387,6 +1419,7 @@
     this._handlersDef = def.handlers || {};
     this._dataScript = def.dataScript || null;
     this._onCursorDef = def.onCursor || null;
+    this._autoHeight = def.autoHeight || false;
     var listDef = {
       id: def.id, width: def.width,
       commands: this._items,
@@ -1420,6 +1453,9 @@
       var items = (new Function('return (' + this._dataScript + ')'))();
       if (!Array.isArray(items)) items = [];
       this._window._winDef.commands = items;
+      if (this._autoHeight) {
+        this._window.height = items.length > 0 ? this._window.fittingHeight(items.length) : 0;
+      }
       if (this._window.refresh) this._window.refresh();
     } catch(e) {
       console.error('[Widget_List] dataScript error:', e);
