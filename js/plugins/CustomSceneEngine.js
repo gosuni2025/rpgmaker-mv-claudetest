@@ -255,67 +255,51 @@
   window.Window_CustomDisplay = Window_CustomDisplay;
 
   //===========================================================================
-  // Window_CustomActorList — Window_Selectable 상속, 파티 멤버 목록
+  // Window_RowSelector — Window_Selectable 상속, 범용 N행 선택 창
   //===========================================================================
-  function Window_CustomActorList() {
+  function Window_RowSelector() {
     this.initialize.apply(this, arguments);
   }
 
-  Window_CustomActorList.prototype = Object.create(Window_Selectable.prototype);
-  Window_CustomActorList.prototype.constructor = Window_CustomActorList;
+  Window_RowSelector.prototype = Object.create(Window_Selectable.prototype);
+  Window_RowSelector.prototype.constructor = Window_RowSelector;
 
   // padding 커스터마이징 지원 (transparent 모드에서 padding:0 으로 커서 정렬)
-  Window_CustomActorList.prototype.standardPadding = function() {
+  Window_RowSelector.prototype.standardPadding = function() {
     if (this._winDef && this._winDef.padding !== undefined) return this._winDef.padding;
     return Window_Selectable.prototype.standardPadding.call(this);
   };
 
-  Window_CustomActorList.prototype.initialize = function(x, y, winDef) {
+  Window_RowSelector.prototype.initialize = function(x, y, winDef) {
     this._winDef = winDef || {};
-    this._customClassName = 'Window_CS_' + (winDef && winDef.id ? winDef.id : 'actorList');
+    this._customClassName = 'Window_CS_' + (winDef && winDef.id ? winDef.id : 'rowSelector');
     this._formationMode = false;
     this._pendingIndex = -1;
-    this._showFace   = this._winDef.showFace   !== false;
-    this._showStatus = this._winDef.showStatus !== false;
+    this._numRows = this._winDef.numRows;  // number | 'party' | undefined
     var w = this._winDef.width || 576;
     var h = this._winDef.height || 624;
     Window_Selectable.prototype.initialize.call(this, x, y, w, h);
     if (this._winDef.transparent) this.setBackgroundType(2);
-    this.loadImages();
     this.refresh();
   };
 
-  Window_CustomActorList.prototype.maxItems = function() {
-    return typeof $gameParty !== 'undefined' ? $gameParty.size() : 0;
+  Window_RowSelector.prototype.maxItems = function() {
+    var nr = this._numRows;
+    if (nr === 'party') return typeof $gameParty !== 'undefined' ? $gameParty.size() : 0;
+    return (typeof nr === 'number' && nr > 0) ? nr : (typeof $gameParty !== 'undefined' ? $gameParty.size() : 0);
   };
 
-  Window_CustomActorList.prototype.numVisibleRows = function() {
-    return this._winDef.numVisibleRows || 4;
+  Window_RowSelector.prototype.numVisibleRows = function() {
+    return this.maxItems() || 1;
   };
 
-  Window_CustomActorList.prototype.itemHeight = function() {
+  Window_RowSelector.prototype.itemHeight = function() {
     var clientHeight = this.height - this.padding * 2;
     return Math.floor(clientHeight / this.numVisibleRows());
   };
 
-  Window_CustomActorList.prototype.loadImages = function() {
-    if (typeof $gameParty === 'undefined' || typeof ImageManager === 'undefined') return;
-    var self = this;
-    $gameParty.members().forEach(function(actor) {
-      var bitmap = ImageManager.reserveFace(actor.faceName());
-      if (bitmap && bitmap.addLoadListener) {
-        bitmap.addLoadListener(function() { self.refresh(); });
-      }
-    }, this);
-  };
-
-  Window_CustomActorList.prototype.drawItem = function(index) {
-    this.drawItemBackground(index);
-    if (this._showFace)   this.drawItemImage(index);
-    if (this._showStatus) this.drawItemStatus(index);
-  };
-
-  Window_CustomActorList.prototype.drawItemBackground = function(index) {
+  Window_RowSelector.prototype.drawItem = function(index) {
+    // pendingIndex 배경만 표시 (얼굴/상태 표시 없음 — 개별 위젯으로 구성)
     if (index === this._pendingIndex) {
       var rect = this.itemRect(index);
       var color = this.pendingColor();
@@ -325,36 +309,11 @@
     }
   };
 
-  Window_CustomActorList.prototype.drawItemImage = function(index) {
-    if (typeof $gameParty === 'undefined') return;
-    var actor = $gameParty.members()[index];
-    if (!actor) return;
-    var rect = this.itemRect(index);
-    this.changePaintOpacity(actor.isBattleMember());
-    this.drawActorFace(actor, rect.x + 1, rect.y + 1, Window_Base._faceWidth, Window_Base._faceHeight);
-    this.changePaintOpacity(true);
-  };
-
-  Window_CustomActorList.prototype.drawItemStatus = function(index) {
-    if (typeof $gameParty === 'undefined') return;
-    var actor = $gameParty.members()[index];
-    if (!actor) return;
-    var rect = this.itemRect(index);
-    var x = rect.x + 162;
-    var y = rect.y + rect.height / 2 - this.lineHeight() * 1.5;
-    var width = rect.width - x - this.textPadding();
-    this.drawActorSimpleStatus(actor, x, y, width);
-  };
-
-  Window_CustomActorList.prototype.processOk = function() {
-    if (typeof $gameParty !== 'undefined') {
-      var actor = $gameParty.members()[this.index()];
-      if (actor) $gameParty.setMenuActor(actor);
-    }
+  Window_RowSelector.prototype.processOk = function() {
     Window_Selectable.prototype.processOk.call(this);
   };
 
-  Window_CustomActorList.prototype.isCurrentItemEnabled = function() {
+  Window_RowSelector.prototype.isCurrentItemEnabled = function() {
     if (this._formationMode) {
       if (typeof $gameParty === 'undefined') return false;
       var actor = $gameParty.members()[this.index()];
@@ -363,26 +322,31 @@
     return true;
   };
 
-  Window_CustomActorList.prototype.selectLast = function() {
-    if (typeof $gameParty === 'undefined') return;
-    var actor = $gameParty.menuActor ? $gameParty.menuActor() : null;
-    if (actor) this.select(actor.index());
-    else this.select(0);
+  Window_RowSelector.prototype.selectLast = function() {
+    var nr = this._numRows;
+    if (nr === 'party' || nr === undefined) {
+      // 파티 모드: menuActor 기반 선택
+      if (typeof $gameParty !== 'undefined') {
+        var actor = $gameParty.menuActor ? $gameParty.menuActor() : null;
+        if (actor) { this.select(actor.index()); return; }
+      }
+    }
+    this.select(0);
   };
 
-  Window_CustomActorList.prototype.formationMode = function() {
+  Window_RowSelector.prototype.formationMode = function() {
     return this._formationMode;
   };
 
-  Window_CustomActorList.prototype.setFormationMode = function(mode) {
+  Window_RowSelector.prototype.setFormationMode = function(mode) {
     this._formationMode = mode;
   };
 
-  Window_CustomActorList.prototype.pendingIndex = function() {
+  Window_RowSelector.prototype.pendingIndex = function() {
     return this._pendingIndex;
   };
 
-  Window_CustomActorList.prototype.setPendingIndex = function(index) {
+  Window_RowSelector.prototype.setPendingIndex = function(index) {
     var last = this._pendingIndex;
     this._pendingIndex = index;
     if (this._pendingIndex !== last) {
@@ -391,7 +355,9 @@
     }
   };
 
-  window.Window_CustomActorList = Window_CustomActorList;
+  // backward compat alias
+  window.Window_CustomActorList = Window_RowSelector;
+  window.Window_RowSelector = Window_RowSelector;
 
   //===========================================================================
   // Window_CustomOptions — Window_Command 상속, 옵션 설정 창
@@ -831,56 +797,6 @@
   window.Widget_Image = Widget_Image;
 
   //===========================================================================
-  // Widget_ActorFace — 액터 얼굴 이미지
-  //===========================================================================
-  function Widget_ActorFace() {}
-  Widget_ActorFace.prototype = Object.create(Widget_Base.prototype);
-  Widget_ActorFace.prototype.constructor = Widget_ActorFace;
-  Widget_ActorFace.prototype.initialize = function(def, parentWidget) {
-    Widget_Base.prototype.initialize.call(this, def, parentWidget);
-    this._actorIndex = def.actorIndex || 0;
-    var sprite = new Sprite();
-    sprite.x = this._x;
-    sprite.y = this._y;
-    var bitmap = new Bitmap(this._width || 144, this._height || 144);
-    sprite.bitmap = bitmap;
-    this._sprite = sprite;
-    this._bitmap = bitmap;
-    this._displayObject = sprite;
-    this.refresh();
-  };
-  Widget_ActorFace.prototype.refresh = function() {
-    if (!this._bitmap) return;
-    this._bitmap.clear();
-    var actor = null;
-    if (typeof $gameParty !== 'undefined') {
-      actor = $gameParty.members()[this._actorIndex];
-    }
-    if (actor) {
-      var faceName = actor.faceName();
-      var faceIndex = actor.faceIndex();
-      if (faceName && typeof ImageManager !== 'undefined') {
-        var bitmap = ImageManager.loadFace(faceName);
-        var self = this;
-        var w = this._width || 144;
-        var h = this._height || 144;
-        bitmap.addLoadListener(function() {
-          self._bitmap.clear();
-          var pw = Window_Base._faceWidth || 144;
-          var ph = Window_Base._faceHeight || 144;
-          var sw = Math.min(w, pw);
-          var sh = Math.min(h, ph);
-          var sx = (faceIndex % 4) * pw + (pw - sw) / 2;
-          var sy = Math.floor(faceIndex / 4) * ph + (ph - sh) / 2;
-          self._bitmap.blt(bitmap, sx, sy, sw, sh, 0, 0, w, h);
-        });
-      }
-    }
-    Widget_Base.prototype.refresh.call(this);
-  };
-  window.Widget_ActorFace = Widget_ActorFace;
-
-  //===========================================================================
   // Widget_Gauge — HP/MP/TP 게이지
   //===========================================================================
   function Widget_Gauge() {}
@@ -890,11 +806,13 @@
     Widget_Base.prototype.initialize.call(this, def, parentWidget);
     this._gaugeType = def.gaugeType || 'hp';
     this._actorIndex = def.actorIndex || 0;
+    this._gaugeRenderMode = def.gaugeRenderMode || 'palette';
     this._gaugeSkinId = def.gaugeSkinId || null;
     this._showLabel = def.showLabel !== false;
     this._showValue = def.showValue !== false;
     this._skinData = null;
     this._skinBitmap = null;
+    this._windowSkin = null;
     var sprite = new Sprite();
     sprite.x = this._x;
     sprite.y = this._y;
@@ -903,14 +821,16 @@
     this._sprite = sprite;
     this._bitmap = bitmap;
     this._displayObject = sprite;
-    // 스킨 ID가 있으면 스킨 이미지 로드
-    if (this._gaugeSkinId && typeof UIEditorSkins !== 'undefined') {
+    // 이미지 모드: 스킨 ID가 있으면 스킨 이미지 로드
+    if (this._gaugeRenderMode === 'image' && this._gaugeSkinId && typeof UIEditorSkins !== 'undefined') {
       var skinEntry = UIEditorSkins.find(function(s) { return s.name === this._gaugeSkinId; }.bind(this));
       if (skinEntry) {
         this._skinData = skinEntry;
         this._skinBitmap = ImageManager.loadSystem(skinEntry.file || skinEntry.name);
       }
     }
+    // 팔레트 모드: Window.png 로드 (palette가 기본)
+    this._windowSkin = ImageManager.loadSystem('Window');
     this.refresh();
   };
   Widget_Gauge.prototype.refresh = function() {
@@ -931,7 +851,7 @@
       }
       var rate = max > 0 ? cur / max : 0;
       // 이미지 기반 게이지 렌더링
-      if (this._skinData && this._skinBitmap && this._skinBitmap.isReady()) {
+      if (this._gaugeRenderMode === 'image' && this._skinData && this._skinBitmap && this._skinBitmap.isReady()) {
         var sd = this._skinData;
         var bgX = sd.gaugeBgX || 0, bgY = sd.gaugeBgY || 0;
         var bgW = sd.gaugeBgW || 0, bgH = sd.gaugeBgH || 0;
@@ -964,12 +884,45 @@
           this._bitmap.drawText(cur + '/' + max, 60, 0, w - 60, h, 'right');
         }
       } else {
-        // 색상 바 렌더링 (기존 방식, 하위 호환)
+        // 팔레트 모드 — Window.png textColor 기반 그라디언트
         var gaugeH = 6;
         var gaugeY = h - gaugeH - 2;
-        this._bitmap.fillRect(0, gaugeY, w, gaugeH, '#202020');
-        var color = this._gaugeType === 'hp' ? '#20c020' : (this._gaugeType === 'mp' ? '#2040c0' : '#c08020');
-        this._bitmap.fillRect(0, gaugeY, Math.floor(w * rate), gaugeH, color);
+        var color1, color2, bgColor;
+        if (this._windowSkin && this._windowSkin.isReady()) {
+          var ws = this._windowSkin;
+          // textColor(n): px = 96+(n%8)*12+6, py = 144+floor(n/8)*12+6
+          bgColor = ws.getPixel(96 + (19 % 8) * 12 + 6, 144 + Math.floor(19 / 8) * 12 + 6);
+          switch (this._gaugeType) {
+            case 'hp':
+              color1 = ws.getPixel(96 + (20 % 8) * 12 + 6, 144 + Math.floor(20 / 8) * 12 + 6);
+              color2 = ws.getPixel(96 + (21 % 8) * 12 + 6, 144 + Math.floor(21 / 8) * 12 + 6);
+              break;
+            case 'mp':
+              color1 = ws.getPixel(96 + (22 % 8) * 12 + 6, 144 + Math.floor(22 / 8) * 12 + 6);
+              color2 = ws.getPixel(96 + (23 % 8) * 12 + 6, 144 + Math.floor(23 / 8) * 12 + 6);
+              break;
+            case 'tp':
+              color1 = ws.getPixel(96 + (28 % 8) * 12 + 6, 144 + Math.floor(28 / 8) * 12 + 6);
+              color2 = ws.getPixel(96 + (29 % 8) * 12 + 6, 144 + Math.floor(29 / 8) * 12 + 6);
+              break;
+            default:
+              color1 = '#20c020'; color2 = '#60e060';
+          }
+        } else {
+          // Window.png 아직 미로드 — 하드코딩 fallback
+          bgColor = '#202020';
+          switch (this._gaugeType) {
+            case 'hp': color1 = '#20c020'; color2 = '#60e060'; break;
+            case 'mp': color1 = '#2040c0'; color2 = '#4080e0'; break;
+            case 'tp': color1 = '#c08020'; color2 = '#e0c040'; break;
+            default:   color1 = '#20c020'; color2 = '#60e060'; break;
+          }
+        }
+        this._bitmap.fillRect(0, gaugeY, w, gaugeH, bgColor || '#202020');
+        var fillW2 = Math.floor(w * rate);
+        if (fillW2 > 0) {
+          this._bitmap.gradientFillRect(0, gaugeY, fillW2, gaugeH, color1, color2);
+        }
         this._bitmap.fontSize = 20;
         this._bitmap.textColor = '#ffffff';
         if (this._showLabel) {
@@ -1028,58 +981,60 @@
   window.Widget_Background = Widget_Background;
 
   //===========================================================================
-  // Widget_ActorList — 파티 멤버 선택 위젯 (focusable)
+  // Widget_RowSelector — 범용 N행 선택 위젯 (focusable)
   //===========================================================================
-  function Widget_ActorList() {}
-  Widget_ActorList.prototype = Object.create(Widget_Base.prototype);
-  Widget_ActorList.prototype.constructor = Widget_ActorList;
-  Widget_ActorList.prototype.initialize = function(def, parentWidget) {
+  function Widget_RowSelector() {}
+  Widget_RowSelector.prototype = Object.create(Widget_Base.prototype);
+  Widget_RowSelector.prototype.constructor = Widget_RowSelector;
+  Widget_RowSelector.prototype.initialize = function(def, parentWidget) {
     Widget_Base.prototype.initialize.call(this, def, parentWidget);
     this._handlersDef = def.handlers || {};
-    var win = new Window_CustomActorList(this._x, this._y, def);
+    var win = new Window_RowSelector(this._x, this._y, def);
     win._customClassName = 'Widget_CS_' + this._id;
     win.deactivate();
     this._window = win;
     this._displayObject = win;
   };
-  Widget_ActorList.prototype.collectFocusable = function(out) {
+  Widget_RowSelector.prototype.collectFocusable = function(out) {
     out.push(this);
   };
-  Widget_ActorList.prototype.activate = function() {
+  Widget_RowSelector.prototype.activate = function() {
     if (this._window) {
       this._window.activate();
       this._window.selectLast();
     }
   };
-  Widget_ActorList.prototype.deactivate = function() {
+  Widget_RowSelector.prototype.deactivate = function() {
     if (this._window) {
       this._window.deactivate();
       this._window.deselect();
     }
   };
-  Widget_ActorList.prototype.setHandler = function(symbol, fn) {
+  Widget_RowSelector.prototype.setHandler = function(symbol, fn) {
     if (this._window) this._window.setHandler(symbol, fn);
   };
-  Widget_ActorList.prototype.setCancelHandler = function(fn) {
+  Widget_RowSelector.prototype.setCancelHandler = function(fn) {
     if (this._window) this._window.setHandler('cancel', fn);
   };
-  Widget_ActorList.prototype.setFormationMode = function(mode) {
+  Widget_RowSelector.prototype.setFormationMode = function(mode) {
     if (this._window) this._window.setFormationMode(mode);
   };
-  Widget_ActorList.prototype.setPendingIndex = function(index) {
+  Widget_RowSelector.prototype.setPendingIndex = function(index) {
     if (this._window) this._window.setPendingIndex(index);
   };
-  Widget_ActorList.prototype.pendingIndex = function() {
+  Widget_RowSelector.prototype.pendingIndex = function() {
     return this._window ? this._window.pendingIndex() : -1;
   };
-  Widget_ActorList.prototype.index = function() {
+  Widget_RowSelector.prototype.index = function() {
     return this._window ? this._window.index() : -1;
   };
-  Widget_ActorList.prototype.refresh = function() {
+  Widget_RowSelector.prototype.refresh = function() {
     if (this._window) this._window.refresh();
   };
-  Widget_ActorList.prototype.handlesUpDown = function() { return true; };
-  window.Widget_ActorList = Widget_ActorList;
+  Widget_RowSelector.prototype.handlesUpDown = function() { return true; };
+  // backward compat alias
+  window.Widget_ActorList = Widget_RowSelector;
+  window.Widget_RowSelector = Widget_RowSelector;
 
   //===========================================================================
   // Widget_Options — 옵션 설정 위젯 (focusable)
@@ -1443,15 +1398,15 @@
     if (!def || !def.type) return null;
     var widget = null;
     switch (def.type) {
-      case 'panel':     widget = new Widget_Panel();     break;
-      case 'label':     widget = new Widget_Label();     break;
-      case 'image':     widget = new Widget_Image();     break;
-      case 'actorFace': widget = new Widget_ActorFace(); break;
-      case 'gauge':     widget = new Widget_Gauge();     break;
-      case 'separator': widget = new Widget_Separator(); break;
+      case 'panel':       widget = new Widget_Panel();       break;
+      case 'label':       widget = new Widget_Label();       break;
+      case 'image':       widget = new Widget_Image();       break;
+      case 'gauge':       widget = new Widget_Gauge();       break;
+      case 'separator':   widget = new Widget_Separator();   break;
       case 'button':      widget = new Widget_Button();      break;
       case 'list':        widget = new Widget_List();        break;
-      case 'actorList':   widget = new Widget_ActorList();   break;
+      case 'rowSelector':
+      case 'actorList':   widget = new Widget_RowSelector(); break;
       case 'options':     widget = new Widget_Options();     break;
       case 'background':  widget = new Widget_Background();  break;
       default:          return null;
@@ -1483,13 +1438,13 @@
         widget.setCancelHandler(function() {
           self._executeWidgetHandler({ action: 'cancel' }, widget);
         });
-      } else if (widget instanceof Widget_ActorList) {
+      } else if (widget instanceof Widget_RowSelector) {
         (function(w) {
           w.setHandler('ok', function() {
-            self._onActorListOk(w);
+            self._onRowSelectorOk(w);
           });
           w.setCancelHandler(function() {
-            self._onActorListCancel(w);
+            self._onRowSelectorCancel(w);
           });
         })(widget);
       } else if (widget instanceof Widget_Options) {
@@ -1673,7 +1628,7 @@
     }
   };
 
-  Scene_CustomUI.prototype._onActorListOk = function(widget) {
+  Scene_CustomUI.prototype._onRowSelectorOk = function(widget) {
     var win = widget._window;
     var index = win.index();
     if (win.formationMode()) {
@@ -1688,6 +1643,17 @@
         win.activate();
       }
     } else {
+      var handlersDef = widget._handlersDef || {};
+      if (handlersDef['ok']) {
+        this._executeWidgetHandler(handlersDef['ok'], widget);
+        return;
+      }
+      // source==='party' (numRows==='party' or undefined) 일 때 menuActor 설정
+      var nr = win._numRows;
+      if ((nr === 'party' || nr === undefined) && typeof $gameParty !== 'undefined') {
+        var actor = $gameParty.members()[index];
+        if (actor) $gameParty.setMenuActor(actor);
+      }
       var action = this._pendingPersonalAction;
       if (action) {
         this._pendingPersonalAction = null;
@@ -1695,6 +1661,8 @@
       }
     }
   };
+  // backward compat
+  Scene_CustomUI.prototype._onActorListOk = Scene_CustomUI.prototype._onRowSelectorOk;
 
   Scene_CustomUI.prototype.terminate = function() {
     Scene_Base.prototype.terminate.call(this);
@@ -1713,12 +1681,18 @@
     this.popScene();
   };
 
-  Scene_CustomUI.prototype._onActorListCancel = function(widget) {
+  Scene_CustomUI.prototype._onRowSelectorCancel = function(widget) {
     var win = widget._window;
     if (win.formationMode() && win.pendingIndex() >= 0) {
       win.setPendingIndex(-1);
       win.activate();
     } else {
+      var handlersDef = widget._handlersDef || {};
+      if (handlersDef['cancel']) {
+        win.deselect();
+        this._executeWidgetHandler(handlersDef['cancel'], widget);
+        return;
+      }
       win.deselect();
       var originId = this._personalOriginWidget ? this._personalOriginWidget._id : null;
       if (!originId && this._navManager && this._navManager._cancelWidgetId) {
@@ -1731,6 +1705,8 @@
       }
     }
   };
+  // backward compat
+  Scene_CustomUI.prototype._onActorListCancel = Scene_CustomUI.prototype._onRowSelectorCancel;
 
   Scene_CustomUI.prototype.start = function () {
     Scene_Base.prototype.start.call(this);
