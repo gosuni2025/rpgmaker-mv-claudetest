@@ -301,9 +301,9 @@
                     "showLabel": true,
                     "showValue": true,
                     "x": 352,
-                    "y": 48,
+                    "y": 52,
                     "width": 218,
-                    "height": 36
+                    "height": 32
                   },
                   {
                     "id": "mp1",
@@ -622,7 +622,10 @@
               "ok": {
                 "action": "script",
                 "code": "var lw=this._widgetMap['questCategoryWidget'];window._qs_currentCategory=lw&&lw._window?lw._window.currentSymbol():'__all__';window._qs_currentQuestId=null;var ql=this._widgetMap['questListWidget'];if(ql)ql._lastIndex=0;",
-                "thenAction": { "action": "focusWidget", "target": "questListWidget" }
+                "thenAction": {
+                  "action": "focusWidget",
+                  "target": "questListWidget"
+                }
               },
               "cancel": {
                 "action": "cancel"
@@ -654,13 +657,19 @@
           {
             "id": "questDetailBg",
             "type": "panel",
-            "x": 400, "y": 0, "width": 416, "height": 624,
+            "x": 400,
+            "y": 0,
+            "width": 416,
+            "height": 624,
             "windowed": true,
             "children": [
               {
                 "id": "qd_title",
                 "type": "label",
-                "x": 8, "y": 8, "width": 392, "height": 36,
+                "x": 8,
+                "y": 8,
+                "width": 392,
+                "height": 36,
                 "text": "{QS._getSelectedQuestTitle()}",
                 "color": "#e8d080",
                 "fontSize": 24
@@ -668,7 +677,10 @@
               {
                 "id": "qd_meta",
                 "type": "label",
-                "x": 8, "y": 44, "width": 392, "height": 28,
+                "x": 8,
+                "y": 44,
+                "width": 392,
+                "height": 28,
                 "text": "{QS._getSelectedQuestMeta()}",
                 "color": "#aaaaaa",
                 "fontSize": 18
@@ -676,12 +688,18 @@
               {
                 "id": "qd_sep",
                 "type": "separator",
-                "x": 8, "y": 74, "width": 392, "height": 4
+                "x": 8,
+                "y": 74,
+                "width": 392,
+                "height": 4
               },
               {
                 "id": "qd_desc",
                 "type": "textArea",
-                "x": 8, "y": 82, "width": 392, "height": 84,
+                "x": 8,
+                "y": 82,
+                "width": 392,
+                "height": 84,
                 "text": "{QS._getSelectedQuestDesc()}",
                 "fontSize": 18,
                 "lineHeight": 28
@@ -689,7 +707,10 @@
               {
                 "id": "qd_obj_header",
                 "type": "label",
-                "x": 8, "y": 170, "width": 392, "height": 28,
+                "x": 8,
+                "y": 170,
+                "width": 392,
+                "height": 28,
                 "text": "[ 목표 ]",
                 "color": "#e8d080",
                 "fontSize": 20
@@ -697,14 +718,20 @@
               {
                 "id": "qd_objectives",
                 "type": "list",
-                "x": 0, "y": 198, "width": 416, "height": 180,
+                "x": 0,
+                "y": 198,
+                "width": 416,
+                "height": 180,
                 "windowed": false,
                 "dataScript": "QS._buildObjectiveItems()"
               },
               {
                 "id": "qd_rew_header",
                 "type": "label",
-                "x": 8, "y": 382, "width": 392, "height": 28,
+                "x": 8,
+                "y": 382,
+                "width": 392,
+                "height": 28,
                 "text": "{QS._getSelectedQuestRewardsLabel()}",
                 "color": "#e8d080",
                 "fontSize": 20
@@ -712,14 +739,20 @@
               {
                 "id": "qd_rewards",
                 "type": "list",
-                "x": 0, "y": 410, "width": 416, "height": 140,
+                "x": 0,
+                "y": 410,
+                "width": 416,
+                "height": 140,
                 "windowed": false,
                 "dataScript": "QS._buildRewardItems()"
               },
               {
                 "id": "qd_status_ok",
                 "type": "label",
-                "x": 8, "y": 560, "width": 392, "height": 28,
+                "x": 8,
+                "y": 560,
+                "width": 392,
+                "height": 28,
                 "text": "{QS._getSelectedQuestStatusOk()}",
                 "color": "#88ff88",
                 "align": "center",
@@ -728,7 +761,10 @@
               {
                 "id": "qd_status_fail",
                 "type": "label",
-                "x": 8, "y": 560, "width": 392, "height": 28,
+                "x": 8,
+                "y": 560,
+                "width": 392,
+                "height": 28,
                 "text": "{QS._getSelectedQuestStatusFail()}",
                 "color": "#ff8888",
                 "align": "center",
