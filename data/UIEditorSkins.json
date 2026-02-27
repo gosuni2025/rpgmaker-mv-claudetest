@@ -39,6 +39,45 @@
       "gaugeFillH": 16
     },
     {
+      "name": "gauge_hp",
+      "file": "Window",
+      "gaugeBgX": 100,
+      "gaugeBgY": 102,
+      "gaugeBgW": 37,
+      "gaugeBgH": 37,
+      "gaugeFillX": 144,
+      "gaugeFillY": 168,
+      "gaugeFillW": 24,
+      "gaugeFillH": 12,
+      "gaugeFillDir": "horizontal"
+    },
+    {
+      "name": "gauge_mp",
+      "file": "Window",
+      "gaugeBgX": 100,
+      "gaugeBgY": 102,
+      "gaugeBgW": 37,
+      "gaugeBgH": 37,
+      "gaugeFillX": 168,
+      "gaugeFillY": 168,
+      "gaugeFillW": 24,
+      "gaugeFillH": 12,
+      "gaugeFillDir": "horizontal"
+    },
+    {
+      "name": "gauge_tp",
+      "file": "Window",
+      "gaugeBgX": 100,
+      "gaugeBgY": 102,
+      "gaugeBgW": 37,
+      "gaugeBgH": 37,
+      "gaugeFillX": 144,
+      "gaugeFillY": 180,
+      "gaugeFillW": 24,
+      "gaugeFillH": 12,
+      "gaugeFillDir": "horizontal"
+    },
+    {
       "name": "kenny",
       "cornerSize": 1,
       "frameX": 221,
