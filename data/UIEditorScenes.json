@@ -451,8 +451,8 @@
               {
                 "id": "minimap",
                 "type": "minimap",
-                "x": -480,
-                "y": 241,
+                "x": 6,
+                "y": 0,
                 "width": 192,
                 "height": 192,
                 "children": [
