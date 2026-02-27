@@ -567,7 +567,7 @@
             "handlers": {
               "ok": {
                 "action": "script",
-                "code": ""
+                "code": "var lw=this._widgetMap['questListWidget'];if(lw&&lw._window)lw._lastIndex=lw._window.index();"
               },
               "cancel": {
                 "action": "focusWidget",
