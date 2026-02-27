@@ -1,8 +1,20 @@
 {
   "categories": [
-    { "id": "main", "name": "메인 퀘스트", "icon": 79 },
-    { "id": "side", "name": "사이드 퀘스트", "icon": 80 },
-    { "id": "daily", "name": "일일 퀘스트", "icon": 81 }
+    {
+      "id": "main",
+      "name": "메인 퀘스트",
+      "icon": 79
+    },
+    {
+      "id": "side",
+      "name": "사이드 퀘스트",
+      "icon": 80
+    },
+    {
+      "id": "daily",
+      "name": "일일 퀘스트",
+      "icon": 81
+    }
   ],
   "quests": [
     {
@@ -18,7 +30,10 @@
           "id": 1,
           "text": "슬라임 3마리 처치",
           "type": "kill",
-          "config": { "enemyId": 1, "count": 3 },
+          "config": {
+            "enemyId": 2,
+            "count": 3
+          },
           "optional": false,
           "hidden": false
         },
@@ -32,8 +47,14 @@
         }
       ],
       "rewards": [
-        { "type": "gold", "amount": 300 },
-        { "type": "exp", "amount": 50 }
+        {
+          "type": "gold",
+          "amount": 300
+        },
+        {
+          "type": "exp",
+          "amount": 50
+        }
       ],
       "note": ""
     },
@@ -50,14 +71,25 @@
           "id": 1,
           "text": "약초 5개 보유",
           "type": "collect",
-          "config": { "itemType": "item", "itemId": 1, "count": 5 },
+          "config": {
+            "itemType": "item",
+            "itemId": 1,
+            "count": 5
+          },
           "optional": false,
           "hidden": false
         }
       ],
       "rewards": [
-        { "type": "gold", "amount": 150 },
-        { "type": "item", "itemId": 2, "count": 3 }
+        {
+          "type": "gold",
+          "amount": 150
+        },
+        {
+          "type": "item",
+          "itemId": 2,
+          "count": 3
+        }
       ],
       "note": "아이템 ID 1 = 포션으로 설정할 것"
     }
