@@ -491,7 +491,8 @@
                 },
                 "bgAlpha": 0.83,
                 "borderWidth": 1,
-                "borderRadius": 2
+                "borderRadius": 2,
+                "windowed": false
               },
               {
                 "id": "btn_zoom_out",
