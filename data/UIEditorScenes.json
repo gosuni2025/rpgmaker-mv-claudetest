@@ -2,7 +2,7 @@
   "scenes": {
     "menu_v2": {
       "id": "menu_v2",
-      "displayName": "위젯 트리 메뉴 (v2)",
+      "displayName": "게임 메뉴",
       "baseScene": "MenuBase",
       "formatVersion": 2,
       "prepareArgs": [],
