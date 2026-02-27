@@ -488,7 +488,10 @@
                 "action": {
                   "action": "script",
                   "code": "MinimapManager.zoomIn()"
-                }
+                },
+                "bgAlpha": 0.83,
+                "borderWidth": 1,
+                "borderRadius": 2
               },
               {
                 "id": "btn_zoom_out",
