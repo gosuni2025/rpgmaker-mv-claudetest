@@ -1,0 +1,2536 @@
+{
+  "id": 23,
+  "name": "셰이더 테스트 (전체 47종)",
+  "x": 14,
+  "y": 21,
+  "note": "",
+  "pages": [
+    {
+      "conditions": {
+        "actorId": 1,
+        "actorValid": false,
+        "itemId": 1,
+        "itemValid": false,
+        "selfSwitchCh": "A",
+        "selfSwitchValid": false,
+        "switch1Id": 1,
+        "switch1Valid": false,
+        "switch2Id": 1,
+        "switch2Valid": false,
+        "variableId": 1,
+        "variableValid": false,
+        "variableValue": 0
+      },
+      "directionFix": false,
+      "image": {
+        "characterIndex": 5,
+        "characterName": "Actor2",
+        "direction": 4,
+        "pattern": 2,
+        "tileId": 0
+      },
+      "list": [
+        {
+          "code": 212,
+          "indent": 0,
+          "parameters": [
+            10
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "wave",
+                "enabled": true,
+                "params": {
+                  "amplitude": 10,
+                  "frequency": 5,
+                  "speed": 2,
+                  "direction": 0
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[1/47] 물결 (Wave)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "glitch",
+                "enabled": true,
+                "params": {
+                  "intensity": 0.3,
+                  "rgbShift": 5,
+                  "lineSpeed": 3,
+                  "blockSize": 8
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[2/47] 글리치 (Glitch)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "dissolve",
+                "enabled": true,
+                "params": {
+                  "threshold": 0.5,
+                  "edgeWidth": 0.05,
+                  "edgeColorR": 1,
+                  "edgeColorG": 0.5,
+                  "edgeColorB": 0,
+                  "noiseScale": 10,
+                  "animSpeed": 1,
+                  "animMode": 0,
+                  "thresholdMin": 0,
+                  "thresholdMax": 1
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[3/47] 디졸브 (Dissolve)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "glow",
+                "enabled": true,
+                "params": {
+                  "intensity": 1,
+                  "radius": 4,
+                  "colorR": 1,
+                  "colorG": 1,
+                  "colorB": 1,
+                  "pulseSpeed": 2,
+                  "animMode": 0
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[4/47] 발광 (Glow)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "chromatic",
+                "enabled": true,
+                "params": {
+                  "offset": 16,
+                  "angle": 0,
+                  "pulseSpeed": 4.1,
+                  "animMode": 0
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[5/47] 색수차 (Chromatic)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "pixelate",
+                "enabled": true,
+                "params": {
+                  "size": 8,
+                  "pulseSpeed": 2,
+                  "animMode": 0,
+                  "minSize": 2,
+                  "maxSize": 16
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[6/47] 픽셀화 (Pixelate)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "shake",
+                "enabled": true,
+                "params": {
+                  "power": 5,
+                  "speed": 10,
+                  "direction": 2
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[7/47] 흔들림 (Shake)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "blur",
+                "enabled": true,
+                "params": {
+                  "strength": 4,
+                  "pulseSpeed": 2,
+                  "animMode": 0,
+                  "minStrength": 0,
+                  "maxStrength": 8
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[8/47] 흐림 (Blur)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "rainbow",
+                "enabled": true,
+                "params": {
+                  "speed": 1,
+                  "saturation": 0.5,
+                  "brightness": 0.1
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[9/47] 무지개 (Rainbow)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "hologram",
+                "enabled": true,
+                "params": {
+                  "scanlineSpacing": 4,
+                  "scanlineAlpha": 0.3,
+                  "flickerSpeed": 5,
+                  "flickerIntensity": 0.2,
+                  "rgbShift": 2,
+                  "tintR": 0.5,
+                  "tintG": 0.8,
+                  "tintB": 1
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[10/47] 홀로그램 (Hologram)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "outline",
+                "enabled": true,
+                "params": {
+                  "thickness": 3,
+                  "colorR": 1,
+                  "colorG": 0.9,
+                  "colorB": 0.2,
+                  "intensity": 1.5,
+                  "animMode": 0,
+                  "animSpeed": 2,
+                  "animMin": 0.8,
+                  "animMax": 2
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[11/47] 외곽선 (Outline)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "fireAura",
+                "enabled": true,
+                "params": {
+                  "radius": 12,
+                  "intensity": 1.2,
+                  "speed": 1.5,
+                  "noiseScale": 8,
+                  "innerColorR": 1,
+                  "innerColorG": 0.9,
+                  "innerColorB": 0.3,
+                  "outerColorR": 1,
+                  "outerColorG": 0.3,
+                  "outerColorB": 0,
+                  "turbulence": 1.5,
+                  "flameHeight": 1,
+                  "animMode": 0,
+                  "animSpeed": 1
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[12/47] 불꽃 오라 (Fire Aura)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "greyscale",
+                "enabled": true,
+                "params": {
+                  "luminosity": 0,
+                  "blend": 1,
+                  "tintR": 1,
+                  "tintG": 1,
+                  "tintB": 1
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[13/47] 그레이스케일 (Greyscale)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "negative",
+                "enabled": true,
+                "params": {
+                  "amount": 1
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[14/47] 네거티브 (Negative)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "hitEffect",
+                "enabled": true,
+                "params": {
+                  "colorR": 1,
+                  "colorG": 1,
+                  "colorB": 1,
+                  "glow": 5,
+                  "blend": 1
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[15/47] 히트 플래시 (Hit Effect)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "shine",
+                "enabled": true,
+                "params": {
+                  "colorR": 1,
+                  "colorG": 1,
+                  "colorB": 1,
+                  "location": 0.5,
+                  "rotate": 0,
+                  "width": 0.1,
+                  "glowAmount": 1,
+                  "speed": 1
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[16/47] 광택 (Shine)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "flicker",
+                "enabled": true,
+                "params": {
+                  "percent": 0.05,
+                  "freq": 0.2,
+                  "alpha": 0
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[17/47] 깜빡임 (Flicker)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "gradient",
+                "enabled": true,
+                "params": {
+                  "blend": 1,
+                  "topLeftR": 1,
+                  "topLeftG": 0,
+                  "topLeftB": 0,
+                  "topLeftA": 1,
+                  "topRightR": 1,
+                  "topRightG": 1,
+                  "topRightB": 0,
+                  "topRightA": 1,
+                  "botLeftR": 0,
+                  "botLeftG": 0,
+                  "botLeftB": 1,
+                  "botLeftA": 1,
+                  "botRightR": 0,
+                  "botRightG": 1,
+                  "botRightB": 0,
+                  "botRightA": 1,
+                  "boostX": 1.2,
+                  "boostY": 1.2,
+                  "radial": 0
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[18/47] 그래디언트 (Gradient)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "gradient2col",
+                "enabled": true,
+                "params": {
+                  "blend": 1,
+                  "topLeftR": 1,
+                  "topLeftG": 0,
+                  "topLeftB": 0,
+                  "topLeftA": 1,
+                  "topRightR": 1,
+                  "topRightG": 0,
+                  "topRightB": 0,
+                  "topRightA": 1,
+                  "botLeftR": 0,
+                  "botLeftG": 0,
+                  "botLeftB": 1,
+                  "botLeftA": 1,
+                  "botRightR": 0,
+                  "botRightG": 0,
+                  "botRightB": 1,
+                  "botRightA": 1,
+                  "boostX": 1.2,
+                  "boostY": 1.2,
+                  "radial": 0
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[19/47] 2색 그래디언트 (Gradient 2Col)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "radialGradient",
+                "enabled": true,
+                "params": {
+                  "blend": 1,
+                  "topLeftR": 1,
+                  "topLeftG": 0,
+                  "topLeftB": 0,
+                  "topLeftA": 1,
+                  "topRightR": 1,
+                  "topRightG": 0,
+                  "topRightB": 0,
+                  "topRightA": 1,
+                  "botLeftR": 0,
+                  "botLeftG": 0,
+                  "botLeftB": 1,
+                  "botLeftA": 1,
+                  "botRightR": 0,
+                  "botRightG": 0,
+                  "botRightB": 1,
+                  "botRightA": 1,
+                  "boostX": 1.2,
+                  "boostY": 1.2,
+                  "radial": 1
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[20/47] 방사형 그래디언트 (Radial Gradient)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "colorSwap",
+                "enabled": true,
+                "params": {
+                  "redNewR": 0,
+                  "redNewG": 0,
+                  "redNewB": 1,
+                  "greenNewR": 1,
+                  "greenNewG": 0,
+                  "greenNewB": 0,
+                  "blueNewR": 0,
+                  "blueNewG": 1,
+                  "blueNewB": 0,
+                  "redLum": 0,
+                  "greenLum": 0,
+                  "blueLum": 0,
+                  "blend": 1
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[21/47] 색상 스왑 (Color Swap)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "hsv",
+                "enabled": true,
+                "params": {
+                  "hsvShift": 0.3,
+                  "hsvSaturation": 0.2,
+                  "hsvBright": 0
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[22/47] HSV 시프트 (HSV)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "contrast",
+                "enabled": true,
+                "params": {
+                  "contrast": 1.5,
+                  "brightness": 0.1
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[23/47] 명도/대비 (Contrast)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "motionBlur",
+                "enabled": true,
+                "params": {
+                  "angle": 0.1,
+                  "dist": 1.25
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[24/47] 모션 블러 (Motion Blur)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "ghost",
+                "enabled": true,
+                "params": {
+                  "colorBoost": 1,
+                  "transparency": 0.3,
+                  "blend": 1
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[25/47] 고스트 (Ghost)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "shadow",
+                "enabled": true,
+                "params": {
+                  "shadowX": 0.05,
+                  "shadowY": -0.05,
+                  "shadowAlpha": 0.5,
+                  "shadowColorR": 0,
+                  "shadowColorG": 0,
+                  "shadowColorB": 0
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[26/47] 드롭 섀도우 (Shadow)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "doodle",
+                "enabled": true,
+                "params": {
+                  "amount": 10,
+                  "speed": 5
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[27/47] 손그림 (Doodle)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "warp",
+                "enabled": true,
+                "params": {
+                  "strength": 0.025,
+                  "speed": 8,
+                  "scale": 0.5
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[28/47] 워프 (Warp)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "twist",
+                "enabled": true,
+                "params": {
+                  "amount": 1,
+                  "posX": 0.5,
+                  "posY": 0.5,
+                  "radius": 0.75,
+                  "speed": 2
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[29/47] 트위스트 (Twist)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "roundWave",
+                "enabled": true,
+                "params": {
+                  "strength": 0.7,
+                  "speed": 2
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[30/47] 원형 파동 (Round Wave)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "fisheye",
+                "enabled": true,
+                "params": {
+                  "amount": 0.35,
+                  "speed": 2
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[31/47] 어안 렌즈 (Fisheye)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "pinch",
+                "enabled": true,
+                "params": {
+                  "amount": 0.35,
+                  "speed": 2
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[32/47] 핀치 (Pinch)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "overlay",
+                "enabled": true,
+                "params": {
+                  "overlayColorR": 1,
+                  "overlayColorG": 0.5,
+                  "overlayColorB": 0.2,
+                  "overlayGlow": 2,
+                  "blend": 0.5,
+                  "multiply": 0
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[33/47] 오버레이 (Overlay)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "wind",
+                "enabled": true,
+                "params": {
+                  "speed": 2,
+                  "wind": 5
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[34/47] 바람 (Wind)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "textureScroll",
+                "enabled": true,
+                "params": {
+                  "speedX": 0.25,
+                  "speedY": 0.1
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[35/47] 텍스처 스크롤 (Texture Scroll)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "zoomUV",
+                "enabled": true,
+                "params": {
+                  "zoom": 0.5
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[36/47] UV 줌 (Zoom UV)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "rotateUV",
+                "enabled": true,
+                "params": {
+                  "angle": 0,
+                  "speed": 1
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[37/47] UV 회전 (Rotate UV)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "polarUV",
+                "enabled": true,
+                "params": {
+                  "speed": 2
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[38/47] 극좌표 변환 (Polar UV)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "offsetUV",
+                "enabled": true,
+                "params": {
+                  "offsetX": 0.1,
+                  "offsetY": 0.05
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[39/47] UV 오프셋 (Offset UV)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "clipping",
+                "enabled": true,
+                "params": {
+                  "left": 0.1,
+                  "right": 0.1,
+                  "up": 0.1,
+                  "down": 0.1
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[40/47] 사각형 클리핑 (Clipping)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "radialClipping",
+                "enabled": true,
+                "params": {
+                  "startAngle": 0,
+                  "clip": 0.7
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[41/47] 방사형 클리핑 (Radial Clipping)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "innerOutline",
+                "enabled": true,
+                "params": {
+                  "colorR": 1,
+                  "colorG": 0,
+                  "colorB": 0,
+                  "width": 2,
+                  "alpha": 1,
+                  "onlyOutline": 0
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[42/47] 내부 아웃라인 (Inner Outline)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "alphaOutline",
+                "enabled": true,
+                "params": {
+                  "colorR": 1,
+                  "colorG": 0.5,
+                  "colorB": 0,
+                  "glow": 2,
+                  "power": 0.3,
+                  "minAlpha": 0.1,
+                  "blend": 1
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[43/47] 알파 아웃라인 (Alpha Outline)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "distort",
+                "enabled": true,
+                "params": {
+                  "amount": 0.5,
+                  "speedX": 0.5,
+                  "speedY": 0.3,
+                  "scale": 5
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[44/47] 왜곡 (Distort)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "colorRamp",
+                "enabled": true,
+                "params": {
+                  "blend": 1,
+                  "luminosity": 0,
+                  "colorDarkR": 0,
+                  "colorDarkG": 0,
+                  "colorDarkB": 0.3,
+                  "colorMidR": 0.5,
+                  "colorMidG": 0.2,
+                  "colorMidB": 0.5,
+                  "colorLightR": 1,
+                  "colorLightG": 0.9,
+                  "colorLightB": 0.7
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[45/47] 컬러 램프 (Color Ramp)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "onlyOutline",
+                "enabled": true,
+                "params": {
+                  "colorR": 1,
+                  "colorG": 1,
+                  "colorB": 0,
+                  "thickness": 2,
+                  "glow": 1.5
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[46/47] 외곽선만 (Only Outline)"
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            [
+              {
+                "type": "shakeUV",
+                "enabled": true,
+                "params": {
+                  "speed": 5,
+                  "shakeX": 5,
+                  "shakeY": 5
+                }
+              }
+            ],
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "[47/47] UV 떨림 (Shake UV)"
+          ]
+        },
+        {
+          "code": 0,
+          "indent": 0,
+          "parameters": []
+        }
+      ],
+      "moveFrequency": 3,
+      "moveRoute": {
+        "list": [
+          {
+            "code": 0
+          }
+        ],
+        "repeat": true,
+        "skippable": false,
+        "wait": false
+      },
+      "moveSpeed": 3,
+      "moveType": 0,
+      "priorityType": 1,
+      "stepAnime": false,
+      "through": false,
+      "trigger": 0,
+      "walkAnime": true
+    }
+  ]
+}

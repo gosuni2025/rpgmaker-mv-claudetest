@@ -1,0 +1,287 @@
+{
+  "id": 1,
+  "name": "소환_초기화",
+  "note": "",
+  "x": 0,
+  "y": 0,
+  "pages": [
+    {
+      "conditions": {
+        "actorId": 1,
+        "actorValid": false,
+        "itemId": 1,
+        "itemValid": false,
+        "selfSwitchCh": "A",
+        "selfSwitchValid": false,
+        "switch1Id": 1,
+        "switch1Valid": false,
+        "switch2Id": 1,
+        "switch2Valid": false,
+        "variableId": 1,
+        "variableValid": false,
+        "variableValue": 0
+      },
+      "directionFix": false,
+      "image": {
+        "characterIndex": 0,
+        "characterName": "",
+        "direction": 2,
+        "pattern": 1,
+        "tileId": 0
+      },
+      "list": [
+        {
+          "code": 129,
+          "indent": 0,
+          "parameters": [
+            2,
+            1,
+            0
+          ]
+        },
+        {
+          "code": 129,
+          "indent": 0,
+          "parameters": [
+            3,
+            1,
+            0
+          ]
+        },
+        {
+          "code": 129,
+          "indent": 0,
+          "parameters": [
+            4,
+            1,
+            0
+          ]
+        },
+        {
+          "code": 221,
+          "indent": 0,
+          "parameters": []
+        },
+        {
+          "code": 241,
+          "indent": 0,
+          "parameters": [
+            {
+              "name": "Castle1",
+              "volume": 90,
+              "pitch": 100,
+              "pan": 0
+            }
+          ]
+        },
+        {
+          "code": 230,
+          "indent": 0,
+          "parameters": [
+            30
+          ]
+        },
+        {
+          "code": 223,
+          "indent": 0,
+          "parameters": [
+            [
+              -51,
+              -51,
+              102,
+              0
+            ],
+            30,
+            true
+          ]
+        },
+        {
+          "code": 222,
+          "indent": 0,
+          "parameters": []
+        },
+        {
+          "code": 250,
+          "indent": 0,
+          "parameters": [
+            {
+              "name": "Teleport",
+              "volume": 90,
+              "pitch": 100,
+              "pan": 0
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "눈앞이 환한 빛으로 가득 차오른다..."
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "그리고 낯선 장소에 서 있었다."
+          ]
+        },
+        {
+          "code": 223,
+          "indent": 0,
+          "parameters": [
+            [
+              0,
+              0,
+              0,
+              0
+            ],
+            30,
+            false
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "People2",
+            2,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "오오...! 드디어 이세계의 용사가 강림하셨군요!"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "나는 아르테시아 왕국의 국왕 레이나르트요."
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "People2",
+            2,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "이 왕국은 마왕 발로르의 군대에 의해 위기에 처해 있소이다."
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "부디 그대의 힘으로 마왕을 무찔러 주시오!"
+          ]
+        },
+        {
+          "code": 123,
+          "indent": 0,
+          "parameters": [
+            "A",
+            0
+          ]
+        },
+        {
+          "code": 0,
+          "indent": 0,
+          "parameters": []
+        }
+      ],
+      "moveFrequency": 3,
+      "moveRoute": {
+        "list": [
+          {
+            "code": 0,
+            "parameters": []
+          }
+        ],
+        "repeat": true,
+        "skippable": false,
+        "wait": false
+      },
+      "moveSpeed": 3,
+      "moveType": 0,
+      "priorityType": 0,
+      "stepAnime": false,
+      "through": true,
+      "trigger": 3,
+      "walkAnime": true
+    },
+    {
+      "conditions": {
+        "actorId": 1,
+        "actorValid": false,
+        "itemId": 1,
+        "itemValid": false,
+        "selfSwitchCh": "A",
+        "selfSwitchValid": true,
+        "switch1Id": 1,
+        "switch1Valid": false,
+        "switch2Id": 1,
+        "switch2Valid": false,
+        "variableId": 1,
+        "variableValid": false,
+        "variableValue": 0
+      },
+      "directionFix": false,
+      "image": {
+        "characterIndex": 0,
+        "characterName": "",
+        "direction": 2,
+        "pattern": 1,
+        "tileId": 0
+      },
+      "list": [
+        {
+          "code": 0,
+          "indent": 0,
+          "parameters": []
+        }
+      ],
+      "moveFrequency": 3,
+      "moveRoute": {
+        "list": [
+          {
+            "code": 0,
+            "parameters": []
+          }
+        ],
+        "repeat": true,
+        "skippable": false,
+        "wait": false
+      },
+      "moveSpeed": 3,
+      "moveType": 0,
+      "priorityType": 0,
+      "stepAnime": false,
+      "through": true,
+      "trigger": 0,
+      "walkAnime": true
+    }
+  ]
+}

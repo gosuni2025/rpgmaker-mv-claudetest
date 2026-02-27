@@ -1,0 +1,133 @@
+{
+  "id": 21,
+  "name": "EV021",
+  "x": 20,
+  "y": 22,
+  "note": "",
+  "pages": [
+    {
+      "conditions": {
+        "actorId": 1,
+        "actorValid": false,
+        "itemId": 1,
+        "itemValid": false,
+        "selfSwitchCh": "A",
+        "selfSwitchValid": false,
+        "switch1Id": 1,
+        "switch1Valid": false,
+        "switch2Id": 1,
+        "switch2Valid": false,
+        "variableId": 1,
+        "variableValid": false,
+        "variableValue": 0
+      },
+      "directionFix": false,
+      "image": {
+        "characterIndex": 4,
+        "characterName": "Actor1",
+        "direction": 4,
+        "pattern": 2,
+        "tileId": 0
+      },
+      "list": [
+        {
+          "code": 204,
+          "indent": 0,
+          "parameters": [
+            2,
+            1,
+            4
+          ]
+        },
+        {
+          "code": 211,
+          "indent": 0,
+          "parameters": [
+            1
+          ]
+        },
+        {
+          "code": 216,
+          "indent": 0,
+          "parameters": []
+        },
+        {
+          "code": 205,
+          "indent": 0,
+          "parameters": [
+            0,
+            {
+              "list": [
+                {
+                  "code": 4
+                },
+                {
+                  "code": 4
+                },
+                {
+                  "code": 4
+                },
+                {
+                  "code": 4
+                },
+                {
+                  "code": 4
+                },
+                {
+                  "code": 0
+                }
+              ],
+              "repeat": false,
+              "skippable": false,
+              "wait": true
+            }
+          ]
+        },
+        {
+          "code": 0,
+          "indent": 0,
+          "parameters": []
+        }
+      ],
+      "moveFrequency": 3,
+      "moveRoute": {
+        "list": [
+          {
+            "code": 1
+          },
+          {
+            "code": 1
+          },
+          {
+            "code": 1
+          },
+          {
+            "code": 1
+          },
+          {
+            "code": 1
+          },
+          {
+            "code": 1
+          },
+          {
+            "code": 1
+          },
+          {
+            "code": 0
+          }
+        ],
+        "repeat": true,
+        "skippable": false,
+        "wait": false
+      },
+      "moveSpeed": 3,
+      "moveType": 3,
+      "priorityType": 1,
+      "stepAnime": false,
+      "through": false,
+      "trigger": 0,
+      "walkAnime": true
+    }
+  ]
+}
