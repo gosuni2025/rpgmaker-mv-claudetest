@@ -496,7 +496,8 @@
                 "action": {
                   "action": "script",
                   "code": "MinimapManager.zoomOut()"
-                }
+                },
+                "windowed": false
               }
             ],
             "visible": true
