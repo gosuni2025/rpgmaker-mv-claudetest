@@ -416,7 +416,8 @@
                 "height": 624,
                 "numRows": "party",
                 "transparent": true,
-                "padding": 0
+                "padding": 0,
+                "previewSelectable": false
               }
             ]
           }
@@ -450,10 +451,21 @@
               {
                 "id": "minimap",
                 "type": "minimap",
-                "x": 6,
-                "y": 6,
+                "x": -480,
+                "y": 241,
                 "width": 192,
-                "height": 192
+                "height": 192,
+                "children": [
+                  {
+                    "id": "label_1772175337598",
+                    "type": "label",
+                    "x": 0,
+                    "y": 0,
+                    "width": 200,
+                    "height": 36,
+                    "text": "텍스트"
+                  }
+                ]
               },
               {
                 "id": "map_name",
