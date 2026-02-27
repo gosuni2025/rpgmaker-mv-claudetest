@@ -536,15 +536,17 @@
           },
           {
             "id": "questCategoryWidget",
-            "type": "questCategory",
+            "type": "list",
             "x": 0,
             "y": 0,
             "width": 180,
             "height": 624,
+            "dataScript": "QS._buildCategoryItems()",
             "handlers": {
               "ok": {
-                "action": "focusWidget",
-                "target": "questListWidget"
+                "action": "script",
+                "code": "var lw=this._widgetMap['questCategoryWidget'];window._qs_currentCategory=lw&&lw._window?lw._window.currentSymbol():'__all__';window._qs_currentQuestId=null;var ql=this._widgetMap['questListWidget'];if(ql)ql._lastIndex=0;",
+                "thenAction": { "action": "focusWidget", "target": "questListWidget" }
               },
               "cancel": {
                 "action": "cancel"
@@ -553,14 +555,23 @@
           },
           {
             "id": "questListWidget",
-            "type": "questList",
+            "type": "list",
             "x": 180,
             "y": 0,
             "width": 220,
             "height": 624,
+            "dataScript": "QS._buildQuestItems()",
+            "onCursor": {
+              "code": "var lw=this._widgetMap['questListWidget'];if(lw&&lw._window){var sym=lw._window.currentSymbol();window._qs_currentQuestId=(sym&&sym!=='__no_quests__')?sym:null;}"
+            },
             "handlers": {
+              "ok": {
+                "action": "script",
+                "code": ""
+              },
               "cancel": {
-                "action": "cancel"
+                "action": "focusWidget",
+                "target": "questCategoryWidget"
               }
             }
           },
