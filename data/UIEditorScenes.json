@@ -3,7 +3,6 @@
     "menu_v2": {
       "id": "menu_v2",
       "displayName": "게임 메뉴",
-      "baseScene": "MenuBase",
       "formatVersion": 2,
       "prepareArgs": [],
       "navigation": {
@@ -23,6 +22,14 @@
         "height": 624,
         "windowed": false,
         "children": [
+          {
+            "id": "bg",
+            "type": "background",
+            "x": 0,
+            "y": 0,
+            "width": 816,
+            "height": 624
+          },
           {
             "id": "cmd_main",
             "type": "list",
@@ -158,7 +165,6 @@
     "options": {
       "id": "options",
       "displayName": "옵션 씬 (개별 위젯)",
-      "baseScene": "MenuBase",
       "formatVersion": 2,
       "saveConfigOnExit": true,
       "prepareArgs": [],
@@ -184,6 +190,14 @@
         "height": 624,
         "windowed": false,
         "children": [
+          {
+            "id": "bg",
+            "type": "background",
+            "x": 0,
+            "y": 0,
+            "width": 816,
+            "height": 624
+          },
           {
             "id": "opts_bg",
             "type": "panel",
