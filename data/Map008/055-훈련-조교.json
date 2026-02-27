@@ -2,8 +2,8 @@
   "id": 55,
   "name": "훈련 조교",
   "note": "",
-  "x": 26,
-  "y": 17,
+  "x": 25,
+  "y": 19,
   "pages": [
     {
       "conditions": {
@@ -63,7 +63,7 @@
               "JP 500 받기",
               "됐습니다"
             ],
-            -2,
+            -1,
             0,
             2,
             0
@@ -79,7 +79,7 @@
         },
         {
           "code": 356,
-          "indent": 0,
+          "indent": 1,
           "parameters": [
             "GainJP 1 100"
           ]
@@ -116,7 +116,7 @@
         },
         {
           "code": 356,
-          "indent": 0,
+          "indent": 1,
           "parameters": [
             "GainJP 1 500"
           ]
@@ -144,9 +144,12 @@
           "parameters": []
         },
         {
-          "code": 403,
+          "code": 402,
           "indent": 0,
-          "parameters": []
+          "parameters": [
+            2,
+            "됐습니다"
+          ]
         },
         {
           "code": 0,
