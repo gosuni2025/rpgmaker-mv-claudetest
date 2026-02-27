@@ -194,7 +194,7 @@
                     "x": 148,
                     "y": 40,
                     "width": 400,
-                    "height": 26,
+                    "height": 32,
                     "text": "Lv {actor[0].level}  {actor[0].class}",
                     "fontSize": 22,
                     "color": "#aaaaaa"
@@ -207,9 +207,9 @@
                     "labelExpr": "'HP'",
                     "gaugeSkinId": "gauge_hp",
                     "x": 148,
-                    "y": 68,
+                    "y": 74,
                     "width": 400,
-                    "height": 28
+                    "height": 36
                   },
                   {
                     "id": "mp0",
@@ -219,21 +219,9 @@
                     "labelExpr": "'MP'",
                     "gaugeSkinId": "gauge_mp",
                     "x": 148,
-                    "y": 98,
+                    "y": 110,
                     "width": 400,
-                    "height": 28
-                  },
-                  {
-                    "id": "tp0",
-                    "type": "gauge",
-                    "valueExpr": "$gameParty.members()[0].tp",
-                    "maxExpr": "$gameParty.members()[0].maxTp()",
-                    "labelExpr": "'TP'",
-                    "gaugeSkinId": "gauge_tp",
-                    "x": 148,
-                    "y": 128,
-                    "width": 400,
-                    "height": 26
+                    "height": 36
                   }
                 ]
               },
@@ -272,7 +260,7 @@
                     "x": 148,
                     "y": 40,
                     "width": 400,
-                    "height": 26,
+                    "height": 32,
                     "text": "Lv {actor[1].level}  {actor[1].class}",
                     "fontSize": 22,
                     "color": "#aaaaaa"
@@ -285,9 +273,9 @@
                     "labelExpr": "'HP'",
                     "gaugeSkinId": "gauge_hp",
                     "x": 148,
-                    "y": 68,
+                    "y": 74,
                     "width": 400,
-                    "height": 28
+                    "height": 36
                   },
                   {
                     "id": "mp1",
@@ -297,21 +285,9 @@
                     "labelExpr": "'MP'",
                     "gaugeSkinId": "gauge_mp",
                     "x": 148,
-                    "y": 98,
+                    "y": 110,
                     "width": 400,
-                    "height": 28
-                  },
-                  {
-                    "id": "tp1",
-                    "type": "gauge",
-                    "valueExpr": "$gameParty.members()[1].tp",
-                    "maxExpr": "$gameParty.members()[1].maxTp()",
-                    "labelExpr": "'TP'",
-                    "gaugeSkinId": "gauge_tp",
-                    "x": 148,
-                    "y": 128,
-                    "width": 400,
-                    "height": 26
+                    "height": 36
                   }
                 ]
               },
@@ -350,7 +326,7 @@
                     "x": 148,
                     "y": 40,
                     "width": 400,
-                    "height": 26,
+                    "height": 32,
                     "text": "Lv {actor[2].level}  {actor[2].class}",
                     "fontSize": 22,
                     "color": "#aaaaaa"
@@ -363,9 +339,9 @@
                     "labelExpr": "'HP'",
                     "gaugeSkinId": "gauge_hp",
                     "x": 148,
-                    "y": 68,
+                    "y": 74,
                     "width": 400,
-                    "height": 28
+                    "height": 36
                   },
                   {
                     "id": "mp2",
@@ -375,21 +351,9 @@
                     "labelExpr": "'MP'",
                     "gaugeSkinId": "gauge_mp",
                     "x": 148,
-                    "y": 98,
+                    "y": 110,
                     "width": 400,
-                    "height": 28
-                  },
-                  {
-                    "id": "tp2",
-                    "type": "gauge",
-                    "valueExpr": "$gameParty.members()[2].tp",
-                    "maxExpr": "$gameParty.members()[2].maxTp()",
-                    "labelExpr": "'TP'",
-                    "gaugeSkinId": "gauge_tp",
-                    "x": 148,
-                    "y": 128,
-                    "width": 400,
-                    "height": 26
+                    "height": 36
                   }
                 ]
               },
@@ -428,7 +392,7 @@
                     "x": 148,
                     "y": 40,
                     "width": 400,
-                    "height": 26,
+                    "height": 32,
                     "text": "Lv {actor[3].level}  {actor[3].class}",
                     "fontSize": 22,
                     "color": "#aaaaaa"
@@ -441,9 +405,9 @@
                     "labelExpr": "'HP'",
                     "gaugeSkinId": "gauge_hp",
                     "x": 148,
-                    "y": 68,
+                    "y": 74,
                     "width": 400,
-                    "height": 28
+                    "height": 36
                   },
                   {
                     "id": "mp3",
@@ -453,21 +417,9 @@
                     "labelExpr": "'MP'",
                     "gaugeSkinId": "gauge_mp",
                     "x": 148,
-                    "y": 98,
+                    "y": 110,
                     "width": 400,
-                    "height": 28
-                  },
-                  {
-                    "id": "tp3",
-                    "type": "gauge",
-                    "valueExpr": "$gameParty.members()[3].tp",
-                    "maxExpr": "$gameParty.members()[3].maxTp()",
-                    "labelExpr": "'TP'",
-                    "gaugeSkinId": "gauge_tp",
-                    "x": 148,
-                    "y": 128,
-                    "width": 400,
-                    "height": 26
+                    "height": 36
                   }
                 ]
               },
