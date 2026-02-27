@@ -194,7 +194,7 @@
                     "x": 148,
                     "y": 40,
                     "width": 400,
-                    "height": 32,
+                    "height": 26,
                     "text": "Lv {actor[0].level}  {actor[0].class}",
                     "fontSize": 22,
                     "color": "#aaaaaa"
@@ -205,9 +205,9 @@
                     "actorIndex": 0,
                     "gaugeType": "hp",
                     "x": 148,
-                    "y": 74,
+                    "y": 68,
                     "width": 400,
-                    "height": 36
+                    "height": 28
                   },
                   {
                     "id": "mp0",
@@ -215,9 +215,19 @@
                     "actorIndex": 0,
                     "gaugeType": "mp",
                     "x": 148,
-                    "y": 110,
+                    "y": 98,
                     "width": 400,
-                    "height": 36
+                    "height": 28
+                  },
+                  {
+                    "id": "tp0",
+                    "type": "gauge",
+                    "actorIndex": 0,
+                    "gaugeType": "tp",
+                    "x": 148,
+                    "y": 128,
+                    "width": 400,
+                    "height": 26
                   }
                 ]
               },
@@ -256,7 +266,7 @@
                     "x": 148,
                     "y": 40,
                     "width": 400,
-                    "height": 32,
+                    "height": 26,
                     "text": "Lv {actor[1].level}  {actor[1].class}",
                     "fontSize": 22,
                     "color": "#aaaaaa"
@@ -267,9 +277,9 @@
                     "actorIndex": 1,
                     "gaugeType": "hp",
                     "x": 148,
-                    "y": 74,
+                    "y": 68,
                     "width": 400,
-                    "height": 36
+                    "height": 28
                   },
                   {
                     "id": "mp1",
@@ -277,9 +287,19 @@
                     "actorIndex": 1,
                     "gaugeType": "mp",
                     "x": 148,
-                    "y": 110,
+                    "y": 98,
                     "width": 400,
-                    "height": 36
+                    "height": 28
+                  },
+                  {
+                    "id": "tp1",
+                    "type": "gauge",
+                    "actorIndex": 1,
+                    "gaugeType": "tp",
+                    "x": 148,
+                    "y": 128,
+                    "width": 400,
+                    "height": 26
                   }
                 ]
               },
@@ -318,7 +338,7 @@
                     "x": 148,
                     "y": 40,
                     "width": 400,
-                    "height": 32,
+                    "height": 26,
                     "text": "Lv {actor[2].level}  {actor[2].class}",
                     "fontSize": 22,
                     "color": "#aaaaaa"
@@ -329,9 +349,9 @@
                     "actorIndex": 2,
                     "gaugeType": "hp",
                     "x": 148,
-                    "y": 74,
+                    "y": 68,
                     "width": 400,
-                    "height": 36
+                    "height": 28
                   },
                   {
                     "id": "mp2",
@@ -339,9 +359,19 @@
                     "actorIndex": 2,
                     "gaugeType": "mp",
                     "x": 148,
-                    "y": 110,
+                    "y": 98,
                     "width": 400,
-                    "height": 36
+                    "height": 28
+                  },
+                  {
+                    "id": "tp2",
+                    "type": "gauge",
+                    "actorIndex": 2,
+                    "gaugeType": "tp",
+                    "x": 148,
+                    "y": 128,
+                    "width": 400,
+                    "height": 26
                   }
                 ]
               },
@@ -380,7 +410,7 @@
                     "x": 148,
                     "y": 40,
                     "width": 400,
-                    "height": 32,
+                    "height": 26,
                     "text": "Lv {actor[3].level}  {actor[3].class}",
                     "fontSize": 22,
                     "color": "#aaaaaa"
@@ -391,9 +421,9 @@
                     "actorIndex": 3,
                     "gaugeType": "hp",
                     "x": 148,
-                    "y": 74,
+                    "y": 68,
                     "width": 400,
-                    "height": 36
+                    "height": 28
                   },
                   {
                     "id": "mp3",
@@ -401,9 +431,19 @@
                     "actorIndex": 3,
                     "gaugeType": "mp",
                     "x": 148,
-                    "y": 110,
+                    "y": 98,
                     "width": 400,
-                    "height": 36
+                    "height": 28
+                  },
+                  {
+                    "id": "tp3",
+                    "type": "gauge",
+                    "actorIndex": 3,
+                    "gaugeType": "tp",
+                    "x": 148,
+                    "y": 128,
+                    "width": 400,
+                    "height": 26
                   }
                 ]
               },
