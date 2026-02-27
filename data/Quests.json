@@ -1,0 +1,65 @@
+{
+  "categories": [
+    { "id": "main", "name": "메인 퀘스트", "icon": 79 },
+    { "id": "side", "name": "사이드 퀘스트", "icon": 80 },
+    { "id": "daily", "name": "일일 퀘스트", "icon": 81 }
+  ],
+  "quests": [
+    {
+      "id": "q001",
+      "title": "첫 의뢰: 슬라임 토벌",
+      "category": "main",
+      "description": "길드 마스터가 마을 근처에 슬라임이 많이 출몰한다고 했다.\n슬라임 3마리를 처치하고 돌아오자.",
+      "difficulty": "E",
+      "requester": "길드 마스터",
+      "location": "마을 근처 초원",
+      "objectives": [
+        {
+          "id": 1,
+          "text": "슬라임 3마리 처치",
+          "type": "kill",
+          "config": { "enemyId": 1, "count": 3 },
+          "optional": false,
+          "hidden": false
+        },
+        {
+          "id": 2,
+          "text": "길드로 보고하기",
+          "type": "manual",
+          "config": {},
+          "optional": false,
+          "hidden": true
+        }
+      ],
+      "rewards": [
+        { "type": "gold", "amount": 300 },
+        { "type": "exp", "amount": 50 }
+      ],
+      "note": ""
+    },
+    {
+      "id": "q002",
+      "title": "약초 수집",
+      "category": "side",
+      "description": "마을 약사가 약초가 부족하다고 한다.\n들판에서 약초 5개를 모아오자.",
+      "difficulty": "E",
+      "requester": "약사 아주머니",
+      "location": "들판",
+      "objectives": [
+        {
+          "id": 1,
+          "text": "약초 5개 보유",
+          "type": "collect",
+          "config": { "itemType": "item", "itemId": 1, "count": 5 },
+          "optional": false,
+          "hidden": false
+        }
+      ],
+      "rewards": [
+        { "type": "gold", "amount": 150 },
+        { "type": "item", "itemId": 2, "count": 3 }
+      ],
+      "note": "아이템 ID 1 = 포션으로 설정할 것"
+    }
+  ]
+}
