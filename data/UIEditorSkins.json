@@ -28,7 +28,15 @@
       "cursorPadding": 2,
       "cursorToneR": 0,
       "cursorToneG": 0,
-      "cursorToneB": 0
+      "cursorToneB": 0,
+      "gaugeBgX": 65,
+      "gaugeBgY": 74,
+      "gaugeBgW": 54,
+      "gaugeBgH": 48,
+      "gaugeFillX": 99,
+      "gaugeFillY": 147,
+      "gaugeFillW": 7,
+      "gaugeFillH": 9
     },
     {
       "name": "kenny",
