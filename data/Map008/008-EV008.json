@@ -1,0 +1,219 @@
+{
+  "id": 8,
+  "name": "EV008",
+  "x": 21,
+  "y": 23,
+  "note": "",
+  "pages": [
+    {
+      "conditions": {
+        "actorId": 1,
+        "actorValid": false,
+        "itemId": 1,
+        "itemValid": false,
+        "selfSwitchCh": "A",
+        "selfSwitchValid": false,
+        "switch1Id": 1,
+        "switch1Valid": false,
+        "switch2Id": 1,
+        "switch2Valid": false,
+        "variableId": 1,
+        "variableValid": false,
+        "variableValue": 0
+      },
+      "directionFix": false,
+      "image": {
+        "characterIndex": 0,
+        "characterName": "People1",
+        "direction": 2,
+        "pattern": 1,
+        "tileId": 0
+      },
+      "list": [
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "People1",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "한 밤에 100\\G입니다.\n묵어 가시겠습니까?"
+          ]
+        },
+        {
+          "code": 102,
+          "indent": 0,
+          "parameters": [
+            [
+              "예",
+              "아니오"
+            ],
+            1
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            0,
+            "예"
+          ]
+        },
+        {
+          "code": 111,
+          "indent": 1,
+          "parameters": [
+            7,
+            100,
+            0
+          ]
+        },
+        {
+          "code": 125,
+          "indent": 2,
+          "parameters": [
+            1,
+            0,
+            100
+          ]
+        },
+        {
+          "code": 221,
+          "indent": 2,
+          "parameters": []
+        },
+        {
+          "code": 314,
+          "indent": 2,
+          "parameters": [
+            0,
+            0
+          ]
+        },
+        {
+          "code": 230,
+          "indent": 2,
+          "parameters": [
+            60
+          ]
+        },
+        {
+          "code": 222,
+          "indent": 2,
+          "parameters": []
+        },
+        {
+          "code": 250,
+          "indent": 2,
+          "parameters": [
+            {
+              "name": "Recovery",
+              "pan": 0,
+              "pitch": 100,
+              "volume": 90
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 2,
+          "parameters": [
+            "People1",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 2,
+          "parameters": [
+            "좋은 아침입니다.\n또 오세요."
+          ]
+        },
+        {
+          "code": 411,
+          "indent": 1,
+          "parameters": []
+        },
+        {
+          "code": 250,
+          "indent": 2,
+          "parameters": [
+            {
+              "name": "Buzzer1",
+              "pan": 0,
+              "pitch": 100,
+              "volume": 90
+            }
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 2,
+          "parameters": [
+            "People1",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 2,
+          "parameters": [
+            "소지금이 부족합니다."
+          ]
+        },
+        {
+          "code": 412,
+          "indent": 1,
+          "parameters": []
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            1,
+            "아니오"
+          ]
+        },
+        {
+          "code": 404,
+          "indent": 0,
+          "parameters": []
+        },
+        {
+          "code": 0,
+          "indent": 0,
+          "parameters": []
+        }
+      ],
+      "moveFrequency": 3,
+      "moveRoute": {
+        "list": [
+          {
+            "code": 0
+          }
+        ],
+        "repeat": true,
+        "skippable": false,
+        "wait": false
+      },
+      "moveSpeed": 3,
+      "moveType": 0,
+      "priorityType": 1,
+      "stepAnime": false,
+      "through": false,
+      "trigger": 0,
+      "walkAnime": true
+    }
+  ]
+}
