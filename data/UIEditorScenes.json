@@ -440,15 +440,6 @@
         "windowed": false,
         "children": [
           {
-            "id": "label_1772175337598",
-            "type": "label",
-            "x": 166,
-            "y": 344,
-            "width": 200,
-            "height": 36,
-            "text": "텍스트"
-          },
-          {
             "id": "hud_container",
             "type": "panel",
             "x": 608,
