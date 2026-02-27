@@ -9400,18 +9400,120 @@
       "name": "EV001",
       "x": 19,
       "y": 18,
-      "note": "",
-      "__ref": "Map008/001-EV001.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/001-EV001.json"
+      "note": "[외부 파일] data/Map008/001-EV001.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 0,
+            "characterName": "!Flame",
+            "direction": 2,
+            "pattern": 0,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": true,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ],
+      "__ref": "Map008/001-EV001.json"
     },
     {
       "id": 2,
       "name": "EV002",
       "x": 9,
       "y": 8,
-      "note": "",
-      "__ref": "Map008/002-EV002.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/002-EV002.json"
+      "note": "[외부 파일] data/Map008/002-EV002.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 0,
+            "characterName": "",
+            "direction": 2,
+            "pattern": 1,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ],
+      "__ref": "Map008/002-EV002.json"
     },
     null,
     {
@@ -9419,9 +9521,60 @@
       "name": "EV004",
       "x": 18,
       "y": 19,
-      "note": "",
-      "__ref": "Map008/004-EV004.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/004-EV004.json"
+      "note": "[외부 파일] data/Map008/004-EV004.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 0,
+            "characterName": "Monster",
+            "direction": 2,
+            "pattern": 0,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ],
+      "__ref": "Map008/004-EV004.json"
     },
     null,
     null,
@@ -9431,27 +9584,230 @@
       "name": "EV008",
       "x": 21,
       "y": 23,
-      "note": "",
-      "__ref": "Map008/008-EV008.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/008-EV008.json"
+      "note": "[외부 파일] data/Map008/008-EV008.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 0,
+            "characterName": "People1",
+            "direction": 2,
+            "pattern": 1,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ],
+      "__ref": "Map008/008-EV008.json"
     },
     {
       "id": 9,
       "name": "EV009",
       "x": 21,
       "y": 21,
-      "note": "",
-      "__ref": "Map008/009-EV009.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/009-EV009.json"
+      "note": "[외부 파일] data/Map008/009-EV009.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 0,
+            "characterName": "!Chest",
+            "direction": 2,
+            "pattern": 1,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        },
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": true,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 0,
+            "characterName": "!Chest",
+            "direction": 2,
+            "pattern": 0,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ],
+      "__ref": "Map008/009-EV009.json"
     },
     {
       "id": 10,
       "name": "텍스트 확장 테스트",
       "x": 18,
       "y": 23,
-      "note": "",
-      "__ref": "Map008/010-텍스트-확장-테스트.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/010-텍스트-확장-테스트.json"
+      "note": "[외부 파일] data/Map008/010-텍스트-확장-테스트.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 0,
+            "characterName": "People1",
+            "direction": 2,
+            "pattern": 1,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ],
+      "__ref": "Map008/010-텍스트-확장-테스트.json"
     },
     null,
     null,
@@ -9463,351 +9819,2594 @@
       "name": "JS 샘플 전체 테스트",
       "x": 34,
       "y": 9,
-      "note": "",
-      "__ref": "Map008/016-JS-샘플-전체-테스트.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/016-JS-샘플-전체-테스트.json"
+      "note": "[외부 파일] data/Map008/016-JS-샘플-전체-테스트.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 7,
+            "characterName": "People3",
+            "direction": 2,
+            "pattern": 0,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0,
+                "parameters": []
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ],
+      "__ref": "Map008/016-JS-샘플-전체-테스트.json"
     },
     {
       "id": 17,
       "name": "비주얼노벨 테스트",
       "x": 24,
       "y": 28,
-      "note": "",
-      "__ref": "Map008/017-비주얼노벨-테스트.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/017-비주얼노벨-테스트.json"
+      "note": "[외부 파일] data/Map008/017-비주얼노벨-테스트.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 0,
+            "characterName": "Actor2",
+            "direction": 2,
+            "pattern": 1,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ],
+      "__ref": "Map008/017-비주얼노벨-테스트.json"
     },
     {
       "id": 18,
       "name": "EV018",
       "x": 29,
       "y": 29,
-      "note": "",
-      "__ref": "Map008/018-EV018.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/018-EV018.json"
+      "note": "[외부 파일] data/Map008/018-EV018.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 0,
+            "characterName": "",
+            "direction": 2,
+            "pattern": 1,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 2,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 1,
+          "walkAnime": false
+        }
+      ],
+      "__ref": "Map008/018-EV018.json"
     },
     {
       "id": 19,
       "name": "EV019",
       "x": 33,
       "y": 26,
-      "note": "",
-      "__ref": "Map008/019-EV019.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/019-EV019.json"
+      "note": "[외부 파일] data/Map008/019-EV019.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 0,
+            "characterName": "",
+            "direction": 2,
+            "pattern": 1,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 2,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 1,
+          "walkAnime": false
+        }
+      ],
+      "__ref": "Map008/019-EV019.json"
     },
     {
       "id": 20,
       "name": "모드 전환기",
       "x": 21,
       "y": 19,
-      "note": "",
-      "__ref": "Map008/020-모드-전환기.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/020-모드-전환기.json"
+      "note": "[외부 파일] data/Map008/020-모드-전환기.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 7,
+            "characterName": "Actor1",
+            "direction": 2,
+            "pattern": 0,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ],
+      "__ref": "Map008/020-모드-전환기.json"
     },
     {
       "id": 21,
       "name": "적 도감 사서",
       "x": 16,
       "y": 23,
-      "note": "",
-      "__ref": "Map008/021-적-도감-사서.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/021-적-도감-사서.json"
+      "note": "[외부 파일] data/Map008/021-적-도감-사서.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 1,
+            "characterName": "People2",
+            "direction": 2,
+            "pattern": 0,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0,
+                "parameters": []
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ],
+      "__ref": "Map008/021-적-도감-사서.json"
     },
     {
       "id": 22,
       "name": "수집품 관리인",
       "x": 16,
       "y": 21,
-      "note": "",
-      "__ref": "Map008/022-수집품-관리인.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/022-수집품-관리인.json"
+      "note": "[외부 파일] data/Map008/022-수집품-관리인.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 3,
+            "characterName": "People2",
+            "direction": 2,
+            "pattern": 0,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0,
+                "parameters": []
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ],
+      "__ref": "Map008/022-수집품-관리인.json"
     },
     {
       "id": 23,
       "name": "카메라 기사",
       "x": 16,
       "y": 19,
-      "note": "",
-      "__ref": "Map008/023-카메라-기사.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/023-카메라-기사.json"
+      "note": "[외부 파일] data/Map008/023-카메라-기사.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 0,
+            "characterName": "Actor3",
+            "direction": 2,
+            "pattern": 0,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0,
+                "parameters": []
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ],
+      "__ref": "Map008/023-카메라-기사.json"
     },
     {
       "id": 24,
       "name": "안개 제어사",
       "x": 16,
       "y": 25,
-      "note": "",
-      "__ref": "Map008/024-안개-제어사.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/024-안개-제어사.json"
+      "note": "[외부 파일] data/Map008/024-안개-제어사.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 2,
+            "characterName": "People3",
+            "direction": 2,
+            "pattern": 0,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0,
+                "parameters": []
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ],
+      "__ref": "Map008/024-안개-제어사.json"
     },
     {
       "id": 25,
       "name": "조명 기사",
       "x": 16,
       "y": 27,
-      "note": "",
-      "__ref": "Map008/025-조명-기사.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/025-조명-기사.json"
+      "note": "[외부 파일] data/Map008/025-조명-기사.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 5,
+            "characterName": "People3",
+            "direction": 2,
+            "pattern": 0,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0,
+                "parameters": []
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ],
+      "__ref": "Map008/025-조명-기사.json"
     },
     {
       "id": 26,
       "name": "카메라 감독",
       "x": 16,
       "y": 29,
-      "note": "",
-      "__ref": "Map008/026-카메라-감독.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/026-카메라-감독.json"
+      "note": "[외부 파일] data/Map008/026-카메라-감독.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 3,
+            "characterName": "Actor1",
+            "direction": 2,
+            "pattern": 0,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0,
+                "parameters": []
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ],
+      "__ref": "Map008/026-카메라-감독.json"
     },
     {
       "id": 27,
       "name": "루카 (여관 주인)",
       "x": 21,
       "y": 25,
-      "note": "",
-      "__ref": "Map008/027-루카-(여관-주인).json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/027-루카-(여관-주인).json"
+      "note": "[외부 파일] data/Map008/027-루카-(여관-주인).json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 6,
+            "characterName": "People2",
+            "direction": 2,
+            "pattern": 1,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0,
+                "parameters": []
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ],
+      "__ref": "Map008/027-루카-(여관-주인).json"
     },
     {
       "id": 28,
       "name": "상점 재고 테스트 NPC",
       "x": 18,
       "y": 25,
-      "note": "",
-      "__ref": "Map008/028-상점-재고-테스트-NPC.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/028-상점-재고-테스트-NPC.json"
+      "note": "[외부 파일] data/Map008/028-상점-재고-테스트-NPC.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": true,
+          "image": {
+            "characterIndex": 3,
+            "characterName": "People3",
+            "direction": 2,
+            "pattern": 1,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0,
+                "parameters": []
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ],
+      "__ref": "Map008/028-상점-재고-테스트-NPC.json"
     },
     {
       "id": 29,
       "name": "EV029",
       "x": 26,
       "y": 28,
-      "note": "",
-      "__ref": "Map008/029-EV029.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/029-EV029.json"
+      "note": "[외부 파일] data/Map008/029-EV029.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 6,
+            "characterName": "Actor3",
+            "direction": 2,
+            "pattern": 0,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ],
+      "__ref": "Map008/029-EV029.json"
     },
     {
       "id": 30,
       "name": "테스트 NPC",
       "x": 5,
       "y": 5,
-      "note": "",
-      "__ref": "Map008/030-테스트-NPC.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/030-테스트-NPC.json"
+      "note": "[외부 파일] data/Map008/030-테스트-NPC.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 0,
+            "characterName": "",
+            "direction": 2,
+            "pattern": 1,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0,
+                "parameters": []
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ],
+      "__ref": "Map008/030-테스트-NPC.json"
     },
     {
       "id": 31,
       "name": "실시간갱신테스트(수정됨)",
       "x": 11,
       "y": 11,
-      "note": "",
-      "__ref": "Map008/031-실시간갱신테스트(수정됨).json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/031-실시간갱신테스트(수정됨).json"
+      "note": "[외부 파일] data/Map008/031-실시간갱신테스트(수정됨).json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 0,
+            "characterName": "",
+            "direction": 2,
+            "pattern": 1,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0,
+                "parameters": []
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ],
+      "__ref": "Map008/031-실시간갱신테스트(수정됨).json"
     },
     {
       "id": 32,
       "name": "이미지NPC테스트",
       "x": 21,
       "y": 13,
-      "note": "",
-      "__ref": "Map008/032-이미지NPC테스트.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/032-이미지NPC테스트.json"
+      "note": "[외부 파일] data/Map008/032-이미지NPC테스트.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 0,
+            "characterName": "People1",
+            "direction": 2,
+            "pattern": 1,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0,
+                "parameters": []
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ],
+      "__ref": "Map008/032-이미지NPC테스트.json"
     },
     {
       "id": 33,
       "name": "전투 훈련관",
       "x": 20,
       "y": 29,
-      "note": "",
-      "__ref": "Map008/033-전투-훈련관.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/033-전투-훈련관.json"
+      "note": "[외부 파일] data/Map008/033-전투-훈련관.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 2,
+            "characterName": "Actor1",
+            "direction": 2,
+            "pattern": 0,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 3
+              },
+              {
+                "code": 3
+              },
+              {
+                "code": 3
+              },
+              {
+                "code": 3
+              },
+              {
+                "code": 3
+              },
+              {
+                "code": 3
+              },
+              {
+                "code": 3
+              },
+              {
+                "code": 3
+              },
+              {
+                "code": 6
+              },
+              {
+                "code": 3
+              },
+              {
+                "code": 3
+              },
+              {
+                "code": 8
+              },
+              {
+                "code": 4
+              },
+              {
+                "code": 4
+              },
+              {
+                "code": 4
+              },
+              {
+                "code": 4
+              },
+              {
+                "code": 4
+              },
+              {
+                "code": 4
+              },
+              {
+                "code": 4
+              },
+              {
+                "code": 4
+              },
+              {
+                "code": 4
+              },
+              {
+                "code": 2
+              },
+              {
+                "code": 7
+              },
+              {
+                "code": 2
+              },
+              {
+                "code": 2
+              },
+              {
+                "code": 2
+              },
+              {
+                "code": 2
+              },
+              {
+                "code": 2
+              },
+              {
+                "code": 2
+              },
+              {
+                "code": 2
+              },
+              {
+                "code": 2
+              },
+              {
+                "code": 5
+              },
+              {
+                "code": 5
+              },
+              {
+                "code": 1
+              },
+              {
+                "code": 1
+              },
+              {
+                "code": 1
+              },
+              {
+                "code": 1
+              },
+              {
+                "code": 1
+              },
+              {
+                "code": 1
+              },
+              {
+                "code": 6
+              },
+              {
+                "code": 1
+              },
+              {
+                "code": 1
+              },
+              {
+                "code": 0
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 3,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ],
+      "__ref": "Map008/033-전투-훈련관.json"
     },
     {
       "id": 34,
       "name": "CRT 스캔라인 데모",
       "x": 6,
       "y": 31,
-      "note": "",
-      "__ref": "Map008/034-CRT-스캔라인-데모.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/034-CRT-스캔라인-데모.json"
+      "note": "[외부 파일] data/Map008/034-CRT-스캔라인-데모.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": true,
+          "image": {
+            "characterIndex": 3,
+            "characterName": "Actor1",
+            "direction": 2,
+            "pattern": 0,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": false
+        }
+      ],
+      "__ref": "Map008/034-CRT-스캔라인-데모.json"
     },
     {
       "id": 35,
       "name": "포스터화 데모",
       "x": 10,
       "y": 29,
-      "note": "",
-      "__ref": "Map008/035-포스터화-데모.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/035-포스터화-데모.json"
+      "note": "[외부 파일] data/Map008/035-포스터화-데모.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": true,
+          "image": {
+            "characterIndex": 5,
+            "characterName": "Actor1",
+            "direction": 2,
+            "pattern": 0,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": false
+        }
+      ],
+      "__ref": "Map008/035-포스터화-데모.json"
     },
     {
       "id": 36,
       "name": "CRT 배럴 왜곡 데모",
       "x": 6,
       "y": 29,
-      "note": "",
-      "__ref": "Map008/036-CRT-배럴-왜곡-데모.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/036-CRT-배럴-왜곡-데모.json"
+      "note": "[외부 파일] data/Map008/036-CRT-배럴-왜곡-데모.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": true,
+          "image": {
+            "characterIndex": 7,
+            "characterName": "Actor1",
+            "direction": 2,
+            "pattern": 0,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": false
+        }
+      ],
+      "__ref": "Map008/036-CRT-배럴-왜곡-데모.json"
     },
     {
       "id": 37,
       "name": "아지랑이 데모",
       "x": 8,
       "y": 29,
-      "note": "",
-      "__ref": "Map008/037-아지랑이-데모.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/037-아지랑이-데모.json"
+      "note": "[외부 파일] data/Map008/037-아지랑이-데모.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": true,
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": false,
+          "image": {
+            "characterIndex": 5,
+            "characterName": "Actor1",
+            "direction": 2,
+            "pattern": 0,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ]
+        }
+      ],
+      "__ref": "Map008/037-아지랑이-데모.json"
     },
     {
       "id": 38,
       "name": "용암 그림 셰이더 데모",
       "x": 14,
       "y": 29,
-      "note": "",
-      "__ref": "Map008/038-용암-그림-셰이더-데모.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/038-용암-그림-셰이더-데모.json"
+      "note": "[외부 파일] data/Map008/038-용암-그림-셰이더-데모.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": true,
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": false,
+          "image": {
+            "characterIndex": 0,
+            "characterName": "Actor2",
+            "direction": 2,
+            "pattern": 0,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ]
+        }
+      ],
+      "__ref": "Map008/038-용암-그림-셰이더-데모.json"
     },
     {
       "id": 39,
       "name": "불꽃 그림 셰이더 데모",
       "x": 12,
       "y": 29,
-      "note": "",
-      "__ref": "Map008/039-불꽃-그림-셰이더-데모.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/039-불꽃-그림-셰이더-데모.json"
+      "note": "[외부 파일] data/Map008/039-불꽃-그림-셰이더-데모.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": true,
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": false,
+          "image": {
+            "characterIndex": 2,
+            "characterName": "Actor2",
+            "direction": 2,
+            "pattern": 0,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ]
+        }
+      ],
+      "__ref": "Map008/039-불꽃-그림-셰이더-데모.json"
     },
     {
       "id": 40,
       "name": "애너글리프 기사",
       "x": 17,
       "y": 17,
-      "note": "",
-      "__ref": "Map008/040-애너글리프-기사.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/040-애너글리프-기사.json"
+      "note": "[외부 파일] data/Map008/040-애너글리프-기사.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 1,
+            "characterName": "Actor3",
+            "direction": 2,
+            "pattern": 0,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0,
+                "parameters": []
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ],
+      "__ref": "Map008/040-애너글리프-기사.json"
     },
     {
       "id": 41,
       "name": "ParallaxUV 데모",
       "x": 21,
       "y": 15,
-      "note": "",
-      "__ref": "Map008/041-ParallaxUV-데모.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/041-ParallaxUV-데모.json"
+      "note": "[외부 파일] data/Map008/041-ParallaxUV-데모.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 0,
+            "characterName": "People3",
+            "direction": 2,
+            "pattern": 0,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0,
+                "parameters": []
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ],
+      "__ref": "Map008/041-ParallaxUV-데모.json"
     },
     {
       "id": 42,
       "name": "CRT 형광체 기사",
       "x": 6,
       "y": 35,
-      "note": "",
-      "__ref": "Map008/042-CRT-형광체-기사.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/042-CRT-형광체-기사.json"
+      "note": "[외부 파일] data/Map008/042-CRT-형광체-기사.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 0,
+            "characterName": "People3",
+            "direction": 2,
+            "pattern": 1,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0,
+                "parameters": []
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ],
+      "__ref": "Map008/042-CRT-형광체-기사.json"
     },
     {
       "id": 43,
       "name": "CRT 반사광 기사",
       "x": 4,
       "y": 31,
-      "note": "",
-      "__ref": "Map008/043-CRT-반사광-기사.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/043-CRT-반사광-기사.json"
+      "note": "[외부 파일] data/Map008/043-CRT-반사광-기사.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 2,
+            "characterName": "People3",
+            "direction": 2,
+            "pattern": 1,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0,
+                "parameters": []
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ],
+      "__ref": "Map008/043-CRT-반사광-기사.json"
     },
     {
       "id": 44,
       "name": "CRT 글로우 기사",
       "x": 6,
       "y": 33,
-      "note": "",
-      "__ref": "Map008/044-CRT-글로우-기사.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/044-CRT-글로우-기사.json"
+      "note": "[외부 파일] data/Map008/044-CRT-글로우-기사.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 4,
+            "characterName": "People3",
+            "direction": 2,
+            "pattern": 1,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0,
+                "parameters": []
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ],
+      "__ref": "Map008/044-CRT-글로우-기사.json"
     },
     {
       "id": 45,
       "name": "CRT 잡음 기사",
       "x": 6,
       "y": 25,
-      "note": "",
-      "__ref": "Map008/045-CRT-잡음-기사.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/045-CRT-잡음-기사.json"
+      "note": "[외부 파일] data/Map008/045-CRT-잡음-기사.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 2,
+            "characterName": "Actor2",
+            "direction": 2,
+            "pattern": 1,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0,
+                "parameters": []
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ],
+      "__ref": "Map008/045-CRT-잡음-기사.json"
     },
     {
       "id": 46,
       "name": "CRT 모서리 기사",
       "x": 6,
       "y": 23,
-      "note": "",
-      "__ref": "Map008/046-CRT-모서리-기사.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/046-CRT-모서리-기사.json"
+      "note": "[외부 파일] data/Map008/046-CRT-모서리-기사.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 4,
+            "characterName": "Actor2",
+            "direction": 2,
+            "pattern": 1,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0,
+                "parameters": []
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ],
+      "__ref": "Map008/046-CRT-모서리-기사.json"
     },
     {
       "id": 47,
       "name": "CRT 마스터",
       "x": 21,
       "y": 17,
-      "note": "",
-      "__ref": "Map008/047-CRT-마스터.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/047-CRT-마스터.json"
+      "note": "[외부 파일] data/Map008/047-CRT-마스터.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 4,
+            "characterName": "Actor3",
+            "direction": 2,
+            "pattern": 1,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0,
+                "parameters": []
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ],
+      "__ref": "Map008/047-CRT-마스터.json"
     },
     {
       "id": 48,
       "name": "이미지 변환 테스트",
       "x": 15,
       "y": 17,
-      "note": "",
-      "__ref": "Map008/048-이미지-변환-테스트.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/048-이미지-변환-테스트.json"
+      "note": "[외부 파일] data/Map008/048-이미지-변환-테스트.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 0,
+            "characterName": "Monster",
+            "direction": 2,
+            "pattern": 0,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ],
+      "__ref": "Map008/048-이미지-변환-테스트.json"
     },
     {
       "id": 49,
       "name": "파일 참조 기능 테스트",
       "x": 35,
       "y": 11,
-      "note": "",
-      "__ref": "Map008/049-파일-참조-기능-테스트.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/049-파일-참조-기능-테스트.json"
+      "note": "[외부 파일] data/Map008/049-파일-참조-기능-테스트.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 7,
+            "characterName": "People3",
+            "direction": 2,
+            "pattern": 0,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0,
+                "parameters": []
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ],
+      "__ref": "Map008/049-파일-참조-기능-테스트.json"
     },
     {
       "id": 50,
       "name": "조건 스크립트 샘플 테스트",
       "x": 33,
       "y": 11,
-      "note": "",
-      "__ref": "Map008/050-조건-스크립트-샘플-테스트.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/050-조건-스크립트-샘플-테스트.json"
+      "note": "[외부 파일] data/Map008/050-조건-스크립트-샘플-테스트.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 6,
+            "characterName": "People3",
+            "direction": 2,
+            "pattern": 0,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0,
+                "parameters": []
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ],
+      "__ref": "Map008/050-조건-스크립트-샘플-테스트.json"
     },
     {
       "id": 51,
       "name": "미니맵 설정사",
       "x": 18,
       "y": 15,
-      "note": "",
-      "__ref": "Map008/051-미니맵-설정사.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/051-미니맵-설정사.json"
+      "note": "[외부 파일] data/Map008/051-미니맵-설정사.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 6,
+            "characterName": "Actor3",
+            "direction": 2,
+            "pattern": 0,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0,
+                "parameters": []
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ],
+      "__ref": "Map008/051-미니맵-설정사.json"
     },
     {
       "id": 52,
       "name": "픽셀 아트 데모",
       "x": 17,
       "y": 31,
-      "note": "",
-      "__ref": "Map008/052-픽셀-아트-데모.json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/052-픽셀-아트-데모.json"
+      "note": "[외부 파일] data/Map008/052-픽셀-아트-데모.json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 3,
+            "characterName": "Actor1",
+            "direction": 2,
+            "pattern": 1,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0,
+                "parameters": []
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ],
+      "__ref": "Map008/052-픽셀-아트-데모.json"
     },
     {
       "id": 53,
       "name": "퀘스트 테스트 NPC (길드 마스터)",
       "x": 24,
       "y": 17,
-      "note": "",
-      "__ref": "Map008/053-퀘스트-테스트-NPC-(길드-마스터).json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/053-퀘스트-테스트-NPC-(길드-마스터).json"
+      "note": "[외부 파일] data/Map008/053-퀘스트-테스트-NPC-(길드-마스터).json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": true,
+          "image": {
+            "characterIndex": 4,
+            "characterName": "People2",
+            "direction": 2,
+            "pattern": 0,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0,
+                "parameters": []
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        },
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": true,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": true,
+          "image": {
+            "characterIndex": 4,
+            "characterName": "People2",
+            "direction": 2,
+            "pattern": 0,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0,
+                "parameters": []
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        },
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "B",
+            "selfSwitchValid": true,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": true,
+          "image": {
+            "characterIndex": 4,
+            "characterName": "People2",
+            "direction": 2,
+            "pattern": 0,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0,
+                "parameters": []
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 0,
+          "priorityType": 1,
+          "stepAnime": false,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ],
+      "__ref": "Map008/053-퀘스트-테스트-NPC-(길드-마스터).json"
     },
     {
       "id": 54,
       "name": "슬라임 (전투 연습)",
       "x": 25,
       "y": 17,
-      "note": "",
-      "__ref": "Map008/054-슬라임-(전투-연습).json",
-      "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/054-슬라임-(전투-연습).json"
+      "note": "[외부 파일] data/Map008/054-슬라임-(전투-연습).json",
+      "pages": [
+        {
+          "conditions": {
+            "actorId": 1,
+            "actorValid": false,
+            "itemId": 1,
+            "itemValid": false,
+            "selfSwitchCh": "A",
+            "selfSwitchValid": false,
+            "switch1Id": 1,
+            "switch1Valid": false,
+            "switch2Id": 1,
+            "switch2Valid": false,
+            "variableId": 1,
+            "variableValid": false,
+            "variableValue": 0
+          },
+          "directionFix": false,
+          "image": {
+            "characterIndex": 0,
+            "characterName": "Monster",
+            "direction": 2,
+            "pattern": 0,
+            "tileId": 0
+          },
+          "list": [
+            {
+              "code": 0,
+              "indent": 0,
+              "parameters": []
+            }
+          ],
+          "moveFrequency": 3,
+          "moveRoute": {
+            "list": [
+              {
+                "code": 0,
+                "parameters": []
+              }
+            ],
+            "repeat": true,
+            "skippable": false,
+            "wait": false
+          },
+          "moveSpeed": 3,
+          "moveType": 1,
+          "priorityType": 1,
+          "stepAnime": true,
+          "through": false,
+          "trigger": 0,
+          "walkAnime": true
+        }
+      ],
+      "__ref": "Map008/054-슬라임-(전투-연습).json"
     },
     {
       "id": 55,

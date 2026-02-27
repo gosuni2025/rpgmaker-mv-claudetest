@@ -1,7 +1,10 @@
 {
   "id": 41,
   "name": "ParallaxUV 데모",
+  "x": 21,
+  "y": 15,
   "note": "",
+  "__note": "외부 파일 참조 (에디터 전용). MV 기본 에디터에서는 빈 이벤트로 표시됩니다. 파일 경로: data/Map008/041-ParallaxUV-데모.json",
   "pages": [
     {
       "conditions": {
@@ -177,7 +180,5 @@
       "trigger": 0,
       "walkAnime": true
     }
-  ],
-  "x": 21,
-  "y": 15
+  ]
 }
