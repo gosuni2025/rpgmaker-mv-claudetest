@@ -513,6 +513,91 @@
         ]
       }
     },
+    "questJournal": {
+      "id": "questJournal",
+      "displayName": "퀘스트 저널",
+      "formatVersion": 2,
+      "navigation": {
+        "defaultFocus": "questCategoryWidget",
+        "cancelWidget": "questCategoryWidget",
+        "focusOrder": ["questCategoryWidget", "questListWidget"]
+      },
+      "root": {
+        "id": "root",
+        "type": "panel",
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 624,
+        "windowed": false,
+        "children": [
+          {
+            "id": "bg",
+            "type": "background",
+            "x": 0,
+            "y": 0,
+            "width": 816,
+            "height": 624
+          },
+          {
+            "id": "questCategoryWidget",
+            "type": "questCategory",
+            "x": 0,
+            "y": 0,
+            "width": 180,
+            "height": 624,
+            "handlers": {
+              "ok": { "action": "focusWidget", "target": "questListWidget" },
+              "cancel": { "action": "cancel" }
+            }
+          },
+          {
+            "id": "questListWidget",
+            "type": "questList",
+            "x": 180,
+            "y": 0,
+            "width": 220,
+            "height": 624,
+            "handlers": {
+              "cancel": { "action": "cancel" }
+            }
+          },
+          {
+            "id": "questDetailWidget",
+            "type": "questDetail",
+            "x": 400,
+            "y": 0,
+            "width": 416,
+            "height": 624
+          }
+        ]
+      }
+    },
+    "questTracker": {
+      "id": "questTracker",
+      "displayName": "퀘스트 추적창",
+      "overlay": true,
+      "formatVersion": 2,
+      "root": {
+        "id": "root",
+        "type": "panel",
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 624,
+        "windowed": false,
+        "children": [
+          {
+            "id": "questTrackerWidget",
+            "type": "questTracker",
+            "x": 0,
+            "y": 0,
+            "width": 300,
+            "height": 200
+          }
+        ]
+      }
+    },
     "options": {
       "id": "options",
       "displayName": "옵션 씬 (개별 위젯)",
