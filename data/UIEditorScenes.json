@@ -2430,8 +2430,7 @@
           "code": "if(typeof SoundManager!=='undefined')SoundManager.playCursor(); $ctx.actorIndex = ($ctx.actorIndex - 1 + $gameParty.size()) % $gameParty.size();"
         },
         "cancel": {
-          "action": "script",
-          "code": "if(typeof SoundManager!=='undefined')SoundManager.playCancel(); SceneManager.pop();"
+          "action": "popScene"
         }
       },
       "navigation": {},
