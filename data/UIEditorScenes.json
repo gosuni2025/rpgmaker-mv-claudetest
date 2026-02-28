@@ -2881,26 +2881,10 @@
             "height": 54,
             "maxCols": 4,
             "items": [
-              {
-                "name": "{typeof TextManager!=='undefined'?TextManager.item:'소비품'}",
-                "symbol": "item",
-                "enabled": true
-              },
-              {
-                "name": "{typeof TextManager!=='undefined'?TextManager.weapon:'무기'}",
-                "symbol": "weapon",
-                "enabled": true
-              },
-              {
-                "name": "{typeof TextManager!=='undefined'?TextManager.armor:'방어구'}",
-                "symbol": "armor",
-                "enabled": true
-              },
-              {
-                "name": "{typeof TextManager!=='undefined'?TextManager.keyItem:'중요'}",
-                "symbol": "keyItem",
-                "enabled": true
-              }
+              { "name": "아이템",      "symbol": "item",    "enabled": true },
+              { "name": "무기",        "symbol": "weapon",  "enabled": true },
+              { "name": "방어구",      "symbol": "armor",   "enabled": true },
+              { "name": "중요 아이템", "symbol": "keyItem", "enabled": true }
             ],
             "handlers": {
               "item": {
