@@ -1,1 +1,3468 @@
-{"scenes":{"menu_v2":{"id":"menu_v2","displayName":"게임 메뉴","formatVersion":2,"prepareArgs":[],"navigation":{"defaultFocus":"cmd_main","cancelWidget":"cmd_main","focusOrder":["cmd_main","actor_select"]},"root":{"id":"root","type":"panel","x":0,"y":0,"width":816,"height":624,"windowed":false,"children":[{"id":"bg","type":"background","x":0,"y":0,"width":816,"height":624},{"id":"cmd_main","type":"list","x":0,"y":0,"width":240,"maxCols":1,"items":[{"name":"아이템","symbol":"item","enabled":true},{"name":"스킬","symbol":"skill","enabled":true},{"name":"장비","symbol":"equip","enabled":true},{"name":"상태","symbol":"status","enabled":true},{"name":"대형","symbol":"formation","enabledCondition":"$gameParty.size() >= 2 && $gameSystem.isFormationEnabled()"},{"name":"옵션","symbol":"options","enabled":true},{"name":"세이브","symbol":"save","enabledCondition":"$gameSystem.isSaveEnabled()"},{"name":"게임 종료","symbol":"gameEnd","enabled":true}],"handlers":{"item":{"action":"gotoScene","target":"Scene_Item"},"skill":{"action":"selectActor","widget":"actor_select","thenAction":{"action":"gotoScene","target":"Scene_Skill"}},"equip":{"action":"selectActor","widget":"actor_select","thenAction":{"action":"gotoScene","target":"Scene_Equip"}},"status":{"action":"selectActor","widget":"actor_select","thenAction":{"action":"gotoScene","target":"Scene_Status"}},"formation":{"action":"formation","widget":"actor_select"},"options":{"action":"gotoScene","target":"Scene_Options"},"save":{"action":"gotoScene","target":"Scene_Save"},"gameEnd":{"action":"gotoScene","target":"Scene_GameEnd"},"cancel":{"action":"popScene"}}},{"id":"gold_win","type":"panel","x":0,"y":552,"width":240,"height":72,"windowed":true,"children":[{"id":"gold_label","type":"label","x":6,"y":6,"width":192,"height":36,"text":"{gold}G","align":"right"}]},{"id":"party_panel","type":"panel","x":240,"y":0,"width":576,"height":624,"windowed":true,"children":[{"id":"actor_row_0","type":"panel","x":0,"y":0,"width":576,"height":156,"windowed":false,"children":[{"id":"face0","type":"image","imageSource":"actorFace","actorIndex":0,"x":2,"y":6,"width":140,"height":140},{"id":"name0","type":"label","x":148,"y":6,"width":200,"height":36,"text":"{actor[0].name}","fontSize":26},{"id":"class0","type":"label","x":352,"y":6,"width":218,"height":36,"text":"{actor[0].class}","fontSize":22,"color":"#aaaaaa"},{"id":"lv0","type":"label","x":148,"y":48,"width":200,"height":32,"text":"Lv {actor[0].level}","fontSize":22,"color":"#aaaaaa"},{"id":"hp0","type":"gauge","valueExpr":"$gameParty.members()[0].hp","maxExpr":"$gameParty.members()[0].mhp","gaugeSkinId":"gauge_hp","x":352,"y":48,"width":218,"height":36,"children":[{"id":"hp0_name","type":"label","text":"HP","x":0,"y":0,"width":61,"height":22,"fontSize":18},{"id":"hp0_cur","type":"label","text":"{$gameParty.members()[0].hp}","x":61,"y":0,"width":78,"height":22,"align":"right","fontSize":18,"borderWidth":1},{"id":"hp0_max","type":"label","text":"/{$gameParty.members()[0].mhp}","x":139,"y":0,"width":79,"height":22,"fontSize":18,"color":"#aaaaaa"}]},{"id":"mp0","type":"gauge","valueExpr":"$gameParty.members()[0].mp","maxExpr":"$gameParty.members()[0].mmp","gaugeSkinId":"gauge_mp","x":352,"y":88,"width":218,"height":36,"children":[{"id":"mp0_name","type":"label","text":"MP","x":0,"y":0,"width":61,"height":22,"fontSize":18},{"id":"mp0_cur","type":"label","text":"{$gameParty.members()[0].mp}","x":61,"y":0,"width":78,"height":22,"align":"right","fontSize":18},{"id":"mp0_max","type":"label","text":"/{$gameParty.members()[0].mmp}","x":139,"y":0,"width":79,"height":22,"fontSize":18,"color":"#aaaaaa"}]}]},{"id":"actor_row_1","type":"panel","x":0,"y":156,"width":576,"height":156,"windowed":false,"children":[{"id":"face1","type":"image","imageSource":"actorFace","actorIndex":1,"x":2,"y":6,"width":140,"height":140},{"id":"name1","type":"label","x":148,"y":6,"width":200,"height":36,"text":"{actor[1].name}","fontSize":26},{"id":"class1","type":"label","x":352,"y":6,"width":218,"height":36,"text":"{actor[1].class}","fontSize":22,"color":"#aaaaaa"},{"id":"lv1","type":"label","x":148,"y":48,"width":200,"height":32,"text":"Lv {actor[1].level}","fontSize":22,"color":"#aaaaaa"},{"id":"hp1","type":"gauge","valueExpr":"$gameParty.members()[1].hp","maxExpr":"$gameParty.members()[1].mhp","gaugeSkinId":"gauge_hp","x":352,"y":48,"width":218,"height":36,"children":[{"id":"hp1_name","type":"label","text":"HP","x":0,"y":0,"width":61,"height":22,"fontSize":18},{"id":"hp1_cur","type":"label","text":"{$gameParty.members()[1].hp}","x":61,"y":0,"width":78,"height":22,"align":"right","fontSize":18},{"id":"hp1_max","type":"label","text":"/{$gameParty.members()[1].mhp}","x":139,"y":0,"width":79,"height":22,"fontSize":18,"color":"#aaaaaa"}]},{"id":"mp1","type":"gauge","valueExpr":"$gameParty.members()[1].mp","maxExpr":"$gameParty.members()[1].mmp","gaugeSkinId":"gauge_mp","x":352,"y":88,"width":218,"height":36,"children":[{"id":"mp1_name","type":"label","text":"MP","x":0,"y":0,"width":61,"height":22,"fontSize":18},{"id":"mp1_cur","type":"label","text":"{$gameParty.members()[1].mp}","x":61,"y":0,"width":78,"height":22,"align":"right","fontSize":18},{"id":"mp1_max","type":"label","text":"/{$gameParty.members()[1].mmp}","x":139,"y":0,"width":79,"height":22,"fontSize":18,"color":"#aaaaaa"}]}]},{"id":"actor_row_2","type":"panel","x":0,"y":312,"width":576,"height":156,"windowed":false,"children":[{"id":"face2","type":"image","imageSource":"actorFace","actorIndex":2,"x":2,"y":6,"width":140,"height":140},{"id":"name2","type":"label","x":148,"y":6,"width":200,"height":36,"text":"{actor[2].name}","fontSize":26},{"id":"class2","type":"label","x":352,"y":6,"width":218,"height":36,"text":"{actor[2].class}","fontSize":22,"color":"#aaaaaa"},{"id":"lv2","type":"label","x":148,"y":48,"width":200,"height":32,"text":"Lv {actor[2].level}","fontSize":22,"color":"#aaaaaa"},{"id":"hp2","type":"gauge","valueExpr":"$gameParty.members()[2].hp","maxExpr":"$gameParty.members()[2].mhp","gaugeSkinId":"gauge_hp","x":352,"y":48,"width":218,"height":36,"children":[{"id":"hp2_name","type":"label","text":"HP","x":0,"y":0,"width":61,"height":22,"fontSize":18},{"id":"hp2_cur","type":"label","text":"{$gameParty.members()[2].hp}","x":61,"y":0,"width":78,"height":22,"align":"right","fontSize":18},{"id":"hp2_max","type":"label","text":"/{$gameParty.members()[2].mhp}","x":139,"y":0,"width":79,"height":22,"fontSize":18,"color":"#aaaaaa"}]},{"id":"mp2","type":"gauge","valueExpr":"$gameParty.members()[2].mp","maxExpr":"$gameParty.members()[2].mmp","gaugeSkinId":"gauge_mp","x":352,"y":88,"width":218,"height":36,"children":[{"id":"mp2_name","type":"label","text":"MP","x":0,"y":0,"width":61,"height":22,"fontSize":18},{"id":"mp2_cur","type":"label","text":"{$gameParty.members()[2].mp}","x":61,"y":0,"width":78,"height":22,"align":"right","fontSize":18},{"id":"mp2_max","type":"label","text":"/{$gameParty.members()[2].mmp}","x":139,"y":0,"width":79,"height":22,"fontSize":18,"color":"#aaaaaa"}]}]},{"id":"actor_row_3","type":"panel","x":0,"y":468,"width":576,"height":156,"windowed":false,"children":[{"id":"face3","type":"image","imageSource":"actorFace","actorIndex":3,"x":2,"y":6,"width":140,"height":140},{"id":"name3","type":"label","x":148,"y":6,"width":200,"height":36,"text":"{actor[3].name}","fontSize":26},{"id":"class3","type":"label","x":352,"y":6,"width":218,"height":36,"text":"{actor[3].class}","fontSize":22,"color":"#aaaaaa"},{"id":"lv3","type":"label","x":148,"y":48,"width":200,"height":32,"text":"Lv {actor[3].level}","fontSize":22,"color":"#aaaaaa"},{"id":"hp3","type":"gauge","valueExpr":"$gameParty.members()[3].hp","maxExpr":"$gameParty.members()[3].mhp","gaugeSkinId":"gauge_hp","x":352,"y":48,"width":218,"height":36,"children":[{"id":"hp3_name","type":"label","text":"HP","x":0,"y":0,"width":61,"height":22,"fontSize":18},{"id":"hp3_cur","type":"label","text":"{$gameParty.members()[3].hp}","x":61,"y":0,"width":78,"height":22,"align":"right","fontSize":18},{"id":"hp3_max","type":"label","text":"/{$gameParty.members()[3].mhp}","x":139,"y":0,"width":79,"height":22,"fontSize":18,"color":"#aaaaaa"}]},{"id":"mp3","type":"gauge","valueExpr":"$gameParty.members()[3].mp","maxExpr":"$gameParty.members()[3].mmp","gaugeSkinId":"gauge_mp","x":352,"y":88,"width":218,"height":36,"children":[{"id":"mp3_name","type":"label","text":"MP","x":0,"y":0,"width":61,"height":22,"fontSize":18},{"id":"mp3_cur","type":"label","text":"{$gameParty.members()[3].mp}","x":61,"y":0,"width":78,"height":22,"align":"right","fontSize":18},{"id":"mp3_max","type":"label","text":"/{$gameParty.members()[3].mmp}","x":139,"y":0,"width":79,"height":22,"fontSize":18,"color":"#aaaaaa"}]}]},{"id":"actor_select","type":"rowSelector","x":0,"y":0,"width":576,"height":624,"numRows":"party","transparent":true,"padding":0,"previewSelectable":false}]},{"id":"textArea_17722543123303","type":"textArea","x":17,"y":404,"width":300,"height":80,"text":"커스텀씬","align":"center","verticalAlign":"middle"}]}},"minimap_hud":{"id":"minimap_hud","displayName":"미니맵 HUD","formatVersion":2,"overlay":true,"prepareArgs":[],"root":{"id":"root","type":"panel","x":0,"y":0,"width":816,"height":624,"windowed":false,"children":[{"id":"hud_container","type":"panel","x":608,"y":4,"width":204,"height":262,"windowed":false,"children":[{"id":"minimap","type":"minimap","x":6,"y":6,"width":192,"height":192,"children":[]},{"id":"map_name","type":"label","x":6,"y":202,"width":192,"height":26,"text":"{mapName}","align":"center","fontSize":16},{"id":"btn_zoom_in","type":"button","x":6,"y":230,"width":90,"height":26,"label":"확대 +","action":{"action":"script","code":"MinimapManager.zoomIn()"},"bgAlpha":0.83,"borderWidth":1,"borderRadius":2,"windowed":false},{"id":"btn_zoom_out","type":"button","x":108,"y":230,"width":90,"height":26,"label":"축소 -","action":{"action":"script","code":"MinimapManager.zoomOut()"},"windowed":false}],"visible":true}]}},"questJournal":{"id":"questJournal","displayName":"퀘스트 저널","formatVersion":2,"navigation":{"defaultFocus":"questCategoryWidget","cancelWidget":"questCategoryWidget","focusOrder":["questCategoryWidget","questListWidget"]},"root":{"id":"root","type":"panel","x":0,"y":0,"width":816,"height":624,"windowed":false,"children":[{"id":"bg","type":"background","x":0,"y":0,"width":816,"height":624},{"id":"questCategoryWidget","type":"list","x":0,"y":0,"width":180,"height":624,"dataScript":"QS._buildCategoryItems()","handlers":{"ok":{"action":"script","code":"var lw=this._widgetMap['questCategoryWidget'];window._qs_currentCategory=lw&&lw._window?lw._window.currentSymbol():'__all__';window._qs_currentQuestId=null;var ql=this._widgetMap['questListWidget'];if(ql)ql._lastIndex=0;","thenAction":{"action":"focusWidget","target":"questListWidget"}},"cancel":{"action":"cancel"}}},{"id":"questListWidget","type":"list","x":180,"y":0,"width":220,"height":624,"dataScript":"QS._buildQuestItems()","onCursor":{"code":"var lw=this._widgetMap['questListWidget'];if(lw&&lw._window){var sym=lw._window.currentSymbol();window._qs_currentQuestId=(sym&&sym!=='__no_quests__')?sym:null;}var oo=this._widgetMap['qd_objectives'];if(oo&&oo._rebuildFromScript)oo._rebuildFromScript();var rr=this._widgetMap['qd_rewards'];if(rr&&rr._rebuildFromScript)rr._rebuildFromScript();"},"handlers":{"ok":{"action":"script","code":"var lw=this._widgetMap['questListWidget'];if(lw&&lw._window)lw._lastIndex=lw._window.index();"},"cancel":{"action":"focusWidget","target":"questCategoryWidget"}}},{"id":"questDetailBg","type":"panel","x":400,"y":0,"width":416,"height":624,"windowed":true,"children":[{"id":"qd_title","type":"label","x":8,"y":8,"width":392,"height":36,"text":"{QS._getSelectedQuestTitle()}","color":"#e8d080","fontSize":24},{"id":"qd_meta","type":"label","x":8,"y":44,"width":392,"height":28,"text":"{QS._getSelectedQuestMeta()}","color":"#aaaaaa","fontSize":18},{"id":"qd_sep","type":"separator","x":8,"y":74,"width":392,"height":4},{"id":"qd_desc","type":"textArea","x":8,"y":82,"width":392,"height":84,"text":"{QS._getSelectedQuestDesc()}","fontSize":18,"lineHeight":28},{"id":"qd_obj_header","type":"label","x":8,"y":170,"width":392,"height":28,"text":"[ 목표 ]","color":"#e8d080","fontSize":20},{"id":"qd_objectives","type":"list","x":0,"y":198,"width":416,"height":180,"windowed":false,"dataScript":"QS._buildObjectiveItems()","focusable":false},{"id":"qd_rew_header","type":"label","x":8,"y":382,"width":392,"height":28,"text":"{QS._getSelectedQuestRewardsLabel()}","color":"#e8d080","fontSize":20},{"id":"qd_rewards","type":"list","x":0,"y":410,"width":416,"height":140,"windowed":false,"dataScript":"QS._buildRewardItems()","focusable":false},{"id":"qd_status_ok","type":"label","x":8,"y":560,"width":392,"height":28,"text":"{QS._getSelectedQuestStatusOk()}","color":"#88ff88","align":"center","fontSize":20},{"id":"qd_status_fail","type":"label","x":8,"y":560,"width":392,"height":28,"text":"{QS._getSelectedQuestStatusFail()}","color":"#ff8888","align":"center","fontSize":20}]}]}},"questTracker":{"id":"questTracker","displayName":"퀘스트 추적창","overlay":true,"formatVersion":2,"root":{"id":"root","type":"panel","x":0,"y":0,"width":816,"height":624,"windowed":false,"children":[{"id":"trackerList","type":"list","x":0,"y":0,"width":300,"windowed":true,"autoHeight":true,"bgAlpha":0.7,"dataScript":"QS._buildTrackerItems()","focusable":false}]}},"options":{"id":"options","displayName":"옵션 씬 (개별 위젯)","formatVersion":2,"saveConfigOnExit":true,"prepareArgs":[],"navigation":{"defaultFocus":"row_alwaysDash","cancelWidget":"row_alwaysDash","upDownNavigation":true,"focusOrder":["row_alwaysDash","row_commandRemember","row_bgmVolume","row_bgsVolume","row_meVolume","row_seVolume"]},"root":{"id":"root","type":"panel","x":0,"y":0,"width":816,"height":624,"windowed":false,"children":[{"id":"bg","type":"background","x":0,"y":0,"width":816,"height":624},{"id":"opts_bg","type":"panel","x":208,"y":156,"width":400,"height":312,"windowed":true,"children":[],"windowStyle":"frame","windowskinName":"kenney_ui-pack-pixel-adventure/Tilesheets/Small tiles/Thick outline/tilemap","skinId":"kenny"},{"id":"row_alwaysDash","type":"button","x":208,"y":156,"width":400,"height":52,"label":"","action":{"action":"toggleConfig","configKey":"alwaysDash"},"children":[{"id":"name_alwaysDash","type":"label","x":12,"y":8,"width":240,"height":36,"text":"항상 대시"},{"id":"val_alwaysDash","type":"label","x":252,"y":8,"width":136,"height":36,"text":"{ConfigManager.alwaysDash ? 'ON' : 'OFF'}","align":"right"}]},{"id":"row_commandRemember","type":"button","x":208,"y":208,"width":400,"height":52,"label":"","action":{"action":"toggleConfig","configKey":"commandRemember"},"children":[{"id":"name_commandRemember","type":"label","x":12,"y":8,"width":240,"height":36,"text":"커맨드 기억"},{"id":"val_commandRemember","type":"label","x":252,"y":8,"width":136,"height":36,"text":"{ConfigManager.commandRemember ? 'ON' : 'OFF'}","align":"right"}]},{"id":"row_bgmVolume","type":"button","x":208,"y":260,"width":400,"height":52,"label":"","action":{"action":"incrementConfig","configKey":"bgmVolume"},"leftAction":{"action":"decrementConfig","configKey":"bgmVolume"},"rightAction":{"action":"incrementConfig","configKey":"bgmVolume"},"children":[{"id":"name_bgmVolume","type":"label","x":12,"y":8,"width":240,"height":36,"text":"BGM 볼륨"},{"id":"val_bgmVolume","type":"label","x":252,"y":8,"width":136,"height":36,"text":"{ConfigManager.bgmVolume + '%'}","align":"right"}]},{"id":"row_bgsVolume","type":"button","x":208,"y":312,"width":400,"height":52,"label":"","action":{"action":"incrementConfig","configKey":"bgsVolume"},"leftAction":{"action":"decrementConfig","configKey":"bgsVolume"},"rightAction":{"action":"incrementConfig","configKey":"bgsVolume"},"children":[{"id":"name_bgsVolume","type":"label","x":12,"y":8,"width":240,"height":36,"text":"BGS 볼륨"},{"id":"val_bgsVolume","type":"label","x":252,"y":8,"width":136,"height":36,"text":"{ConfigManager.bgsVolume + '%'}","align":"right"}]},{"id":"row_meVolume","type":"button","x":208,"y":364,"width":400,"height":52,"label":"","action":{"action":"incrementConfig","configKey":"meVolume"},"leftAction":{"action":"decrementConfig","configKey":"meVolume"},"rightAction":{"action":"incrementConfig","configKey":"meVolume"},"children":[{"id":"name_meVolume","type":"label","x":12,"y":8,"width":240,"height":36,"text":"ME 볼륨"},{"id":"val_meVolume","type":"label","x":252,"y":8,"width":136,"height":36,"text":"{ConfigManager.meVolume + '%'}","align":"right"}]},{"id":"row_seVolume","type":"button","x":208,"y":416,"width":400,"height":52,"label":"","action":{"action":"incrementConfig","configKey":"seVolume"},"leftAction":{"action":"decrementConfig","configKey":"seVolume"},"rightAction":{"action":"incrementConfig","configKey":"seVolume"},"children":[{"id":"name_seVolume","type":"label","x":12,"y":8,"width":240,"height":36,"text":"SE 볼륨"},{"id":"val_seVolume","type":"label","x":252,"y":8,"width":136,"height":36,"text":"{ConfigManager.seVolume + '%'}","align":"right"}]},{"id":"textArea_17722543365505","type":"textArea","x":151,"y":511,"width":300,"height":80,"text":"커스텀씬","align":"center","verticalAlign":"middle"}]}},"enemy_book":{"id":"enemy_book","displayName":"몬스터 도감","formatVersion":2,"prepareArgs":[],"navigation":{"defaultFocus":"enemy_list","cancelWidget":"enemy_list"},"root":{"id":"root","type":"panel","x":0,"y":0,"width":816,"height":624,"windowed":false,"children":[{"id":"bg","type":"background","x":0,"y":0,"width":816,"height":624},{"id":"enemy_list","type":"list","x":0,"y":0,"width":240,"height":624,"dataScript":"(function(){var list=[];for(var i=1;i<$dataEnemies.length;i++){var e=$dataEnemies[i];if(e&&e.name&&e.meta.book!=='no'){var known=$gameSystem.isInEnemyBook(e);list.push({name:('00'+(list.length+1)).slice(-3)+'  '+(known?e.name:'??????'),symbol:'enemy_'+i,data:e,enabled:true});}}return list;})()","onCursor":{"code":"var lst=this._widgetMap&&this._widgetMap['enemy_list'];if(lst&&lst._window){var idx=lst._window.index();var cmds=lst._window._winDef.commands;this._ctx={enemy:cmds&&cmds[idx]?cmds[idx].data:null};}"},"handlers":{"cancel":{"action":"popScene"}}},{"id":"detail_panel","type":"panel","x":240,"y":0,"width":576,"height":624,"windowed":true,"children":[{"id":"enemy_battler","type":"image","bitmapExpr":"CSHelper.enemyBattler($ctx.enemy)","fitMode":"contain","x":284,"y":20,"width":280,"height":280},{"id":"enemy_name","type":"label","text":"{$ctx.enemy&&$ctx.enemy.name||''}","x":8,"y":8,"width":272,"height":36,"fontSize":26},{"id":"param_name_0","type":"label","text":"{TextManager.param(0)}","x":8,"y":56,"width":110,"height":36,"fontSize":22,"color":"#aaaaaa"},{"id":"param_val_0","type":"label","text":"{$ctx.enemy&&$ctx.enemy.params[0]||0}","x":120,"y":56,"width":80,"height":36,"fontSize":22,"align":"right"},{"id":"param_name_1","type":"label","text":"{TextManager.param(1)}","x":8,"y":92,"width":110,"height":36,"fontSize":22,"color":"#aaaaaa"},{"id":"param_val_1","type":"label","text":"{$ctx.enemy&&$ctx.enemy.params[1]||0}","x":120,"y":92,"width":80,"height":36,"fontSize":22,"align":"right"},{"id":"param_name_2","type":"label","text":"{TextManager.param(2)}","x":8,"y":128,"width":110,"height":36,"fontSize":22,"color":"#aaaaaa"},{"id":"param_val_2","type":"label","text":"{$ctx.enemy&&$ctx.enemy.params[2]||0}","x":120,"y":128,"width":80,"height":36,"fontSize":22,"align":"right"},{"id":"param_name_3","type":"label","text":"{TextManager.param(3)}","x":8,"y":164,"width":110,"height":36,"fontSize":22,"color":"#aaaaaa"},{"id":"param_val_3","type":"label","text":"{$ctx.enemy&&$ctx.enemy.params[3]||0}","x":120,"y":164,"width":80,"height":36,"fontSize":22,"align":"right"},{"id":"param_name_4","type":"label","text":"{TextManager.param(4)}","x":8,"y":200,"width":110,"height":36,"fontSize":22,"color":"#aaaaaa"},{"id":"param_val_4","type":"label","text":"{$ctx.enemy&&$ctx.enemy.params[4]||0}","x":120,"y":200,"width":80,"height":36,"fontSize":22,"align":"right"},{"id":"param_name_5","type":"label","text":"{TextManager.param(5)}","x":8,"y":236,"width":110,"height":36,"fontSize":22,"color":"#aaaaaa"},{"id":"param_val_5","type":"label","text":"{$ctx.enemy&&$ctx.enemy.params[5]||0}","x":120,"y":236,"width":80,"height":36,"fontSize":22,"align":"right"},{"id":"param_name_6","type":"label","text":"{TextManager.param(6)}","x":8,"y":272,"width":110,"height":36,"fontSize":22,"color":"#aaaaaa"},{"id":"param_val_6","type":"label","text":"{$ctx.enemy&&$ctx.enemy.params[6]||0}","x":120,"y":272,"width":80,"height":36,"fontSize":22,"align":"right"},{"id":"param_name_7","type":"label","text":"{TextManager.param(7)}","x":8,"y":308,"width":110,"height":36,"fontSize":22,"color":"#aaaaaa"},{"id":"param_val_7","type":"label","text":"{$ctx.enemy&&$ctx.enemy.params[7]||0}","x":120,"y":308,"width":80,"height":36,"fontSize":22,"align":"right"},{"id":"exp_name","type":"label","text":"{TextManager.expA}","x":8,"y":352,"width":70,"height":36,"fontSize":22,"color":"#aaaaaa"},{"id":"exp_val","type":"label","text":"{$ctx.enemy&&$ctx.enemy.exp||0}","x":80,"y":352,"width":60,"height":36,"fontSize":22,"align":"right"},{"id":"gold_name","type":"label","text":"{TextManager.currencyUnit}","x":148,"y":352,"width":70,"height":36,"fontSize":22,"color":"#aaaaaa"},{"id":"gold_val","type":"label","text":"{$ctx.enemy&&$ctx.enemy.gold||0}","x":220,"y":352,"width":50,"height":36,"fontSize":22,"align":"right"},{"id":"enemy_drops","type":"list","x":8,"y":396,"width":556,"height":220,"autoHeight":true,"dataScript":"(function(){var e=$ctx&&$ctx.enemy;if(!e)return[];var drops=[];e.dropItems.forEach(function(di){if(di.kind>0){var item=Game_Enemy.prototype.itemObject(di.kind,di.dataId);if(item)drops.push({name:item.name,symbol:'drop_'+drops.length,enabled:false});}});return drops;})()","windowed":false,"handlers":{},"maxCols":1,"focusable":false}]},{"id":"textArea_1772250546038","type":"textArea","x":151,"y":511,"width":300,"height":80,"text":"커스텀씬","align":"center","verticalAlign":"middle"}]}},"item_book":{"id":"item_book","displayName":"아이템 도감","formatVersion":2,"prepareArgs":[],"navigation":{"defaultFocus":"item_list","cancelWidget":"item_list"},"root":{"id":"root","type":"panel","x":0,"y":0,"width":816,"height":624,"windowed":false,"children":[{"id":"bg","type":"background","x":0,"y":0,"width":816,"height":624},{"id":"item_list","type":"list","x":0,"y":0,"width":240,"height":624,"dataScript":"(function(){var list=[];var i,it;for(i=1;i<$dataItems.length;i++){it=$dataItems[i];if(it&&it.name&&it.itypeId===1&&it.meta.book!=='no'){var k=$gameSystem.isInItemBook(it);list.push({name:('00'+(list.length+1)).slice(-3)+'  '+(k?it.name:'??????'),symbol:'i_'+i,data:it,enabled:true});}}for(i=1;i<$dataWeapons.length;i++){it=$dataWeapons[i];if(it&&it.name&&it.meta.book!=='no'){var k2=$gameSystem.isInItemBook(it);list.push({name:('00'+(list.length+1)).slice(-3)+'  '+(k2?it.name:'??????'),symbol:'w_'+i,data:it,enabled:true});}}for(i=1;i<$dataArmors.length;i++){it=$dataArmors[i];if(it&&it.name&&it.meta.book!=='no'){var k3=$gameSystem.isInItemBook(it);list.push({name:('00'+(list.length+1)).slice(-3)+'  '+(k3?it.name:'??????'),symbol:'a_'+i,data:it,enabled:true});}}return list;})()","onCursor":{"code":"var lst=this._widgetMap&&this._widgetMap['item_list'];if(lst&&lst._window){var idx=lst._window.index();var cmds=lst._window._winDef.commands;this._ctx={item:cmds&&cmds[idx]?cmds[idx].data:null};}"},"handlers":{"cancel":{"action":"popScene"}}},{"id":"detail_panel","type":"panel","x":240,"y":0,"width":576,"height":624,"windowed":true,"children":[{"id":"item_icon","type":"image","bitmapExpr":"ImageManager.loadSystem('IconSet')","srcRectExpr":"(function(){var it=$ctx&&$ctx.item;if(!it)return{x:0,y:0,w:0,h:0};var iw=32,ih=32,cols=16;return{x:(it.iconIndex%cols)*iw,y:Math.floor(it.iconIndex/cols)*ih,w:iw,h:ih};})()","fitMode":"stretch","x":8,"y":8,"width":32,"height":32},{"id":"item_name","type":"label","text":"{$ctx.item&&$ctx.item.name||''}","x":48,"y":8,"width":510,"height":36,"fontSize":26},{"id":"price_label","type":"label","text":"가격","x":8,"y":48,"width":80,"height":36,"fontSize":22,"color":"#aaaaaa"},{"id":"price_val","type":"label","text":"{$ctx.item&&$ctx.item.price||0}","x":90,"y":48,"width":80,"height":36,"fontSize":22},{"id":"ipar_name_0","type":"label","text":"{TextManager.param(2)}","x":8,"y":80,"width":80,"height":36,"fontSize":20,"color":"#aaaaaa"},{"id":"ipar_val_0","type":"label","text":"{$ctx.item&&$ctx.item.params&&$ctx.item.params[2]||0}","x":90,"y":80,"width":50,"height":36,"fontSize":20,"align":"right"},{"id":"ipar_name_1","type":"label","text":"{TextManager.param(3)}","x":148,"y":80,"width":80,"height":36,"fontSize":20,"color":"#aaaaaa"},{"id":"ipar_val_1","type":"label","text":"{$ctx.item&&$ctx.item.params&&$ctx.item.params[3]||0}","x":230,"y":80,"width":50,"height":36,"fontSize":20,"align":"right"},{"id":"ipar_name_2","type":"label","text":"{TextManager.param(4)}","x":8,"y":116,"width":80,"height":36,"fontSize":20,"color":"#aaaaaa"},{"id":"ipar_val_2","type":"label","text":"{$ctx.item&&$ctx.item.params&&$ctx.item.params[4]||0}","x":90,"y":116,"width":50,"height":36,"fontSize":20,"align":"right"},{"id":"ipar_name_3","type":"label","text":"{TextManager.param(5)}","x":148,"y":116,"width":80,"height":36,"fontSize":20,"color":"#aaaaaa"},{"id":"ipar_val_3","type":"label","text":"{$ctx.item&&$ctx.item.params&&$ctx.item.params[5]||0}","x":230,"y":116,"width":50,"height":36,"fontSize":20,"align":"right"},{"id":"ipar_name_4","type":"label","text":"{TextManager.param(6)}","x":8,"y":152,"width":80,"height":36,"fontSize":20,"color":"#aaaaaa"},{"id":"ipar_val_4","type":"label","text":"{$ctx.item&&$ctx.item.params&&$ctx.item.params[6]||0}","x":90,"y":152,"width":50,"height":36,"fontSize":20,"align":"right"},{"id":"ipar_name_5","type":"label","text":"{TextManager.param(7)}","x":148,"y":152,"width":80,"height":36,"fontSize":20,"color":"#aaaaaa"},{"id":"ipar_val_5","type":"label","text":"{$ctx.item&&$ctx.item.params&&$ctx.item.params[7]||0}","x":230,"y":152,"width":50,"height":36,"fontSize":20,"align":"right"},{"id":"item_desc","type":"textArea","text":"{$ctx.item&&$ctx.item.description||''}","x":8,"y":196,"width":556,"height":108,"fontSize":20,"color":"#dddddd"}]},{"id":"textArea_17722543468076","type":"textArea","x":151,"y":511,"width":300,"height":80,"text":"커스텀씬","align":"center","verticalAlign":"middle"}]}},"fj_classChange":{"id":"fj_classChange","displayName":"전직 시스템","formatVersion":2,"prepareArgs":[],"navigation":{"defaultFocus":"actor_list","cancelWidget":"actor_list","focusOrder":["actor_list","slot_list","class_list"]},"root":{"id":"root","type":"panel","x":0,"y":0,"width":816,"height":624,"windowed":false,"children":[{"id":"bg","type":"background","x":0,"y":0,"width":816,"height":624},{"id":"left_panel","type":"panel","x":0,"y":0,"width":248,"height":624,"windowed":true,"children":[{"id":"fj_title","type":"label","x":6,"y":6,"width":236,"height":36,"text":"◆ 전직 시스템","fontSize":22},{"id":"fj_actor_name","type":"label","x":6,"y":46,"width":236,"height":28,"text":"{FJ.actorName()}","fontSize":18,"color":"#aaaaaa"},{"id":"fj_slot_sep2","type":"label","x":6,"y":194,"width":236,"height":22,"text":"── 슬롯 선택 ──","fontSize":15,"color":"#888888","align":"center"}]},{"id":"actor_list","type":"list","x":0,"y":72,"width":248,"height":144,"windowed":false,"dataScript":"FJ.actorItems()","onCursor":{"code":"var lw=this._widgetMap['actor_list'];if(lw&&lw._window&&lw._window.active){var sym=lw._window.currentSymbol();if(sym){var idx=parseInt(sym.replace('actor_',''),10);FJ._actorIdx=idx;FJ._slot=0;FJ._curClassId=0;var sl=this._widgetMap['slot_list'];if(sl&&sl._rebuildFromScript)sl._rebuildFromScript();}}"},"handlers":{"ok":{"action":"script","code":"FJ._curClassId=0;","thenAction":{"action":"focusWidget","target":"slot_list"}},"cancel":{"action":"popScene"}}},{"id":"slot_list","type":"list","x":0,"y":216,"width":248,"height":408,"windowed":false,"dataScript":"FJ.slotItems()","onCursor":{"code":"var lw=this._widgetMap['slot_list'];if(lw&&lw._window){var sym=lw._window.currentSymbol();FJ._slot=sym?parseInt(sym.replace('slot_',''),10):0;FJ._curClassId=0;}var cl=this._widgetMap['class_list'];if(cl&&cl._rebuildFromScript)cl._rebuildFromScript();"},"handlers":{"ok":{"action":"script","code":"FJ._curClassId=0;","thenAction":{"action":"focusWidget","target":"class_list"}},"cancel":{"action":"popScene"}}},{"id":"center_panel","type":"panel","x":248,"y":0,"width":270,"height":624,"windowed":true,"children":[{"id":"fj_class_title","type":"label","x":6,"y":6,"width":258,"height":36,"text":"직업 목록","fontSize":22}]},{"id":"class_list","type":"list","x":248,"y":44,"width":270,"height":580,"windowed":false,"dataScript":"FJ.classItems()","onCursor":{"code":"var lw=this._widgetMap['class_list'];if(lw&&lw._window&&lw._window.active){var sym=lw._window.currentSymbol();FJ._curClassId=sym?parseInt(sym.replace('cls_',''),10):0;}"},"handlers":{"ok":{"action":"script","code":"FJ.applySlotChange();","thenAction":{"action":"focusWidget","target":"slot_list"}},"cancel":{"action":"focusWidget","target":"slot_list"}},"rowHeight":52},{"id":"right_panel","type":"panel","x":518,"y":0,"width":298,"height":624,"windowed":true,"children":[{"id":"cd_header","type":"label","x":6,"y":6,"width":286,"height":36,"text":"직업 상세","fontSize":22},{"id":"cd_name","type":"label","x":6,"y":48,"width":286,"height":36,"text":"{FJ.classDetailName()}","fontSize":22,"color":"#e8d080"},{"id":"cd_lv","type":"label","x":6,"y":88,"width":140,"height":26,"text":"{FJ.classDetailLv()}","fontSize":18,"color":"#aaaaaa"},{"id":"cd_jp","type":"label","x":150,"y":88,"width":142,"height":26,"text":"{FJ.classDetailJp()}","fontSize":18,"color":"#88ccff","align":"right"},{"id":"cd_desc","type":"textArea","x":6,"y":120,"width":286,"height":72,"text":"{FJ.classDetailDesc()}","fontSize":16,"lineHeight":24,"color":"#cccccc"},{"id":"cd_exp_header","type":"label","x":6,"y":196,"width":120,"height":22,"text":"경험치","fontSize":15,"color":"#888888"},{"id":"cd_exp","type":"label","x":6,"y":220,"width":286,"height":22,"text":"{FJ.classDetailExpBar()}","fontSize":15,"color":"#cccccc"},{"id":"cd_stat_sep","type":"separator","x":6,"y":248,"width":286,"height":4},{"id":"cd_stat_header","type":"label","x":6,"y":256,"width":286,"height":22,"text":"파라미터 예상치","fontSize":15,"color":"#888888"},{"id":"cd_atk","type":"label","x":6,"y":282,"width":286,"height":22,"text":"공격력  {FJ.statCompare(2)}","fontSize":14},{"id":"cd_def","type":"label","x":6,"y":306,"width":286,"height":22,"text":"방어력  {FJ.statCompare(3)}","fontSize":14},{"id":"cd_mat","type":"label","x":6,"y":330,"width":286,"height":22,"text":"마법공격  {FJ.statCompare(4)}","fontSize":14},{"id":"cd_mdf","type":"label","x":6,"y":354,"width":286,"height":22,"text":"마법방어  {FJ.statCompare(5)}","fontSize":14},{"id":"cd_agi","type":"label","x":6,"y":378,"width":286,"height":22,"text":"민첩  {FJ.statCompare(6)}","fontSize":14},{"id":"cd_luk","type":"label","x":6,"y":402,"width":286,"height":22,"text":"행운  {FJ.statCompare(7)}","fontSize":14}]}]}},"fj_skillLearn":{"id":"fj_skillLearn","displayName":"스킬 습득","formatVersion":2,"prepareArgs":[],"navigation":{"defaultFocus":"skill_list","cancelWidget":"skill_list","focusOrder":["skill_list"]},"root":{"id":"root","type":"panel","x":0,"y":0,"width":816,"height":624,"windowed":false,"children":[{"id":"bg","type":"background","x":0,"y":0,"width":816,"height":624},{"id":"status_panel","type":"panel","x":0,"y":0,"width":816,"height":68,"windowed":true,"children":[{"id":"sl_actor_name","type":"label","x":8,"y":8,"width":480,"height":36,"text":"{FJ.actorName()}","fontSize":24},{"id":"sl_jp_val","type":"label","x":496,"y":8,"width":312,"height":36,"text":"보유 {FJ.actorJp()}","fontSize":22,"color":"#88ccff","align":"right"}]},{"id":"skill_list","type":"list","x":0,"y":68,"width":440,"height":556,"windowed":true,"dataScript":"FJ.skillItems()","onCursor":{"code":"var lw=this._widgetMap['skill_list'];if(lw&&lw._window){var sym=lw._window.currentSymbol();FJ._curSkillId=sym?parseInt(sym.replace('sk_',''),10):0;}"},"handlers":{"ok":{"action":"script","code":"FJ.applySkillLearn();"},"cancel":{"action":"popScene"}}},{"id":"detail_panel","type":"panel","x":440,"y":68,"width":376,"height":556,"windowed":true,"children":[{"id":"sk_name","type":"label","x":8,"y":8,"width":360,"height":40,"text":"{FJ.skillDetailName()}","fontSize":26,"color":"#e8d080"},{"id":"sk_desc","type":"textArea","x":8,"y":56,"width":360,"height":96,"text":"{FJ.skillDetailDesc()}","fontSize":18,"lineHeight":28,"color":"#dddddd"},{"id":"sk_sep","type":"separator","x":8,"y":158,"width":360,"height":4},{"id":"sk_cost","type":"textArea","x":8,"y":168,"width":360,"height":60,"text":"{FJ.skillDetailCost()}","fontSize":18,"lineHeight":28,"color":"#aaaaaa"},{"id":"sk_hint","type":"label","x":8,"y":510,"width":360,"height":28,"text":"[ OK ] 스킬 습득","fontSize":18,"color":"#888888","align":"center"}]}]}},"status":{"id":"status","displayName":"캐릭터 상태","formatVersion":2,"prepareArgs":[],"initCtx":{"actorIndex":"$gameParty.menuActor() ? Math.max(0, $gameParty.members().indexOf($gameParty.menuActor())) : 0"},"keyHandlers":{"pagedown":{"action":"script","code":"if(typeof SoundManager!=='undefined')SoundManager.playCursor(); $ctx.actorIndex = ($ctx.actorIndex + 1) % $gameParty.size();"},"pageup":{"action":"script","code":"if(typeof SoundManager!=='undefined')SoundManager.playCursor(); $ctx.actorIndex = ($ctx.actorIndex - 1 + $gameParty.size()) % $gameParty.size();"},"cancel":{"action":"popScene"}},"navigation":{},"root":{"id":"root","type":"panel","x":0,"y":0,"width":816,"height":624,"windowed":false,"children":[{"id":"bg","type":"background","x":0,"y":0,"width":816,"height":624},{"id":"status_win","type":"panel","x":0,"y":0,"width":816,"height":624,"windowed":true,"children":[{"id":"actor_name","type":"label","x":24,"y":18,"width":168,"height":36,"text":"{actor[$ctx.actorIndex].name}","fontSize":26},{"id":"actor_class","type":"label","x":210,"y":18,"width":240,"height":36,"text":"{actor[$ctx.actorIndex].class}","fontSize":22,"color":"#aaaaaa"},{"id":"actor_nickname","type":"label","x":450,"y":18,"width":348,"height":36,"text":"{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?a.nickname():'';})()}","fontSize":22,"color":"#aaaaaa"},{"id":"line1","type":"separator","x":18,"y":54,"width":780,"height":4},{"id":"actor_face","type":"image","imageSource":"actorFace","actorIndexExpr":"$ctx.actorIndex","x":30,"y":90,"width":144,"height":144},{"id":"actor_level","type":"label","x":222,"y":90,"width":222,"height":36,"text":"Lv. {actor[$ctx.actorIndex].level}","fontSize":22,"color":"#aaaaaa"},{"id":"actor_icons","type":"icons","x":222,"y":126,"width":222,"height":32,"iconsExpr":"(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?a.allIcons():[];})()","maxCols":7,"iconSize":28,"iconGap":2},{"id":"hp_gauge","type":"gauge","x":222,"y":162,"width":222,"height":36,"gaugeType":"hp","actorIndexExpr":"$ctx.actorIndex","showLabel":true,"showValue":true},{"id":"mp_gauge","type":"gauge","x":222,"y":198,"width":222,"height":36,"gaugeType":"mp","actorIndexExpr":"$ctx.actorIndex","showLabel":true,"showValue":true},{"id":"exp_total_label","type":"label","x":474,"y":90,"width":270,"height":36,"text":"{(typeof TextManager!=='undefined'&&TextManager.expTotal)?TextManager.expTotal.format(TextManager.exp||'EXP'):'현재 경험치'}","fontSize":20,"color":"#ffff99"},{"id":"exp_total_val","type":"label","x":474,"y":126,"width":270,"height":36,"text":"{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?(a.isMaxLevel()?'-------':String(a.currentExp())):'';})()}","fontSize":22,"align":"right"},{"id":"exp_next_label","type":"label","x":474,"y":162,"width":270,"height":36,"text":"{(typeof TextManager!=='undefined'&&TextManager.expNext)?TextManager.expNext.format(TextManager.level||'Lv'):'다음 레벨까지'}","fontSize":20,"color":"#ffff99"},{"id":"exp_next_val","type":"label","x":474,"y":198,"width":270,"height":36,"text":"{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?(a.isMaxLevel()?'-------':String(a.nextRequiredExp())):'';})()}","fontSize":22,"align":"right"},{"id":"line2","type":"separator","x":18,"y":234,"width":780,"height":4},{"id":"p2_label","type":"label","x":30,"y":270,"width":160,"height":36,"text":"{typeof TextManager!=='undefined'?TextManager.param(2):'공격력'}","fontSize":22,"color":"#ffff99"},{"id":"p2_val","type":"label","x":190,"y":270,"width":60,"height":36,"text":"{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?a.param(2):0;})()}","fontSize":22,"align":"right"},{"id":"p3_label","type":"label","x":30,"y":306,"width":160,"height":36,"text":"{typeof TextManager!=='undefined'?TextManager.param(3):'방어력'}","fontSize":22,"color":"#ffff99"},{"id":"p3_val","type":"label","x":190,"y":306,"width":60,"height":36,"text":"{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?a.param(3):0;})()}","fontSize":22,"align":"right"},{"id":"p4_label","type":"label","x":30,"y":342,"width":160,"height":36,"text":"{typeof TextManager!=='undefined'?TextManager.param(4):'마법공격'}","fontSize":22,"color":"#ffff99"},{"id":"p4_val","type":"label","x":190,"y":342,"width":60,"height":36,"text":"{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?a.param(4):0;})()}","fontSize":22,"align":"right"},{"id":"p5_label","type":"label","x":30,"y":378,"width":160,"height":36,"text":"{typeof TextManager!=='undefined'?TextManager.param(5):'마법방어'}","fontSize":22,"color":"#ffff99"},{"id":"p5_val","type":"label","x":190,"y":378,"width":60,"height":36,"text":"{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?a.param(5):0;})()}","fontSize":22,"align":"right"},{"id":"p6_label","type":"label","x":30,"y":414,"width":160,"height":36,"text":"{typeof TextManager!=='undefined'?TextManager.param(6):'민첩성'}","fontSize":22,"color":"#ffff99"},{"id":"p6_val","type":"label","x":190,"y":414,"width":60,"height":36,"text":"{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?a.param(6):0;})()}","fontSize":22,"align":"right"},{"id":"p7_label","type":"label","x":30,"y":450,"width":160,"height":36,"text":"{typeof TextManager!=='undefined'?TextManager.param(7):'행운'}","fontSize":22,"color":"#ffff99"},{"id":"p7_val","type":"label","x":190,"y":450,"width":60,"height":36,"text":"{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?a.param(7):0;})()}","fontSize":22,"align":"right"},{"id":"equip_list","type":"list","x":450,"y":270,"width":348,"height":216,"focusable":false,"windowed":false,"dataScript":"(function(){var a=$gameParty.members()[$ctx.actorIndex];if(!a)return [];return a.equips().map(function(e,i){var tn=($dataSystem&&$dataSystem.equipTypes&&$dataSystem.equipTypes[i+1])||('장비'+(i+1));return {name:tn+':  '+(e?e.name:'---'),symbol:'equip_'+i,enabled:false};});})()"},{"id":"line3","type":"separator","x":18,"y":486,"width":780,"height":4},{"id":"actor_profile","type":"textArea","x":24,"y":504,"width":774,"height":84,"text":"{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?a.profile():'';})()}","fontSize":18}]},{"id":"textArea_17722556870531","type":"textArea","x":284,"y":434,"width":300,"height":80,"text":"커스텀씬","align":"center","verticalAlign":"middle"}]}},"item":{"id":"item","displayName":"아이템","formatVersion":2,"prepareArgs":[],"initCtx":{"itemCategory":"item","helpText":""},"navigation":{"defaultFocus":"category_list","cancelWidget":"category_list","focusOrder":["category_list","item_list","actor_select"]},"root":{"id":"root","type":"panel","x":0,"y":0,"width":816,"height":624,"windowed":false,"children":[{"id":"bg","type":"background","x":0,"y":0,"width":816,"height":624},{"id":"help_win","type":"panel","x":0,"y":0,"width":816,"height":72,"windowed":true,"children":[{"id":"help_text","type":"textArea","x":6,"y":6,"width":780,"height":60,"text":"{$ctx.helpText}","fontSize":22,"verticalAlign":"middle"}]},{"id":"category_list","type":"list","x":0,"y":72,"width":816,"height":54,"maxCols":4,"items":[{"name":"{typeof TextManager!=='undefined'?TextManager.item:'소비품'}","symbol":"item","enabled":true},{"name":"{typeof TextManager!=='undefined'?TextManager.weapon:'무기'}","symbol":"weapon","enabled":true},{"name":"{typeof TextManager!=='undefined'?TextManager.armor:'방어구'}","symbol":"armor","enabled":true},{"name":"{typeof TextManager!=='undefined'?TextManager.keyItem:'중요'}","symbol":"keyItem","enabled":true}],"handlers":{"item":{"action":"script","code":"$ctx.itemCategory='item';","thenAction":{"action":"focusWidget","target":"item_list"}},"weapon":{"action":"script","code":"$ctx.itemCategory='weapon';","thenAction":{"action":"focusWidget","target":"item_list"}},"armor":{"action":"script","code":"$ctx.itemCategory='armor';","thenAction":{"action":"focusWidget","target":"item_list"}},"keyItem":{"action":"script","code":"$ctx.itemCategory='keyItem';","thenAction":{"action":"focusWidget","target":"item_list"}},"cancel":{"action":"popScene"}}},{"id":"item_list","type":"list","x":0,"y":126,"width":816,"height":498,"maxCols":2,"dataScript":"(function(){var cat=($ctx&&$ctx.itemCategory)||'item';var items=[];if(cat==='item'){items=($gameParty&&$gameParty.items()||[]).filter(function(i){return DataManager.isItem(i)&&i.itypeId===1;});}else if(cat==='weapon'){items=$gameParty&&$gameParty.weapons()||[];}else if(cat==='armor'){items=$gameParty&&$gameParty.armors()||[];}else if(cat==='keyItem'){items=($gameParty&&$gameParty.items()||[]).filter(function(i){return DataManager.isItem(i)&&i.itypeId===2;});}return items.map(function(item){return{name:item.name,iconIndex:item.iconIndex,numberText:'×'+$gameParty.numItems(item),symbol:'item_'+item.id,enabled:$gameParty.canUse(item),data:item};});})()","onCursor":{"code":"var w=this._widgetMap&&this._widgetMap['item_list'];var idx=w&&w._window?w._window.index():-1;var cmd=idx>=0?(w._window._winDef.commands&&w._window._winDef.commands[idx]):null;this._ctx.helpText=(cmd&&cmd.data&&cmd.data.description)?cmd.data.description:'';"},"handlers":{"ok":{"action":"useItem","itemListWidget":"item_list","actorWidget":"actor_select"},"cancel":{"action":"focusWidget","target":"category_list"}}},{"id":"actor_select","type":"rowSelector","x":0,"y":126,"width":816,"height":498,"numRows":"party","transparent":true,"padding":0,"handlers":{"cancel":{"action":"focusWidget","target":"item_list"}}}]}},"save":{"id":"save","displayName":"세이브","formatVersion":2,"prepareArgs":[],"navigation":{"defaultFocus":"saveList","cancelWidget":"saveList"},"root":{"id":"root","type":"panel","x":0,"y":0,"width":816,"height":624,"windowed":false,"children":[{"id":"bg","type":"background","x":0,"y":0,"width":816,"height":624},{"id":"helpPanel","type":"panel","x":0,"y":0,"width":816,"height":52,"windowed":true,"children":[{"id":"helpText","type":"label","x":4,"y":2,"width":808,"height":36,"text":"저장할 파일을 선택하세요."}]},{"id":"saveList","type":"list","x":0,"y":52,"width":816,"height":572,"rowHeight":104,"initialIndexExpr":"CSHelper.lastSavefileId() - 1","dataScript":"(function() { var items = []; var count = DataManager.maxSavefiles(); for (var i = 1; i <= count; i++) { var info = DataManager.loadSavefileInfo(i); var valid = DataManager.isThisGameFile(i); var chars = []; if (valid && info && info.characters) { for (var j = 0; j < Math.min(info.characters.length, 4); j++) { var c = info.characters[j]; chars.push([c[0], c[1], 220 + j * 48, 100]); } } items.push({ name: TextManager.file + ' ' + i, symbol: i, enabled: true, subText: (info && info.title) ? info.title : '', rightText: (info && info.playtime) ? info.playtime : '', characters: chars }); } return items; })()","handlers":{"ok":{"action":"script","code":"var id = this._widgetMap.saveList._window.currentSymbol(); $gameSystem.onBeforeSave(); if (DataManager.saveGame(id)) { SoundManager.playSave(); this.popScene(); } else { SoundManager.playBuzzer(); }"},"cancel":{"action":"popScene"}}}]}},"load":{"id":"load","displayName":"로드","formatVersion":2,"prepareArgs":[],"navigation":{"defaultFocus":"loadList","cancelWidget":"loadList"},"root":{"id":"root","type":"panel","x":0,"y":0,"width":816,"height":624,"windowed":false,"children":[{"id":"bg","type":"background","x":0,"y":0,"width":816,"height":624},{"id":"helpPanel","type":"panel","x":0,"y":0,"width":816,"height":52,"windowed":true,"children":[{"id":"helpText","type":"label","x":4,"y":2,"width":808,"height":36,"text":"불러올 파일을 선택하세요."}]},{"id":"loadList","type":"list","x":0,"y":52,"width":816,"height":572,"rowHeight":104,"dataScript":"(function() { var items = []; var count = DataManager.maxSavefiles(); for (var i = 1; i <= count; i++) { var info = DataManager.loadSavefileInfo(i); var valid = DataManager.isThisGameFile(i); var chars = []; if (valid && info && info.characters) { for (var j = 0; j < Math.min(info.characters.length, 4); j++) { var c = info.characters[j]; chars.push([c[0], c[1], 220 + j * 48, 100]); } } items.push({ name: TextManager.file + ' ' + i, symbol: i, enabled: valid, subText: (info && info.title) ? info.title : '', rightText: (info && info.playtime) ? info.playtime : '', characters: chars }); } return items; })()","handlers":{"ok":{"action":"script","code":"var id = this._widgetMap.loadList._window.currentSymbol(); if (DataManager.loadGame(id)) { SceneManager.goto(Scene_Map); $gameSystem.onAfterLoad(); } else { SoundManager.playBuzzer(); }"},"cancel":{"action":"popScene"}}}]}},"battle":{"id":"battle","displayName":"배틀","root":{"id":"battle_root","type":"panel","x":0,"y":0,"width":816,"height":624,"windowed":false,"children":[{"id":"partyCommand","type":"list","x":0,"y":516,"width":192,"height":108,"items":[{"name":"전투","symbol":"fight","enabled":true},{"name":"도주","symbol":"escape","enabled":true}]},{"id":"actorCommand","type":"list","x":0,"y":444,"width":192,"height":216,"dataScript":"(function(){var actor=BattleManager.actor();if(!actor)return[];var cmds=[{name:TextManager.attack,symbol:\"attack\",enabled:actor.canAttack(),iconIndex:76}];actor.addedSkillTypes().sort(function(a,b){return a-b;}).forEach(function(id){cmds.push({name:TextManager.skillType(id),symbol:\"skill\",enabled:true,ext:id,iconIndex:79});});cmds.push({name:TextManager.guard,symbol:\"guard\",enabled:actor.canGuard(),iconIndex:81},{name:TextManager.item,symbol:\"item\",enabled:true,iconIndex:83});return cmds;})()"}]}}}}
+{
+  "scenes": {
+    "menu_v2": {
+      "id": "menu_v2",
+      "displayName": "게임 메뉴",
+      "formatVersion": 2,
+      "prepareArgs": [],
+      "navigation": {
+        "defaultFocus": "cmd_main",
+        "cancelWidget": "cmd_main",
+        "focusOrder": [
+          "cmd_main",
+          "actor_select"
+        ]
+      },
+      "root": {
+        "id": "root",
+        "type": "panel",
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 624,
+        "windowed": false,
+        "children": [
+          {
+            "id": "bg",
+            "type": "background",
+            "x": 0,
+            "y": 0,
+            "width": 816,
+            "height": 624
+          },
+          {
+            "id": "cmd_main",
+            "type": "list",
+            "x": 0,
+            "y": 0,
+            "width": 240,
+            "maxCols": 1,
+            "items": [
+              {
+                "name": "아이템",
+                "symbol": "item",
+                "enabled": true
+              },
+              {
+                "name": "스킬",
+                "symbol": "skill",
+                "enabled": true
+              },
+              {
+                "name": "장비",
+                "symbol": "equip",
+                "enabled": true
+              },
+              {
+                "name": "상태",
+                "symbol": "status",
+                "enabled": true
+              },
+              {
+                "name": "대형",
+                "symbol": "formation",
+                "enabledCondition": "$gameParty.size() >= 2 && $gameSystem.isFormationEnabled()"
+              },
+              {
+                "name": "옵션",
+                "symbol": "options",
+                "enabled": true
+              },
+              {
+                "name": "세이브",
+                "symbol": "save",
+                "enabledCondition": "$gameSystem.isSaveEnabled()"
+              },
+              {
+                "name": "게임 종료",
+                "symbol": "gameEnd",
+                "enabled": true
+              }
+            ],
+            "handlers": {
+              "item": {
+                "action": "gotoScene",
+                "target": "Scene_Item"
+              },
+              "skill": {
+                "action": "selectActor",
+                "widget": "actor_select",
+                "thenAction": {
+                  "action": "gotoScene",
+                  "target": "Scene_Skill"
+                }
+              },
+              "equip": {
+                "action": "selectActor",
+                "widget": "actor_select",
+                "thenAction": {
+                  "action": "gotoScene",
+                  "target": "Scene_Equip"
+                }
+              },
+              "status": {
+                "action": "selectActor",
+                "widget": "actor_select",
+                "thenAction": {
+                  "action": "gotoScene",
+                  "target": "Scene_Status"
+                }
+              },
+              "formation": {
+                "action": "formation",
+                "widget": "actor_select"
+              },
+              "options": {
+                "action": "gotoScene",
+                "target": "Scene_Options"
+              },
+              "save": {
+                "action": "gotoScene",
+                "target": "Scene_Save"
+              },
+              "gameEnd": {
+                "action": "gotoScene",
+                "target": "Scene_GameEnd"
+              },
+              "cancel": {
+                "action": "popScene"
+              }
+            }
+          },
+          {
+            "id": "gold_win",
+            "type": "panel",
+            "x": 0,
+            "y": 552,
+            "width": 240,
+            "height": 72,
+            "windowed": true,
+            "children": [
+              {
+                "id": "gold_label",
+                "type": "label",
+                "x": 6,
+                "y": 6,
+                "width": 192,
+                "height": 36,
+                "text": "{gold}G",
+                "align": "right"
+              }
+            ]
+          },
+          {
+            "id": "party_panel",
+            "type": "panel",
+            "x": 240,
+            "y": 0,
+            "width": 576,
+            "height": 624,
+            "windowed": true,
+            "children": [
+              {
+                "id": "actor_row_0",
+                "type": "panel",
+                "x": 0,
+                "y": 0,
+                "width": 576,
+                "height": 156,
+                "windowed": false,
+                "children": [
+                  {
+                    "id": "face0",
+                    "type": "image",
+                    "imageSource": "actorFace",
+                    "actorIndex": 0,
+                    "x": 2,
+                    "y": 6,
+                    "width": 140,
+                    "height": 140
+                  },
+                  {
+                    "id": "name0",
+                    "type": "label",
+                    "x": 148,
+                    "y": 6,
+                    "width": 200,
+                    "height": 36,
+                    "text": "{actor[0].name}",
+                    "fontSize": 26
+                  },
+                  {
+                    "id": "class0",
+                    "type": "label",
+                    "x": 352,
+                    "y": 6,
+                    "width": 218,
+                    "height": 36,
+                    "text": "{actor[0].class}",
+                    "fontSize": 22,
+                    "color": "#aaaaaa"
+                  },
+                  {
+                    "id": "lv0",
+                    "type": "label",
+                    "x": 148,
+                    "y": 48,
+                    "width": 200,
+                    "height": 32,
+                    "text": "Lv {actor[0].level}",
+                    "fontSize": 22,
+                    "color": "#aaaaaa"
+                  },
+                  {
+                    "id": "hp0",
+                    "type": "gauge",
+                    "valueExpr": "$gameParty.members()[0].hp",
+                    "maxExpr": "$gameParty.members()[0].mhp",
+                    "gaugeSkinId": "gauge_hp",
+                    "x": 352,
+                    "y": 48,
+                    "width": 218,
+                    "height": 36,
+                    "children": [
+                      {
+                        "id": "hp0_name",
+                        "type": "label",
+                        "text": "HP",
+                        "x": 0,
+                        "y": 0,
+                        "width": 61,
+                        "height": 22,
+                        "fontSize": 18
+                      },
+                      {
+                        "id": "hp0_cur",
+                        "type": "label",
+                        "text": "{$gameParty.members()[0].hp}",
+                        "x": 61,
+                        "y": 0,
+                        "width": 78,
+                        "height": 22,
+                        "align": "right",
+                        "fontSize": 18,
+                        "borderWidth": 1
+                      },
+                      {
+                        "id": "hp0_max",
+                        "type": "label",
+                        "text": "/{$gameParty.members()[0].mhp}",
+                        "x": 139,
+                        "y": 0,
+                        "width": 79,
+                        "height": 22,
+                        "fontSize": 18,
+                        "color": "#aaaaaa"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "mp0",
+                    "type": "gauge",
+                    "valueExpr": "$gameParty.members()[0].mp",
+                    "maxExpr": "$gameParty.members()[0].mmp",
+                    "gaugeSkinId": "gauge_mp",
+                    "x": 352,
+                    "y": 88,
+                    "width": 218,
+                    "height": 36,
+                    "children": [
+                      {
+                        "id": "mp0_name",
+                        "type": "label",
+                        "text": "MP",
+                        "x": 0,
+                        "y": 0,
+                        "width": 61,
+                        "height": 22,
+                        "fontSize": 18
+                      },
+                      {
+                        "id": "mp0_cur",
+                        "type": "label",
+                        "text": "{$gameParty.members()[0].mp}",
+                        "x": 61,
+                        "y": 0,
+                        "width": 78,
+                        "height": 22,
+                        "align": "right",
+                        "fontSize": 18
+                      },
+                      {
+                        "id": "mp0_max",
+                        "type": "label",
+                        "text": "/{$gameParty.members()[0].mmp}",
+                        "x": 139,
+                        "y": 0,
+                        "width": 79,
+                        "height": 22,
+                        "fontSize": 18,
+                        "color": "#aaaaaa"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "actor_row_1",
+                "type": "panel",
+                "x": 0,
+                "y": 156,
+                "width": 576,
+                "height": 156,
+                "windowed": false,
+                "children": [
+                  {
+                    "id": "face1",
+                    "type": "image",
+                    "imageSource": "actorFace",
+                    "actorIndex": 1,
+                    "x": 2,
+                    "y": 6,
+                    "width": 140,
+                    "height": 140
+                  },
+                  {
+                    "id": "name1",
+                    "type": "label",
+                    "x": 148,
+                    "y": 6,
+                    "width": 200,
+                    "height": 36,
+                    "text": "{actor[1].name}",
+                    "fontSize": 26
+                  },
+                  {
+                    "id": "class1",
+                    "type": "label",
+                    "x": 352,
+                    "y": 6,
+                    "width": 218,
+                    "height": 36,
+                    "text": "{actor[1].class}",
+                    "fontSize": 22,
+                    "color": "#aaaaaa"
+                  },
+                  {
+                    "id": "lv1",
+                    "type": "label",
+                    "x": 148,
+                    "y": 48,
+                    "width": 200,
+                    "height": 32,
+                    "text": "Lv {actor[1].level}",
+                    "fontSize": 22,
+                    "color": "#aaaaaa"
+                  },
+                  {
+                    "id": "hp1",
+                    "type": "gauge",
+                    "valueExpr": "$gameParty.members()[1].hp",
+                    "maxExpr": "$gameParty.members()[1].mhp",
+                    "gaugeSkinId": "gauge_hp",
+                    "x": 352,
+                    "y": 48,
+                    "width": 218,
+                    "height": 36,
+                    "children": [
+                      {
+                        "id": "hp1_name",
+                        "type": "label",
+                        "text": "HP",
+                        "x": 0,
+                        "y": 0,
+                        "width": 61,
+                        "height": 22,
+                        "fontSize": 18
+                      },
+                      {
+                        "id": "hp1_cur",
+                        "type": "label",
+                        "text": "{$gameParty.members()[1].hp}",
+                        "x": 61,
+                        "y": 0,
+                        "width": 78,
+                        "height": 22,
+                        "align": "right",
+                        "fontSize": 18
+                      },
+                      {
+                        "id": "hp1_max",
+                        "type": "label",
+                        "text": "/{$gameParty.members()[1].mhp}",
+                        "x": 139,
+                        "y": 0,
+                        "width": 79,
+                        "height": 22,
+                        "fontSize": 18,
+                        "color": "#aaaaaa"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "mp1",
+                    "type": "gauge",
+                    "valueExpr": "$gameParty.members()[1].mp",
+                    "maxExpr": "$gameParty.members()[1].mmp",
+                    "gaugeSkinId": "gauge_mp",
+                    "x": 352,
+                    "y": 88,
+                    "width": 218,
+                    "height": 36,
+                    "children": [
+                      {
+                        "id": "mp1_name",
+                        "type": "label",
+                        "text": "MP",
+                        "x": 0,
+                        "y": 0,
+                        "width": 61,
+                        "height": 22,
+                        "fontSize": 18
+                      },
+                      {
+                        "id": "mp1_cur",
+                        "type": "label",
+                        "text": "{$gameParty.members()[1].mp}",
+                        "x": 61,
+                        "y": 0,
+                        "width": 78,
+                        "height": 22,
+                        "align": "right",
+                        "fontSize": 18
+                      },
+                      {
+                        "id": "mp1_max",
+                        "type": "label",
+                        "text": "/{$gameParty.members()[1].mmp}",
+                        "x": 139,
+                        "y": 0,
+                        "width": 79,
+                        "height": 22,
+                        "fontSize": 18,
+                        "color": "#aaaaaa"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "actor_row_2",
+                "type": "panel",
+                "x": 0,
+                "y": 312,
+                "width": 576,
+                "height": 156,
+                "windowed": false,
+                "children": [
+                  {
+                    "id": "face2",
+                    "type": "image",
+                    "imageSource": "actorFace",
+                    "actorIndex": 2,
+                    "x": 2,
+                    "y": 6,
+                    "width": 140,
+                    "height": 140
+                  },
+                  {
+                    "id": "name2",
+                    "type": "label",
+                    "x": 148,
+                    "y": 6,
+                    "width": 200,
+                    "height": 36,
+                    "text": "{actor[2].name}",
+                    "fontSize": 26
+                  },
+                  {
+                    "id": "class2",
+                    "type": "label",
+                    "x": 352,
+                    "y": 6,
+                    "width": 218,
+                    "height": 36,
+                    "text": "{actor[2].class}",
+                    "fontSize": 22,
+                    "color": "#aaaaaa"
+                  },
+                  {
+                    "id": "lv2",
+                    "type": "label",
+                    "x": 148,
+                    "y": 48,
+                    "width": 200,
+                    "height": 32,
+                    "text": "Lv {actor[2].level}",
+                    "fontSize": 22,
+                    "color": "#aaaaaa"
+                  },
+                  {
+                    "id": "hp2",
+                    "type": "gauge",
+                    "valueExpr": "$gameParty.members()[2].hp",
+                    "maxExpr": "$gameParty.members()[2].mhp",
+                    "gaugeSkinId": "gauge_hp",
+                    "x": 352,
+                    "y": 48,
+                    "width": 218,
+                    "height": 36,
+                    "children": [
+                      {
+                        "id": "hp2_name",
+                        "type": "label",
+                        "text": "HP",
+                        "x": 0,
+                        "y": 0,
+                        "width": 61,
+                        "height": 22,
+                        "fontSize": 18
+                      },
+                      {
+                        "id": "hp2_cur",
+                        "type": "label",
+                        "text": "{$gameParty.members()[2].hp}",
+                        "x": 61,
+                        "y": 0,
+                        "width": 78,
+                        "height": 22,
+                        "align": "right",
+                        "fontSize": 18
+                      },
+                      {
+                        "id": "hp2_max",
+                        "type": "label",
+                        "text": "/{$gameParty.members()[2].mhp}",
+                        "x": 139,
+                        "y": 0,
+                        "width": 79,
+                        "height": 22,
+                        "fontSize": 18,
+                        "color": "#aaaaaa"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "mp2",
+                    "type": "gauge",
+                    "valueExpr": "$gameParty.members()[2].mp",
+                    "maxExpr": "$gameParty.members()[2].mmp",
+                    "gaugeSkinId": "gauge_mp",
+                    "x": 352,
+                    "y": 88,
+                    "width": 218,
+                    "height": 36,
+                    "children": [
+                      {
+                        "id": "mp2_name",
+                        "type": "label",
+                        "text": "MP",
+                        "x": 0,
+                        "y": 0,
+                        "width": 61,
+                        "height": 22,
+                        "fontSize": 18
+                      },
+                      {
+                        "id": "mp2_cur",
+                        "type": "label",
+                        "text": "{$gameParty.members()[2].mp}",
+                        "x": 61,
+                        "y": 0,
+                        "width": 78,
+                        "height": 22,
+                        "align": "right",
+                        "fontSize": 18
+                      },
+                      {
+                        "id": "mp2_max",
+                        "type": "label",
+                        "text": "/{$gameParty.members()[2].mmp}",
+                        "x": 139,
+                        "y": 0,
+                        "width": 79,
+                        "height": 22,
+                        "fontSize": 18,
+                        "color": "#aaaaaa"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "actor_row_3",
+                "type": "panel",
+                "x": 0,
+                "y": 468,
+                "width": 576,
+                "height": 156,
+                "windowed": false,
+                "children": [
+                  {
+                    "id": "face3",
+                    "type": "image",
+                    "imageSource": "actorFace",
+                    "actorIndex": 3,
+                    "x": 2,
+                    "y": 6,
+                    "width": 140,
+                    "height": 140
+                  },
+                  {
+                    "id": "name3",
+                    "type": "label",
+                    "x": 148,
+                    "y": 6,
+                    "width": 200,
+                    "height": 36,
+                    "text": "{actor[3].name}",
+                    "fontSize": 26
+                  },
+                  {
+                    "id": "class3",
+                    "type": "label",
+                    "x": 352,
+                    "y": 6,
+                    "width": 218,
+                    "height": 36,
+                    "text": "{actor[3].class}",
+                    "fontSize": 22,
+                    "color": "#aaaaaa"
+                  },
+                  {
+                    "id": "lv3",
+                    "type": "label",
+                    "x": 148,
+                    "y": 48,
+                    "width": 200,
+                    "height": 32,
+                    "text": "Lv {actor[3].level}",
+                    "fontSize": 22,
+                    "color": "#aaaaaa"
+                  },
+                  {
+                    "id": "hp3",
+                    "type": "gauge",
+                    "valueExpr": "$gameParty.members()[3].hp",
+                    "maxExpr": "$gameParty.members()[3].mhp",
+                    "gaugeSkinId": "gauge_hp",
+                    "x": 352,
+                    "y": 48,
+                    "width": 218,
+                    "height": 36,
+                    "children": [
+                      {
+                        "id": "hp3_name",
+                        "type": "label",
+                        "text": "HP",
+                        "x": 0,
+                        "y": 0,
+                        "width": 61,
+                        "height": 22,
+                        "fontSize": 18
+                      },
+                      {
+                        "id": "hp3_cur",
+                        "type": "label",
+                        "text": "{$gameParty.members()[3].hp}",
+                        "x": 61,
+                        "y": 0,
+                        "width": 78,
+                        "height": 22,
+                        "align": "right",
+                        "fontSize": 18
+                      },
+                      {
+                        "id": "hp3_max",
+                        "type": "label",
+                        "text": "/{$gameParty.members()[3].mhp}",
+                        "x": 139,
+                        "y": 0,
+                        "width": 79,
+                        "height": 22,
+                        "fontSize": 18,
+                        "color": "#aaaaaa"
+                      }
+                    ]
+                  },
+                  {
+                    "id": "mp3",
+                    "type": "gauge",
+                    "valueExpr": "$gameParty.members()[3].mp",
+                    "maxExpr": "$gameParty.members()[3].mmp",
+                    "gaugeSkinId": "gauge_mp",
+                    "x": 352,
+                    "y": 88,
+                    "width": 218,
+                    "height": 36,
+                    "children": [
+                      {
+                        "id": "mp3_name",
+                        "type": "label",
+                        "text": "MP",
+                        "x": 0,
+                        "y": 0,
+                        "width": 61,
+                        "height": 22,
+                        "fontSize": 18
+                      },
+                      {
+                        "id": "mp3_cur",
+                        "type": "label",
+                        "text": "{$gameParty.members()[3].mp}",
+                        "x": 61,
+                        "y": 0,
+                        "width": 78,
+                        "height": 22,
+                        "align": "right",
+                        "fontSize": 18
+                      },
+                      {
+                        "id": "mp3_max",
+                        "type": "label",
+                        "text": "/{$gameParty.members()[3].mmp}",
+                        "x": 139,
+                        "y": 0,
+                        "width": 79,
+                        "height": 22,
+                        "fontSize": 18,
+                        "color": "#aaaaaa"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "actor_select",
+                "type": "rowSelector",
+                "x": 0,
+                "y": 0,
+                "width": 576,
+                "height": 624,
+                "numRows": "party",
+                "transparent": true,
+                "padding": 0,
+                "previewSelectable": false
+              }
+            ]
+          },
+          {
+            "id": "textArea_17722543123303",
+            "type": "textArea",
+            "x": 17,
+            "y": 404,
+            "width": 300,
+            "height": 80,
+            "text": "커스텀씬",
+            "align": "center",
+            "verticalAlign": "middle"
+          }
+        ]
+      }
+    },
+    "minimap_hud": {
+      "id": "minimap_hud",
+      "displayName": "미니맵 HUD",
+      "formatVersion": 2,
+      "overlay": true,
+      "prepareArgs": [],
+      "root": {
+        "id": "root",
+        "type": "panel",
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 624,
+        "windowed": false,
+        "children": [
+          {
+            "id": "hud_container",
+            "type": "panel",
+            "x": 608,
+            "y": 4,
+            "width": 204,
+            "height": 262,
+            "windowed": false,
+            "children": [
+              {
+                "id": "minimap",
+                "type": "minimap",
+                "x": 6,
+                "y": 6,
+                "width": 192,
+                "height": 192,
+                "children": []
+              },
+              {
+                "id": "map_name",
+                "type": "label",
+                "x": 6,
+                "y": 202,
+                "width": 192,
+                "height": 26,
+                "text": "{mapName}",
+                "align": "center",
+                "fontSize": 16
+              },
+              {
+                "id": "btn_zoom_in",
+                "type": "button",
+                "x": 6,
+                "y": 230,
+                "width": 90,
+                "height": 26,
+                "label": "확대 +",
+                "action": {
+                  "action": "script",
+                  "code": "MinimapManager.zoomIn()"
+                },
+                "bgAlpha": 0.83,
+                "borderWidth": 1,
+                "borderRadius": 2,
+                "windowed": false
+              },
+              {
+                "id": "btn_zoom_out",
+                "type": "button",
+                "x": 108,
+                "y": 230,
+                "width": 90,
+                "height": 26,
+                "label": "축소 -",
+                "action": {
+                  "action": "script",
+                  "code": "MinimapManager.zoomOut()"
+                },
+                "windowed": false
+              }
+            ],
+            "visible": true
+          }
+        ]
+      }
+    },
+    "questJournal": {
+      "id": "questJournal",
+      "displayName": "퀘스트 저널",
+      "formatVersion": 2,
+      "navigation": {
+        "defaultFocus": "questCategoryWidget",
+        "cancelWidget": "questCategoryWidget",
+        "focusOrder": [
+          "questCategoryWidget",
+          "questListWidget"
+        ]
+      },
+      "root": {
+        "id": "root",
+        "type": "panel",
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 624,
+        "windowed": false,
+        "children": [
+          {
+            "id": "bg",
+            "type": "background",
+            "x": 0,
+            "y": 0,
+            "width": 816,
+            "height": 624
+          },
+          {
+            "id": "questCategoryWidget",
+            "type": "list",
+            "x": 0,
+            "y": 0,
+            "width": 180,
+            "height": 624,
+            "dataScript": "QS._buildCategoryItems()",
+            "handlers": {
+              "ok": {
+                "action": "script",
+                "code": "var lw=this._widgetMap['questCategoryWidget'];window._qs_currentCategory=lw&&lw._window?lw._window.currentSymbol():'__all__';window._qs_currentQuestId=null;var ql=this._widgetMap['questListWidget'];if(ql)ql._lastIndex=0;",
+                "thenAction": {
+                  "action": "focusWidget",
+                  "target": "questListWidget"
+                }
+              },
+              "cancel": {
+                "action": "cancel"
+              }
+            }
+          },
+          {
+            "id": "questListWidget",
+            "type": "list",
+            "x": 180,
+            "y": 0,
+            "width": 220,
+            "height": 624,
+            "dataScript": "QS._buildQuestItems()",
+            "onCursor": {
+              "code": "var lw=this._widgetMap['questListWidget'];if(lw&&lw._window){var sym=lw._window.currentSymbol();window._qs_currentQuestId=(sym&&sym!=='__no_quests__')?sym:null;}var oo=this._widgetMap['qd_objectives'];if(oo&&oo._rebuildFromScript)oo._rebuildFromScript();var rr=this._widgetMap['qd_rewards'];if(rr&&rr._rebuildFromScript)rr._rebuildFromScript();"
+            },
+            "handlers": {
+              "ok": {
+                "action": "script",
+                "code": "var lw=this._widgetMap['questListWidget'];if(lw&&lw._window)lw._lastIndex=lw._window.index();"
+              },
+              "cancel": {
+                "action": "focusWidget",
+                "target": "questCategoryWidget"
+              }
+            }
+          },
+          {
+            "id": "questDetailBg",
+            "type": "panel",
+            "x": 400,
+            "y": 0,
+            "width": 416,
+            "height": 624,
+            "windowed": true,
+            "children": [
+              {
+                "id": "qd_title",
+                "type": "label",
+                "x": 8,
+                "y": 8,
+                "width": 392,
+                "height": 36,
+                "text": "{QS._getSelectedQuestTitle()}",
+                "color": "#e8d080",
+                "fontSize": 24
+              },
+              {
+                "id": "qd_meta",
+                "type": "label",
+                "x": 8,
+                "y": 44,
+                "width": 392,
+                "height": 28,
+                "text": "{QS._getSelectedQuestMeta()}",
+                "color": "#aaaaaa",
+                "fontSize": 18
+              },
+              {
+                "id": "qd_sep",
+                "type": "separator",
+                "x": 8,
+                "y": 74,
+                "width": 392,
+                "height": 4
+              },
+              {
+                "id": "qd_desc",
+                "type": "textArea",
+                "x": 8,
+                "y": 82,
+                "width": 392,
+                "height": 84,
+                "text": "{QS._getSelectedQuestDesc()}",
+                "fontSize": 18,
+                "lineHeight": 28
+              },
+              {
+                "id": "qd_obj_header",
+                "type": "label",
+                "x": 8,
+                "y": 170,
+                "width": 392,
+                "height": 28,
+                "text": "[ 목표 ]",
+                "color": "#e8d080",
+                "fontSize": 20
+              },
+              {
+                "id": "qd_objectives",
+                "type": "list",
+                "x": 0,
+                "y": 198,
+                "width": 416,
+                "height": 180,
+                "windowed": false,
+                "dataScript": "QS._buildObjectiveItems()",
+                "focusable": false
+              },
+              {
+                "id": "qd_rew_header",
+                "type": "label",
+                "x": 8,
+                "y": 382,
+                "width": 392,
+                "height": 28,
+                "text": "{QS._getSelectedQuestRewardsLabel()}",
+                "color": "#e8d080",
+                "fontSize": 20
+              },
+              {
+                "id": "qd_rewards",
+                "type": "list",
+                "x": 0,
+                "y": 410,
+                "width": 416,
+                "height": 140,
+                "windowed": false,
+                "dataScript": "QS._buildRewardItems()",
+                "focusable": false
+              },
+              {
+                "id": "qd_status_ok",
+                "type": "label",
+                "x": 8,
+                "y": 560,
+                "width": 392,
+                "height": 28,
+                "text": "{QS._getSelectedQuestStatusOk()}",
+                "color": "#88ff88",
+                "align": "center",
+                "fontSize": 20
+              },
+              {
+                "id": "qd_status_fail",
+                "type": "label",
+                "x": 8,
+                "y": 560,
+                "width": 392,
+                "height": 28,
+                "text": "{QS._getSelectedQuestStatusFail()}",
+                "color": "#ff8888",
+                "align": "center",
+                "fontSize": 20
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "questTracker": {
+      "id": "questTracker",
+      "displayName": "퀘스트 추적창",
+      "overlay": true,
+      "formatVersion": 2,
+      "root": {
+        "id": "root",
+        "type": "panel",
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 624,
+        "windowed": false,
+        "children": [
+          {
+            "id": "trackerList",
+            "type": "list",
+            "x": 0,
+            "y": 0,
+            "width": 300,
+            "windowed": true,
+            "autoHeight": true,
+            "bgAlpha": 0.7,
+            "dataScript": "QS._buildTrackerItems()",
+            "focusable": false
+          }
+        ]
+      }
+    },
+    "options": {
+      "id": "options",
+      "displayName": "옵션 씬 (개별 위젯)",
+      "formatVersion": 2,
+      "saveConfigOnExit": true,
+      "prepareArgs": [],
+      "navigation": {
+        "defaultFocus": "row_alwaysDash",
+        "cancelWidget": "row_alwaysDash",
+        "upDownNavigation": true,
+        "focusOrder": [
+          "row_alwaysDash",
+          "row_commandRemember",
+          "row_bgmVolume",
+          "row_bgsVolume",
+          "row_meVolume",
+          "row_seVolume"
+        ]
+      },
+      "root": {
+        "id": "root",
+        "type": "panel",
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 624,
+        "windowed": false,
+        "children": [
+          {
+            "id": "bg",
+            "type": "background",
+            "x": 0,
+            "y": 0,
+            "width": 816,
+            "height": 624
+          },
+          {
+            "id": "opts_bg",
+            "type": "panel",
+            "x": 208,
+            "y": 156,
+            "width": 400,
+            "height": 312,
+            "windowed": true,
+            "children": [],
+            "windowStyle": "frame",
+            "windowskinName": "kenney_ui-pack-pixel-adventure/Tilesheets/Small tiles/Thick outline/tilemap",
+            "skinId": "kenny"
+          },
+          {
+            "id": "row_alwaysDash",
+            "type": "button",
+            "x": 208,
+            "y": 156,
+            "width": 400,
+            "height": 52,
+            "label": "",
+            "action": {
+              "action": "toggleConfig",
+              "configKey": "alwaysDash"
+            },
+            "children": [
+              {
+                "id": "name_alwaysDash",
+                "type": "label",
+                "x": 12,
+                "y": 8,
+                "width": 240,
+                "height": 36,
+                "text": "항상 대시"
+              },
+              {
+                "id": "val_alwaysDash",
+                "type": "label",
+                "x": 252,
+                "y": 8,
+                "width": 136,
+                "height": 36,
+                "text": "{ConfigManager.alwaysDash ? 'ON' : 'OFF'}",
+                "align": "right"
+              }
+            ]
+          },
+          {
+            "id": "row_commandRemember",
+            "type": "button",
+            "x": 208,
+            "y": 208,
+            "width": 400,
+            "height": 52,
+            "label": "",
+            "action": {
+              "action": "toggleConfig",
+              "configKey": "commandRemember"
+            },
+            "children": [
+              {
+                "id": "name_commandRemember",
+                "type": "label",
+                "x": 12,
+                "y": 8,
+                "width": 240,
+                "height": 36,
+                "text": "커맨드 기억"
+              },
+              {
+                "id": "val_commandRemember",
+                "type": "label",
+                "x": 252,
+                "y": 8,
+                "width": 136,
+                "height": 36,
+                "text": "{ConfigManager.commandRemember ? 'ON' : 'OFF'}",
+                "align": "right"
+              }
+            ]
+          },
+          {
+            "id": "row_bgmVolume",
+            "type": "button",
+            "x": 208,
+            "y": 260,
+            "width": 400,
+            "height": 52,
+            "label": "",
+            "action": {
+              "action": "incrementConfig",
+              "configKey": "bgmVolume"
+            },
+            "leftAction": {
+              "action": "decrementConfig",
+              "configKey": "bgmVolume"
+            },
+            "rightAction": {
+              "action": "incrementConfig",
+              "configKey": "bgmVolume"
+            },
+            "children": [
+              {
+                "id": "name_bgmVolume",
+                "type": "label",
+                "x": 12,
+                "y": 8,
+                "width": 240,
+                "height": 36,
+                "text": "BGM 볼륨"
+              },
+              {
+                "id": "val_bgmVolume",
+                "type": "label",
+                "x": 252,
+                "y": 8,
+                "width": 136,
+                "height": 36,
+                "text": "{ConfigManager.bgmVolume + '%'}",
+                "align": "right"
+              }
+            ]
+          },
+          {
+            "id": "row_bgsVolume",
+            "type": "button",
+            "x": 208,
+            "y": 312,
+            "width": 400,
+            "height": 52,
+            "label": "",
+            "action": {
+              "action": "incrementConfig",
+              "configKey": "bgsVolume"
+            },
+            "leftAction": {
+              "action": "decrementConfig",
+              "configKey": "bgsVolume"
+            },
+            "rightAction": {
+              "action": "incrementConfig",
+              "configKey": "bgsVolume"
+            },
+            "children": [
+              {
+                "id": "name_bgsVolume",
+                "type": "label",
+                "x": 12,
+                "y": 8,
+                "width": 240,
+                "height": 36,
+                "text": "BGS 볼륨"
+              },
+              {
+                "id": "val_bgsVolume",
+                "type": "label",
+                "x": 252,
+                "y": 8,
+                "width": 136,
+                "height": 36,
+                "text": "{ConfigManager.bgsVolume + '%'}",
+                "align": "right"
+              }
+            ]
+          },
+          {
+            "id": "row_meVolume",
+            "type": "button",
+            "x": 208,
+            "y": 364,
+            "width": 400,
+            "height": 52,
+            "label": "",
+            "action": {
+              "action": "incrementConfig",
+              "configKey": "meVolume"
+            },
+            "leftAction": {
+              "action": "decrementConfig",
+              "configKey": "meVolume"
+            },
+            "rightAction": {
+              "action": "incrementConfig",
+              "configKey": "meVolume"
+            },
+            "children": [
+              {
+                "id": "name_meVolume",
+                "type": "label",
+                "x": 12,
+                "y": 8,
+                "width": 240,
+                "height": 36,
+                "text": "ME 볼륨"
+              },
+              {
+                "id": "val_meVolume",
+                "type": "label",
+                "x": 252,
+                "y": 8,
+                "width": 136,
+                "height": 36,
+                "text": "{ConfigManager.meVolume + '%'}",
+                "align": "right"
+              }
+            ]
+          },
+          {
+            "id": "row_seVolume",
+            "type": "button",
+            "x": 208,
+            "y": 416,
+            "width": 400,
+            "height": 52,
+            "label": "",
+            "action": {
+              "action": "incrementConfig",
+              "configKey": "seVolume"
+            },
+            "leftAction": {
+              "action": "decrementConfig",
+              "configKey": "seVolume"
+            },
+            "rightAction": {
+              "action": "incrementConfig",
+              "configKey": "seVolume"
+            },
+            "children": [
+              {
+                "id": "name_seVolume",
+                "type": "label",
+                "x": 12,
+                "y": 8,
+                "width": 240,
+                "height": 36,
+                "text": "SE 볼륨"
+              },
+              {
+                "id": "val_seVolume",
+                "type": "label",
+                "x": 252,
+                "y": 8,
+                "width": 136,
+                "height": 36,
+                "text": "{ConfigManager.seVolume + '%'}",
+                "align": "right"
+              }
+            ]
+          },
+          {
+            "id": "textArea_17722543365505",
+            "type": "textArea",
+            "x": 151,
+            "y": 511,
+            "width": 300,
+            "height": 80,
+            "text": "커스텀씬",
+            "align": "center",
+            "verticalAlign": "middle"
+          }
+        ]
+      }
+    },
+    "enemy_book": {
+      "id": "enemy_book",
+      "displayName": "몬스터 도감",
+      "formatVersion": 2,
+      "prepareArgs": [],
+      "navigation": {
+        "defaultFocus": "enemy_list",
+        "cancelWidget": "enemy_list"
+      },
+      "root": {
+        "id": "root",
+        "type": "panel",
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 624,
+        "windowed": false,
+        "children": [
+          {
+            "id": "bg",
+            "type": "background",
+            "x": 0,
+            "y": 0,
+            "width": 816,
+            "height": 624
+          },
+          {
+            "id": "enemy_list",
+            "type": "list",
+            "x": 0,
+            "y": 0,
+            "width": 240,
+            "height": 624,
+            "dataScript": "(function(){var list=[];for(var i=1;i<$dataEnemies.length;i++){var e=$dataEnemies[i];if(e&&e.name&&e.meta.book!=='no'){var known=$gameSystem.isInEnemyBook(e);list.push({name:('00'+(list.length+1)).slice(-3)+'  '+(known?e.name:'??????'),symbol:'enemy_'+i,data:e,enabled:true});}}return list;})()",
+            "onCursor": {
+              "code": "var lst=this._widgetMap&&this._widgetMap['enemy_list'];if(lst&&lst._window){var idx=lst._window.index();var cmds=lst._window._winDef.commands;this._ctx={enemy:cmds&&cmds[idx]?cmds[idx].data:null};}"
+            },
+            "handlers": {
+              "cancel": {
+                "action": "popScene"
+              }
+            }
+          },
+          {
+            "id": "detail_panel",
+            "type": "panel",
+            "x": 240,
+            "y": 0,
+            "width": 576,
+            "height": 624,
+            "windowed": true,
+            "children": [
+              {
+                "id": "enemy_battler",
+                "type": "image",
+                "bitmapExpr": "CSHelper.enemyBattler($ctx.enemy)",
+                "fitMode": "contain",
+                "x": 284,
+                "y": 20,
+                "width": 280,
+                "height": 280
+              },
+              {
+                "id": "enemy_name",
+                "type": "label",
+                "text": "{$ctx.enemy&&$ctx.enemy.name||''}",
+                "x": 8,
+                "y": 8,
+                "width": 272,
+                "height": 36,
+                "fontSize": 26
+              },
+              {
+                "id": "param_name_0",
+                "type": "label",
+                "text": "{TextManager.param(0)}",
+                "x": 8,
+                "y": 56,
+                "width": 110,
+                "height": 36,
+                "fontSize": 22,
+                "color": "#aaaaaa"
+              },
+              {
+                "id": "param_val_0",
+                "type": "label",
+                "text": "{$ctx.enemy&&$ctx.enemy.params[0]||0}",
+                "x": 120,
+                "y": 56,
+                "width": 80,
+                "height": 36,
+                "fontSize": 22,
+                "align": "right"
+              },
+              {
+                "id": "param_name_1",
+                "type": "label",
+                "text": "{TextManager.param(1)}",
+                "x": 8,
+                "y": 92,
+                "width": 110,
+                "height": 36,
+                "fontSize": 22,
+                "color": "#aaaaaa"
+              },
+              {
+                "id": "param_val_1",
+                "type": "label",
+                "text": "{$ctx.enemy&&$ctx.enemy.params[1]||0}",
+                "x": 120,
+                "y": 92,
+                "width": 80,
+                "height": 36,
+                "fontSize": 22,
+                "align": "right"
+              },
+              {
+                "id": "param_name_2",
+                "type": "label",
+                "text": "{TextManager.param(2)}",
+                "x": 8,
+                "y": 128,
+                "width": 110,
+                "height": 36,
+                "fontSize": 22,
+                "color": "#aaaaaa"
+              },
+              {
+                "id": "param_val_2",
+                "type": "label",
+                "text": "{$ctx.enemy&&$ctx.enemy.params[2]||0}",
+                "x": 120,
+                "y": 128,
+                "width": 80,
+                "height": 36,
+                "fontSize": 22,
+                "align": "right"
+              },
+              {
+                "id": "param_name_3",
+                "type": "label",
+                "text": "{TextManager.param(3)}",
+                "x": 8,
+                "y": 164,
+                "width": 110,
+                "height": 36,
+                "fontSize": 22,
+                "color": "#aaaaaa"
+              },
+              {
+                "id": "param_val_3",
+                "type": "label",
+                "text": "{$ctx.enemy&&$ctx.enemy.params[3]||0}",
+                "x": 120,
+                "y": 164,
+                "width": 80,
+                "height": 36,
+                "fontSize": 22,
+                "align": "right"
+              },
+              {
+                "id": "param_name_4",
+                "type": "label",
+                "text": "{TextManager.param(4)}",
+                "x": 8,
+                "y": 200,
+                "width": 110,
+                "height": 36,
+                "fontSize": 22,
+                "color": "#aaaaaa"
+              },
+              {
+                "id": "param_val_4",
+                "type": "label",
+                "text": "{$ctx.enemy&&$ctx.enemy.params[4]||0}",
+                "x": 120,
+                "y": 200,
+                "width": 80,
+                "height": 36,
+                "fontSize": 22,
+                "align": "right"
+              },
+              {
+                "id": "param_name_5",
+                "type": "label",
+                "text": "{TextManager.param(5)}",
+                "x": 8,
+                "y": 236,
+                "width": 110,
+                "height": 36,
+                "fontSize": 22,
+                "color": "#aaaaaa"
+              },
+              {
+                "id": "param_val_5",
+                "type": "label",
+                "text": "{$ctx.enemy&&$ctx.enemy.params[5]||0}",
+                "x": 120,
+                "y": 236,
+                "width": 80,
+                "height": 36,
+                "fontSize": 22,
+                "align": "right"
+              },
+              {
+                "id": "param_name_6",
+                "type": "label",
+                "text": "{TextManager.param(6)}",
+                "x": 8,
+                "y": 272,
+                "width": 110,
+                "height": 36,
+                "fontSize": 22,
+                "color": "#aaaaaa"
+              },
+              {
+                "id": "param_val_6",
+                "type": "label",
+                "text": "{$ctx.enemy&&$ctx.enemy.params[6]||0}",
+                "x": 120,
+                "y": 272,
+                "width": 80,
+                "height": 36,
+                "fontSize": 22,
+                "align": "right"
+              },
+              {
+                "id": "param_name_7",
+                "type": "label",
+                "text": "{TextManager.param(7)}",
+                "x": 8,
+                "y": 308,
+                "width": 110,
+                "height": 36,
+                "fontSize": 22,
+                "color": "#aaaaaa"
+              },
+              {
+                "id": "param_val_7",
+                "type": "label",
+                "text": "{$ctx.enemy&&$ctx.enemy.params[7]||0}",
+                "x": 120,
+                "y": 308,
+                "width": 80,
+                "height": 36,
+                "fontSize": 22,
+                "align": "right"
+              },
+              {
+                "id": "exp_name",
+                "type": "label",
+                "text": "{TextManager.expA}",
+                "x": 8,
+                "y": 352,
+                "width": 70,
+                "height": 36,
+                "fontSize": 22,
+                "color": "#aaaaaa"
+              },
+              {
+                "id": "exp_val",
+                "type": "label",
+                "text": "{$ctx.enemy&&$ctx.enemy.exp||0}",
+                "x": 80,
+                "y": 352,
+                "width": 60,
+                "height": 36,
+                "fontSize": 22,
+                "align": "right"
+              },
+              {
+                "id": "gold_name",
+                "type": "label",
+                "text": "{TextManager.currencyUnit}",
+                "x": 148,
+                "y": 352,
+                "width": 70,
+                "height": 36,
+                "fontSize": 22,
+                "color": "#aaaaaa"
+              },
+              {
+                "id": "gold_val",
+                "type": "label",
+                "text": "{$ctx.enemy&&$ctx.enemy.gold||0}",
+                "x": 220,
+                "y": 352,
+                "width": 50,
+                "height": 36,
+                "fontSize": 22,
+                "align": "right"
+              },
+              {
+                "id": "enemy_drops",
+                "type": "list",
+                "x": 8,
+                "y": 396,
+                "width": 556,
+                "height": 220,
+                "autoHeight": true,
+                "dataScript": "(function(){var e=$ctx&&$ctx.enemy;if(!e)return[];var drops=[];e.dropItems.forEach(function(di){if(di.kind>0){var item=Game_Enemy.prototype.itemObject(di.kind,di.dataId);if(item)drops.push({name:item.name,symbol:'drop_'+drops.length,enabled:false});}});return drops;})()",
+                "windowed": false,
+                "handlers": {},
+                "maxCols": 1,
+                "focusable": false
+              }
+            ]
+          },
+          {
+            "id": "textArea_1772250546038",
+            "type": "textArea",
+            "x": 151,
+            "y": 511,
+            "width": 300,
+            "height": 80,
+            "text": "커스텀씬",
+            "align": "center",
+            "verticalAlign": "middle"
+          }
+        ]
+      }
+    },
+    "item_book": {
+      "id": "item_book",
+      "displayName": "아이템 도감",
+      "formatVersion": 2,
+      "prepareArgs": [],
+      "navigation": {
+        "defaultFocus": "item_list",
+        "cancelWidget": "item_list"
+      },
+      "root": {
+        "id": "root",
+        "type": "panel",
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 624,
+        "windowed": false,
+        "children": [
+          {
+            "id": "bg",
+            "type": "background",
+            "x": 0,
+            "y": 0,
+            "width": 816,
+            "height": 624
+          },
+          {
+            "id": "item_list",
+            "type": "list",
+            "x": 0,
+            "y": 0,
+            "width": 240,
+            "height": 624,
+            "dataScript": "(function(){var list=[];var i,it;for(i=1;i<$dataItems.length;i++){it=$dataItems[i];if(it&&it.name&&it.itypeId===1&&it.meta.book!=='no'){var k=$gameSystem.isInItemBook(it);list.push({name:('00'+(list.length+1)).slice(-3)+'  '+(k?it.name:'??????'),symbol:'i_'+i,data:it,enabled:true});}}for(i=1;i<$dataWeapons.length;i++){it=$dataWeapons[i];if(it&&it.name&&it.meta.book!=='no'){var k2=$gameSystem.isInItemBook(it);list.push({name:('00'+(list.length+1)).slice(-3)+'  '+(k2?it.name:'??????'),symbol:'w_'+i,data:it,enabled:true});}}for(i=1;i<$dataArmors.length;i++){it=$dataArmors[i];if(it&&it.name&&it.meta.book!=='no'){var k3=$gameSystem.isInItemBook(it);list.push({name:('00'+(list.length+1)).slice(-3)+'  '+(k3?it.name:'??????'),symbol:'a_'+i,data:it,enabled:true});}}return list;})()",
+            "onCursor": {
+              "code": "var lst=this._widgetMap&&this._widgetMap['item_list'];if(lst&&lst._window){var idx=lst._window.index();var cmds=lst._window._winDef.commands;this._ctx={item:cmds&&cmds[idx]?cmds[idx].data:null};}"
+            },
+            "handlers": {
+              "cancel": {
+                "action": "popScene"
+              }
+            }
+          },
+          {
+            "id": "detail_panel",
+            "type": "panel",
+            "x": 240,
+            "y": 0,
+            "width": 576,
+            "height": 624,
+            "windowed": true,
+            "children": [
+              {
+                "id": "item_icon",
+                "type": "image",
+                "bitmapExpr": "ImageManager.loadSystem('IconSet')",
+                "srcRectExpr": "(function(){var it=$ctx&&$ctx.item;if(!it)return{x:0,y:0,w:0,h:0};var iw=32,ih=32,cols=16;return{x:(it.iconIndex%cols)*iw,y:Math.floor(it.iconIndex/cols)*ih,w:iw,h:ih};})()",
+                "fitMode": "stretch",
+                "x": 8,
+                "y": 8,
+                "width": 32,
+                "height": 32
+              },
+              {
+                "id": "item_name",
+                "type": "label",
+                "text": "{$ctx.item&&$ctx.item.name||''}",
+                "x": 48,
+                "y": 8,
+                "width": 510,
+                "height": 36,
+                "fontSize": 26
+              },
+              {
+                "id": "price_label",
+                "type": "label",
+                "text": "가격",
+                "x": 8,
+                "y": 48,
+                "width": 80,
+                "height": 36,
+                "fontSize": 22,
+                "color": "#aaaaaa"
+              },
+              {
+                "id": "price_val",
+                "type": "label",
+                "text": "{$ctx.item&&$ctx.item.price||0}",
+                "x": 90,
+                "y": 48,
+                "width": 80,
+                "height": 36,
+                "fontSize": 22
+              },
+              {
+                "id": "ipar_name_0",
+                "type": "label",
+                "text": "{TextManager.param(2)}",
+                "x": 8,
+                "y": 80,
+                "width": 80,
+                "height": 36,
+                "fontSize": 20,
+                "color": "#aaaaaa"
+              },
+              {
+                "id": "ipar_val_0",
+                "type": "label",
+                "text": "{$ctx.item&&$ctx.item.params&&$ctx.item.params[2]||0}",
+                "x": 90,
+                "y": 80,
+                "width": 50,
+                "height": 36,
+                "fontSize": 20,
+                "align": "right"
+              },
+              {
+                "id": "ipar_name_1",
+                "type": "label",
+                "text": "{TextManager.param(3)}",
+                "x": 148,
+                "y": 80,
+                "width": 80,
+                "height": 36,
+                "fontSize": 20,
+                "color": "#aaaaaa"
+              },
+              {
+                "id": "ipar_val_1",
+                "type": "label",
+                "text": "{$ctx.item&&$ctx.item.params&&$ctx.item.params[3]||0}",
+                "x": 230,
+                "y": 80,
+                "width": 50,
+                "height": 36,
+                "fontSize": 20,
+                "align": "right"
+              },
+              {
+                "id": "ipar_name_2",
+                "type": "label",
+                "text": "{TextManager.param(4)}",
+                "x": 8,
+                "y": 116,
+                "width": 80,
+                "height": 36,
+                "fontSize": 20,
+                "color": "#aaaaaa"
+              },
+              {
+                "id": "ipar_val_2",
+                "type": "label",
+                "text": "{$ctx.item&&$ctx.item.params&&$ctx.item.params[4]||0}",
+                "x": 90,
+                "y": 116,
+                "width": 50,
+                "height": 36,
+                "fontSize": 20,
+                "align": "right"
+              },
+              {
+                "id": "ipar_name_3",
+                "type": "label",
+                "text": "{TextManager.param(5)}",
+                "x": 148,
+                "y": 116,
+                "width": 80,
+                "height": 36,
+                "fontSize": 20,
+                "color": "#aaaaaa"
+              },
+              {
+                "id": "ipar_val_3",
+                "type": "label",
+                "text": "{$ctx.item&&$ctx.item.params&&$ctx.item.params[5]||0}",
+                "x": 230,
+                "y": 116,
+                "width": 50,
+                "height": 36,
+                "fontSize": 20,
+                "align": "right"
+              },
+              {
+                "id": "ipar_name_4",
+                "type": "label",
+                "text": "{TextManager.param(6)}",
+                "x": 8,
+                "y": 152,
+                "width": 80,
+                "height": 36,
+                "fontSize": 20,
+                "color": "#aaaaaa"
+              },
+              {
+                "id": "ipar_val_4",
+                "type": "label",
+                "text": "{$ctx.item&&$ctx.item.params&&$ctx.item.params[6]||0}",
+                "x": 90,
+                "y": 152,
+                "width": 50,
+                "height": 36,
+                "fontSize": 20,
+                "align": "right"
+              },
+              {
+                "id": "ipar_name_5",
+                "type": "label",
+                "text": "{TextManager.param(7)}",
+                "x": 148,
+                "y": 152,
+                "width": 80,
+                "height": 36,
+                "fontSize": 20,
+                "color": "#aaaaaa"
+              },
+              {
+                "id": "ipar_val_5",
+                "type": "label",
+                "text": "{$ctx.item&&$ctx.item.params&&$ctx.item.params[7]||0}",
+                "x": 230,
+                "y": 152,
+                "width": 50,
+                "height": 36,
+                "fontSize": 20,
+                "align": "right"
+              },
+              {
+                "id": "item_desc",
+                "type": "textArea",
+                "text": "{$ctx.item&&$ctx.item.description||''}",
+                "x": 8,
+                "y": 196,
+                "width": 556,
+                "height": 108,
+                "fontSize": 20,
+                "color": "#dddddd"
+              }
+            ]
+          },
+          {
+            "id": "textArea_17722543468076",
+            "type": "textArea",
+            "x": 151,
+            "y": 511,
+            "width": 300,
+            "height": 80,
+            "text": "커스텀씬",
+            "align": "center",
+            "verticalAlign": "middle"
+          }
+        ]
+      }
+    },
+    "fj_classChange": {
+      "id": "fj_classChange",
+      "displayName": "전직 시스템",
+      "formatVersion": 2,
+      "prepareArgs": [],
+      "navigation": {
+        "defaultFocus": "actor_list",
+        "cancelWidget": "actor_list",
+        "focusOrder": [
+          "actor_list",
+          "slot_list",
+          "class_list"
+        ]
+      },
+      "root": {
+        "id": "root",
+        "type": "panel",
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 624,
+        "windowed": false,
+        "children": [
+          {
+            "id": "bg",
+            "type": "background",
+            "x": 0,
+            "y": 0,
+            "width": 816,
+            "height": 624
+          },
+          {
+            "id": "left_panel",
+            "type": "panel",
+            "x": 0,
+            "y": 0,
+            "width": 248,
+            "height": 624,
+            "windowed": true,
+            "children": [
+              {
+                "id": "fj_title",
+                "type": "label",
+                "x": 6,
+                "y": 6,
+                "width": 236,
+                "height": 36,
+                "text": "◆ 전직 시스템",
+                "fontSize": 22
+              },
+              {
+                "id": "fj_actor_name",
+                "type": "label",
+                "x": 6,
+                "y": 46,
+                "width": 236,
+                "height": 28,
+                "text": "{FJ.actorName()}",
+                "fontSize": 18,
+                "color": "#aaaaaa"
+              },
+              {
+                "id": "fj_slot_sep2",
+                "type": "label",
+                "x": 6,
+                "y": 194,
+                "width": 236,
+                "height": 22,
+                "text": "── 슬롯 선택 ──",
+                "fontSize": 15,
+                "color": "#888888",
+                "align": "center"
+              }
+            ]
+          },
+          {
+            "id": "actor_list",
+            "type": "list",
+            "x": 0,
+            "y": 72,
+            "width": 248,
+            "height": 144,
+            "windowed": false,
+            "dataScript": "FJ.actorItems()",
+            "onCursor": {
+              "code": "var lw=this._widgetMap['actor_list'];if(lw&&lw._window&&lw._window.active){var sym=lw._window.currentSymbol();if(sym){var idx=parseInt(sym.replace('actor_',''),10);FJ._actorIdx=idx;FJ._slot=0;FJ._curClassId=0;var sl=this._widgetMap['slot_list'];if(sl&&sl._rebuildFromScript)sl._rebuildFromScript();}}"
+            },
+            "handlers": {
+              "ok": {
+                "action": "script",
+                "code": "FJ._curClassId=0;",
+                "thenAction": {
+                  "action": "focusWidget",
+                  "target": "slot_list"
+                }
+              },
+              "cancel": {
+                "action": "popScene"
+              }
+            }
+          },
+          {
+            "id": "slot_list",
+            "type": "list",
+            "x": 0,
+            "y": 216,
+            "width": 248,
+            "height": 408,
+            "windowed": false,
+            "dataScript": "FJ.slotItems()",
+            "onCursor": {
+              "code": "var lw=this._widgetMap['slot_list'];if(lw&&lw._window){var sym=lw._window.currentSymbol();FJ._slot=sym?parseInt(sym.replace('slot_',''),10):0;FJ._curClassId=0;}var cl=this._widgetMap['class_list'];if(cl&&cl._rebuildFromScript)cl._rebuildFromScript();"
+            },
+            "handlers": {
+              "ok": {
+                "action": "script",
+                "code": "FJ._curClassId=0;",
+                "thenAction": {
+                  "action": "focusWidget",
+                  "target": "class_list"
+                }
+              },
+              "cancel": {
+                "action": "popScene"
+              }
+            }
+          },
+          {
+            "id": "center_panel",
+            "type": "panel",
+            "x": 248,
+            "y": 0,
+            "width": 270,
+            "height": 624,
+            "windowed": true,
+            "children": [
+              {
+                "id": "fj_class_title",
+                "type": "label",
+                "x": 6,
+                "y": 6,
+                "width": 258,
+                "height": 36,
+                "text": "직업 목록",
+                "fontSize": 22
+              }
+            ]
+          },
+          {
+            "id": "class_list",
+            "type": "list",
+            "x": 248,
+            "y": 44,
+            "width": 270,
+            "height": 580,
+            "windowed": false,
+            "dataScript": "FJ.classItems()",
+            "onCursor": {
+              "code": "var lw=this._widgetMap['class_list'];if(lw&&lw._window&&lw._window.active){var sym=lw._window.currentSymbol();FJ._curClassId=sym?parseInt(sym.replace('cls_',''),10):0;}"
+            },
+            "handlers": {
+              "ok": {
+                "action": "script",
+                "code": "FJ.applySlotChange();",
+                "thenAction": {
+                  "action": "focusWidget",
+                  "target": "slot_list"
+                }
+              },
+              "cancel": {
+                "action": "focusWidget",
+                "target": "slot_list"
+              }
+            },
+            "rowHeight": 52
+          },
+          {
+            "id": "right_panel",
+            "type": "panel",
+            "x": 518,
+            "y": 0,
+            "width": 298,
+            "height": 624,
+            "windowed": true,
+            "children": [
+              {
+                "id": "cd_header",
+                "type": "label",
+                "x": 6,
+                "y": 6,
+                "width": 286,
+                "height": 36,
+                "text": "직업 상세",
+                "fontSize": 22
+              },
+              {
+                "id": "cd_name",
+                "type": "label",
+                "x": 6,
+                "y": 48,
+                "width": 286,
+                "height": 36,
+                "text": "{FJ.classDetailName()}",
+                "fontSize": 22,
+                "color": "#e8d080"
+              },
+              {
+                "id": "cd_lv",
+                "type": "label",
+                "x": 6,
+                "y": 88,
+                "width": 140,
+                "height": 26,
+                "text": "{FJ.classDetailLv()}",
+                "fontSize": 18,
+                "color": "#aaaaaa"
+              },
+              {
+                "id": "cd_jp",
+                "type": "label",
+                "x": 150,
+                "y": 88,
+                "width": 142,
+                "height": 26,
+                "text": "{FJ.classDetailJp()}",
+                "fontSize": 18,
+                "color": "#88ccff",
+                "align": "right"
+              },
+              {
+                "id": "cd_desc",
+                "type": "textArea",
+                "x": 6,
+                "y": 120,
+                "width": 286,
+                "height": 72,
+                "text": "{FJ.classDetailDesc()}",
+                "fontSize": 16,
+                "lineHeight": 24,
+                "color": "#cccccc"
+              },
+              {
+                "id": "cd_exp_header",
+                "type": "label",
+                "x": 6,
+                "y": 196,
+                "width": 120,
+                "height": 22,
+                "text": "경험치",
+                "fontSize": 15,
+                "color": "#888888"
+              },
+              {
+                "id": "cd_exp",
+                "type": "label",
+                "x": 6,
+                "y": 220,
+                "width": 286,
+                "height": 22,
+                "text": "{FJ.classDetailExpBar()}",
+                "fontSize": 15,
+                "color": "#cccccc"
+              },
+              {
+                "id": "cd_stat_sep",
+                "type": "separator",
+                "x": 6,
+                "y": 248,
+                "width": 286,
+                "height": 4
+              },
+              {
+                "id": "cd_stat_header",
+                "type": "label",
+                "x": 6,
+                "y": 256,
+                "width": 286,
+                "height": 22,
+                "text": "파라미터 예상치",
+                "fontSize": 15,
+                "color": "#888888"
+              },
+              {
+                "id": "cd_atk",
+                "type": "label",
+                "x": 6,
+                "y": 282,
+                "width": 286,
+                "height": 22,
+                "text": "공격력  {FJ.statCompare(2)}",
+                "fontSize": 14
+              },
+              {
+                "id": "cd_def",
+                "type": "label",
+                "x": 6,
+                "y": 306,
+                "width": 286,
+                "height": 22,
+                "text": "방어력  {FJ.statCompare(3)}",
+                "fontSize": 14
+              },
+              {
+                "id": "cd_mat",
+                "type": "label",
+                "x": 6,
+                "y": 330,
+                "width": 286,
+                "height": 22,
+                "text": "마법공격  {FJ.statCompare(4)}",
+                "fontSize": 14
+              },
+              {
+                "id": "cd_mdf",
+                "type": "label",
+                "x": 6,
+                "y": 354,
+                "width": 286,
+                "height": 22,
+                "text": "마법방어  {FJ.statCompare(5)}",
+                "fontSize": 14
+              },
+              {
+                "id": "cd_agi",
+                "type": "label",
+                "x": 6,
+                "y": 378,
+                "width": 286,
+                "height": 22,
+                "text": "민첩  {FJ.statCompare(6)}",
+                "fontSize": 14
+              },
+              {
+                "id": "cd_luk",
+                "type": "label",
+                "x": 6,
+                "y": 402,
+                "width": 286,
+                "height": 22,
+                "text": "행운  {FJ.statCompare(7)}",
+                "fontSize": 14
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "fj_skillLearn": {
+      "id": "fj_skillLearn",
+      "displayName": "스킬 습득",
+      "formatVersion": 2,
+      "prepareArgs": [],
+      "navigation": {
+        "defaultFocus": "skill_list",
+        "cancelWidget": "skill_list",
+        "focusOrder": [
+          "skill_list"
+        ]
+      },
+      "root": {
+        "id": "root",
+        "type": "panel",
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 624,
+        "windowed": false,
+        "children": [
+          {
+            "id": "bg",
+            "type": "background",
+            "x": 0,
+            "y": 0,
+            "width": 816,
+            "height": 624
+          },
+          {
+            "id": "status_panel",
+            "type": "panel",
+            "x": 0,
+            "y": 0,
+            "width": 816,
+            "height": 68,
+            "windowed": true,
+            "children": [
+              {
+                "id": "sl_actor_name",
+                "type": "label",
+                "x": 8,
+                "y": 8,
+                "width": 480,
+                "height": 36,
+                "text": "{FJ.actorName()}",
+                "fontSize": 24
+              },
+              {
+                "id": "sl_jp_val",
+                "type": "label",
+                "x": 496,
+                "y": 8,
+                "width": 312,
+                "height": 36,
+                "text": "보유 {FJ.actorJp()}",
+                "fontSize": 22,
+                "color": "#88ccff",
+                "align": "right"
+              }
+            ]
+          },
+          {
+            "id": "skill_list",
+            "type": "list",
+            "x": 0,
+            "y": 68,
+            "width": 440,
+            "height": 556,
+            "windowed": true,
+            "dataScript": "FJ.skillItems()",
+            "onCursor": {
+              "code": "var lw=this._widgetMap['skill_list'];if(lw&&lw._window){var sym=lw._window.currentSymbol();FJ._curSkillId=sym?parseInt(sym.replace('sk_',''),10):0;}"
+            },
+            "handlers": {
+              "ok": {
+                "action": "script",
+                "code": "FJ.applySkillLearn();"
+              },
+              "cancel": {
+                "action": "popScene"
+              }
+            }
+          },
+          {
+            "id": "detail_panel",
+            "type": "panel",
+            "x": 440,
+            "y": 68,
+            "width": 376,
+            "height": 556,
+            "windowed": true,
+            "children": [
+              {
+                "id": "sk_name",
+                "type": "label",
+                "x": 8,
+                "y": 8,
+                "width": 360,
+                "height": 40,
+                "text": "{FJ.skillDetailName()}",
+                "fontSize": 26,
+                "color": "#e8d080"
+              },
+              {
+                "id": "sk_desc",
+                "type": "textArea",
+                "x": 8,
+                "y": 56,
+                "width": 360,
+                "height": 96,
+                "text": "{FJ.skillDetailDesc()}",
+                "fontSize": 18,
+                "lineHeight": 28,
+                "color": "#dddddd"
+              },
+              {
+                "id": "sk_sep",
+                "type": "separator",
+                "x": 8,
+                "y": 158,
+                "width": 360,
+                "height": 4
+              },
+              {
+                "id": "sk_cost",
+                "type": "textArea",
+                "x": 8,
+                "y": 168,
+                "width": 360,
+                "height": 60,
+                "text": "{FJ.skillDetailCost()}",
+                "fontSize": 18,
+                "lineHeight": 28,
+                "color": "#aaaaaa"
+              },
+              {
+                "id": "sk_hint",
+                "type": "label",
+                "x": 8,
+                "y": 510,
+                "width": 360,
+                "height": 28,
+                "text": "[ OK ] 스킬 습득",
+                "fontSize": 18,
+                "color": "#888888",
+                "align": "center"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "status": {
+      "id": "status",
+      "displayName": "캐릭터 상태",
+      "formatVersion": 2,
+      "prepareArgs": [],
+      "initCtx": {
+        "actorIndex": "$gameParty.menuActor() ? Math.max(0, $gameParty.members().indexOf($gameParty.menuActor())) : 0"
+      },
+      "keyHandlers": {
+        "pagedown": {
+          "action": "script",
+          "code": "if(typeof SoundManager!=='undefined')SoundManager.playCursor(); $ctx.actorIndex = ($ctx.actorIndex + 1) % $gameParty.size();"
+        },
+        "pageup": {
+          "action": "script",
+          "code": "if(typeof SoundManager!=='undefined')SoundManager.playCursor(); $ctx.actorIndex = ($ctx.actorIndex - 1 + $gameParty.size()) % $gameParty.size();"
+        },
+        "cancel": {
+          "action": "popScene"
+        }
+      },
+      "navigation": {},
+      "root": {
+        "id": "root",
+        "type": "panel",
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 624,
+        "windowed": false,
+        "children": [
+          {
+            "id": "bg",
+            "type": "background",
+            "x": 0,
+            "y": 0,
+            "width": 816,
+            "height": 624
+          },
+          {
+            "id": "status_win",
+            "type": "panel",
+            "x": 0,
+            "y": 0,
+            "width": 816,
+            "height": 624,
+            "windowed": true,
+            "children": [
+              {
+                "id": "actor_name",
+                "type": "label",
+                "x": 24,
+                "y": 18,
+                "width": 168,
+                "height": 36,
+                "text": "{actor[$ctx.actorIndex].name}",
+                "fontSize": 26
+              },
+              {
+                "id": "actor_class",
+                "type": "label",
+                "x": 210,
+                "y": 18,
+                "width": 240,
+                "height": 36,
+                "text": "{actor[$ctx.actorIndex].class}",
+                "fontSize": 22,
+                "color": "#aaaaaa"
+              },
+              {
+                "id": "actor_nickname",
+                "type": "label",
+                "x": 450,
+                "y": 18,
+                "width": 348,
+                "height": 36,
+                "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?a.nickname():'';})()}",
+                "fontSize": 22,
+                "color": "#aaaaaa"
+              },
+              {
+                "id": "line1",
+                "type": "separator",
+                "x": 18,
+                "y": 54,
+                "width": 780,
+                "height": 4
+              },
+              {
+                "id": "actor_face",
+                "type": "image",
+                "imageSource": "actorFace",
+                "actorIndexExpr": "$ctx.actorIndex",
+                "x": 30,
+                "y": 90,
+                "width": 144,
+                "height": 144
+              },
+              {
+                "id": "actor_level",
+                "type": "label",
+                "x": 222,
+                "y": 90,
+                "width": 222,
+                "height": 36,
+                "text": "Lv. {actor[$ctx.actorIndex].level}",
+                "fontSize": 22,
+                "color": "#aaaaaa"
+              },
+              {
+                "id": "actor_icons",
+                "type": "icons",
+                "x": 222,
+                "y": 126,
+                "width": 222,
+                "height": 32,
+                "iconsExpr": "(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?a.allIcons():[];})()",
+                "maxCols": 7,
+                "iconSize": 28,
+                "iconGap": 2
+              },
+              {
+                "id": "hp_gauge",
+                "type": "gauge",
+                "x": 222,
+                "y": 162,
+                "width": 222,
+                "height": 36,
+                "gaugeType": "hp",
+                "actorIndexExpr": "$ctx.actorIndex",
+                "showLabel": true,
+                "showValue": true
+              },
+              {
+                "id": "mp_gauge",
+                "type": "gauge",
+                "x": 222,
+                "y": 198,
+                "width": 222,
+                "height": 36,
+                "gaugeType": "mp",
+                "actorIndexExpr": "$ctx.actorIndex",
+                "showLabel": true,
+                "showValue": true
+              },
+              {
+                "id": "exp_total_label",
+                "type": "label",
+                "x": 474,
+                "y": 90,
+                "width": 270,
+                "height": 36,
+                "text": "{(typeof TextManager!=='undefined'&&TextManager.expTotal)?TextManager.expTotal.format(TextManager.exp||'EXP'):'현재 경험치'}",
+                "fontSize": 20,
+                "color": "#ffff99"
+              },
+              {
+                "id": "exp_total_val",
+                "type": "label",
+                "x": 474,
+                "y": 126,
+                "width": 270,
+                "height": 36,
+                "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?(a.isMaxLevel()?'-------':String(a.currentExp())):'';})()}",
+                "fontSize": 22,
+                "align": "right"
+              },
+              {
+                "id": "exp_next_label",
+                "type": "label",
+                "x": 474,
+                "y": 162,
+                "width": 270,
+                "height": 36,
+                "text": "{(typeof TextManager!=='undefined'&&TextManager.expNext)?TextManager.expNext.format(TextManager.level||'Lv'):'다음 레벨까지'}",
+                "fontSize": 20,
+                "color": "#ffff99"
+              },
+              {
+                "id": "exp_next_val",
+                "type": "label",
+                "x": 474,
+                "y": 198,
+                "width": 270,
+                "height": 36,
+                "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?(a.isMaxLevel()?'-------':String(a.nextRequiredExp())):'';})()}",
+                "fontSize": 22,
+                "align": "right"
+              },
+              {
+                "id": "line2",
+                "type": "separator",
+                "x": 18,
+                "y": 234,
+                "width": 780,
+                "height": 4
+              },
+              {
+                "id": "p2_label",
+                "type": "label",
+                "x": 30,
+                "y": 270,
+                "width": 160,
+                "height": 36,
+                "text": "{typeof TextManager!=='undefined'?TextManager.param(2):'공격력'}",
+                "fontSize": 22,
+                "color": "#ffff99"
+              },
+              {
+                "id": "p2_val",
+                "type": "label",
+                "x": 190,
+                "y": 270,
+                "width": 60,
+                "height": 36,
+                "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?a.param(2):0;})()}",
+                "fontSize": 22,
+                "align": "right"
+              },
+              {
+                "id": "p3_label",
+                "type": "label",
+                "x": 30,
+                "y": 306,
+                "width": 160,
+                "height": 36,
+                "text": "{typeof TextManager!=='undefined'?TextManager.param(3):'방어력'}",
+                "fontSize": 22,
+                "color": "#ffff99"
+              },
+              {
+                "id": "p3_val",
+                "type": "label",
+                "x": 190,
+                "y": 306,
+                "width": 60,
+                "height": 36,
+                "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?a.param(3):0;})()}",
+                "fontSize": 22,
+                "align": "right"
+              },
+              {
+                "id": "p4_label",
+                "type": "label",
+                "x": 30,
+                "y": 342,
+                "width": 160,
+                "height": 36,
+                "text": "{typeof TextManager!=='undefined'?TextManager.param(4):'마법공격'}",
+                "fontSize": 22,
+                "color": "#ffff99"
+              },
+              {
+                "id": "p4_val",
+                "type": "label",
+                "x": 190,
+                "y": 342,
+                "width": 60,
+                "height": 36,
+                "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?a.param(4):0;})()}",
+                "fontSize": 22,
+                "align": "right"
+              },
+              {
+                "id": "p5_label",
+                "type": "label",
+                "x": 30,
+                "y": 378,
+                "width": 160,
+                "height": 36,
+                "text": "{typeof TextManager!=='undefined'?TextManager.param(5):'마법방어'}",
+                "fontSize": 22,
+                "color": "#ffff99"
+              },
+              {
+                "id": "p5_val",
+                "type": "label",
+                "x": 190,
+                "y": 378,
+                "width": 60,
+                "height": 36,
+                "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?a.param(5):0;})()}",
+                "fontSize": 22,
+                "align": "right"
+              },
+              {
+                "id": "p6_label",
+                "type": "label",
+                "x": 30,
+                "y": 414,
+                "width": 160,
+                "height": 36,
+                "text": "{typeof TextManager!=='undefined'?TextManager.param(6):'민첩성'}",
+                "fontSize": 22,
+                "color": "#ffff99"
+              },
+              {
+                "id": "p6_val",
+                "type": "label",
+                "x": 190,
+                "y": 414,
+                "width": 60,
+                "height": 36,
+                "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?a.param(6):0;})()}",
+                "fontSize": 22,
+                "align": "right"
+              },
+              {
+                "id": "p7_label",
+                "type": "label",
+                "x": 30,
+                "y": 450,
+                "width": 160,
+                "height": 36,
+                "text": "{typeof TextManager!=='undefined'?TextManager.param(7):'행운'}",
+                "fontSize": 22,
+                "color": "#ffff99"
+              },
+              {
+                "id": "p7_val",
+                "type": "label",
+                "x": 190,
+                "y": 450,
+                "width": 60,
+                "height": 36,
+                "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?a.param(7):0;})()}",
+                "fontSize": 22,
+                "align": "right"
+              },
+              {
+                "id": "equip_list",
+                "type": "list",
+                "x": 450,
+                "y": 270,
+                "width": 348,
+                "height": 216,
+                "focusable": false,
+                "windowed": false,
+                "dataScript": "(function(){var a=$gameParty.members()[$ctx.actorIndex];if(!a)return [];return a.equips().map(function(e,i){var tn=($dataSystem&&$dataSystem.equipTypes&&$dataSystem.equipTypes[i+1])||('장비'+(i+1));return {name:tn+':  '+(e?e.name:'---'),symbol:'equip_'+i,enabled:false};});})()"
+              },
+              {
+                "id": "line3",
+                "type": "separator",
+                "x": 18,
+                "y": 486,
+                "width": 780,
+                "height": 4
+              },
+              {
+                "id": "actor_profile",
+                "type": "textArea",
+                "x": 24,
+                "y": 504,
+                "width": 774,
+                "height": 84,
+                "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?a.profile():'';})()}",
+                "fontSize": 18
+              }
+            ]
+          },
+          {
+            "id": "textArea_17722556870531",
+            "type": "textArea",
+            "x": 284,
+            "y": 434,
+            "width": 300,
+            "height": 80,
+            "text": "커스텀씬",
+            "align": "center",
+            "verticalAlign": "middle"
+          }
+        ]
+      }
+    },
+    "item": {
+      "id": "item",
+      "displayName": "아이템",
+      "formatVersion": 2,
+      "prepareArgs": [],
+      "initCtx": {
+        "itemCategory": "item",
+        "helpText": ""
+      },
+      "navigation": {
+        "defaultFocus": "category_list",
+        "cancelWidget": "category_list",
+        "focusOrder": [
+          "category_list",
+          "item_list",
+          "actor_select"
+        ]
+      },
+      "root": {
+        "id": "root",
+        "type": "panel",
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 624,
+        "windowed": false,
+        "children": [
+          {
+            "id": "bg",
+            "type": "background",
+            "x": 0,
+            "y": 0,
+            "width": 816,
+            "height": 624
+          },
+          {
+            "id": "help_win",
+            "type": "panel",
+            "x": 0,
+            "y": 0,
+            "width": 816,
+            "height": 72,
+            "windowed": true,
+            "children": [
+              {
+                "id": "help_text",
+                "type": "textArea",
+                "x": 6,
+                "y": 6,
+                "width": 780,
+                "height": 60,
+                "text": "{$ctx.helpText}",
+                "fontSize": 22,
+                "verticalAlign": "middle"
+              }
+            ]
+          },
+          {
+            "id": "category_list",
+            "type": "list",
+            "x": 0,
+            "y": 72,
+            "width": 816,
+            "height": 54,
+            "maxCols": 4,
+            "items": [
+              {
+                "name": "{typeof TextManager!=='undefined'?TextManager.item:'소비품'}",
+                "symbol": "item",
+                "enabled": true
+              },
+              {
+                "name": "{typeof TextManager!=='undefined'?TextManager.weapon:'무기'}",
+                "symbol": "weapon",
+                "enabled": true
+              },
+              {
+                "name": "{typeof TextManager!=='undefined'?TextManager.armor:'방어구'}",
+                "symbol": "armor",
+                "enabled": true
+              },
+              {
+                "name": "{typeof TextManager!=='undefined'?TextManager.keyItem:'중요'}",
+                "symbol": "keyItem",
+                "enabled": true
+              }
+            ],
+            "handlers": {
+              "item": {
+                "action": "script",
+                "code": "$ctx.itemCategory='item';",
+                "thenAction": {
+                  "action": "focusWidget",
+                  "target": "item_list"
+                }
+              },
+              "weapon": {
+                "action": "script",
+                "code": "$ctx.itemCategory='weapon';",
+                "thenAction": {
+                  "action": "focusWidget",
+                  "target": "item_list"
+                }
+              },
+              "armor": {
+                "action": "script",
+                "code": "$ctx.itemCategory='armor';",
+                "thenAction": {
+                  "action": "focusWidget",
+                  "target": "item_list"
+                }
+              },
+              "keyItem": {
+                "action": "script",
+                "code": "$ctx.itemCategory='keyItem';",
+                "thenAction": {
+                  "action": "focusWidget",
+                  "target": "item_list"
+                }
+              },
+              "cancel": {
+                "action": "popScene"
+              }
+            }
+          },
+          {
+            "id": "item_list",
+            "type": "list",
+            "x": 0,
+            "y": 126,
+            "width": 816,
+            "height": 498,
+            "maxCols": 2,
+            "dataScript": "(function(){var cat=($ctx&&$ctx.itemCategory)||'item';var items=[];if(cat==='item'){items=($gameParty&&$gameParty.items()||[]).filter(function(i){return DataManager.isItem(i)&&i.itypeId===1;});}else if(cat==='weapon'){items=$gameParty&&$gameParty.weapons()||[];}else if(cat==='armor'){items=$gameParty&&$gameParty.armors()||[];}else if(cat==='keyItem'){items=($gameParty&&$gameParty.items()||[]).filter(function(i){return DataManager.isItem(i)&&i.itypeId===2;});}return items.map(function(item){return{name:item.name,iconIndex:item.iconIndex,numberText:'×'+$gameParty.numItems(item),symbol:'item_'+item.id,enabled:$gameParty.canUse(item),data:item};});})()",
+            "onCursor": {
+              "code": "var w=this._widgetMap&&this._widgetMap['item_list'];var idx=w&&w._window?w._window.index():-1;var cmd=idx>=0?(w._window._winDef.commands&&w._window._winDef.commands[idx]):null;this._ctx.helpText=(cmd&&cmd.data&&cmd.data.description)?cmd.data.description:'';"
+            },
+            "handlers": {
+              "ok": {
+                "action": "useItem",
+                "itemListWidget": "item_list",
+                "actorWidget": "actor_select"
+              },
+              "cancel": {
+                "action": "focusWidget",
+                "target": "category_list"
+              }
+            }
+          },
+          {
+            "id": "actor_select",
+            "type": "rowSelector",
+            "x": 0,
+            "y": 126,
+            "width": 816,
+            "height": 498,
+            "numRows": "party",
+            "transparent": true,
+            "padding": 0,
+            "handlers": {
+              "cancel": {
+                "action": "focusWidget",
+                "target": "item_list"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "save": {
+      "id": "save",
+      "displayName": "세이브",
+      "formatVersion": 2,
+      "prepareArgs": [],
+      "navigation": {
+        "defaultFocus": "saveList",
+        "cancelWidget": "saveList"
+      },
+      "root": {
+        "id": "root",
+        "type": "panel",
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 624,
+        "windowed": false,
+        "children": [
+          {
+            "id": "bg",
+            "type": "background",
+            "x": 0,
+            "y": 0,
+            "width": 816,
+            "height": 624
+          },
+          {
+            "id": "helpPanel",
+            "type": "panel",
+            "x": 0,
+            "y": 0,
+            "width": 816,
+            "height": 52,
+            "windowed": true,
+            "children": [
+              {
+                "id": "helpText",
+                "type": "label",
+                "x": 4,
+                "y": 2,
+                "width": 808,
+                "height": 36,
+                "text": "저장할 파일을 선택하세요."
+              }
+            ]
+          },
+          {
+            "id": "saveList",
+            "type": "list",
+            "x": 0,
+            "y": 52,
+            "width": 816,
+            "height": 572,
+            "rowHeight": 104,
+            "initialIndexExpr": "CSHelper.lastSavefileId() - 1",
+            "dataScript": "(function() { var items = []; var count = DataManager.maxSavefiles(); for (var i = 1; i <= count; i++) { var info = DataManager.loadSavefileInfo(i); var valid = DataManager.isThisGameFile(i); var chars = []; if (valid && info && info.characters) { for (var j = 0; j < Math.min(info.characters.length, 4); j++) { var c = info.characters[j]; chars.push([c[0], c[1], 220 + j * 48, 100]); } } items.push({ name: TextManager.file + ' ' + i, symbol: i, enabled: true, subText: (info && info.title) ? info.title : '', rightText: (info && info.playtime) ? info.playtime : '', characters: chars }); } return items; })()",
+            "handlers": {
+              "ok": {
+                "action": "script",
+                "code": "var id = this._widgetMap.saveList._window.currentSymbol(); $gameSystem.onBeforeSave(); if (DataManager.saveGame(id)) { SoundManager.playSave(); this.popScene(); } else { SoundManager.playBuzzer(); }"
+              },
+              "cancel": {
+                "action": "popScene"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "load": {
+      "id": "load",
+      "displayName": "로드",
+      "formatVersion": 2,
+      "prepareArgs": [],
+      "navigation": {
+        "defaultFocus": "loadList",
+        "cancelWidget": "loadList"
+      },
+      "root": {
+        "id": "root",
+        "type": "panel",
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 624,
+        "windowed": false,
+        "children": [
+          {
+            "id": "bg",
+            "type": "background",
+            "x": 0,
+            "y": 0,
+            "width": 816,
+            "height": 624
+          },
+          {
+            "id": "helpPanel",
+            "type": "panel",
+            "x": 0,
+            "y": 0,
+            "width": 816,
+            "height": 52,
+            "windowed": true,
+            "children": [
+              {
+                "id": "helpText",
+                "type": "label",
+                "x": 4,
+                "y": 2,
+                "width": 808,
+                "height": 36,
+                "text": "불러올 파일을 선택하세요."
+              }
+            ]
+          },
+          {
+            "id": "loadList",
+            "type": "list",
+            "x": 0,
+            "y": 52,
+            "width": 816,
+            "height": 572,
+            "rowHeight": 104,
+            "dataScript": "(function() { var items = []; var count = DataManager.maxSavefiles(); for (var i = 1; i <= count; i++) { var info = DataManager.loadSavefileInfo(i); var valid = DataManager.isThisGameFile(i); var chars = []; if (valid && info && info.characters) { for (var j = 0; j < Math.min(info.characters.length, 4); j++) { var c = info.characters[j]; chars.push([c[0], c[1], 220 + j * 48, 100]); } } items.push({ name: TextManager.file + ' ' + i, symbol: i, enabled: valid, subText: (info && info.title) ? info.title : '', rightText: (info && info.playtime) ? info.playtime : '', characters: chars }); } return items; })()",
+            "handlers": {
+              "ok": {
+                "action": "script",
+                "code": "var id = this._widgetMap.loadList._window.currentSymbol(); if (DataManager.loadGame(id)) { SceneManager.goto(Scene_Map); $gameSystem.onAfterLoad(); } else { SoundManager.playBuzzer(); }"
+              },
+              "cancel": {
+                "action": "popScene"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "battle": {
+      "id": "battle",
+      "displayName": "배틀",
+      "root": {
+        "id": "battle_root",
+        "type": "panel",
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 624,
+        "windowed": false,
+        "children": [
+          {
+            "id": "partyCommand",
+            "type": "list",
+            "x": 0,
+            "y": 516,
+            "width": 192,
+            "height": 108,
+            "items": [
+              {
+                "name": "전투",
+                "symbol": "fight",
+                "enabled": true
+              },
+              {
+                "name": "도주",
+                "symbol": "escape",
+                "enabled": true
+              }
+            ]
+          },
+          {
+            "id": "actorCommand",
+            "type": "list",
+            "x": 0,
+            "y": 444,
+            "width": 192,
+            "height": 216,
+            "dataScript": "(function(){var actor=BattleManager.actor();if(!actor)return[];var cmds=[{name:TextManager.attack,symbol:\"attack\",enabled:actor.canAttack(),iconIndex:76}];actor.addedSkillTypes().sort(function(a,b){return a-b;}).forEach(function(id){cmds.push({name:TextManager.skillType(id),symbol:\"skill\",enabled:true,ext:id,iconIndex:79});});cmds.push({name:TextManager.guard,symbol:\"guard\",enabled:actor.canGuard(),iconIndex:81},{name:TextManager.item,symbol:\"item\",enabled:true,iconIndex:83});return cmds;})()"
+          }
+        ]
+      }
+    },
+    "shop": {
+      "id": "shop",
+      "displayName": "상점",
+      "formatVersion": 2,
+      "prepareArgs": [
+        "shopGoods",
+        "purchaseOnly"
+      ],
+      "initCtx": {
+        "shopGoods": "[]",
+        "purchaseOnly": "false",
+        "sellCategory": "'all'",
+        "buyItems": "[]",
+        "sellItems": "[]",
+        "selectedItem": "null",
+        "selectedPrice": "0",
+        "shopMode": "'command'",
+        "helpText": "''",
+        "statusText": "''"
+      },
+      "navigation": {
+        "defaultFocus": "cmd_win"
+      },
+      "root": {
+        "id": "root",
+        "type": "panel",
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 624,
+        "windowed": false,
+        "children": [
+          {
+            "id": "bg",
+            "type": "background",
+            "x": 0,
+            "y": 0,
+            "width": 816,
+            "height": 624
+          },
+          {
+            "id": "help_win",
+            "type": "panel",
+            "x": 0,
+            "y": 0,
+            "width": 816,
+            "height": 72,
+            "windowed": true,
+            "children": [
+              {
+                "id": "help_text",
+                "type": "textArea",
+                "x": 4,
+                "y": 6,
+                "width": 800,
+                "height": 60,
+                "text": "{$ctx.helpText}",
+                "fontSize": 22,
+                "color": "#dddddd",
+                "windowed": false
+              }
+            ]
+          },
+          {
+            "id": "gold_win",
+            "type": "panel",
+            "x": 576,
+            "y": 72,
+            "width": 240,
+            "height": 56,
+            "windowed": true,
+            "children": [
+              {
+                "id": "gold_label",
+                "type": "label",
+                "x": 8,
+                "y": 4,
+                "width": 224,
+                "height": 48,
+                "text": "{gold} {(function(){return typeof TextManager!=='undefined'?TextManager.currencyUnit:'G';})()}",
+                "fontSize": 26,
+                "align": "right",
+                "color": "#dddddd",
+                "windowed": false
+              }
+            ]
+          },
+          {
+            "id": "cmd_win",
+            "type": "list",
+            "x": 0,
+            "y": 72,
+            "width": 576,
+            "height": 56,
+            "maxCols": 3,
+            "items": [
+              {
+                "name": "구매",
+                "symbol": "buy",
+                "enabled": true
+              },
+              {
+                "name": "판매",
+                "symbol": "sell",
+                "enabledCondition": "!$ctx.purchaseOnly"
+              },
+              {
+                "name": "취소",
+                "symbol": "cancel",
+                "enabled": true
+              }
+            ],
+            "handlers": {
+              "buy": {
+                "action": "script",
+                "code": "this._widgetMap['dummy_win']._displayObject.visible=false; this._widgetMap['buy_list']._window.visible=true; this._widgetMap['status_win']._displayObject.visible=true; $ctx.shopMode='buy'; $ctx.helpText=''; $ctx.statusText=''; this._navManager.focusWidget('buy_list');",
+                "thenAction": {
+                  "action": "noop"
+                }
+              },
+              "sell": {
+                "action": "script",
+                "code": "this._widgetMap['dummy_win']._displayObject.visible=false; this._widgetMap['category_win']._window.visible=true; this._widgetMap['sell_list']._window.visible=true; this._widgetMap['status_win']._displayObject.visible=false; $ctx.shopMode='sell'; $ctx.sellCategory='all'; $ctx.helpText=''; $ctx.statusText=''; this._navManager.focusWidget('category_win');",
+                "thenAction": {
+                  "action": "noop"
+                }
+              },
+              "cancel": {
+                "action": "popScene"
+              }
+            }
+          },
+          {
+            "id": "dummy_win",
+            "type": "panel",
+            "x": 0,
+            "y": 128,
+            "width": 816,
+            "height": 496,
+            "windowed": true
+          },
+          {
+            "id": "buy_list",
+            "type": "list",
+            "x": 0,
+            "y": 128,
+            "width": 456,
+            "height": 496,
+            "visible": false,
+            "dataScript": "(function(){ var goods=$ctx.shopGoods||[]; var money=$gameParty.gold(); var items=[]; var itemData=[]; goods.forEach(function(g){ var item=g[0]===0?$dataItems[g[1]]:g[0]===1?$dataWeapons[g[1]]:$dataArmors[g[1]]; if(item){ var price=g[2]===0?item.price:g[3]; items.push({name:item.name, symbol:'buy', iconIndex:item.iconIndex, enabled:price<=money&&!$gameParty.hasMaxItems(item), numberText:String(price)}); itemData.push({item:item, price:price}); } }); $ctx.buyItems=itemData; return items; })()",
+            "onCursor": {
+              "code": "var win=this._widgetMap['buy_list']._window; var idx=win.index(); var data=$ctx.buyItems; if(data&&idx>=0&&data[idx]){ var info=data[idx]; $ctx.helpText=info.item.description; $ctx.selectedItem=info.item; $ctx.selectedPrice=info.price; $ctx.statusText=info.item.name+'\\n\\\\C[16]가격:\\\\C[0] '+info.price+' '+(typeof TextManager!=='undefined'?TextManager.currencyUnit:'G'); }else{ $ctx.helpText=''; $ctx.selectedItem=null; $ctx.statusText=''; }"
+            },
+            "handlers": {
+              "ok": {
+                "action": "script",
+                "code": "var idx=this._widgetMap['buy_list']._window.index(); var info=$ctx.buyItems&&$ctx.buyItems[idx]; if(info){ $ctx.selectedItem=info.item; $ctx.selectedPrice=info.price; var maxBuy=Math.min($gameParty.maxItems(info.item)-$gameParty.numItems(info.item), info.price>0?Math.floor($gameParty.gold()/info.price):99); maxBuy=Math.max(1,maxBuy); var nw=this._widgetMap['number_win']; nw.setup(info.item,maxBuy,info.price); nw._window.visible=true; this._widgetMap['buy_list']._window.visible=false; this._navManager.focusWidget('number_win'); }",
+                "thenAction": {
+                  "action": "noop"
+                }
+              },
+              "cancel": {
+                "action": "script",
+                "code": "this._widgetMap['buy_list']._window.visible=false; this._widgetMap['status_win']._displayObject.visible=false; this._widgetMap['dummy_win']._displayObject.visible=true; $ctx.shopMode='command'; $ctx.helpText=''; $ctx.statusText=''; this._navManager.focusWidget('cmd_win');",
+                "thenAction": {
+                  "action": "noop"
+                }
+              }
+            }
+          },
+          {
+            "id": "number_win",
+            "type": "shopNumber",
+            "x": 0,
+            "y": 128,
+            "width": 456,
+            "height": 496,
+            "visible": false,
+            "handlers": {
+              "ok": {
+                "action": "script",
+                "code": "var n=this._widgetMap['number_win'].number(); SoundManager.playShop(); this._widgetMap['number_win']._window.visible=false; if($ctx.shopMode==='buy'){ $gameParty.loseGold(n*$ctx.selectedPrice); $gameParty.gainItem($ctx.selectedItem,n); this._widgetMap['buy_list']._window.visible=true; this._navManager.focusWidget('buy_list'); }else{ $gameParty.gainGold(n*$ctx.selectedPrice); $gameParty.loseItem($ctx.selectedItem,n); this._widgetMap['status_win']._displayObject.visible=false; this._widgetMap['sell_list']._window.visible=true; this._widgetMap['category_win']._window.visible=true; this._navManager.focusWidget('sell_list'); }",
+                "thenAction": {
+                  "action": "noop"
+                }
+              },
+              "cancel": {
+                "action": "script",
+                "code": "SoundManager.playCancel(); this._widgetMap['number_win']._window.visible=false; if($ctx.shopMode==='buy'){ this._widgetMap['buy_list']._window.visible=true; this._navManager.focusWidget('buy_list'); }else{ this._widgetMap['sell_list']._window.visible=true; this._widgetMap['category_win']._window.visible=true; this._navManager.focusWidget('sell_list'); }",
+                "thenAction": {
+                  "action": "noop"
+                }
+              }
+            }
+          },
+          {
+            "id": "status_win",
+            "type": "panel",
+            "x": 456,
+            "y": 128,
+            "width": 360,
+            "height": 496,
+            "windowed": true,
+            "visible": false,
+            "children": [
+              {
+                "id": "status_text",
+                "type": "textArea",
+                "x": 8,
+                "y": 8,
+                "width": 336,
+                "height": 472,
+                "text": "{$ctx.statusText}",
+                "fontSize": 22,
+                "color": "#dddddd",
+                "lineHeight": 32,
+                "windowed": false
+              }
+            ]
+          },
+          {
+            "id": "category_win",
+            "type": "list",
+            "x": 0,
+            "y": 128,
+            "width": 816,
+            "height": 56,
+            "maxCols": 4,
+            "visible": false,
+            "items": [
+              {
+                "name": "아이템",
+                "symbol": "item",
+                "enabled": true
+              },
+              {
+                "name": "무기",
+                "symbol": "weapon",
+                "enabled": true
+              },
+              {
+                "name": "방어구",
+                "symbol": "armor",
+                "enabled": true
+              },
+              {
+                "name": "중요 아이템",
+                "symbol": "keyItem",
+                "enabled": true
+              }
+            ],
+            "handlers": {
+              "ok": {
+                "action": "script",
+                "code": "var win=this._widgetMap['category_win']._window; $ctx.sellCategory=win.currentSymbol(); this._widgetMap['sell_list'].refresh(); this._navManager.focusWidget('sell_list');",
+                "thenAction": {
+                  "action": "noop"
+                }
+              },
+              "cancel": {
+                "action": "script",
+                "code": "this._widgetMap['category_win']._window.visible=false; this._widgetMap['sell_list']._window.visible=false; this._widgetMap['dummy_win']._displayObject.visible=true; $ctx.shopMode='command'; $ctx.helpText=''; $ctx.statusText=''; this._navManager.focusWidget('cmd_win');",
+                "thenAction": {
+                  "action": "noop"
+                }
+              }
+            }
+          },
+          {
+            "id": "sell_list",
+            "type": "list",
+            "x": 0,
+            "y": 184,
+            "width": 816,
+            "height": 440,
+            "visible": false,
+            "dataScript": "(function(){ var cat=$ctx.sellCategory||'all'; var all=$gameParty.allItems(); var filtered=all.filter(function(item){ if(!item||item.price<=0)return false; if(cat==='item')return DataManager.isItem(item)&&item.itypeId===1; if(cat==='weapon')return DataManager.isWeapon(item); if(cat==='armor')return DataManager.isArmor(item); if(cat==='keyItem')return DataManager.isItem(item)&&item.itypeId===2; return true; }); $ctx.sellItems=filtered; return filtered.map(function(item){ return {name:item.name, symbol:'sell', iconIndex:item.iconIndex, enabled:true, numberText:String($gameParty.numItems(item))}; }); })()",
+            "onCursor": {
+              "code": "var win=this._widgetMap['sell_list']._window; var idx=win.index(); var items=$ctx.sellItems; if(items&&idx>=0&&items[idx]){ var item=items[idx]; var sellPrice=Math.floor(item.price/2); $ctx.helpText=item.description; $ctx.selectedItem=item; $ctx.selectedPrice=sellPrice; $ctx.statusText=item.name+'\\n\\\\C[16]판매가:\\\\C[0] '+sellPrice+' '+(typeof TextManager!=='undefined'?TextManager.currencyUnit:'G'); }else{ $ctx.helpText=''; $ctx.selectedItem=null; $ctx.statusText=''; $ctx.selectedPrice=0; }"
+            },
+            "handlers": {
+              "ok": {
+                "action": "script",
+                "code": "var idx=this._widgetMap['sell_list']._window.index(); var items=$ctx.sellItems; var item=items&&items[idx]; if(item){ $ctx.selectedItem=item; $ctx.selectedPrice=Math.floor(item.price/2); var maxSell=$gameParty.numItems(item); var nw=this._widgetMap['number_win']; nw.setup(item,maxSell,$ctx.selectedPrice); nw._window.visible=true; this._widgetMap['status_win']._displayObject.visible=true; this._widgetMap['sell_list']._window.visible=false; this._widgetMap['category_win']._window.visible=false; this._navManager.focusWidget('number_win'); }",
+                "thenAction": {
+                  "action": "noop"
+                }
+              },
+              "cancel": {
+                "action": "script",
+                "code": "this._widgetMap['sell_list']._window.visible=false; this._navManager.focusWidget('category_win');",
+                "thenAction": {
+                  "action": "noop"
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}
