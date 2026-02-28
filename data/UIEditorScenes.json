@@ -4183,7 +4183,12 @@
             "numRows": "party",
             "padding": 0,
             "transparent": true,
-            "visible": false
+            "handlers": {
+              "cancel": {
+                "action": "script",
+                "code": "var sl=this._widgetMap['skill_list'];if(sl&&sl.displayObject())sl.displayObject().visible=true;if(sl&&sl._rowOverlay)sl._rowOverlay.visible=true;this._pendingItemListWidgetId=null;this._pendingActorWidgetId=null;if(this._navManager)this._navManager.focusWidget('skill_list');"
+              }
+            }
           },
           {
             "id": "textArea_17722651297207",
