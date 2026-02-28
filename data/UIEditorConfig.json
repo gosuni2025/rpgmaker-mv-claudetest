@@ -5,17 +5,5 @@
       "x": 0,
       "y": 0
     }
-  },
-  "sceneRedirects": {
-    "Scene_Status": "Scene_CS_status",
-    "Scene_Menu": "Scene_CS_menu_v2",
-    "Scene_Save": "Scene_CS_save",
-    "Scene_Load": "Scene_CS_load",
-    "Scene_Item": "Scene_CS_item",
-    "Scene_Battle": "Scene_CSBattle",
-    "Scene_Shop": "Scene_CS_shop",
-    "Scene_Equip": "Scene_CS_equip",
-    "Scene_Skill": "Scene_CS_fj_skillLearn",
-    "Scene_GameEnd": "Scene_CS_gameEnd"
   }
 }

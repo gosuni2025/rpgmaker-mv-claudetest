@@ -2979,6 +2979,17 @@
                 "target": "item_list"
               }
             }
+          },
+          {
+            "id": "textArea_17722650899211",
+            "type": "textArea",
+            "x": 17,
+            "y": 404,
+            "width": 300,
+            "height": 80,
+            "text": "커스텀씬",
+            "align": "center",
+            "verticalAlign": "middle"
           }
         ]
       }
@@ -3048,6 +3059,17 @@
                 "action": "popScene"
               }
             }
+          },
+          {
+            "id": "textArea_17722650956072",
+            "type": "textArea",
+            "x": 469,
+            "y": 475,
+            "width": 300,
+            "height": 80,
+            "text": "커스텀씬",
+            "align": "center",
+            "verticalAlign": "middle"
           }
         ]
       }
@@ -3116,6 +3138,17 @@
                 "action": "popScene"
               }
             }
+          },
+          {
+            "id": "textArea_17722651026653",
+            "type": "textArea",
+            "x": 474,
+            "y": 446,
+            "width": 300,
+            "height": 80,
+            "text": "커스텀씬",
+            "align": "center",
+            "verticalAlign": "middle"
           }
         ]
       }
@@ -3160,6 +3193,17 @@
             "width": 192,
             "height": 216,
             "dataScript": "(function(){var actor=BattleManager.actor();if(!actor)return[];var cmds=[{name:TextManager.attack,symbol:\"attack\",enabled:actor.canAttack(),iconIndex:76}];actor.addedSkillTypes().sort(function(a,b){return a-b;}).forEach(function(id){cmds.push({name:TextManager.skillType(id),symbol:\"skill\",enabled:true,ext:id,iconIndex:79});});cmds.push({name:TextManager.guard,symbol:\"guard\",enabled:actor.canGuard(),iconIndex:81},{name:TextManager.item,symbol:\"item\",enabled:true,iconIndex:83});return cmds;})()"
+          },
+          {
+            "id": "textArea_17722651096544",
+            "type": "textArea",
+            "x": 461,
+            "y": 103,
+            "width": 300,
+            "height": 80,
+            "text": "커스텀씬",
+            "align": "center",
+            "verticalAlign": "middle"
           }
         ]
       }
@@ -3460,6 +3504,17 @@
                 }
               }
             }
+          },
+          {
+            "id": "textArea_17722651166925",
+            "type": "textArea",
+            "x": 462,
+            "y": 224,
+            "width": 300,
+            "height": 80,
+            "text": "커스텀씬",
+            "align": "center",
+            "verticalAlign": "middle"
           }
         ]
       }
@@ -3906,6 +3961,17 @@
                 "code": "$ctx.tempActor=null;$ctx.helpText='';var iw=this._widgetMap['item_list'];if(iw&&iw._window)iw._window.deselect();var sw=this._widgetMap['slot_list'];if(sw)sw.activate();"
               }
             }
+          },
+          {
+            "id": "textArea_17722651220466",
+            "type": "textArea",
+            "x": 487,
+            "y": 500,
+            "width": 300,
+            "height": 80,
+            "text": "커스텀씬",
+            "align": "center",
+            "verticalAlign": "middle"
           }
         ]
       }
@@ -4129,6 +4195,17 @@
                 "target": "skill_list"
               }
             }
+          },
+          {
+            "id": "textArea_17722651297207",
+            "type": "textArea",
+            "x": 465,
+            "y": 510,
+            "width": 300,
+            "height": 80,
+            "text": "커스텀씬",
+            "align": "center",
+            "verticalAlign": "middle"
           }
         ]
       }
