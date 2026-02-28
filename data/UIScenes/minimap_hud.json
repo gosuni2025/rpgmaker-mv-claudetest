@@ -77,5 +77,6 @@
         "visible": true
       }
     ]
-  }
+  },
+  "category": "plugin"
 }

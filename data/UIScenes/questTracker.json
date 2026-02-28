@@ -25,5 +25,6 @@
         "focusable": false
       }
     ]
-  }
+  },
+  "category": "plugin"
 }
