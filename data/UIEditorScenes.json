@@ -2113,7 +2113,8 @@
                 "action": "focusWidget",
                 "target": "slot_list"
               }
-            }
+            },
+            "rowHeight": 52
           },
           {
             "id": "right_panel",
