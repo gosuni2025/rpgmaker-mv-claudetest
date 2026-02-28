@@ -3480,59 +3480,358 @@
       "root": {
         "type": "panel",
         "id": "equip_root",
-        "x": 0, "y": 0,
-        "width": 816, "height": 624,
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 624,
         "windowed": false,
         "children": [
           {
             "type": "panel",
             "id": "help_panel",
-            "x": 0, "y": 0,
-            "width": 816, "height": 108,
+            "x": 0,
+            "y": 0,
+            "width": 816,
+            "height": 108,
             "windowed": true,
             "children": [
-              { "type": "textarea", "id": "help_text", "x": 6, "y": 0, "width": 780, "height": 108, "text": "{$ctx.helpText||''}", "verticalAlign": "middle", "lineHeight": 36, "fontSize": 26 }
+              {
+                "type": "textarea",
+                "id": "help_text",
+                "x": 6,
+                "y": 0,
+                "width": 780,
+                "height": 108,
+                "text": "{$ctx.helpText||''}",
+                "verticalAlign": "middle",
+                "lineHeight": 36,
+                "fontSize": 26
+              }
             ]
           },
           {
             "type": "panel",
             "id": "status_panel",
-            "x": 0, "y": 108,
-            "width": 312, "height": 288,
+            "x": 0,
+            "y": 108,
+            "width": 312,
+            "height": 288,
             "windowed": true,
             "children": [
-              { "type": "label", "id": "actor_name", "x": 18, "y": 18,  "width": 276, "height": 36, "fontSize": 26, "verticalAlign": "middle", "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?a.name():'';})()}" },
-              { "type": "label", "id": "p0_name", "x": 24,  "y": 54,  "width": 120, "height": 36, "fontSize": 24, "color": "#808080", "verticalAlign": "middle", "text": "{TextManager.param(0)}" },
-              { "type": "label", "id": "p0_cur",  "x": 158, "y": 54,  "width": 48,  "height": 36, "fontSize": 24, "align": "right", "verticalAlign": "middle", "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?String(a.param(0)):'';})()}" },
-              { "type": "label", "id": "p0_arr",  "x": 206, "y": 54,  "width": 32,  "height": 36, "fontSize": 24, "color": "#808080", "align": "center", "verticalAlign": "middle", "text": "{$ctx.tempActor?'\u2192':''}" },
-              { "type": "label", "id": "p0_new",  "x": 238, "y": 54,  "width": 52,  "height": 36, "fontSize": 24, "verticalAlign": "middle", "useTextEx": true, "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];var t=$ctx.tempActor;if(!a||!t)return '';var d=t.param(0)-a.param(0);return '\\c['+(d>0?24:d<0?25:0)+']'+t.param(0)+'\\c[0]';})()}" },
-              { "type": "label", "id": "p1_name", "x": 24,  "y": 90,  "width": 120, "height": 36, "fontSize": 24, "color": "#808080", "verticalAlign": "middle", "text": "{TextManager.param(1)}" },
-              { "type": "label", "id": "p1_cur",  "x": 158, "y": 90,  "width": 48,  "height": 36, "fontSize": 24, "align": "right", "verticalAlign": "middle", "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?String(a.param(1)):'';})()}" },
-              { "type": "label", "id": "p1_arr",  "x": 206, "y": 90,  "width": 32,  "height": 36, "fontSize": 24, "color": "#808080", "align": "center", "verticalAlign": "middle", "text": "{$ctx.tempActor?'\u2192':''}" },
-              { "type": "label", "id": "p1_new",  "x": 238, "y": 90,  "width": 52,  "height": 36, "fontSize": 24, "verticalAlign": "middle", "useTextEx": true, "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];var t=$ctx.tempActor;if(!a||!t)return '';var d=t.param(1)-a.param(1);return '\\c['+(d>0?24:d<0?25:0)+']'+t.param(1)+'\\c[0]';})()}" },
-              { "type": "label", "id": "p2_name", "x": 24,  "y": 126, "width": 120, "height": 36, "fontSize": 24, "color": "#808080", "verticalAlign": "middle", "text": "{TextManager.param(2)}" },
-              { "type": "label", "id": "p2_cur",  "x": 158, "y": 126, "width": 48,  "height": 36, "fontSize": 24, "align": "right", "verticalAlign": "middle", "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?String(a.param(2)):'';})()}" },
-              { "type": "label", "id": "p2_arr",  "x": 206, "y": 126, "width": 32,  "height": 36, "fontSize": 24, "color": "#808080", "align": "center", "verticalAlign": "middle", "text": "{$ctx.tempActor?'\u2192':''}" },
-              { "type": "label", "id": "p2_new",  "x": 238, "y": 126, "width": 52,  "height": 36, "fontSize": 24, "verticalAlign": "middle", "useTextEx": true, "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];var t=$ctx.tempActor;if(!a||!t)return '';var d=t.param(2)-a.param(2);return '\\c['+(d>0?24:d<0?25:0)+']'+t.param(2)+'\\c[0]';})()}" },
-              { "type": "label", "id": "p3_name", "x": 24,  "y": 162, "width": 120, "height": 36, "fontSize": 24, "color": "#808080", "verticalAlign": "middle", "text": "{TextManager.param(3)}" },
-              { "type": "label", "id": "p3_cur",  "x": 158, "y": 162, "width": 48,  "height": 36, "fontSize": 24, "align": "right", "verticalAlign": "middle", "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?String(a.param(3)):'';})()}" },
-              { "type": "label", "id": "p3_arr",  "x": 206, "y": 162, "width": 32,  "height": 36, "fontSize": 24, "color": "#808080", "align": "center", "verticalAlign": "middle", "text": "{$ctx.tempActor?'\u2192':''}" },
-              { "type": "label", "id": "p3_new",  "x": 238, "y": 162, "width": 52,  "height": 36, "fontSize": 24, "verticalAlign": "middle", "useTextEx": true, "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];var t=$ctx.tempActor;if(!a||!t)return '';var d=t.param(3)-a.param(3);return '\\c['+(d>0?24:d<0?25:0)+']'+t.param(3)+'\\c[0]';})()}" },
-              { "type": "label", "id": "p4_name", "x": 24,  "y": 198, "width": 120, "height": 36, "fontSize": 24, "color": "#808080", "verticalAlign": "middle", "text": "{TextManager.param(4)}" },
-              { "type": "label", "id": "p4_cur",  "x": 158, "y": 198, "width": 48,  "height": 36, "fontSize": 24, "align": "right", "verticalAlign": "middle", "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?String(a.param(4)):'';})()}" },
-              { "type": "label", "id": "p4_arr",  "x": 206, "y": 198, "width": 32,  "height": 36, "fontSize": 24, "color": "#808080", "align": "center", "verticalAlign": "middle", "text": "{$ctx.tempActor?'\u2192':''}" },
-              { "type": "label", "id": "p4_new",  "x": 238, "y": 198, "width": 52,  "height": 36, "fontSize": 24, "verticalAlign": "middle", "useTextEx": true, "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];var t=$ctx.tempActor;if(!a||!t)return '';var d=t.param(4)-a.param(4);return '\\c['+(d>0?24:d<0?25:0)+']'+t.param(4)+'\\c[0]';})()}" },
-              { "type": "label", "id": "p5_name", "x": 24,  "y": 234, "width": 120, "height": 36, "fontSize": 24, "color": "#808080", "verticalAlign": "middle", "text": "{TextManager.param(5)}" },
-              { "type": "label", "id": "p5_cur",  "x": 158, "y": 234, "width": 48,  "height": 36, "fontSize": 24, "align": "right", "verticalAlign": "middle", "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?String(a.param(5)):'';})()}" },
-              { "type": "label", "id": "p5_arr",  "x": 206, "y": 234, "width": 32,  "height": 36, "fontSize": 24, "color": "#808080", "align": "center", "verticalAlign": "middle", "text": "{$ctx.tempActor?'\u2192':''}" },
-              { "type": "label", "id": "p5_new",  "x": 238, "y": 234, "width": 52,  "height": 36, "fontSize": 24, "verticalAlign": "middle", "useTextEx": true, "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];var t=$ctx.tempActor;if(!a||!t)return '';var d=t.param(5)-a.param(5);return '\\c['+(d>0?24:d<0?25:0)+']'+t.param(5)+'\\c[0]';})()}" }
+              {
+                "type": "label",
+                "id": "actor_name",
+                "x": 18,
+                "y": 18,
+                "width": 276,
+                "height": 36,
+                "fontSize": 26,
+                "verticalAlign": "middle",
+                "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?a.name():'';})()}"
+              },
+              {
+                "type": "label",
+                "id": "p0_name",
+                "x": 24,
+                "y": 54,
+                "width": 120,
+                "height": 36,
+                "fontSize": 24,
+                "color": "#808080",
+                "verticalAlign": "middle",
+                "text": "{TextManager.param(0)}"
+              },
+              {
+                "type": "label",
+                "id": "p0_cur",
+                "x": 158,
+                "y": 54,
+                "width": 48,
+                "height": 36,
+                "fontSize": 24,
+                "align": "right",
+                "verticalAlign": "middle",
+                "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?String(a.param(0)):'';})()}"
+              },
+              {
+                "type": "label",
+                "id": "p0_arr",
+                "x": 206,
+                "y": 54,
+                "width": 32,
+                "height": 36,
+                "fontSize": 24,
+                "color": "#808080",
+                "align": "center",
+                "verticalAlign": "middle",
+                "text": "{$ctx.tempActor?'→':''}"
+              },
+              {
+                "type": "label",
+                "id": "p0_new",
+                "x": 238,
+                "y": 54,
+                "width": 52,
+                "height": 36,
+                "fontSize": 24,
+                "verticalAlign": "middle",
+                "useTextEx": true,
+                "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];var t=$ctx.tempActor;if(!a||!t)return '';var d=t.param(0)-a.param(0);return '\\c['+(d>0?24:d<0?25:0)+']'+t.param(0)+'\\c[0]';})()}"
+              },
+              {
+                "type": "label",
+                "id": "p1_name",
+                "x": 24,
+                "y": 90,
+                "width": 120,
+                "height": 36,
+                "fontSize": 24,
+                "color": "#808080",
+                "verticalAlign": "middle",
+                "text": "{TextManager.param(1)}"
+              },
+              {
+                "type": "label",
+                "id": "p1_cur",
+                "x": 158,
+                "y": 90,
+                "width": 48,
+                "height": 36,
+                "fontSize": 24,
+                "align": "right",
+                "verticalAlign": "middle",
+                "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?String(a.param(1)):'';})()}"
+              },
+              {
+                "type": "label",
+                "id": "p1_arr",
+                "x": 206,
+                "y": 90,
+                "width": 32,
+                "height": 36,
+                "fontSize": 24,
+                "color": "#808080",
+                "align": "center",
+                "verticalAlign": "middle",
+                "text": "{$ctx.tempActor?'→':''}"
+              },
+              {
+                "type": "label",
+                "id": "p1_new",
+                "x": 238,
+                "y": 90,
+                "width": 52,
+                "height": 36,
+                "fontSize": 24,
+                "verticalAlign": "middle",
+                "useTextEx": true,
+                "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];var t=$ctx.tempActor;if(!a||!t)return '';var d=t.param(1)-a.param(1);return '\\c['+(d>0?24:d<0?25:0)+']'+t.param(1)+'\\c[0]';})()}"
+              },
+              {
+                "type": "label",
+                "id": "p2_name",
+                "x": 24,
+                "y": 126,
+                "width": 120,
+                "height": 36,
+                "fontSize": 24,
+                "color": "#808080",
+                "verticalAlign": "middle",
+                "text": "{TextManager.param(2)}"
+              },
+              {
+                "type": "label",
+                "id": "p2_cur",
+                "x": 158,
+                "y": 126,
+                "width": 48,
+                "height": 36,
+                "fontSize": 24,
+                "align": "right",
+                "verticalAlign": "middle",
+                "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?String(a.param(2)):'';})()}"
+              },
+              {
+                "type": "label",
+                "id": "p2_arr",
+                "x": 206,
+                "y": 126,
+                "width": 32,
+                "height": 36,
+                "fontSize": 24,
+                "color": "#808080",
+                "align": "center",
+                "verticalAlign": "middle",
+                "text": "{$ctx.tempActor?'→':''}"
+              },
+              {
+                "type": "label",
+                "id": "p2_new",
+                "x": 238,
+                "y": 126,
+                "width": 52,
+                "height": 36,
+                "fontSize": 24,
+                "verticalAlign": "middle",
+                "useTextEx": true,
+                "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];var t=$ctx.tempActor;if(!a||!t)return '';var d=t.param(2)-a.param(2);return '\\c['+(d>0?24:d<0?25:0)+']'+t.param(2)+'\\c[0]';})()}"
+              },
+              {
+                "type": "label",
+                "id": "p3_name",
+                "x": 24,
+                "y": 162,
+                "width": 120,
+                "height": 36,
+                "fontSize": 24,
+                "color": "#808080",
+                "verticalAlign": "middle",
+                "text": "{TextManager.param(3)}"
+              },
+              {
+                "type": "label",
+                "id": "p3_cur",
+                "x": 158,
+                "y": 162,
+                "width": 48,
+                "height": 36,
+                "fontSize": 24,
+                "align": "right",
+                "verticalAlign": "middle",
+                "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?String(a.param(3)):'';})()}"
+              },
+              {
+                "type": "label",
+                "id": "p3_arr",
+                "x": 206,
+                "y": 162,
+                "width": 32,
+                "height": 36,
+                "fontSize": 24,
+                "color": "#808080",
+                "align": "center",
+                "verticalAlign": "middle",
+                "text": "{$ctx.tempActor?'→':''}"
+              },
+              {
+                "type": "label",
+                "id": "p3_new",
+                "x": 238,
+                "y": 162,
+                "width": 52,
+                "height": 36,
+                "fontSize": 24,
+                "verticalAlign": "middle",
+                "useTextEx": true,
+                "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];var t=$ctx.tempActor;if(!a||!t)return '';var d=t.param(3)-a.param(3);return '\\c['+(d>0?24:d<0?25:0)+']'+t.param(3)+'\\c[0]';})()}"
+              },
+              {
+                "type": "label",
+                "id": "p4_name",
+                "x": 24,
+                "y": 198,
+                "width": 120,
+                "height": 36,
+                "fontSize": 24,
+                "color": "#808080",
+                "verticalAlign": "middle",
+                "text": "{TextManager.param(4)}"
+              },
+              {
+                "type": "label",
+                "id": "p4_cur",
+                "x": 158,
+                "y": 198,
+                "width": 48,
+                "height": 36,
+                "fontSize": 24,
+                "align": "right",
+                "verticalAlign": "middle",
+                "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?String(a.param(4)):'';})()}"
+              },
+              {
+                "type": "label",
+                "id": "p4_arr",
+                "x": 206,
+                "y": 198,
+                "width": 32,
+                "height": 36,
+                "fontSize": 24,
+                "color": "#808080",
+                "align": "center",
+                "verticalAlign": "middle",
+                "text": "{$ctx.tempActor?'→':''}"
+              },
+              {
+                "type": "label",
+                "id": "p4_new",
+                "x": 238,
+                "y": 198,
+                "width": 52,
+                "height": 36,
+                "fontSize": 24,
+                "verticalAlign": "middle",
+                "useTextEx": true,
+                "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];var t=$ctx.tempActor;if(!a||!t)return '';var d=t.param(4)-a.param(4);return '\\c['+(d>0?24:d<0?25:0)+']'+t.param(4)+'\\c[0]';})()}"
+              },
+              {
+                "type": "label",
+                "id": "p5_name",
+                "x": 24,
+                "y": 234,
+                "width": 120,
+                "height": 36,
+                "fontSize": 24,
+                "color": "#808080",
+                "verticalAlign": "middle",
+                "text": "{TextManager.param(5)}"
+              },
+              {
+                "type": "label",
+                "id": "p5_cur",
+                "x": 158,
+                "y": 234,
+                "width": 48,
+                "height": 36,
+                "fontSize": 24,
+                "align": "right",
+                "verticalAlign": "middle",
+                "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?String(a.param(5)):'';})()}"
+              },
+              {
+                "type": "label",
+                "id": "p5_arr",
+                "x": 206,
+                "y": 234,
+                "width": 32,
+                "height": 36,
+                "fontSize": 24,
+                "color": "#808080",
+                "align": "center",
+                "verticalAlign": "middle",
+                "text": "{$ctx.tempActor?'→':''}"
+              },
+              {
+                "type": "label",
+                "id": "p5_new",
+                "x": 238,
+                "y": 234,
+                "width": 52,
+                "height": 36,
+                "fontSize": 24,
+                "verticalAlign": "middle",
+                "useTextEx": true,
+                "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];var t=$ctx.tempActor;if(!a||!t)return '';var d=t.param(5)-a.param(5);return '\\c['+(d>0?24:d<0?25:0)+']'+t.param(5)+'\\c[0]';})()}"
+              }
             ]
           },
           {
             "type": "list",
             "id": "cmd_list",
-            "x": 312, "y": 108,
-            "width": 504, "height": 72,
+            "x": 312,
+            "y": 108,
+            "width": 504,
+            "height": 72,
             "maxCols": 3,
             "dataScript": "[{name:TextManager.equip2,symbol:'equip'},{name:TextManager.optimize,symbol:'optimize'},{name:TextManager.clear,symbol:'clear'}]",
             "handlers": {
@@ -3548,7 +3847,9 @@
                 "action": "script",
                 "code": "var a=$gameParty.members()[$ctx.actorIndex];if(a){SoundManager.playEquip();a.clearEquipments();$ctx.tempActor=null;$ctx.helpText='';}this._rootWidget.refresh();"
               },
-              "cancel": { "action": "popScene" },
+              "cancel": {
+                "action": "popScene"
+              },
               "pagedown": {
                 "action": "script",
                 "code": "SoundManager.playCursor();$ctx.actorIndex=($ctx.actorIndex+1)%$gameParty.size();$ctx.tempActor=null;$ctx.helpText='';this._rootWidget.refresh();"
@@ -3562,8 +3863,10 @@
           {
             "type": "list",
             "id": "slot_list",
-            "x": 312, "y": 180,
-            "width": 504, "height": 216,
+            "x": 312,
+            "y": 180,
+            "width": 504,
+            "height": 216,
             "focusable": true,
             "dataScript": "(function(){var a=$gameParty.members()[$ctx.actorIndex];if(!a)return [];return a.equipSlots().map(function(etypeId,i){var eq=a.equips()[i];return {name:'',symbol:'slot_'+i,enabled:a.isEquipChangeOk(i),data:i,cols:[{text:($dataSystem.equipTypes[etypeId]||''),width:138,color:8},{text:eq?eq.name:'',iconIndex:eq?(eq.iconIndex||0):0}]};});})()",
             "onCursor": {
@@ -3583,13 +3886,15 @@
           {
             "type": "list",
             "id": "item_list",
-            "x": 0, "y": 396,
-            "width": 816, "height": 228,
+            "x": 0,
+            "y": 396,
+            "width": 816,
+            "height": 228,
             "focusable": true,
             "maxCols": 2,
-            "dataScript": "(function(){var a=$gameParty.members()[$ctx.actorIndex];var slotId=$ctx.slotId||0;if(!a||!a.equipSlots)return [];var etypeId=a.equipSlots()[slotId];if(!etypeId)return [];var list=[{name:TextManager.none||'\uc5c6\uc74c',symbol:'none',enabled:true,data:null}];$gameParty.equipItems().filter(function(it){return it.etypeId===etypeId&&a.canEquip(it);}).forEach(function(it){list.push({name:it.name,iconIndex:it.iconIndex,symbol:'eq_'+it.etypeId+'_'+it.id,enabled:true,data:it});});return list;})()",
+            "dataScript": "(function(){var a=$gameParty.members()[$ctx.actorIndex];var slotId=$ctx.slotId||0;if(!a||!a.equipSlots)return [];var etypeId=a.equipSlots()[slotId];if(!etypeId)return [];var list=[{name:TextManager.none||'없음',symbol:'none',enabled:true,data:null}];$gameParty.equipItems().filter(function(it){return it.etypeId===etypeId&&a.canEquip(it);}).forEach(function(it){list.push({name:it.name,iconIndex:it.iconIndex,symbol:'eq_'+it.etypeId+'_'+it.id,enabled:true,data:it});});return list;})()",
             "onCursor": {
-              "code": "var iw=this._widgetMap['item_list'];if(!iw||!iw._window)return;var cmds=iw._window._winDef.commands;var idx=iw._window.index();var item=cmds&&cmds[idx]?cmds[idx].data:null;var a=$gameParty.members()[$ctx.actorIndex];if(a){var tmp=JsonEx.makeDeepCopy(a);tmp.forceChangeEquip($ctx.slotId||0,item);$ctx.tempActor=tmp;}$ctx.helpText=item?item.description:(TextManager.none||'\uc5c6\uc74c');this._rootWidget.refresh();"
+              "code": "var iw=this._widgetMap['item_list'];if(!iw||!iw._window)return;var cmds=iw._window._winDef.commands;var idx=iw._window.index();var item=cmds&&cmds[idx]?cmds[idx].data:null;var a=$gameParty.members()[$ctx.actorIndex];if(a){var tmp=JsonEx.makeDeepCopy(a);tmp.forceChangeEquip($ctx.slotId||0,item);$ctx.tempActor=tmp;}$ctx.helpText=item?item.description:(TextManager.none||'없음');this._rootWidget.refresh();"
             },
             "handlers": {
               "ok": {
@@ -3599,6 +3904,229 @@
               "cancel": {
                 "action": "script",
                 "code": "$ctx.tempActor=null;$ctx.helpText='';var iw=this._widgetMap['item_list'];if(iw&&iw._window)iw._window.deselect();var sw=this._widgetMap['slot_list'];if(sw)sw.activate();"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "skill": {
+      "id": "skill",
+      "displayName": "스킬",
+      "formatVersion": 2,
+      "initCtx": {
+        "actorIndex": "$gameParty.menuActor() ? Math.max(0, $gameParty.members().indexOf($gameParty.menuActor())) : 0",
+        "stypeId": "$gameParty.menuActor() ? ($gameParty.menuActor().addedSkillTypes().sort(function(a,b){return a-b;})[0] || 1) : 1",
+        "helpText": "",
+        "selectedSkill": null
+      },
+      "prepareArgs": [],
+      "navigation": {
+        "defaultFocus": "skilltype_list",
+        "focusOrder": [
+          "skilltype_list",
+          "skill_list",
+          "actor_select"
+        ]
+      },
+      "root": {
+        "id": "skill_root",
+        "type": "panel",
+        "windowed": false,
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 624,
+        "children": [
+          {
+            "id": "bg",
+            "type": "background",
+            "x": 0,
+            "y": 0,
+            "width": 816,
+            "height": 624
+          },
+          {
+            "id": "help_win",
+            "type": "panel",
+            "windowed": true,
+            "x": 0,
+            "y": 0,
+            "width": 816,
+            "height": 108,
+            "children": [
+              {
+                "id": "help_text",
+                "type": "textArea",
+                "text": "{$ctx.helpText}",
+                "fontSize": 22,
+                "verticalAlign": "middle",
+                "x": 0,
+                "y": 0,
+                "width": 780,
+                "height": 72
+              }
+            ]
+          },
+          {
+            "id": "skilltype_list",
+            "type": "list",
+            "x": 0,
+            "y": 108,
+            "width": 240,
+            "height": 180,
+            "dataScript": "(function(){var actor=$gameParty.members()[$ctx.actorIndex];if(!actor)return[];return actor.addedSkillTypes().sort(function(a,b){return a-b;}).map(function(id){return{name:$dataSystem.skillTypes[id]||'',symbol:'stype_'+id,enabled:true,data:id};});})()",
+            "onCursor": {
+              "code": "var stl=this._widgetMap['skilltype_list'];if(!stl||!stl._window)return;var cmds=stl._window._winDef.commands;var idx=stl._window.index();var cmd=cmds&&cmds[idx]?cmds[idx]:null;if(cmd){this._ctx.stypeId=cmd.data;this._ctx.helpText='';this._ctx.selectedSkill=null;var skl=this._widgetMap['skill_list'];if(skl)skl._rebuildFromScript();}"
+            },
+            "handlers": {
+              "ok": {
+                "action": "focusWidget",
+                "target": "skill_list"
+              },
+              "cancel": {
+                "action": "popScene"
+              },
+              "pageup": {
+                "action": "script",
+                "code": "var sz=$gameParty.size();if(sz>1){SoundManager.playCursor();$ctx.actorIndex=($ctx.actorIndex-1+sz)%sz;$gameParty.setMenuActor($gameParty.members()[$ctx.actorIndex]);var actor=$gameParty.members()[$ctx.actorIndex];var st=actor?actor.addedSkillTypes().sort(function(a,b){return a-b;}):[];$ctx.stypeId=st[0]||1;$ctx.helpText='';$ctx.selectedSkill=null;var stl=this._widgetMap['skilltype_list'];if(stl)stl._rebuildFromScript();var skl=this._widgetMap['skill_list'];if(skl)skl._rebuildFromScript();}"
+              },
+              "pagedown": {
+                "action": "script",
+                "code": "var sz=$gameParty.size();if(sz>1){SoundManager.playCursor();$ctx.actorIndex=($ctx.actorIndex+1)%sz;$gameParty.setMenuActor($gameParty.members()[$ctx.actorIndex]);var actor=$gameParty.members()[$ctx.actorIndex];var st=actor?actor.addedSkillTypes().sort(function(a,b){return a-b;}):[];$ctx.stypeId=st[0]||1;$ctx.helpText='';$ctx.selectedSkill=null;var stl=this._widgetMap['skilltype_list'];if(stl)stl._rebuildFromScript();var skl=this._widgetMap['skill_list'];if(skl)skl._rebuildFromScript();}"
+              }
+            }
+          },
+          {
+            "id": "status_panel",
+            "type": "panel",
+            "windowed": true,
+            "x": 240,
+            "y": 108,
+            "width": 576,
+            "height": 180,
+            "children": [
+              {
+                "id": "sk_face",
+                "type": "image",
+                "imageSource": "actorFace",
+                "actorIndexExpr": "$ctx.actorIndex",
+                "x": 8,
+                "y": 8,
+                "width": 144,
+                "height": 144
+              },
+              {
+                "id": "sk_name",
+                "type": "label",
+                "fontSize": 26,
+                "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?a.name():'';})()}",
+                "verticalAlign": "middle",
+                "x": 162,
+                "y": 8,
+                "width": 200,
+                "height": 36
+              },
+              {
+                "id": "sk_class",
+                "type": "label",
+                "fontSize": 22,
+                "color": "#808080",
+                "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a&&$dataClasses[a._classId]?$dataClasses[a._classId].name:'';})()}",
+                "verticalAlign": "middle",
+                "x": 162,
+                "y": 44,
+                "width": 200,
+                "height": 36
+              },
+              {
+                "id": "sk_lv_label",
+                "type": "label",
+                "fontSize": 22,
+                "color": "#808080",
+                "text": "{TextManager.levelA}",
+                "verticalAlign": "middle",
+                "x": 162,
+                "y": 80,
+                "width": 36,
+                "height": 36
+              },
+              {
+                "id": "sk_lv",
+                "type": "label",
+                "fontSize": 22,
+                "align": "right",
+                "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?String(a.level):'';})()}",
+                "verticalAlign": "middle",
+                "x": 198,
+                "y": 80,
+                "width": 54,
+                "height": 36
+              },
+              {
+                "id": "sk_hp",
+                "type": "gauge",
+                "gaugeType": "hp",
+                "actorIndexExpr": "$ctx.actorIndex",
+                "x": 162,
+                "y": 116,
+                "width": 200,
+                "height": 36
+              },
+              {
+                "id": "sk_mp",
+                "type": "gauge",
+                "gaugeType": "mp",
+                "actorIndexExpr": "$ctx.actorIndex",
+                "x": 162,
+                "y": 152,
+                "width": 200,
+                "height": 36
+              }
+            ]
+          },
+          {
+            "id": "skill_list",
+            "type": "list",
+            "x": 0,
+            "y": 288,
+            "width": 816,
+            "height": 336,
+            "maxCols": 2,
+            "focusable": true,
+            "dataScript": "(function(){var actor=$gameParty.members()[$ctx.actorIndex];if(!actor)return[];return actor.skills().filter(function(s){return s.stypeId===$ctx.stypeId;}).map(function(s){var mpCost=actor.skillMpCost(s)||0;var tpCost=actor.skillTpCost(s)||0;var rt=tpCost>0?String(tpCost):mpCost>0?String(mpCost):'';var rtc=tpCost>0?29:23;return{name:s.name,symbol:'skill_'+s.id,iconIndex:s.iconIndex||0,enabled:actor.canUse(s),data:s,rightText:rt||undefined,rightTextColorIndex:rt?rtc:undefined};});})()",
+            "onCursor": {
+              "code": "var skl=this._widgetMap['skill_list'];if(!skl||!skl._window)return;var cmds=skl._window._winDef.commands;var idx=skl._window.index();var cmd=cmds&&cmds[idx]?cmds[idx]:null;this._ctx.selectedSkill=cmd?cmd.data:null;this._ctx.helpText=this._ctx.selectedSkill?(this._ctx.selectedSkill.description||''):'';var hw=this._widgetMap['help_win'];if(hw)hw.refresh();"
+            },
+            "handlers": {
+              "ok": {
+                "action": "useItem",
+                "itemExpr": "$ctx.selectedSkill",
+                "userExpr": "$gameParty.members()[$ctx.actorIndex]",
+                "soundType": "skill",
+                "setLastSkill": true,
+                "actorWidget": "actor_select"
+              },
+              "cancel": {
+                "action": "focusWidget",
+                "target": "skilltype_list"
+              }
+            }
+          },
+          {
+            "id": "actor_select",
+            "type": "rowSelector",
+            "x": 0,
+            "y": 108,
+            "width": 816,
+            "height": 516,
+            "numRows": "party",
+            "padding": 0,
+            "transparent": true,
+            "handlers": {
+              "cancel": {
+                "action": "focusWidget",
+                "target": "skill_list"
               }
             }
           }
