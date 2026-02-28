@@ -1,0 +1,60 @@
+{
+  "id": 57,
+  "name": "직업 길드장",
+  "x": 25,
+  "y": 15,
+  "note": "",
+  "pages": [
+    {
+      "conditions": {
+        "actorId": 1,
+        "actorValid": false,
+        "itemId": 1,
+        "itemValid": false,
+        "selfSwitchCh": "A",
+        "selfSwitchValid": false,
+        "switch1Id": 1,
+        "switch1Valid": false,
+        "switch2Id": 1,
+        "switch2Valid": false,
+        "variableId": 1,
+        "variableValid": false,
+        "variableValue": 0
+      },
+      "directionFix": true,
+      "image": {
+        "characterIndex": 0,
+        "characterName": "Actor3",
+        "direction": 2,
+        "pattern": 0,
+        "tileId": 0
+      },
+      "list": [
+        {"code": 101, "indent": 0, "parameters": ["Actor3", 0, 0, 2]},
+        {"code": 401, "indent": 0, "parameters": ["직업 길드장: 어서오시오, 모험가."]},
+        {"code": 401, "indent": 0, "parameters": ["이 곳은 직업 길드요. 직업을 바꾸거나"]},
+        {"code": 401, "indent": 0, "parameters": ["서브 직업을 추가할 수 있소."]},
+        {"code": 102, "indent": 0, "parameters": [["전직하기", "닫기"], 1, 0, 2, 0]},
+        {"code": 402, "indent": 0, "parameters": [0, "전직하기"]},
+        {"code": 356, "indent": 1, "parameters": ["OpenClassChange"]},
+        {"code": 402, "indent": 0, "parameters": [1, "닫기"]},
+        {"code": 404, "indent": 0, "parameters": []},
+        {"code": 0, "indent": 0, "parameters": []}
+      ],
+      "moveFrequency": 3,
+      "moveRoute": {
+        "list": [{"code": 0, "parameters": []}],
+        "repeat": true,
+        "skippable": false,
+        "wait": false
+      },
+      "moveSpeed": 3,
+      "moveType": 0,
+      "priorityType": 1,
+      "stepAnime": false,
+      "through": false,
+      "trigger": 0,
+      "walkAnime": true
+    }
+  ]
+}
