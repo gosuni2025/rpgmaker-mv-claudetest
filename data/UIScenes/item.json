@@ -86,7 +86,7 @@
           }
         ],
         "onCursor": {
-          "code": "var w=this._widgetMap['category_list'];var idx=w&&w._window?w._window.index():-1;var cmds=w&&w._window?w._window._winDef.commands:null;var sym=cmds&&cmds[idx]?cmds[idx].symbol:null;if(sym&&this._ctx.itemCategory!==sym){this._ctx.itemCategory=sym;var il=this._widgetMap['item_list'];if(il&&il._rebuildFromScript)il._rebuildFromScript();}"
+          "code": "var w = this._widgetMap['category_list'];\nvar idx = w && w._window ? w._window.index() : -1;\nvar cmds = w && w._window ? w._window._winDef.commands : null;\nvar sym = cmds && cmds[idx] ? cmds[idx].symbol : null;\nif (sym && this._ctx.itemCategory !== sym) {\n  this._ctx.itemCategory = sym;\n  var il = this._widgetMap['item_list'];\n  if (il && il._rebuildFromScript) il._rebuildFromScript();\n}"
         },
         "handlers": {
           "item": {
@@ -135,9 +135,9 @@
         "height": 480,
         "maxCols": 2,
         "itemScene": "item_row",
-        "dataScript": "(function(){var cat=($ctx&&$ctx.itemCategory)||'item';var items=[];if(cat==='item'){items=($gameParty&&$gameParty.items()||[]).filter(function(i){return DataManager.isItem(i)&&i.itypeId===1;});}else if(cat==='weapon'){items=$gameParty&&$gameParty.weapons()||[];}else if(cat==='armor'){items=$gameParty&&$gameParty.armors()||[];}else if(cat==='keyItem'){items=($gameParty&&$gameParty.items()||[]).filter(function(i){return DataManager.isItem(i)&&i.itypeId===2;});}return items.map(function(item){return{name:item.name,iconIndex:item.iconIndex,numberText:'×'+$gameParty.numItems(item),symbol:'item_'+item.id,enabled:$gameParty.canUse(item),data:item};});})()",
+        "dataScript": "(function() {\n  var cat = ($ctx && $ctx.itemCategory) || 'item';\n  var items = [];\n  if (cat === 'item') {\n    items = ($gameParty && $gameParty.items() || []).filter(function(i) {\n      return DataManager.isItem(i) && i.itypeId === 1;\n    });\n  } else if (cat === 'weapon') {\n    items = $gameParty && $gameParty.weapons() || [];\n  } else if (cat === 'armor') {\n    items = $gameParty && $gameParty.armors() || [];\n  } else if (cat === 'keyItem') {\n    items = ($gameParty && $gameParty.items() || []).filter(function(i) {\n      return DataManager.isItem(i) && i.itypeId === 2;\n    });\n  }\n  return items.map(function(item) {\n    return {\n      name: item.name,\n      iconIndex: item.iconIndex,\n      numberText: '×' + $gameParty.numItems(item),\n      symbol: 'item_' + item.id,\n      enabled: $gameParty.canUse(item),\n      data: item\n    };\n  });\n})()",
         "onCursor": {
-          "code": "var w=this._widgetMap&&this._widgetMap['item_list'];var idx=w&&w._window?w._window.index():-1;var cmd=idx>=0?(w._window._winDef.commands&&w._window._winDef.commands[idx]):null;this._ctx.helpText=(cmd&&cmd.data&&cmd.data.description)?cmd.data.description:'';"
+          "code": "var w = this._widgetMap && this._widgetMap['item_list'];\nvar idx = w && w._window ? w._window.index() : -1;\nvar cmd = idx >= 0 ? (w._window._winDef.commands && w._window._winDef.commands[idx]) : null;\nthis._ctx.helpText = (cmd && cmd.data && cmd.data.description) ? cmd.data.description : '';"
         },
         "handlers": {
           "ok": {

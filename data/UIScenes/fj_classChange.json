@@ -83,7 +83,7 @@
         "windowed": false,
         "dataScript": "FJ.actorItems()",
         "onCursor": {
-          "code": "var lw=this._widgetMap['actor_list'];if(lw&&lw._window&&lw._window.active){var sym=lw._window.currentSymbol();if(sym){var idx=parseInt(sym.replace('actor_',''),10);FJ._actorIdx=idx;FJ._slot=0;FJ._curClassId=0;var sl=this._widgetMap['slot_list'];if(sl&&sl._rebuildFromScript)sl._rebuildFromScript();}}"
+          "code": "var lw = this._widgetMap['actor_list'];\nif (lw && lw._window && lw._window.active) {\n  var sym = lw._window.currentSymbol();\n  if (sym) {\n    var idx = parseInt(sym.replace('actor_', ''), 10);\n    FJ._actorIdx = idx;\n    FJ._slot = 0;\n    FJ._curClassId = 0;\n    var sl = this._widgetMap['slot_list'];\n    if (sl && sl._rebuildFromScript) sl._rebuildFromScript();\n  }\n}"
         },
         "handlers": {
           "ok": {
@@ -109,7 +109,7 @@
         "windowed": false,
         "dataScript": "FJ.slotItems()",
         "onCursor": {
-          "code": "var lw=this._widgetMap[\"slot_list\"];if(lw&&lw._window&&lw._window.active){var sym=lw._window.currentSymbol();FJ._slot=sym?parseInt(sym.replace(\"slot_\",\"\"),10):0;FJ._curClassId=0;var cl=this._widgetMap[\"class_list\"];if(cl&&cl._rebuildFromScript)cl._rebuildFromScript();}"
+          "code": "var lw = this._widgetMap[\"slot_list\"];\nif (lw && lw._window && lw._window.active) {\n  var sym = lw._window.currentSymbol();\n  FJ._slot = sym ? parseInt(sym.replace(\"slot_\", \"\"), 10) : 0;\n  FJ._curClassId = 0;\n  var cl = this._widgetMap[\"class_list\"];\n  if (cl && cl._rebuildFromScript) cl._rebuildFromScript();\n}"
         },
         "handlers": {
           "ok": {
@@ -156,7 +156,7 @@
         "windowed": false,
         "dataScript": "FJ.classItems()",
         "onCursor": {
-          "code": "var lw=this._widgetMap['class_list'];if(lw&&lw._window&&lw._window.active){var sym=lw._window.currentSymbol();FJ._curClassId=sym?parseInt(sym.replace('cls_',''),10):0;}"
+          "code": "var lw = this._widgetMap['class_list'];\nif (lw && lw._window && lw._window.active) {\n  var sym = lw._window.currentSymbol();\n  FJ._curClassId = sym ? parseInt(sym.replace('cls_', ''), 10) : 0;\n}"
         },
         "handlers": {
           "ok": {

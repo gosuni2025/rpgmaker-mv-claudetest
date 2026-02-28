@@ -367,7 +367,7 @@
         "width": 504,
         "height": 72,
         "maxCols": 3,
-        "dataScript": "[{name:TextManager.equip2,symbol:'equip'},{name:TextManager.optimize,symbol:'optimize'},{name:TextManager.clear,symbol:'clear'}]",
+        "dataScript": "[{\n  name: TextManager.equip2,\n  symbol: 'equip'\n}, {\n  name: TextManager.optimize,\n  symbol: 'optimize'\n}, {\n  name: TextManager.clear,\n  symbol: 'clear'\n}]",
         "handlers": {
           "equip": {
             "action": "script",
@@ -402,9 +402,9 @@
         "width": 504,
         "height": 216,
         "focusable": true,
-        "dataScript": "(function(){var a=$gameParty.members()[$ctx.actorIndex];if(!a)return [];return a.equipSlots().map(function(etypeId,i){var eq=a.equips()[i];return {name:'',symbol:'slot_'+i,enabled:a.isEquipChangeOk(i),data:i,cols:[{text:($dataSystem.equipTypes[etypeId]||''),width:138,color:8},{text:eq?eq.name:'',iconIndex:eq?(eq.iconIndex||0):0}]};});})()",
+        "dataScript": "(function() {\n  var a = $gameParty.members()[$ctx.actorIndex];\n  if (!a) return [];\n  return a.equipSlots().map(function(etypeId, i) {\n    var eq = a.equips()[i];\n    return {\n      name: '',\n      symbol: 'slot_' + i,\n      enabled: a.isEquipChangeOk(i),\n      data: i,\n      cols: [{\n        text: ($dataSystem.equipTypes[etypeId] || ''),\n        width: 138,\n        color: 8\n      }, {\n        text: eq ? eq.name : '',\n        iconIndex: eq ? (eq.iconIndex || 0) : 0\n      }]\n    };\n  });\n})()",
         "onCursor": {
-          "code": "var sw=this._widgetMap['slot_list'];if(sw&&sw._window){$ctx.slotId=sw._window.index();$ctx.tempActor=null;$ctx.helpText='';var iw=this._widgetMap['item_list'];if(iw)iw._rebuildFromScript();}"
+          "code": "var sw = this._widgetMap['slot_list'];\nif (sw && sw._window) {\n  $ctx.slotId = sw._window.index();\n  $ctx.tempActor = null;\n  $ctx.helpText = '';\n  var iw = this._widgetMap['item_list'];\n  if (iw) iw._rebuildFromScript();\n}"
         },
         "handlers": {
           "ok": {
@@ -426,9 +426,9 @@
         "height": 228,
         "focusable": true,
         "maxCols": 2,
-        "dataScript": "(function(){var a=$gameParty.members()[$ctx.actorIndex];var slotId=$ctx.slotId||0;if(!a||!a.equipSlots)return [];var etypeId=a.equipSlots()[slotId];if(!etypeId)return [];var list=[{name:TextManager.none||'없음',symbol:'none',enabled:true,data:null}];$gameParty.equipItems().filter(function(it){return it.etypeId===etypeId&&a.canEquip(it);}).forEach(function(it){list.push({name:it.name,iconIndex:it.iconIndex,symbol:'eq_'+it.etypeId+'_'+it.id,enabled:true,data:it});});return list;})()",
+        "dataScript": "(function() {\n  var a = $gameParty.members()[$ctx.actorIndex];\n  var slotId = $ctx.slotId || 0;\n  if (!a || !a.equipSlots) return [];\n  var etypeId = a.equipSlots()[slotId];\n  if (!etypeId) return [];\n  var list = [{\n    name: TextManager.none || '없음',\n    symbol: 'none',\n    enabled: true,\n    data: null\n  }];\n  $gameParty.equipItems().filter(function(it) {\n    return it.etypeId === etypeId && a.canEquip(it);\n  }).forEach(function(it) {\n    list.push({\n      name: it.name,\n      iconIndex: it.iconIndex,\n      symbol: 'eq_' + it.etypeId + '_' + it.id,\n      enabled: true,\n      data: it\n    });\n  });\n  return list;\n})()",
         "onCursor": {
-          "code": "var iw=this._widgetMap['item_list'];if(!iw||!iw._window)return;var cmds=iw._window._winDef.commands;var idx=iw._window.index();var item=cmds&&cmds[idx]?cmds[idx].data:null;var a=$gameParty.members()[$ctx.actorIndex];if(a){var tmp=JsonEx.makeDeepCopy(a);tmp.forceChangeEquip($ctx.slotId||0,item);$ctx.tempActor=tmp;}$ctx.helpText=item?item.description:(TextManager.none||'없음');this._rootWidget.refresh();"
+          "code": "var iw = this._widgetMap['item_list'];\nif (!iw || !iw._window) return;\nvar cmds = iw._window._winDef.commands;\nvar idx = iw._window.index();\nvar item = cmds && cmds[idx] ? cmds[idx].data : null;\nvar a = $gameParty.members()[$ctx.actorIndex];\nif (a) {\n  var tmp = JsonEx.makeDeepCopy(a);\n  tmp.forceChangeEquip($ctx.slotId || 0, item);\n  $ctx.tempActor = tmp;\n}\n$ctx.helpText = item ? item.description : (TextManager.none || '없음');\nthis._rootWidget.refresh();"
         },
         "handlers": {
           "ok": {

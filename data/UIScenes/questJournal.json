@@ -58,7 +58,7 @@
         "height": 624,
         "dataScript": "QS._buildQuestItems()",
         "onCursor": {
-          "code": "var lw=this._widgetMap['questListWidget'];if(lw&&lw._window){var sym=lw._window.currentSymbol();window._qs_currentQuestId=(sym&&sym!=='__no_quests__')?sym:null;}var oo=this._widgetMap['qd_objectives'];if(oo&&oo._rebuildFromScript)oo._rebuildFromScript();var rr=this._widgetMap['qd_rewards'];if(rr&&rr._rebuildFromScript)rr._rebuildFromScript();"
+          "code": "var lw = this._widgetMap['questListWidget'];\nif (lw && lw._window) {\n  var sym = lw._window.currentSymbol();\n  window._qs_currentQuestId = (sym && sym !== '__no_quests__') ? sym : null;\n}\nvar oo = this._widgetMap['qd_objectives'];\nif (oo && oo._rebuildFromScript) oo._rebuildFromScript();\nvar rr = this._widgetMap['qd_rewards'];\nif (rr && rr._rebuildFromScript) rr._rebuildFromScript();"
         },
         "handlers": {
           "ok": {

@@ -37,7 +37,7 @@
         "y": 444,
         "width": 192,
         "height": 216,
-        "dataScript": "(function(){var actor=BattleManager.actor();if(!actor)return[];var cmds=[{name:TextManager.attack,symbol:\"attack\",enabled:actor.canAttack(),iconIndex:76}];actor.addedSkillTypes().sort(function(a,b){return a-b;}).forEach(function(id){cmds.push({name:TextManager.skillType(id),symbol:\"skill\",enabled:true,ext:id,iconIndex:79});});cmds.push({name:TextManager.guard,symbol:\"guard\",enabled:actor.canGuard(),iconIndex:81},{name:TextManager.item,symbol:\"item\",enabled:true,iconIndex:83});return cmds;})()"
+        "dataScript": "(function() {\n  var actor = BattleManager.actor();\n  if (!actor) return [];\n  var cmds = [{\n    name: TextManager.attack,\n    symbol: \"attack\",\n    enabled: actor.canAttack(),\n    iconIndex: 76\n  }];\n  actor.addedSkillTypes().sort(function(a, b) {\n    return a - b;\n  }).forEach(function(id) {\n    cmds.push({\n      name: TextManager.skillType(id),\n      symbol: \"skill\",\n      enabled: true,\n      ext: id,\n      iconIndex: 79\n    });\n  });\n  cmds.push({\n    name: TextManager.guard,\n    symbol: \"guard\",\n    enabled: actor.canGuard(),\n    iconIndex: 81\n  }, {\n    name: TextManager.item,\n    symbol: \"item\",\n    enabled: true,\n    iconIndex: 83\n  });\n  return cmds;\n})()"
       },
       {
         "id": "textArea_17722651096544",

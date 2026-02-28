@@ -70,7 +70,7 @@
         "windowed": true,
         "dataScript": "FJ.skillItems()",
         "onCursor": {
-          "code": "var lw=this._widgetMap['skill_list'];if(lw&&lw._window){var sym=lw._window.currentSymbol();FJ._curSkillId=sym?parseInt(sym.replace('sk_',''),10):0;}"
+          "code": "var lw = this._widgetMap['skill_list'];\nif (lw && lw._window) {\n  var sym = lw._window.currentSymbol();\n  FJ._curSkillId = sym ? parseInt(sym.replace('sk_', ''), 10) : 0;\n}"
         },
         "handlers": {
           "ok": {

@@ -31,9 +31,9 @@
         "y": 0,
         "width": 240,
         "height": 624,
-        "dataScript": "(function(){var list=[];for(var i=1;i<$dataEnemies.length;i++){var e=$dataEnemies[i];if(e&&e.name&&e.meta.book!=='no'){var known=$gameSystem.isInEnemyBook(e);list.push({name:('00'+(list.length+1)).slice(-3)+'  '+(known?e.name:'??????'),symbol:'enemy_'+i,data:e,enabled:true});}}return list;})()",
+        "dataScript": "(function() {\n  var list = [];\n  for (var i = 1; i < $dataEnemies.length; i++) {\n    var e = $dataEnemies[i];\n    if (e && e.name && e.meta.book !== 'no') {\n      var known = $gameSystem.isInEnemyBook(e);\n      list.push({\n        name: ('00' + (list.length + 1)).slice(-3) + '  ' + (known ? e.name : '??????'),\n        symbol: 'enemy_' + i,\n        data: e,\n        enabled: true\n      });\n    }\n  }\n  return list;\n})()",
         "onCursor": {
-          "code": "var lst=this._widgetMap&&this._widgetMap['enemy_list'];if(lst&&lst._window){var idx=lst._window.index();var cmds=lst._window._winDef.commands;this._ctx={enemy:cmds&&cmds[idx]?cmds[idx].data:null};}"
+          "code": "var lst = this._widgetMap && this._widgetMap['enemy_list'];\nif (lst && lst._window) {\n  var idx = lst._window.index();\n  var cmds = lst._window._winDef.commands;\n  this._ctx = {\n    enemy: cmds && cmds[idx] ? cmds[idx].data : null\n  };\n}"
         },
         "handlers": {
           "cancel": {
@@ -298,7 +298,7 @@
             "width": 556,
             "height": 220,
             "autoHeight": true,
-            "dataScript": "(function(){var e=$ctx&&$ctx.enemy;if(!e)return[];var drops=[];e.dropItems.forEach(function(di){if(di.kind>0){var item=Game_Enemy.prototype.itemObject(di.kind,di.dataId);if(item)drops.push({name:item.name,symbol:'drop_'+drops.length,enabled:false});}});return drops;})()",
+            "dataScript": "(function() {\n  var e = $ctx && $ctx.enemy;\n  if (!e) return [];\n  var drops = [];\n  e.dropItems.forEach(function(di) {\n    if (di.kind > 0) {\n      var item = Game_Enemy.prototype.itemObject(di.kind, di.dataId);\n      if (item) drops.push({\n        name: item.name,\n        symbol: 'drop_' + drops.length,\n        enabled: false\n      });\n    }\n  });\n  return drops;\n})()",
             "windowed": false,
             "handlers": {},
             "maxCols": 1,

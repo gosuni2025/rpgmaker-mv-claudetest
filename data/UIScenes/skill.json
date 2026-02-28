@@ -63,9 +63,9 @@
         "y": 108,
         "width": 240,
         "height": 180,
-        "dataScript": "(function(){var actor=$gameParty.members()[$ctx.actorIndex];if(!actor)return[];return actor.addedSkillTypes().sort(function(a,b){return a-b;}).map(function(id){return{name:$dataSystem.skillTypes[id]||'',symbol:'stype_'+id,enabled:true,data:id};});})()",
+        "dataScript": "(function() {\n  var actor = $gameParty.members()[$ctx.actorIndex];\n  if (!actor) return [];\n  return actor.addedSkillTypes().sort(function(a, b) {\n    return a - b;\n  }).map(function(id) {\n    return {\n      name: $dataSystem.skillTypes[id] || '',\n      symbol: 'stype_' + id,\n      enabled: true,\n      data: id\n    };\n  });\n})()",
         "onCursor": {
-          "code": "var stl=this._widgetMap['skilltype_list'];if(!stl||!stl._window)return;var cmds=stl._window._winDef.commands;var idx=stl._window.index();var cmd=cmds&&cmds[idx]?cmds[idx]:null;if(cmd){this._ctx.stypeId=cmd.data;this._ctx.helpText='';this._ctx.selectedSkill=null;var skl=this._widgetMap['skill_list'];if(skl)skl._rebuildFromScript();}"
+          "code": "var stl = this._widgetMap['skilltype_list'];\nif (!stl || !stl._window) return;\nvar cmds = stl._window._winDef.commands;\nvar idx = stl._window.index();\nvar cmd = cmds && cmds[idx] ? cmds[idx] : null;\nif (cmd) {\n  this._ctx.stypeId = cmd.data;\n  this._ctx.helpText = '';\n  this._ctx.selectedSkill = null;\n  var skl = this._widgetMap['skill_list'];\n  if (skl) skl._rebuildFromScript();\n}"
         },
         "handlers": {
           "ok": {
@@ -182,9 +182,9 @@
         "height": 336,
         "maxCols": 2,
         "focusable": true,
-        "dataScript": "(function(){var actor=$gameParty.members()[$ctx.actorIndex];if(!actor)return[];return actor.skills().filter(function(s){return s.stypeId===$ctx.stypeId;}).map(function(s){var mpCost=actor.skillMpCost(s)||0;var tpCost=actor.skillTpCost(s)||0;var rt=tpCost>0?String(tpCost):mpCost>0?String(mpCost):'';var rtc=tpCost>0?29:23;return{name:s.name,symbol:'skill_'+s.id,iconIndex:s.iconIndex||0,enabled:actor.canUse(s),data:s,rightText:rt||undefined,rightTextColorIndex:rt?rtc:undefined};});})()",
+        "dataScript": "(function() {\n  var actor = $gameParty.members()[$ctx.actorIndex];\n  if (!actor) return [];\n  return actor.skills().filter(function(s) {\n    return s.stypeId === $ctx.stypeId;\n  }).map(function(s) {\n    var mpCost = actor.skillMpCost(s) || 0;\n    var tpCost = actor.skillTpCost(s) || 0;\n    var rt = tpCost > 0 ? String(tpCost) : mpCost > 0 ? String(mpCost) : '';\n    var rtc = tpCost > 0 ? 29 : 23;\n    return {\n      name: s.name,\n      symbol: 'skill_' + s.id,\n      iconIndex: s.iconIndex || 0,\n      enabled: actor.canUse(s),\n      data: s,\n      rightText: rt || undefined,\n      rightTextColorIndex: rt ? rtc : undefined\n    };\n  });\n})()",
         "onCursor": {
-          "code": "var skl=this._widgetMap['skill_list'];if(!skl||!skl._window)return;var cmds=skl._window._winDef.commands;var idx=skl._window.index();var cmd=cmds&&cmds[idx]?cmds[idx]:null;this._ctx.selectedSkill=cmd?cmd.data:null;this._ctx.helpText=this._ctx.selectedSkill?(this._ctx.selectedSkill.description||''):'';var hw=this._widgetMap['help_win'];if(hw)hw.refresh();"
+          "code": "var skl = this._widgetMap['skill_list'];\nif (!skl || !skl._window) return;\nvar cmds = skl._window._winDef.commands;\nvar idx = skl._window.index();\nvar cmd = cmds && cmds[idx] ? cmds[idx] : null;\nthis._ctx.selectedSkill = cmd ? cmd.data : null;\nthis._ctx.helpText = this._ctx.selectedSkill ? (this._ctx.selectedSkill.description || '') : '';\nvar hw = this._widgetMap['help_win'];\nif (hw) hw.refresh();"
         },
         "handlers": {
           "ok": {

@@ -53,7 +53,7 @@
         "height": 572,
         "rowHeight": 104,
         "initialIndexExpr": "CSHelper.lastSavefileId() - 1",
-        "dataScript": "(function() { var items = []; var count = DataManager.maxSavefiles(); for (var i = 1; i <= count; i++) { var info = DataManager.loadSavefileInfo(i); var valid = DataManager.isThisGameFile(i); var chars = []; if (valid && info && info.characters) { for (var j = 0; j < Math.min(info.characters.length, 4); j++) { var c = info.characters[j]; chars.push([c[0], c[1], 220 + j * 48, 100]); } } items.push({ name: TextManager.file + ' ' + i, symbol: i, enabled: true, subText: (info && info.title) ? info.title : '', rightText: (info && info.playtime) ? info.playtime : '', characters: chars }); } return items; })()",
+        "dataScript": "(function() {\n  var items = [];\n  var count = DataManager.maxSavefiles();\n  for (var i = 1; i <= count; i++) {\n    var info = DataManager.loadSavefileInfo(i);\n    var valid = DataManager.isThisGameFile(i);\n    var chars = [];\n    if (valid && info && info.characters) {\n      for (var j = 0; j < Math.min(info.characters.length, 4); j++) {\n        var c = info.characters[j];\n        chars.push([c[0], c[1], 220 + j * 48, 100]);\n      }\n    }\n    items.push({\n      name: TextManager.file + ' ' + i,\n      symbol: i,\n      enabled: true,\n      subText: (info && info.title) ? info.title : '',\n      rightText: (info && info.playtime) ? info.playtime : '',\n      characters: chars\n    });\n  }\n  return items;\n})()",
         "handlers": {
           "ok": {
             "action": "script",

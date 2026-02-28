@@ -336,7 +336,7 @@
             "height": 216,
             "focusable": false,
             "windowed": false,
-            "dataScript": "(function(){var a=$gameParty.members()[$ctx.actorIndex];if(!a)return [];return a.equips().map(function(e,i){var tn=($dataSystem&&$dataSystem.equipTypes&&$dataSystem.equipTypes[i+1])||('장비'+(i+1));return {name:tn+':  '+(e?e.name:'---'),symbol:'equip_'+i,enabled:false};});})()"
+            "dataScript": "(function() {\n  var a = $gameParty.members()[$ctx.actorIndex];\n  if (!a) return [];\n  return a.equips().map(function(e, i) {\n    var tn = ($dataSystem && $dataSystem.equipTypes && $dataSystem.equipTypes[i + 1]) || ('장비' + (i + 1));\n    return {\n      name: tn + ':  ' + (e ? e.name : '---'),\n      symbol: 'equip_' + i,\n      enabled: false\n    };\n  });\n})()"
           },
           {
             "id": "line3",
