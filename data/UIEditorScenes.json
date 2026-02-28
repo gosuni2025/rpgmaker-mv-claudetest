@@ -2886,6 +2886,9 @@
               { "name": "{TextManager.armor}",   "symbol": "armor",   "enabled": true },
               { "name": "{TextManager.keyItem}", "symbol": "keyItem", "enabled": true }
             ],
+            "onCursor": {
+              "code": "var w=this._widgetMap['category_list'];var idx=w&&w._window?w._window.index():-1;var cmds=w&&w._window?w._window._winDef.commands:null;var sym=cmds&&cmds[idx]?cmds[idx].symbol:null;if(sym&&this._ctx.itemCategory!==sym){this._ctx.itemCategory=sym;var il=this._widgetMap['item_list'];if(il&&il._rebuildFromScript)il._rebuildFromScript();}"
+            },
             "handlers": {
               "item": {
                 "action": "script",
