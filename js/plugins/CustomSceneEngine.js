@@ -745,7 +745,11 @@
   // Widget_Scene은 _children 대신 _subRoot를 통해 Window_Base 자손을 수집합니다.
   Widget_Scene.prototype._collectWindowDescendants = function(out) {
     if (!this._subRoot) return;
-    if (this._subRoot.displayObject() instanceof Window_Base) out.push(this._subRoot);
+    var srObj = this._subRoot.displayObject();
+    console.log('[Widget_Scene._collectWindowDescendants]', this._id,
+      'subRoot:', this._subRoot._id, 'isWindow:', (srObj instanceof Window_Base),
+      'subRoot._children:', this._subRoot._children.length);
+    if (srObj instanceof Window_Base) out.push(this._subRoot);
     this._subRoot._collectWindowDescendants(out);
   };
 
@@ -1229,7 +1233,9 @@
   Widget_Base.prototype._collectWindowDescendants = function(out) {
     for (var i = 0; i < this._children.length; i++) {
       var child = this._children[i];
-      if (child.displayObject() instanceof Window_Base) out.push(child);
+      var isWin = (child.displayObject() instanceof Window_Base);
+      console.log('[_collectWindowDescendants]', this._id || '?', '→ child:', child._id, 'isWindow:', isWin, 'type:', child.constructor.name || '?');
+      if (isWin) out.push(child);
       child._collectWindowDescendants(out);
     }
   };
@@ -1244,6 +1250,8 @@
     this._prevDispX = cx; this._prevDispY = cy;
     var wins = [];
     this._collectWindowDescendants(wins);
+    console.log('[_syncWindowDescendants]', this._id, 'dx='+dx, 'dy='+dy,
+      'wins='+wins.map(function(w){return w._id+'('+w.displayObject().x+','+w.displayObject().y+')'}).join(', '));
     for (var i = 0; i < wins.length; i++) {
       var wo = wins[i].displayObject();
       wo.x += dx; wo.y += dy;
@@ -2748,6 +2756,7 @@
       var w2 = this._widgetMap[id2];
       var obj = w2.displayObject();
       if (obj && obj instanceof Window_Base) {
+        console.log('[_createWidgetTree] addWindow:', id2, 'x='+obj.x, 'y='+obj.y);
         this.addWindow(obj);
       }
     }
