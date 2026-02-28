@@ -72,6 +72,11 @@
             "enabledCondition": "$gameSystem.isSaveEnabled()"
           },
           {
+            "name": "네비게이션 테스트",
+            "symbol": "navTest",
+            "enabled": true
+          },
+          {
             "name": "스크립트 테스트",
             "symbol": "scriptTest",
             "enabled": true
@@ -122,6 +127,10 @@
           "save": {
             "action": "gotoScene",
             "target": "Scene_CS_save"
+          },
+          "navTest": {
+            "action": "customScene",
+            "target": "navTest"
           },
           "scriptTest": {
             "action": "customScene",

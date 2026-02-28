@@ -1,0 +1,123 @@
+{
+  "id": "navTest",
+  "displayName": "방향키 네비게이션 테스트",
+  "formatVersion": 2,
+  "prepareArgs": [],
+  "windows": [],
+  "windowLinks": {},
+  "navigation": {
+    "defaultFocus": "btn_c",
+    "cancelWidget": "btn_close"
+  },
+  "root": {
+    "id": "root",
+    "type": "panel",
+    "x": 0, "y": 0, "width": 816, "height": 624,
+    "windowed": false,
+    "children": [
+      {
+        "id": "bg",
+        "type": "background",
+        "x": 0, "y": 0, "width": 816, "height": 624
+      },
+      {
+        "id": "main_panel",
+        "type": "panel",
+        "x": 208, "y": 127, "width": 400, "height": 370,
+        "windowed": true,
+        "scripts": {
+          "onCreate": "$ctx.selected = '중앙 버튼에서 시작합니다';"
+        },
+        "children": [
+          {
+            "id": "title",
+            "type": "label",
+            "x": 0, "y": 4, "width": 400, "height": 40,
+            "text": "방향키 네비게이션 테스트",
+            "align": "center",
+            "fontSize": 20,
+            "color": "#aaddff"
+          },
+          {
+            "id": "sep1",
+            "type": "separator",
+            "x": 12, "y": 52, "width": 376, "height": 2
+          },
+
+          { "id": "btn_tl", "type": "button",
+            "x": 20, "y": 62, "width": 114, "height": 52, "label": "↖ 좌상",
+            "navRight": "btn_t", "navDown": "btn_l",
+            "action": { "action": "script", "code": "$ctx.selected = '↖ 좌상 버튼 — navRight:위, navDown:왼쪽';" } },
+
+          { "id": "btn_t", "type": "button",
+            "x": 143, "y": 62, "width": 114, "height": 52, "label": "↑ 위",
+            "navLeft": "btn_tl", "navRight": "btn_tr", "navDown": "btn_c",
+            "action": { "action": "script", "code": "$ctx.selected = '↑ 위 버튼 — navLeft:좌상, navRight:우상, navDown:중앙';" } },
+
+          { "id": "btn_tr", "type": "button",
+            "x": 266, "y": 62, "width": 114, "height": 52, "label": "↗ 우상",
+            "navLeft": "btn_t", "navDown": "btn_r",
+            "action": { "action": "script", "code": "$ctx.selected = '↗ 우상 버튼 — navLeft:위, navDown:오른쪽';" } },
+
+          { "id": "btn_l", "type": "button",
+            "x": 20, "y": 122, "width": 114, "height": 52, "label": "← 왼쪽",
+            "navUp": "btn_tl", "navRight": "btn_c", "navDown": "btn_bl",
+            "action": { "action": "script", "code": "$ctx.selected = '← 왼쪽 버튼 — navUp:좌상, navRight:중앙, navDown:좌하';" } },
+
+          { "id": "btn_c", "type": "button",
+            "x": 143, "y": 122, "width": 114, "height": 52, "label": "★ 중앙",
+            "navUp": "btn_t", "navDown": "btn_b", "navLeft": "btn_l", "navRight": "btn_r",
+            "action": { "action": "script", "code": "$ctx.selected = '★ 중앙 버튼 — 4방향 모두 설정됨';" } },
+
+          { "id": "btn_r", "type": "button",
+            "x": 266, "y": 122, "width": 114, "height": 52, "label": "→ 오른쪽",
+            "navUp": "btn_tr", "navLeft": "btn_c", "navDown": "btn_br",
+            "action": { "action": "script", "code": "$ctx.selected = '→ 오른쪽 버튼 — navUp:우상, navLeft:중앙, navDown:우하';" } },
+
+          { "id": "btn_bl", "type": "button",
+            "x": 20, "y": 182, "width": 114, "height": 52, "label": "↙ 좌하",
+            "navUp": "btn_l", "navRight": "btn_b",
+            "action": { "action": "script", "code": "$ctx.selected = '↙ 좌하 버튼 — navUp:왼쪽, navRight:아래';" } },
+
+          { "id": "btn_b", "type": "button",
+            "x": 143, "y": 182, "width": 114, "height": 52, "label": "↓ 아래",
+            "navUp": "btn_c", "navLeft": "btn_bl", "navRight": "btn_br",
+            "action": { "action": "script", "code": "$ctx.selected = '↓ 아래 버튼 — navUp:중앙, navLeft:좌하, navRight:우하';" } },
+
+          { "id": "btn_br", "type": "button",
+            "x": 266, "y": 182, "width": 114, "height": 52, "label": "↘ 우하",
+            "navUp": "btn_r", "navLeft": "btn_b",
+            "action": { "action": "script", "code": "$ctx.selected = '↘ 우하 버튼 — navUp:오른쪽, navLeft:아래';" } },
+
+          {
+            "id": "sep2",
+            "type": "separator",
+            "x": 12, "y": 243, "width": 376, "height": 2
+          },
+          {
+            "id": "selected_label",
+            "type": "label",
+            "x": 12, "y": 253, "width": 376, "height": 40,
+            "text": "{$ctx.selected || '버튼을 눌러보세요'}",
+            "align": "left",
+            "fontSize": 14,
+            "color": "#ffee88"
+          },
+          {
+            "id": "sep3",
+            "type": "separator",
+            "x": 12, "y": 300, "width": 376, "height": 2
+          },
+          {
+            "id": "btn_close",
+            "type": "button",
+            "x": 138, "y": 310, "width": 124, "height": 48,
+            "label": "닫기",
+            "navUp": "btn_b",
+            "action": { "action": "popScene" }
+          }
+        ]
+      }
+    ]
+  }
+}
