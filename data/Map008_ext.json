@@ -1408,7 +1408,8 @@
       ],
       "animationId": 2,
       "animationLoop": "forward",
-      "animationSe": false
+      "animationSe": false,
+      "visible": true
     }
   ],
   "cameraZones": [
