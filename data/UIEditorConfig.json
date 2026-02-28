@@ -5,5 +5,9 @@
       "x": 0,
       "y": 0
     }
+  },
+  "sceneRedirects": {
+    "Scene_Status": "Scene_CS_status",
+    "Scene_Menu": "Scene_CS_menu_v2"
   }
 }
