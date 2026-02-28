@@ -1,0 +1,48 @@
+{
+  "id": "item_row",
+  "displayName": "아이템 행",
+  "formatVersion": 2,
+  "root": {
+    "id": "item_row_root",
+    "type": "panel",
+    "x": 0,
+    "y": 0,
+    "width": 400,
+    "height": 36,
+    "windowed": false,
+    "children": [
+      {
+        "id": "icon",
+        "type": "image",
+        "imageSource": "icon",
+        "iconIndexExpr": "$ctx.iconIndex",
+        "x": 2,
+        "y": 2,
+        "width": 32,
+        "height": 32
+      },
+      {
+        "id": "name",
+        "type": "label",
+        "x": 38,
+        "y": 0,
+        "width": 280,
+        "height": 36,
+        "text": "{$ctx.name}",
+        "fontSize": 26
+      },
+      {
+        "id": "count",
+        "type": "label",
+        "x": 320,
+        "y": 0,
+        "width": 80,
+        "height": 36,
+        "text": "{$ctx.numberText}",
+        "align": "right",
+        "fontSize": 22,
+        "color": "#aaaaaa"
+      }
+    ]
+  }
+}
