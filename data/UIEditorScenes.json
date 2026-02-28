@@ -2071,7 +2071,7 @@
             "windowed": false,
             "dataScript": "FJ.classItems()",
             "onCursor": {
-              "code": "var lw=this._widgetMap['class_list'];if(lw&&lw._window){var sym=lw._window.currentSymbol();FJ._curClassId=sym?parseInt(sym.replace('cls_',''),10):0;}"
+              "code": "var lw=this._widgetMap['class_list'];if(lw&&lw._window&&lw._window.active){var sym=lw._window.currentSymbol();FJ._curClassId=sym?parseInt(sym.replace('cls_',''),10):0;}"
             },
             "handlers": {
               "ok": {
