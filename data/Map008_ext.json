@@ -4806,6 +4806,10 @@
     "56": {
       "name": "직업 해금사",
       "showName": true
+    },
+    "58": {
+      "name": "스킬 사서",
+      "showName": true
     }
   },
   "minimapData": {
