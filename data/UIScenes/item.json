@@ -222,6 +222,11 @@
         "transparent": true,
         "padding": 0
       }
-    ]
+    ],
+    "enterAnimation": {
+      "type": "fade",
+      "duration": 15,
+      "delay": 0
+    }
   }
 }
