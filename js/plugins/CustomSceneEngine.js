@@ -2268,18 +2268,35 @@
       rootDef.y = 0;
       rootDef.width = itemW;
       rootDef.height = itemH;
+      // fillWidth: true인 자식의 width를 itemW로 설정
+      (function patchFillWidth(node, w) {
+        var children = node.children || [];
+        for (var ci = 0; ci < children.length; ci++) {
+          if (children[ci].fillWidth) children[ci].width = w;
+          patchFillWidth(children[ci], w);
+        }
+      })(rootDef, itemW);
 
       // Widget_Scene 방식으로 행 위젯 생성
-      var rowWidget = { _subRoot: null, destroy: function() { if (this._subRoot) { this._subRoot.destroy(); this._subRoot = null; } } };
+      var rowWidget = {
+        _subRoot: null,
+        _instanceCtx: instanceCtx,
+        _scene: scene,
+        destroy: function() { if (this._subRoot) { this._subRoot.destroy(); this._subRoot = null; } },
+        _withCtx: function(fn) {
+          var c = this._scene && this._scene._ctx;
+          if (!c) { fn(); return; }
+          var ic = this._instanceCtx;
+          var sv = {};
+          Object.keys(ic).forEach(function(key) { sv[key] = c[key]; c[key] = ic[key]; });
+          try { fn(); } finally { Object.keys(sv).forEach(function(key) { c[key] = sv[key]; }); }
+        }
+      };
       var rowContainer = new Sprite();
       rowWidget._container = rowContainer;
 
       // _ctx에 instanceCtx 주입한 상태로 위젯 빌드
-      var ctx = scene._ctx;
-      if (!ctx) ctx = scene._ctx = {};
-      var saved = {};
-      Object.keys(instanceCtx).forEach(function(key) { saved[key] = ctx[key]; ctx[key] = instanceCtx[key]; });
-      try {
+      rowWidget._withCtx(function() {
         var built = scene._buildWidget(rootDef, null);
         if (built) {
           rowWidget._subRoot = built;
@@ -2288,9 +2305,7 @@
             rowContainer.addChild(dobj);
           }
         }
-      } finally {
-        Object.keys(saved).forEach(function(key) { ctx[key] = saved[key]; });
-      }
+      });
 
       // 행 위치: padding은 오버레이 자체가 offset하므로 itemRect 기준 (padding 미포함)
       var rect = win.itemRect(i);
@@ -2380,10 +2395,12 @@
     // itemScene 모드: 매 프레임 행 위치 갱신 (스크롤 반영)
     if (this._itemSceneId && this._rowWidgets.length > 0) {
       this._updateRowPositions();
-      // 행 위젯들의 update 호출 (라벨 텍스트 갱신 등)
+      // 행 위젯들의 update 호출 (라벨 텍스트 갱신 등) — rowData ctx 주입 상태에서 실행
       for (var ri = 0; ri < this._rowWidgets.length; ri++) {
-        var rw = this._rowWidgets[ri];
-        if (rw && rw._subRoot && rw._subRoot.update) rw._subRoot.update();
+        (function(rw) {
+          if (!rw || !rw._subRoot) return;
+          rw._withCtx(function() { rw._subRoot.update(); });
+        })(this._rowWidgets[ri]);
       }
     }
     Widget_Base.prototype.update.call(this);
