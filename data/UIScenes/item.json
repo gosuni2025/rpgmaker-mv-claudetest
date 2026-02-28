@@ -220,13 +220,7 @@
         "height": 480,
         "numRows": "party",
         "transparent": true,
-        "padding": 0,
-        "handlers": {
-          "cancel": {
-            "action": "focusWidget",
-            "target": "item_list"
-          }
-        }
+        "padding": 0
       }
     ]
   }
