@@ -1,6 +1,3 @@
 {
-  "overrides": {},
-  "sceneRedirects": {
-    "Scene_Menu": "Scene_CS_menu_v2"
-  }
+  "overrides": {}
 }

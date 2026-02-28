@@ -1643,6 +1643,16 @@
                 "dataScript": "(function(){var e=$ctx&&$ctx.enemy;if(!e)return[];var drops=[];e.dropItems.forEach(function(di){if(di.kind>0){var item=Game_Enemy.prototype.itemObject(di.kind,di.dataId);if(item)drops.push({name:item.name,symbol:'drop_'+drops.length,enabled:false});}});return drops;})()",
                 "windowed": false,
                 "handlers": {}
+              },
+              {
+                "id": "image_1772241330242",
+                "type": "image",
+                "x": 359,
+                "y": 262,
+                "width": 100,
+                "height": 100,
+                "imageSource": "file",
+                "imageName": ""
               }
             ]
           }
@@ -1899,7 +1909,10 @@
       "navigation": {
         "defaultFocus": "slot_list",
         "cancelWidget": "slot_list",
-        "focusOrder": ["slot_list", "class_list"]
+        "focusOrder": [
+          "slot_list",
+          "class_list"
+        ]
       },
       "root": {
         "id": "root",
@@ -2215,7 +2228,9 @@
       "navigation": {
         "defaultFocus": "skill_list",
         "cancelWidget": "skill_list",
-        "focusOrder": ["skill_list"]
+        "focusOrder": [
+          "skill_list"
+        ]
       },
       "root": {
         "id": "root",
