@@ -2114,7 +2114,8 @@
                 "target": "slot_list"
               }
             },
-            "rowHeight": 52
+            "rowHeight": 72,
+            "autoRefresh": false
           },
           {
             "id": "right_panel",
