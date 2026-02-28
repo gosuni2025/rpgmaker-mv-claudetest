@@ -1339,6 +1339,114 @@
           }
         ]
       }
+    },
+    "enemy_book": {
+      "id": "enemy_book",
+      "displayName": "몬스터 도감",
+      "formatVersion": 2,
+      "prepareArgs": [],
+      "navigation": {
+        "defaultFocus": "enemy_list",
+        "cancelWidget": "enemy_list"
+      },
+      "root": {
+        "id": "root",
+        "type": "panel",
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 624,
+        "windowed": false,
+        "children": [
+          {
+            "id": "bg",
+            "type": "background",
+            "x": 0,
+            "y": 0,
+            "width": 816,
+            "height": 624
+          },
+          {
+            "id": "enemy_list",
+            "type": "list",
+            "x": 0,
+            "y": 0,
+            "width": 240,
+            "height": 624,
+            "dataScript": "(function(){var list=[];for(var i=1;i<$dataEnemies.length;i++){var e=$dataEnemies[i];if(e&&e.name&&e.meta.book!=='no'){var known=$gameSystem.isInEnemyBook(e);list.push({name:('00'+(list.length+1)).slice(-3)+'  '+(known?e.name:'??????'),symbol:'enemy_'+i,data:e,enabled:true});}}return list;})()",
+            "onCursor": {
+              "code": "var det=this._widgetMap&&this._widgetMap['enemy_detail'];var lst=this._widgetMap&&this._widgetMap['enemy_list'];if(det&&lst&&lst._window){var idx=lst._window.index();var cmds=lst._window._winDef.commands;var enemy=cmds&&cmds[idx]?cmds[idx].data:null;det.setEnemy(enemy);}"
+            },
+            "handlers": {
+              "cancel": {
+                "action": "popScene"
+              }
+            }
+          },
+          {
+            "id": "enemy_detail",
+            "type": "enemyBookDetail",
+            "x": 240,
+            "y": 0,
+            "width": 576,
+            "height": 624
+          }
+        ]
+      }
+    },
+    "item_book": {
+      "id": "item_book",
+      "displayName": "아이템 도감",
+      "formatVersion": 2,
+      "prepareArgs": [],
+      "navigation": {
+        "defaultFocus": "item_list",
+        "cancelWidget": "item_list"
+      },
+      "root": {
+        "id": "root",
+        "type": "panel",
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 624,
+        "windowed": false,
+        "children": [
+          {
+            "id": "bg",
+            "type": "background",
+            "x": 0,
+            "y": 0,
+            "width": 816,
+            "height": 624
+          },
+          {
+            "id": "item_list",
+            "type": "list",
+            "x": 0,
+            "y": 0,
+            "width": 240,
+            "height": 624,
+            "dataScript": "(function(){var list=[];var i;var it;for(i=1;i<$dataItems.length;i++){it=$dataItems[i];if(it&&it.name&&it.itypeId===1&&it.meta.book!=='no'){var known=$gameSystem.isInItemBook(it);list.push({name:('00'+(list.length+1)).slice(-3)+'  '+(known?it.name:'??????'),symbol:'item_'+i,data:it,enabled:true});}}for(i=1;i<$dataWeapons.length;i++){it=$dataWeapons[i];if(it&&it.name&&it.meta.book!=='no'){var known2=$gameSystem.isInItemBook(it);list.push({name:('00'+(list.length+1)).slice(-3)+'  '+(known2?it.name:'??????'),symbol:'weapon_'+i,data:it,enabled:true});}}for(i=1;i<$dataArmors.length;i++){it=$dataArmors[i];if(it&&it.name&&it.meta.book!=='no'){var known3=$gameSystem.isInItemBook(it);list.push({name:('00'+(list.length+1)).slice(-3)+'  '+(known3?it.name:'??????'),symbol:'armor_'+i,data:it,enabled:true});}}return list;})()",
+            "onCursor": {
+              "code": "var det=this._widgetMap&&this._widgetMap['item_detail'];var lst=this._widgetMap&&this._widgetMap['item_list'];if(det&&lst&&lst._window){var idx=lst._window.index();var cmds=lst._window._winDef.commands;var item=cmds&&cmds[idx]?cmds[idx].data:null;det.setItem(item);}"
+            },
+            "handlers": {
+              "cancel": {
+                "action": "popScene"
+              }
+            }
+          },
+          {
+            "id": "item_detail",
+            "type": "itemBookDetail",
+            "x": 240,
+            "y": 0,
+            "width": 576,
+            "height": 624
+          }
+        ]
+      }
     }
   }
 }
