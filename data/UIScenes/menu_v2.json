@@ -72,6 +72,11 @@
             "enabledCondition": "$gameSystem.isSaveEnabled()"
           },
           {
+            "name": "스크립트 테스트",
+            "symbol": "scriptTest",
+            "enabled": true
+          },
+          {
             "name": "게임 종료",
             "symbol": "gameEnd",
             "enabled": true
@@ -117,6 +122,10 @@
           "save": {
             "action": "gotoScene",
             "target": "Scene_CS_save"
+          },
+          "scriptTest": {
+            "action": "customScene",
+            "target": "scriptTest"
           },
           "gameEnd": {
             "action": "gotoScene",
