@@ -16,6 +16,7 @@
     "Scene_Shop": "Scene_CS_shop",
     "Scene_Equip": "Scene_CS_equip",
     "Scene_Skill": "Scene_CS_fj_skillLearn",
-    "Scene_GameEnd": "Scene_CS_gameEnd"
+    "Scene_GameEnd": "Scene_CS_gameEnd",
+    "Scene_Options": "Scene_CS_options"
   }
 }

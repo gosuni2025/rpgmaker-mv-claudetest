@@ -82,14 +82,14 @@
             "handlers": {
               "item": {
                 "action": "gotoScene",
-                "target": "Scene_Item"
+                "target": "Scene_CS_item"
               },
               "skill": {
                 "action": "selectActor",
                 "widget": "actor_select",
                 "thenAction": {
                   "action": "gotoScene",
-                  "target": "Scene_Skill"
+                  "target": "Scene_CS_fj_skillLearn"
                 }
               },
               "equip": {
@@ -97,7 +97,7 @@
                 "widget": "actor_select",
                 "thenAction": {
                   "action": "gotoScene",
-                  "target": "Scene_Equip"
+                  "target": "Scene_CS_equip"
                 }
               },
               "status": {
@@ -105,7 +105,7 @@
                 "widget": "actor_select",
                 "thenAction": {
                   "action": "gotoScene",
-                  "target": "Scene_Status"
+                  "target": "Scene_CS_status"
                 }
               },
               "formation": {
@@ -114,15 +114,15 @@
               },
               "options": {
                 "action": "gotoScene",
-                "target": "Scene_Options"
+                "target": "Scene_CS_options"
               },
               "save": {
                 "action": "gotoScene",
-                "target": "Scene_Save"
+                "target": "Scene_CS_save"
               },
               "gameEnd": {
                 "action": "gotoScene",
-                "target": "Scene_GameEnd"
+                "target": "Scene_CS_gameEnd"
               },
               "cancel": {
                 "action": "popScene"
