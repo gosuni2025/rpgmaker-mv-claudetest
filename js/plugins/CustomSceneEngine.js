@@ -1035,6 +1035,12 @@
         var props = buildProps(animDef, obj, isEnter);
         if (!props) { if (onComplete) onComplete(); return; }
         var duration = (animDef && animDef.duration !== undefined) ? animDef.duration : 15;
+        // ── 디버그 로그 ──
+        var objId = (obj._customClassName || obj.constructor && obj.constructor.name || '?');
+        console.log('[WidgetAnimator.play]', objId,
+          'type='+animDef.type, 'isEnter='+isEnter,
+          'props:', JSON.stringify(props).substring(0, 120),
+          'objPos: x='+obj.x+' y='+obj.y);
         if (duration <= 0) {
           applyTask({obj:obj, props:props}, 1);
           if (onComplete) onComplete();
@@ -1244,14 +1250,17 @@
     var obj = this._displayObject;
     if (!obj) return;
     var cx = obj.x, cy = obj.y;
-    if (this._prevDispX === undefined) { this._prevDispX = cx; this._prevDispY = cy; return; }
+    if (this._prevDispX === undefined) {
+      console.log('[_syncWindowDescendants] INIT', this._id, 'x='+cx+' y='+cy);
+      this._prevDispX = cx; this._prevDispY = cy; return;
+    }
     var dx = cx - this._prevDispX, dy = cy - this._prevDispY;
     if (dx === 0 && dy === 0) return;
     this._prevDispX = cx; this._prevDispY = cy;
     var wins = [];
     this._collectWindowDescendants(wins);
-    console.log('[_syncWindowDescendants]', this._id, 'dx='+dx, 'dy='+dy,
-      'wins='+wins.map(function(w){return w._id+'('+w.displayObject().x+','+w.displayObject().y+')'}).join(', '));
+    console.log('[_syncWindowDescendants] DELTA', this._id, 'dx='+dx, 'dy='+dy,
+      'wins=['+wins.map(function(w){return w._id+'('+w.displayObject().x+','+w.displayObject().y+')'}).join(',')+']');
     for (var i = 0; i < wins.length; i++) {
       var wo = wins[i].displayObject();
       wo.x += dx; wo.y += dy;

@@ -87,7 +87,7 @@
             "widget": "actor_select",
             "thenAction": {
               "action": "gotoScene",
-              "target": "Scene_CS_fj_skillLearn"
+              "target": "Scene_CS_skill"
             }
           },
           "equip": {

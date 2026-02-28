@@ -19,8 +19,8 @@
   "root": {
     "id": "root",
     "type": "panel",
-    "x": 112,
-    "y": 158,
+    "x": 0,
+    "y": 0,
     "width": 816,
     "height": 624,
     "windowed": false,
