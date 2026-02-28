@@ -2928,9 +2928,9 @@
             "id": "item_list",
             "type": "list",
             "x": 0,
-            "y": 126,
+            "y": 144,
             "width": 816,
-            "height": 498,
+            "height": 480,
             "maxCols": 2,
             "dataScript": "(function(){var cat=($ctx&&$ctx.itemCategory)||'item';var items=[];if(cat==='item'){items=($gameParty&&$gameParty.items()||[]).filter(function(i){return DataManager.isItem(i)&&i.itypeId===1;});}else if(cat==='weapon'){items=$gameParty&&$gameParty.weapons()||[];}else if(cat==='armor'){items=$gameParty&&$gameParty.armors()||[];}else if(cat==='keyItem'){items=($gameParty&&$gameParty.items()||[]).filter(function(i){return DataManager.isItem(i)&&i.itypeId===2;});}return items.map(function(item){return{name:item.name,iconIndex:item.iconIndex,numberText:'×'+$gameParty.numItems(item),symbol:'item_'+item.id,enabled:$gameParty.canUse(item),data:item};});})()",
             "onCursor": {
@@ -2952,9 +2952,9 @@
             "id": "actor_select",
             "type": "rowSelector",
             "x": 0,
-            "y": 126,
+            "y": 144,
             "width": 816,
-            "height": 498,
+            "height": 480,
             "numRows": "party",
             "transparent": true,
             "padding": 0,
@@ -2964,20 +2964,6 @@
                 "target": "item_list"
               }
             }
-          },
-          {
-            "id": "textArea_17722650899211",
-            "type": "textArea",
-            "x": 318,
-            "y": 449,
-            "width": 300,
-            "height": 80,
-            "text": "커스텀씬",
-            "align": "center",
-            "verticalAlign": "middle",
-            "bgColor": "#f42525",
-            "borderRadius": 2,
-            "borderWidth": 2
           }
         ]
       }
