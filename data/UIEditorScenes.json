@@ -1946,9 +1946,10 @@
       "formatVersion": 2,
       "prepareArgs": [],
       "navigation": {
-        "defaultFocus": "slot_list",
-        "cancelWidget": "slot_list",
+        "defaultFocus": "actor_list",
+        "cancelWidget": "actor_list",
         "focusOrder": [
+          "actor_list",
           "slot_list",
           "class_list"
         ]
@@ -2001,10 +2002,10 @@
                 "color": "#aaaaaa"
               },
               {
-                "id": "fj_slot_sep",
+                "id": "fj_slot_sep2",
                 "type": "label",
                 "x": 6,
-                "y": 78,
+                "y": 194,
                 "width": 236,
                 "height": 22,
                 "text": "── 슬롯 선택 ──",
@@ -2015,12 +2016,38 @@
             ]
           },
           {
+            "id": "actor_list",
+            "type": "list",
+            "x": 0,
+            "y": 72,
+            "width": 248,
+            "height": 144,
+            "windowed": false,
+            "dataScript": "FJ.actorItems()",
+            "onCursor": {
+              "code": "var lw=this._widgetMap['actor_list'];if(lw&&lw._window&&lw._window.active){var sym=lw._window.currentSymbol();if(sym){var idx=parseInt(sym.replace('actor_',''),10);FJ._actorIdx=idx;FJ._slot=0;FJ._curClassId=0;var sl=this._widgetMap['slot_list'];if(sl&&sl._rebuildFromScript)sl._rebuildFromScript();}}"
+            },
+            "handlers": {
+              "ok": {
+                "action": "script",
+                "code": "FJ._curClassId=0;",
+                "thenAction": {
+                  "action": "focusWidget",
+                  "target": "slot_list"
+                }
+              },
+              "cancel": {
+                "action": "popScene"
+              }
+            }
+          },
+          {
             "id": "slot_list",
             "type": "list",
             "x": 0,
-            "y": 104,
+            "y": 216,
             "width": 248,
-            "height": 520,
+            "height": 408,
             "windowed": false,
             "dataScript": "FJ.slotItems()",
             "onCursor": {
