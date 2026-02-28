@@ -547,6 +547,7 @@
             copy.height = cap.height;
             copy.getContext('2d').drawImage(cap, 0, 0);
             _srcCanvas = copy;
+            console.log('[MT] snapForBackground: PostProcess 캔버스 캡처 OK', cap.width, 'x', cap.height);
         } else if (!cap) {
             // PostProcess 없는 경우 폴백: SceneManager._backgroundBitmap 캔버스 사용
             var bgBmp = SceneManager._backgroundBitmap;
@@ -556,7 +557,12 @@
                 copy2.height = bgBmp.height;
                 copy2.getContext('2d').drawImage(bgBmp._canvas, 0, 0);
                 _srcCanvas = copy2;
+                console.log('[MT] snapForBackground: backgroundBitmap 폴백 캡처 OK', bgBmp.width, 'x', bgBmp.height);
+            } else {
+                console.warn('[MT] snapForBackground: 캡처 실패 — bgBmp:', bgBmp, 'canvas:', bgBmp && bgBmp._canvas);
             }
+        } else {
+            console.warn('[MT] snapForBackground: PostProcess cap 있으나 width=0');
         }
 
         _clearEffect();
@@ -566,9 +572,15 @@
 
     var _origPush = SceneManager.push;
     SceneManager.push = function (sceneClass) {
+        var isCustom = _isCustomUIClass(sceneClass);
         var isMenu = typeof sceneClass === 'function' &&
             (sceneClass === Scene_MenuBase || sceneClass.prototype instanceof Scene_MenuBase ||
-             _isCustomUIClass(sceneClass));
+             isCustom);
+
+        console.log('[MT] push:', sceneClass && sceneClass.name,
+            '| isMenu:', isMenu, '| isCustom:', isCustom,
+            '| Scene_CustomUI defined:', typeof Scene_CustomUI !== 'undefined',
+            '| _phase:', _phase);
 
         if (isMenu && _phase === 0) {
             _phase               = 2;
@@ -671,13 +683,19 @@
     // ── Scene_CustomUI 오버라이드 ─────────────────────────────────────────────
 
     if (typeof Scene_CustomUI !== 'undefined') {
+        console.log('[MT] Scene_CustomUI 감지됨 — 훅 설치');
+
         var _SCU_create = Scene_CustomUI.prototype.create;
         Scene_CustomUI.prototype.create = function () {
             _SCU_create.call(this);
             _setMenuBgHook(true);
             // Scene_MenuBase.createBackground()에 해당: 맨 아래에 배경 스프라이트 추가
+            var bgBitmap = SceneManager.backgroundBitmap();
+            console.log('[MT] SCU create — _phase:', _phase, '| bgBitmap:', bgBitmap,
+                '| bgBitmap.width:', bgBitmap && bgBitmap.width,
+                '| _srcCanvas:', !!_srcCanvas);
             this._backgroundSprite = new Sprite();
-            this._backgroundSprite.bitmap = SceneManager.backgroundBitmap();
+            this._backgroundSprite.bitmap = bgBitmap;
             this.addChildAt(this._backgroundSprite, 0);
         };
 
@@ -734,9 +752,13 @@
 
     // ── 닫기 애니메이션 공통 트리거 ──────────────────────────────────────────
 
-    function _triggerCloseAnim() {
-        var isMenuScene = SceneManager._scene instanceof Scene_MenuBase ||
-            _isCustomUIInstance(SceneManager._scene);
+    function _triggerCloseAnim(via) {
+        var scene = SceneManager._scene;
+        var isMenuScene = scene instanceof Scene_MenuBase || _isCustomUIInstance(scene);
+        console.log('[MT] _triggerCloseAnim via=' + via,
+            '| scene:', scene && scene.constructor && scene.constructor.name,
+            '| isMenuScene:', isMenuScene, '| _phase:', _phase,
+            '| _bgBlurT:', _bgBlurT);
         if (isMenuScene && _phase !== 0) {
             _bgBlurStartT        = _bgBlurT;
             _suppressMenuFadeOut = true;
@@ -744,6 +766,7 @@
             _bgBlurDir           = -1;
             _bgElapsed           = 0;
             _phase               = 0;
+            console.log('[MT] 닫기 애니메이션 시작 — bgBlurStartT:', _bgBlurStartT);
         }
     }
 
@@ -752,14 +775,15 @@
     if (Cfg.closeAnim) {
         var _origPop = SceneManager.pop;
         SceneManager.pop = function () {
-            _triggerCloseAnim();
+            _triggerCloseAnim('pop');
             _origPop.call(this);
         };
 
         // ── SceneManager.goto: 커스텀/메뉴 씬에서 goto로 빠져나갈 때도 처리 ──
         var _origGoto = SceneManager.goto;
         SceneManager.goto = function (sceneClass) {
-            _triggerCloseAnim();
+            console.log('[MT] goto:', sceneClass && sceneClass.name);
+            _triggerCloseAnim('goto');
             _origGoto.call(this, sceneClass);
         };
     }
