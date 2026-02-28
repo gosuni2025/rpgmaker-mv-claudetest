@@ -29,7 +29,7 @@
       },
       {
         "id": "questCategoryWidget",
-        "type": "list",
+        "type": "textList",
         "x": 0,
         "y": 0,
         "width": 180,
@@ -51,7 +51,7 @@
       },
       {
         "id": "questListWidget",
-        "type": "list",
+        "type": "textList",
         "x": 180,
         "y": 0,
         "width": 220,
@@ -134,7 +134,7 @@
           },
           {
             "id": "qd_objectives",
-            "type": "list",
+            "type": "textList",
             "x": 0,
             "y": 198,
             "width": 416,
@@ -156,7 +156,7 @@
           },
           {
             "id": "qd_rewards",
-            "type": "list",
+            "type": "textList",
             "x": 0,
             "y": 410,
             "width": 416,

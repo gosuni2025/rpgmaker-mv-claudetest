@@ -329,7 +329,7 @@
           },
           {
             "id": "equip_list",
-            "type": "list",
+            "type": "textList",
             "x": 450,
             "y": 270,
             "width": 348,

@@ -75,7 +75,7 @@
       },
       {
         "id": "actor_list",
-        "type": "list",
+        "type": "textList",
         "x": 0,
         "y": 72,
         "width": 248,
@@ -101,7 +101,7 @@
       },
       {
         "id": "slot_list",
-        "type": "list",
+        "type": "textList",
         "x": 0,
         "y": 216,
         "width": 248,
@@ -148,7 +148,7 @@
       },
       {
         "id": "class_list",
-        "type": "list",
+        "type": "textList",
         "x": 248,
         "y": 44,
         "width": 270,

@@ -26,7 +26,7 @@
       },
       {
         "id": "enemy_list",
-        "type": "list",
+        "type": "textList",
         "x": 0,
         "y": 0,
         "width": 240,
@@ -292,7 +292,7 @@
           },
           {
             "id": "enemy_drops",
-            "type": "list",
+            "type": "textList",
             "x": 8,
             "y": 396,
             "width": 556,

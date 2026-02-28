@@ -30,7 +30,7 @@
       },
       {
         "id": "cmd_main",
-        "type": "list",
+        "type": "textList",
         "x": 0,
         "y": 0,
         "width": 240,

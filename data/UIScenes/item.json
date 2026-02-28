@@ -57,7 +57,7 @@
       },
       {
         "id": "category_list",
-        "type": "list",
+        "type": "textList",
         "x": 0,
         "y": 72,
         "width": 816,

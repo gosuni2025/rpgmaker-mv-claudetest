@@ -360,7 +360,7 @@
         ]
       },
       {
-        "type": "list",
+        "type": "textList",
         "id": "cmd_list",
         "x": 312,
         "y": 108,
@@ -395,7 +395,7 @@
         }
       },
       {
-        "type": "list",
+        "type": "textList",
         "id": "slot_list",
         "x": 312,
         "y": 180,
@@ -418,7 +418,7 @@
         }
       },
       {
-        "type": "list",
+        "type": "textList",
         "id": "item_list",
         "x": 0,
         "y": 396,

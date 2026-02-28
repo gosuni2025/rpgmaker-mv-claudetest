@@ -87,7 +87,7 @@
       },
       {
         "id": "cmd_win",
-        "type": "list",
+        "type": "textList",
         "x": 0,
         "y": 72,
         "width": 576,
@@ -141,7 +141,7 @@
       },
       {
         "id": "buy_list",
-        "type": "list",
+        "type": "textList",
         "x": 0,
         "y": 128,
         "width": 456,
@@ -220,7 +220,7 @@
       },
       {
         "id": "category_win",
-        "type": "list",
+        "type": "textList",
         "x": 0,
         "y": 128,
         "width": 816,
@@ -268,7 +268,7 @@
       },
       {
         "id": "sell_list",
-        "type": "list",
+        "type": "textList",
         "x": 0,
         "y": 184,
         "width": 816,

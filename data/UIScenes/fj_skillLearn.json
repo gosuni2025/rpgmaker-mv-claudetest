@@ -62,7 +62,7 @@
       },
       {
         "id": "skill_list",
-        "type": "list",
+        "type": "textList",
         "x": 0,
         "y": 68,
         "width": 440,

@@ -46,7 +46,7 @@
       },
       {
         "id": "loadList",
-        "type": "list",
+        "type": "textList",
         "x": 0,
         "y": 52,
         "width": 816,

@@ -22,7 +22,7 @@
       },
       {
         "id": "cmd_gameend",
-        "type": "list",
+        "type": "textList",
         "x": 288,
         "y": 258,
         "width": 240,

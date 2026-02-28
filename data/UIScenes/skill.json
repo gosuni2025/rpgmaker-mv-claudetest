@@ -58,7 +58,7 @@
       },
       {
         "id": "skilltype_list",
-        "type": "list",
+        "type": "textList",
         "x": 0,
         "y": 108,
         "width": 240,
@@ -175,7 +175,7 @@
       },
       {
         "id": "skill_list",
-        "type": "list",
+        "type": "textList",
         "x": 0,
         "y": 288,
         "width": 816,
