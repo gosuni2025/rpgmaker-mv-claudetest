@@ -333,6 +333,20 @@ ThreeTilemapRectLayer.prototype._flush = function() {
             }
         }
     }
+
+    // 사용되지 않는 stale 메시 정리 (visible=false로 남은 것들)
+    var staleKeys = [];
+    for (var key in this._meshes) {
+        if (!this._meshes[key].visible) staleKeys.push(key);
+    }
+    for (var si = 0; si < staleKeys.length; si++) {
+        var staleMesh = this._meshes[staleKeys[si]];
+        this._threeObj.remove(staleMesh);
+        staleMesh.geometry.dispose();
+        if (staleMesh.material) staleMesh.material.dispose();
+        if (staleMesh.customDepthMaterial) staleMesh.customDepthMaterial.dispose();
+        delete this._meshes[staleKeys[si]];
+    }
 };
 
 /**
