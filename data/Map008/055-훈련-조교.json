@@ -1,9 +1,9 @@
 {
   "id": 55,
   "name": "훈련 조교",
-  "note": "",
   "x": 25,
   "y": 19,
+  "note": "",
   "pages": [
     {
       "conditions": {

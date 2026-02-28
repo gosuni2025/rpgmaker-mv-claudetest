@@ -1,9 +1,9 @@
 {
   "id": 56,
   "name": "직업 해금사",
-  "note": "",
   "x": 25,
   "y": 21,
+  "note": "",
   "pages": [
     {
       "conditions": {

@@ -1,9 +1,9 @@
 {
   "id": 58,
   "name": "스킬 사서",
-  "note": "",
   "x": 25,
   "y": 23,
+  "note": "",
   "pages": [
     {
       "conditions": {
