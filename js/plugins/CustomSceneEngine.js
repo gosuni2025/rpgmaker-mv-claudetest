@@ -3078,8 +3078,14 @@
             this._ctx._pendingUseItemUser = useUser;
             this._pendingPersonalAction = { action: 'applyItemToActor', itemListWidget: null };
             this._personalOriginWidget = widget;
+            // skill_list 숨기기 + actor_select 표시를 위한 상태 저장
+            this._pendingItemListWidgetId = widget ? widget._id : null;
+            this._pendingActorWidgetId = handler.actorWidget || null;
+            if (widget && widget.displayObject()) widget.displayObject().visible = false;
+            if (widget && widget._rowOverlay) widget._rowOverlay.visible = false;
             var sawUI = this._widgetMap[handler.actorWidget];
             if (sawUI) {
+              if (sawUI.displayObject()) sawUI.displayObject().visible = true; // 명시적으로 표시
               sawUI.setFormationMode(false);
               if (this._navManager) this._navManager.focusWidget(handler.actorWidget);
             }

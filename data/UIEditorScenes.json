@@ -4177,18 +4177,13 @@
             "id": "actor_select",
             "type": "rowSelector",
             "x": 0,
-            "y": 108,
+            "y": 288,
             "width": 816,
-            "height": 516,
+            "height": 336,
             "numRows": "party",
             "padding": 0,
             "transparent": true,
-            "handlers": {
-              "cancel": {
-                "action": "focusWidget",
-                "target": "skill_list"
-              }
-            }
+            "visible": false
           },
           {
             "id": "textArea_17722651297207",
