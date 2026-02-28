@@ -1,0 +1,55 @@
+{
+  "id": "battle",
+  "displayName": "배틀",
+  "root": {
+    "id": "battle_root",
+    "type": "panel",
+    "x": 0,
+    "y": 0,
+    "width": 816,
+    "height": 624,
+    "windowed": false,
+    "children": [
+      {
+        "id": "partyCommand",
+        "type": "list",
+        "x": 0,
+        "y": 516,
+        "width": 192,
+        "height": 108,
+        "items": [
+          {
+            "name": "전투",
+            "symbol": "fight",
+            "enabled": true
+          },
+          {
+            "name": "도주",
+            "symbol": "escape",
+            "enabled": true
+          }
+        ]
+      },
+      {
+        "id": "actorCommand",
+        "type": "list",
+        "x": 0,
+        "y": 444,
+        "width": 192,
+        "height": 216,
+        "dataScript": "(function(){var actor=BattleManager.actor();if(!actor)return[];var cmds=[{name:TextManager.attack,symbol:\"attack\",enabled:actor.canAttack(),iconIndex:76}];actor.addedSkillTypes().sort(function(a,b){return a-b;}).forEach(function(id){cmds.push({name:TextManager.skillType(id),symbol:\"skill\",enabled:true,ext:id,iconIndex:79});});cmds.push({name:TextManager.guard,symbol:\"guard\",enabled:actor.canGuard(),iconIndex:81},{name:TextManager.item,symbol:\"item\",enabled:true,iconIndex:83});return cmds;})()"
+      },
+      {
+        "id": "textArea_17722651096544",
+        "type": "textArea",
+        "x": 461,
+        "y": 103,
+        "width": 300,
+        "height": 80,
+        "text": "커스텀씬",
+        "align": "center",
+        "verticalAlign": "middle"
+      }
+    ]
+  }
+}

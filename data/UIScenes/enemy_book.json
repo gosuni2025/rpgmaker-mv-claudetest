@@ -1,0 +1,322 @@
+{
+  "id": "enemy_book",
+  "displayName": "몬스터 도감",
+  "formatVersion": 2,
+  "prepareArgs": [],
+  "navigation": {
+    "defaultFocus": "enemy_list",
+    "cancelWidget": "enemy_list"
+  },
+  "root": {
+    "id": "root",
+    "type": "panel",
+    "x": 0,
+    "y": 0,
+    "width": 816,
+    "height": 624,
+    "windowed": false,
+    "children": [
+      {
+        "id": "bg",
+        "type": "background",
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 624
+      },
+      {
+        "id": "enemy_list",
+        "type": "list",
+        "x": 0,
+        "y": 0,
+        "width": 240,
+        "height": 624,
+        "dataScript": "(function(){var list=[];for(var i=1;i<$dataEnemies.length;i++){var e=$dataEnemies[i];if(e&&e.name&&e.meta.book!=='no'){var known=$gameSystem.isInEnemyBook(e);list.push({name:('00'+(list.length+1)).slice(-3)+'  '+(known?e.name:'??????'),symbol:'enemy_'+i,data:e,enabled:true});}}return list;})()",
+        "onCursor": {
+          "code": "var lst=this._widgetMap&&this._widgetMap['enemy_list'];if(lst&&lst._window){var idx=lst._window.index();var cmds=lst._window._winDef.commands;this._ctx={enemy:cmds&&cmds[idx]?cmds[idx].data:null};}"
+        },
+        "handlers": {
+          "cancel": {
+            "action": "popScene"
+          }
+        }
+      },
+      {
+        "id": "detail_panel",
+        "type": "panel",
+        "x": 240,
+        "y": 0,
+        "width": 576,
+        "height": 624,
+        "windowed": true,
+        "children": [
+          {
+            "id": "enemy_battler",
+            "type": "image",
+            "bitmapExpr": "CSHelper.enemyBattler($ctx.enemy)",
+            "fitMode": "contain",
+            "x": 284,
+            "y": 20,
+            "width": 280,
+            "height": 280
+          },
+          {
+            "id": "enemy_name",
+            "type": "label",
+            "text": "{$ctx.enemy&&$ctx.enemy.name||''}",
+            "x": 8,
+            "y": 8,
+            "width": 272,
+            "height": 36,
+            "fontSize": 26
+          },
+          {
+            "id": "param_name_0",
+            "type": "label",
+            "text": "{TextManager.param(0)}",
+            "x": 8,
+            "y": 56,
+            "width": 110,
+            "height": 36,
+            "fontSize": 22,
+            "color": "#aaaaaa"
+          },
+          {
+            "id": "param_val_0",
+            "type": "label",
+            "text": "{$ctx.enemy&&$ctx.enemy.params[0]||0}",
+            "x": 120,
+            "y": 56,
+            "width": 80,
+            "height": 36,
+            "fontSize": 22,
+            "align": "right"
+          },
+          {
+            "id": "param_name_1",
+            "type": "label",
+            "text": "{TextManager.param(1)}",
+            "x": 8,
+            "y": 92,
+            "width": 110,
+            "height": 36,
+            "fontSize": 22,
+            "color": "#aaaaaa"
+          },
+          {
+            "id": "param_val_1",
+            "type": "label",
+            "text": "{$ctx.enemy&&$ctx.enemy.params[1]||0}",
+            "x": 120,
+            "y": 92,
+            "width": 80,
+            "height": 36,
+            "fontSize": 22,
+            "align": "right"
+          },
+          {
+            "id": "param_name_2",
+            "type": "label",
+            "text": "{TextManager.param(2)}",
+            "x": 8,
+            "y": 128,
+            "width": 110,
+            "height": 36,
+            "fontSize": 22,
+            "color": "#aaaaaa"
+          },
+          {
+            "id": "param_val_2",
+            "type": "label",
+            "text": "{$ctx.enemy&&$ctx.enemy.params[2]||0}",
+            "x": 120,
+            "y": 128,
+            "width": 80,
+            "height": 36,
+            "fontSize": 22,
+            "align": "right"
+          },
+          {
+            "id": "param_name_3",
+            "type": "label",
+            "text": "{TextManager.param(3)}",
+            "x": 8,
+            "y": 164,
+            "width": 110,
+            "height": 36,
+            "fontSize": 22,
+            "color": "#aaaaaa"
+          },
+          {
+            "id": "param_val_3",
+            "type": "label",
+            "text": "{$ctx.enemy&&$ctx.enemy.params[3]||0}",
+            "x": 120,
+            "y": 164,
+            "width": 80,
+            "height": 36,
+            "fontSize": 22,
+            "align": "right"
+          },
+          {
+            "id": "param_name_4",
+            "type": "label",
+            "text": "{TextManager.param(4)}",
+            "x": 8,
+            "y": 200,
+            "width": 110,
+            "height": 36,
+            "fontSize": 22,
+            "color": "#aaaaaa"
+          },
+          {
+            "id": "param_val_4",
+            "type": "label",
+            "text": "{$ctx.enemy&&$ctx.enemy.params[4]||0}",
+            "x": 120,
+            "y": 200,
+            "width": 80,
+            "height": 36,
+            "fontSize": 22,
+            "align": "right"
+          },
+          {
+            "id": "param_name_5",
+            "type": "label",
+            "text": "{TextManager.param(5)}",
+            "x": 8,
+            "y": 236,
+            "width": 110,
+            "height": 36,
+            "fontSize": 22,
+            "color": "#aaaaaa"
+          },
+          {
+            "id": "param_val_5",
+            "type": "label",
+            "text": "{$ctx.enemy&&$ctx.enemy.params[5]||0}",
+            "x": 120,
+            "y": 236,
+            "width": 80,
+            "height": 36,
+            "fontSize": 22,
+            "align": "right"
+          },
+          {
+            "id": "param_name_6",
+            "type": "label",
+            "text": "{TextManager.param(6)}",
+            "x": 8,
+            "y": 272,
+            "width": 110,
+            "height": 36,
+            "fontSize": 22,
+            "color": "#aaaaaa"
+          },
+          {
+            "id": "param_val_6",
+            "type": "label",
+            "text": "{$ctx.enemy&&$ctx.enemy.params[6]||0}",
+            "x": 120,
+            "y": 272,
+            "width": 80,
+            "height": 36,
+            "fontSize": 22,
+            "align": "right"
+          },
+          {
+            "id": "param_name_7",
+            "type": "label",
+            "text": "{TextManager.param(7)}",
+            "x": 8,
+            "y": 308,
+            "width": 110,
+            "height": 36,
+            "fontSize": 22,
+            "color": "#aaaaaa"
+          },
+          {
+            "id": "param_val_7",
+            "type": "label",
+            "text": "{$ctx.enemy&&$ctx.enemy.params[7]||0}",
+            "x": 120,
+            "y": 308,
+            "width": 80,
+            "height": 36,
+            "fontSize": 22,
+            "align": "right"
+          },
+          {
+            "id": "exp_name",
+            "type": "label",
+            "text": "{TextManager.expA}",
+            "x": 8,
+            "y": 352,
+            "width": 70,
+            "height": 36,
+            "fontSize": 22,
+            "color": "#aaaaaa"
+          },
+          {
+            "id": "exp_val",
+            "type": "label",
+            "text": "{$ctx.enemy&&$ctx.enemy.exp||0}",
+            "x": 80,
+            "y": 352,
+            "width": 60,
+            "height": 36,
+            "fontSize": 22,
+            "align": "right"
+          },
+          {
+            "id": "gold_name",
+            "type": "label",
+            "text": "{TextManager.currencyUnit}",
+            "x": 148,
+            "y": 352,
+            "width": 70,
+            "height": 36,
+            "fontSize": 22,
+            "color": "#aaaaaa"
+          },
+          {
+            "id": "gold_val",
+            "type": "label",
+            "text": "{$ctx.enemy&&$ctx.enemy.gold||0}",
+            "x": 220,
+            "y": 352,
+            "width": 50,
+            "height": 36,
+            "fontSize": 22,
+            "align": "right"
+          },
+          {
+            "id": "enemy_drops",
+            "type": "list",
+            "x": 8,
+            "y": 396,
+            "width": 556,
+            "height": 220,
+            "autoHeight": true,
+            "dataScript": "(function(){var e=$ctx&&$ctx.enemy;if(!e)return[];var drops=[];e.dropItems.forEach(function(di){if(di.kind>0){var item=Game_Enemy.prototype.itemObject(di.kind,di.dataId);if(item)drops.push({name:item.name,symbol:'drop_'+drops.length,enabled:false});}});return drops;})()",
+            "windowed": false,
+            "handlers": {},
+            "maxCols": 1,
+            "focusable": false
+          }
+        ]
+      },
+      {
+        "id": "textArea_1772250546038",
+        "type": "textArea",
+        "x": 151,
+        "y": 511,
+        "width": 300,
+        "height": 80,
+        "text": "커스텀씬",
+        "align": "center",
+        "verticalAlign": "middle"
+      }
+    ]
+  }
+}

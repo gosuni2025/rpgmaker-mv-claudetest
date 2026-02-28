@@ -1,0 +1,348 @@
+{
+  "id": "fj_classChange",
+  "displayName": "전직 시스템",
+  "formatVersion": 2,
+  "prepareArgs": [],
+  "navigation": {
+    "defaultFocus": "actor_list",
+    "cancelWidget": "actor_list",
+    "focusOrder": [
+      "actor_list",
+      "slot_list",
+      "class_list"
+    ]
+  },
+  "root": {
+    "id": "root",
+    "type": "panel",
+    "x": 0,
+    "y": 0,
+    "width": 816,
+    "height": 624,
+    "windowed": false,
+    "children": [
+      {
+        "id": "bg",
+        "type": "background",
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 624
+      },
+      {
+        "id": "left_panel",
+        "type": "panel",
+        "x": 0,
+        "y": 0,
+        "width": 248,
+        "height": 624,
+        "windowed": true,
+        "children": [
+          {
+            "id": "fj_title",
+            "type": "label",
+            "x": 6,
+            "y": 6,
+            "width": 236,
+            "height": 36,
+            "text": "◆ 전직 시스템",
+            "fontSize": 22
+          },
+          {
+            "id": "fj_actor_name",
+            "type": "label",
+            "x": 6,
+            "y": 46,
+            "width": 236,
+            "height": 28,
+            "text": "{FJ.actorName()}",
+            "fontSize": 18,
+            "color": "#aaaaaa"
+          },
+          {
+            "id": "fj_slot_sep2",
+            "type": "label",
+            "x": 6,
+            "y": 194,
+            "width": 236,
+            "height": 22,
+            "text": "── 슬롯 선택 ──",
+            "fontSize": 15,
+            "color": "#888888",
+            "align": "center"
+          }
+        ]
+      },
+      {
+        "id": "actor_list",
+        "type": "list",
+        "x": 0,
+        "y": 72,
+        "width": 248,
+        "height": 144,
+        "windowed": false,
+        "dataScript": "FJ.actorItems()",
+        "onCursor": {
+          "code": "var lw=this._widgetMap['actor_list'];if(lw&&lw._window&&lw._window.active){var sym=lw._window.currentSymbol();if(sym){var idx=parseInt(sym.replace('actor_',''),10);FJ._actorIdx=idx;FJ._slot=0;FJ._curClassId=0;var sl=this._widgetMap['slot_list'];if(sl&&sl._rebuildFromScript)sl._rebuildFromScript();}}"
+        },
+        "handlers": {
+          "ok": {
+            "action": "script",
+            "code": "FJ._curClassId=0;",
+            "thenAction": {
+              "action": "focusWidget",
+              "target": "slot_list"
+            }
+          },
+          "cancel": {
+            "action": "popScene"
+          }
+        }
+      },
+      {
+        "id": "slot_list",
+        "type": "list",
+        "x": 0,
+        "y": 216,
+        "width": 248,
+        "height": 408,
+        "windowed": false,
+        "dataScript": "FJ.slotItems()",
+        "onCursor": {
+          "code": "var lw=this._widgetMap[\"slot_list\"];if(lw&&lw._window&&lw._window.active){var sym=lw._window.currentSymbol();FJ._slot=sym?parseInt(sym.replace(\"slot_\",\"\"),10):0;FJ._curClassId=0;var cl=this._widgetMap[\"class_list\"];if(cl&&cl._rebuildFromScript)cl._rebuildFromScript();}"
+        },
+        "handlers": {
+          "ok": {
+            "action": "script",
+            "code": "FJ._curClassId=0;",
+            "thenAction": {
+              "action": "focusWidget",
+              "target": "class_list"
+            }
+          },
+          "cancel": {
+            "action": "popScene"
+          }
+        }
+      },
+      {
+        "id": "center_panel",
+        "type": "panel",
+        "x": 248,
+        "y": 0,
+        "width": 270,
+        "height": 624,
+        "windowed": true,
+        "children": [
+          {
+            "id": "fj_class_title",
+            "type": "label",
+            "x": 6,
+            "y": 6,
+            "width": 258,
+            "height": 36,
+            "text": "직업 목록",
+            "fontSize": 22
+          }
+        ]
+      },
+      {
+        "id": "class_list",
+        "type": "list",
+        "x": 248,
+        "y": 44,
+        "width": 270,
+        "height": 580,
+        "windowed": false,
+        "dataScript": "FJ.classItems()",
+        "onCursor": {
+          "code": "var lw=this._widgetMap['class_list'];if(lw&&lw._window&&lw._window.active){var sym=lw._window.currentSymbol();FJ._curClassId=sym?parseInt(sym.replace('cls_',''),10):0;}"
+        },
+        "handlers": {
+          "ok": {
+            "action": "script",
+            "code": "FJ.applySlotChange();",
+            "thenAction": {
+              "action": "focusWidget",
+              "target": "slot_list"
+            }
+          },
+          "cancel": {
+            "action": "focusWidget",
+            "target": "slot_list"
+          }
+        },
+        "rowHeight": 72,
+        "autoRefresh": false
+      },
+      {
+        "id": "right_panel",
+        "type": "panel",
+        "x": 518,
+        "y": 0,
+        "width": 298,
+        "height": 624,
+        "windowed": true,
+        "children": [
+          {
+            "id": "cd_header",
+            "type": "label",
+            "x": 6,
+            "y": 6,
+            "width": 286,
+            "height": 36,
+            "text": "직업 상세",
+            "fontSize": 22
+          },
+          {
+            "id": "cd_name",
+            "type": "label",
+            "x": 6,
+            "y": 48,
+            "width": 286,
+            "height": 36,
+            "text": "{FJ.classDetailName()}",
+            "fontSize": 22,
+            "color": "#e8d080"
+          },
+          {
+            "id": "cd_lv",
+            "type": "label",
+            "x": 6,
+            "y": 88,
+            "width": 140,
+            "height": 26,
+            "text": "{FJ.classDetailLv()}",
+            "fontSize": 18,
+            "color": "#aaaaaa"
+          },
+          {
+            "id": "cd_jp",
+            "type": "label",
+            "x": 150,
+            "y": 88,
+            "width": 142,
+            "height": 26,
+            "text": "{FJ.classDetailJp()}",
+            "fontSize": 18,
+            "color": "#88ccff",
+            "align": "right"
+          },
+          {
+            "id": "cd_desc",
+            "type": "textArea",
+            "x": 6,
+            "y": 120,
+            "width": 286,
+            "height": 72,
+            "text": "{FJ.classDetailDesc()}",
+            "fontSize": 16,
+            "lineHeight": 24,
+            "color": "#cccccc"
+          },
+          {
+            "id": "cd_exp_header",
+            "type": "label",
+            "x": 6,
+            "y": 196,
+            "width": 120,
+            "height": 22,
+            "text": "경험치",
+            "fontSize": 15,
+            "color": "#888888"
+          },
+          {
+            "id": "cd_exp",
+            "type": "label",
+            "x": 6,
+            "y": 220,
+            "width": 286,
+            "height": 22,
+            "text": "{FJ.classDetailExpBar()}",
+            "fontSize": 15,
+            "color": "#cccccc"
+          },
+          {
+            "id": "cd_stat_sep",
+            "type": "separator",
+            "x": 6,
+            "y": 248,
+            "width": 286,
+            "height": 4
+          },
+          {
+            "id": "cd_stat_header",
+            "type": "label",
+            "x": 6,
+            "y": 256,
+            "width": 286,
+            "height": 22,
+            "text": "파라미터 예상치",
+            "fontSize": 15,
+            "color": "#888888"
+          },
+          {
+            "id": "cd_atk",
+            "type": "label",
+            "x": 6,
+            "y": 282,
+            "width": 286,
+            "height": 22,
+            "text": "공격력  {FJ.statCompare(2)}",
+            "fontSize": 14
+          },
+          {
+            "id": "cd_def",
+            "type": "label",
+            "x": 6,
+            "y": 306,
+            "width": 286,
+            "height": 22,
+            "text": "방어력  {FJ.statCompare(3)}",
+            "fontSize": 14
+          },
+          {
+            "id": "cd_mat",
+            "type": "label",
+            "x": 6,
+            "y": 330,
+            "width": 286,
+            "height": 22,
+            "text": "마법공격  {FJ.statCompare(4)}",
+            "fontSize": 14
+          },
+          {
+            "id": "cd_mdf",
+            "type": "label",
+            "x": 6,
+            "y": 354,
+            "width": 286,
+            "height": 22,
+            "text": "마법방어  {FJ.statCompare(5)}",
+            "fontSize": 14
+          },
+          {
+            "id": "cd_agi",
+            "type": "label",
+            "x": 6,
+            "y": 378,
+            "width": 286,
+            "height": 22,
+            "text": "민첩  {FJ.statCompare(6)}",
+            "fontSize": 14
+          },
+          {
+            "id": "cd_luk",
+            "type": "label",
+            "x": 6,
+            "y": 402,
+            "width": 286,
+            "height": 22,
+            "text": "행운  {FJ.statCompare(7)}",
+            "fontSize": 14
+          }
+        ]
+      }
+    ]
+  }
+}

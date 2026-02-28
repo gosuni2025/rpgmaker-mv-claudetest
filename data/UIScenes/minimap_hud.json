@@ -1,0 +1,81 @@
+{
+  "id": "minimap_hud",
+  "displayName": "미니맵 HUD",
+  "formatVersion": 2,
+  "overlay": true,
+  "prepareArgs": [],
+  "root": {
+    "id": "root",
+    "type": "panel",
+    "x": 0,
+    "y": 0,
+    "width": 816,
+    "height": 624,
+    "windowed": false,
+    "children": [
+      {
+        "id": "hud_container",
+        "type": "panel",
+        "x": 608,
+        "y": 4,
+        "width": 204,
+        "height": 262,
+        "windowed": false,
+        "children": [
+          {
+            "id": "minimap",
+            "type": "minimap",
+            "x": 6,
+            "y": 6,
+            "width": 192,
+            "height": 192,
+            "children": []
+          },
+          {
+            "id": "map_name",
+            "type": "label",
+            "x": 6,
+            "y": 202,
+            "width": 192,
+            "height": 26,
+            "text": "{mapName}",
+            "align": "center",
+            "fontSize": 16
+          },
+          {
+            "id": "btn_zoom_in",
+            "type": "button",
+            "x": 6,
+            "y": 230,
+            "width": 90,
+            "height": 26,
+            "label": "확대 +",
+            "action": {
+              "action": "script",
+              "code": "MinimapManager.zoomIn()"
+            },
+            "bgAlpha": 0.83,
+            "borderWidth": 1,
+            "borderRadius": 2,
+            "windowed": false
+          },
+          {
+            "id": "btn_zoom_out",
+            "type": "button",
+            "x": 108,
+            "y": 230,
+            "width": 90,
+            "height": 26,
+            "label": "축소 -",
+            "action": {
+              "action": "script",
+              "code": "MinimapManager.zoomOut()"
+            },
+            "windowed": false
+          }
+        ],
+        "visible": true
+      }
+    ]
+  }
+}

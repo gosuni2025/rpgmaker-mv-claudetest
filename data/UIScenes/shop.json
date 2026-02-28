@@ -1,0 +1,311 @@
+{
+  "id": "shop",
+  "displayName": "상점",
+  "formatVersion": 2,
+  "prepareArgs": [
+    "shopGoods",
+    "purchaseOnly"
+  ],
+  "initCtx": {
+    "shopGoods": "[]",
+    "purchaseOnly": "false",
+    "sellCategory": "'all'",
+    "buyItems": "[]",
+    "sellItems": "[]",
+    "selectedItem": "null",
+    "selectedPrice": "0",
+    "shopMode": "'command'",
+    "helpText": "''",
+    "statusText": "''"
+  },
+  "navigation": {
+    "defaultFocus": "cmd_win"
+  },
+  "root": {
+    "id": "root",
+    "type": "panel",
+    "x": 0,
+    "y": 0,
+    "width": 816,
+    "height": 624,
+    "windowed": false,
+    "children": [
+      {
+        "id": "bg",
+        "type": "background",
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 624
+      },
+      {
+        "id": "help_win",
+        "type": "panel",
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 72,
+        "windowed": true,
+        "children": [
+          {
+            "id": "help_text",
+            "type": "textArea",
+            "x": 4,
+            "y": 6,
+            "width": 800,
+            "height": 60,
+            "text": "{$ctx.helpText}",
+            "fontSize": 22,
+            "color": "#dddddd",
+            "windowed": false
+          }
+        ]
+      },
+      {
+        "id": "gold_win",
+        "type": "panel",
+        "x": 576,
+        "y": 72,
+        "width": 240,
+        "height": 56,
+        "windowed": true,
+        "children": [
+          {
+            "id": "gold_label",
+            "type": "label",
+            "x": 8,
+            "y": 4,
+            "width": 224,
+            "height": 48,
+            "text": "{gold} {(function(){return typeof TextManager!=='undefined'?TextManager.currencyUnit:'G';})()}",
+            "fontSize": 26,
+            "align": "right",
+            "color": "#dddddd",
+            "windowed": false
+          }
+        ]
+      },
+      {
+        "id": "cmd_win",
+        "type": "list",
+        "x": 0,
+        "y": 72,
+        "width": 576,
+        "height": 56,
+        "maxCols": 3,
+        "items": [
+          {
+            "name": "구매",
+            "symbol": "buy",
+            "enabled": true
+          },
+          {
+            "name": "판매",
+            "symbol": "sell",
+            "enabledCondition": "!$ctx.purchaseOnly"
+          },
+          {
+            "name": "취소",
+            "symbol": "cancel",
+            "enabled": true
+          }
+        ],
+        "handlers": {
+          "buy": {
+            "action": "script",
+            "code": "this._widgetMap['dummy_win']._displayObject.visible=false; this._widgetMap['buy_list']._window.visible=true; this._widgetMap['status_win']._displayObject.visible=true; $ctx.shopMode='buy'; $ctx.helpText=''; $ctx.statusText=''; this._navManager.focusWidget('buy_list');",
+            "thenAction": {
+              "action": "noop"
+            }
+          },
+          "sell": {
+            "action": "script",
+            "code": "this._widgetMap['dummy_win']._displayObject.visible=false; this._widgetMap['category_win']._window.visible=true; this._widgetMap['sell_list']._window.visible=true; this._widgetMap['status_win']._displayObject.visible=false; $ctx.shopMode='sell'; $ctx.sellCategory='all'; $ctx.helpText=''; $ctx.statusText=''; this._navManager.focusWidget('category_win');",
+            "thenAction": {
+              "action": "noop"
+            }
+          },
+          "cancel": {
+            "action": "popScene"
+          }
+        }
+      },
+      {
+        "id": "dummy_win",
+        "type": "panel",
+        "x": 0,
+        "y": 128,
+        "width": 816,
+        "height": 496,
+        "windowed": true
+      },
+      {
+        "id": "buy_list",
+        "type": "list",
+        "x": 0,
+        "y": 128,
+        "width": 456,
+        "height": 496,
+        "visible": false,
+        "dataScript": "(function(){ var goods=$ctx.shopGoods||[]; var money=$gameParty.gold(); var items=[]; var itemData=[]; goods.forEach(function(g){ var item=g[0]===0?$dataItems[g[1]]:g[0]===1?$dataWeapons[g[1]]:$dataArmors[g[1]]; if(item){ var price=g[2]===0?item.price:g[3]; items.push({name:item.name, symbol:'buy', iconIndex:item.iconIndex, enabled:price<=money&&!$gameParty.hasMaxItems(item), numberText:String(price)}); itemData.push({item:item, price:price}); } }); $ctx.buyItems=itemData; return items; })()",
+        "onCursor": {
+          "code": "var win=this._widgetMap['buy_list']._window; var idx=win.index(); var data=$ctx.buyItems; if(data&&idx>=0&&data[idx]){ var info=data[idx]; $ctx.helpText=info.item.description; $ctx.selectedItem=info.item; $ctx.selectedPrice=info.price; $ctx.statusText=info.item.name+'\\n\\\\C[16]가격:\\\\C[0] '+info.price+' '+(typeof TextManager!=='undefined'?TextManager.currencyUnit:'G'); }else{ $ctx.helpText=''; $ctx.selectedItem=null; $ctx.statusText=''; }"
+        },
+        "handlers": {
+          "ok": {
+            "action": "script",
+            "code": "var idx=this._widgetMap['buy_list']._window.index(); var info=$ctx.buyItems&&$ctx.buyItems[idx]; if(info){ $ctx.selectedItem=info.item; $ctx.selectedPrice=info.price; var maxBuy=Math.min($gameParty.maxItems(info.item)-$gameParty.numItems(info.item), info.price>0?Math.floor($gameParty.gold()/info.price):99); maxBuy=Math.max(1,maxBuy); var nw=this._widgetMap['number_win']; nw.setup(info.item,maxBuy,info.price); nw._window.visible=true; this._widgetMap['buy_list']._window.visible=false; this._navManager.focusWidget('number_win'); }",
+            "thenAction": {
+              "action": "noop"
+            }
+          },
+          "cancel": {
+            "action": "script",
+            "code": "this._widgetMap['buy_list']._window.visible=false; this._widgetMap['status_win']._displayObject.visible=false; this._widgetMap['dummy_win']._displayObject.visible=true; $ctx.shopMode='command'; $ctx.helpText=''; $ctx.statusText=''; this._navManager.focusWidget('cmd_win');",
+            "thenAction": {
+              "action": "noop"
+            }
+          }
+        }
+      },
+      {
+        "id": "number_win",
+        "type": "shopNumber",
+        "x": 0,
+        "y": 128,
+        "width": 456,
+        "height": 496,
+        "visible": false,
+        "handlers": {
+          "ok": {
+            "action": "script",
+            "code": "var n=this._widgetMap['number_win'].number(); SoundManager.playShop(); this._widgetMap['number_win']._window.visible=false; if($ctx.shopMode==='buy'){ $gameParty.loseGold(n*$ctx.selectedPrice); $gameParty.gainItem($ctx.selectedItem,n); this._widgetMap['buy_list']._window.visible=true; this._navManager.focusWidget('buy_list'); }else{ $gameParty.gainGold(n*$ctx.selectedPrice); $gameParty.loseItem($ctx.selectedItem,n); this._widgetMap['status_win']._displayObject.visible=false; this._widgetMap['sell_list']._window.visible=true; this._widgetMap['category_win']._window.visible=true; this._navManager.focusWidget('sell_list'); }",
+            "thenAction": {
+              "action": "noop"
+            }
+          },
+          "cancel": {
+            "action": "script",
+            "code": "SoundManager.playCancel(); this._widgetMap['number_win']._window.visible=false; if($ctx.shopMode==='buy'){ this._widgetMap['buy_list']._window.visible=true; this._navManager.focusWidget('buy_list'); }else{ this._widgetMap['sell_list']._window.visible=true; this._widgetMap['category_win']._window.visible=true; this._navManager.focusWidget('sell_list'); }",
+            "thenAction": {
+              "action": "noop"
+            }
+          }
+        }
+      },
+      {
+        "id": "status_win",
+        "type": "panel",
+        "x": 456,
+        "y": 128,
+        "width": 360,
+        "height": 496,
+        "windowed": true,
+        "visible": false,
+        "children": [
+          {
+            "id": "status_text",
+            "type": "textArea",
+            "x": 8,
+            "y": 8,
+            "width": 336,
+            "height": 472,
+            "text": "{$ctx.statusText}",
+            "fontSize": 22,
+            "color": "#dddddd",
+            "lineHeight": 32,
+            "windowed": false
+          }
+        ]
+      },
+      {
+        "id": "category_win",
+        "type": "list",
+        "x": 0,
+        "y": 128,
+        "width": 816,
+        "height": 56,
+        "maxCols": 4,
+        "visible": false,
+        "items": [
+          {
+            "name": "아이템",
+            "symbol": "item",
+            "enabled": true
+          },
+          {
+            "name": "무기",
+            "symbol": "weapon",
+            "enabled": true
+          },
+          {
+            "name": "방어구",
+            "symbol": "armor",
+            "enabled": true
+          },
+          {
+            "name": "중요 아이템",
+            "symbol": "keyItem",
+            "enabled": true
+          }
+        ],
+        "handlers": {
+          "ok": {
+            "action": "script",
+            "code": "var win=this._widgetMap['category_win']._window; $ctx.sellCategory=win.currentSymbol(); this._widgetMap['sell_list'].refresh(); this._navManager.focusWidget('sell_list');",
+            "thenAction": {
+              "action": "noop"
+            }
+          },
+          "cancel": {
+            "action": "script",
+            "code": "this._widgetMap['category_win']._window.visible=false; this._widgetMap['sell_list']._window.visible=false; this._widgetMap['dummy_win']._displayObject.visible=true; $ctx.shopMode='command'; $ctx.helpText=''; $ctx.statusText=''; this._navManager.focusWidget('cmd_win');",
+            "thenAction": {
+              "action": "noop"
+            }
+          }
+        }
+      },
+      {
+        "id": "sell_list",
+        "type": "list",
+        "x": 0,
+        "y": 184,
+        "width": 816,
+        "height": 440,
+        "visible": false,
+        "dataScript": "(function(){ var cat=$ctx.sellCategory||'all'; var all=$gameParty.allItems(); var filtered=all.filter(function(item){ if(!item||item.price<=0)return false; if(cat==='item')return DataManager.isItem(item)&&item.itypeId===1; if(cat==='weapon')return DataManager.isWeapon(item); if(cat==='armor')return DataManager.isArmor(item); if(cat==='keyItem')return DataManager.isItem(item)&&item.itypeId===2; return true; }); $ctx.sellItems=filtered; return filtered.map(function(item){ return {name:item.name, symbol:'sell', iconIndex:item.iconIndex, enabled:true, numberText:String($gameParty.numItems(item))}; }); })()",
+        "onCursor": {
+          "code": "var win=this._widgetMap['sell_list']._window; var idx=win.index(); var items=$ctx.sellItems; if(items&&idx>=0&&items[idx]){ var item=items[idx]; var sellPrice=Math.floor(item.price/2); $ctx.helpText=item.description; $ctx.selectedItem=item; $ctx.selectedPrice=sellPrice; $ctx.statusText=item.name+'\\n\\\\C[16]판매가:\\\\C[0] '+sellPrice+' '+(typeof TextManager!=='undefined'?TextManager.currencyUnit:'G'); }else{ $ctx.helpText=''; $ctx.selectedItem=null; $ctx.statusText=''; $ctx.selectedPrice=0; }"
+        },
+        "handlers": {
+          "ok": {
+            "action": "script",
+            "code": "var idx=this._widgetMap['sell_list']._window.index(); var items=$ctx.sellItems; var item=items&&items[idx]; if(item){ $ctx.selectedItem=item; $ctx.selectedPrice=Math.floor(item.price/2); var maxSell=$gameParty.numItems(item); var nw=this._widgetMap['number_win']; nw.setup(item,maxSell,$ctx.selectedPrice); nw._window.visible=true; this._widgetMap['status_win']._displayObject.visible=true; this._widgetMap['sell_list']._window.visible=false; this._widgetMap['category_win']._window.visible=false; this._navManager.focusWidget('number_win'); }",
+            "thenAction": {
+              "action": "noop"
+            }
+          },
+          "cancel": {
+            "action": "script",
+            "code": "this._widgetMap['sell_list']._window.visible=false; this._navManager.focusWidget('category_win');",
+            "thenAction": {
+              "action": "noop"
+            }
+          }
+        }
+      },
+      {
+        "id": "textArea_17722651166925",
+        "type": "textArea",
+        "x": 462,
+        "y": 224,
+        "width": 300,
+        "height": 80,
+        "text": "커스텀씬",
+        "align": "center",
+        "verticalAlign": "middle"
+      }
+    ]
+  }
+}

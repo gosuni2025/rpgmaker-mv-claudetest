@@ -1,0 +1,234 @@
+{
+  "id": "skill",
+  "displayName": "스킬",
+  "formatVersion": 2,
+  "initCtx": {
+    "actorIndex": "$gameParty.menuActor() ? Math.max(0, $gameParty.members().indexOf($gameParty.menuActor())) : 0",
+    "stypeId": "$gameParty.menuActor() ? ($gameParty.menuActor().addedSkillTypes().sort(function(a,b){return a-b;})[0] || 1) : 1",
+    "helpText": "",
+    "selectedSkill": null
+  },
+  "prepareArgs": [],
+  "navigation": {
+    "defaultFocus": "skilltype_list",
+    "focusOrder": [
+      "skilltype_list",
+      "skill_list",
+      "actor_select"
+    ]
+  },
+  "root": {
+    "id": "skill_root",
+    "type": "panel",
+    "windowed": false,
+    "x": 0,
+    "y": 0,
+    "width": 816,
+    "height": 624,
+    "children": [
+      {
+        "id": "bg",
+        "type": "background",
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 624
+      },
+      {
+        "id": "help_win",
+        "type": "panel",
+        "windowed": true,
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 108,
+        "children": [
+          {
+            "id": "help_text",
+            "type": "textArea",
+            "text": "{$ctx.helpText}",
+            "fontSize": 22,
+            "verticalAlign": "middle",
+            "x": 0,
+            "y": 0,
+            "width": 780,
+            "height": 72
+          }
+        ]
+      },
+      {
+        "id": "skilltype_list",
+        "type": "list",
+        "x": 0,
+        "y": 108,
+        "width": 240,
+        "height": 180,
+        "dataScript": "(function(){var actor=$gameParty.members()[$ctx.actorIndex];if(!actor)return[];return actor.addedSkillTypes().sort(function(a,b){return a-b;}).map(function(id){return{name:$dataSystem.skillTypes[id]||'',symbol:'stype_'+id,enabled:true,data:id};});})()",
+        "onCursor": {
+          "code": "var stl=this._widgetMap['skilltype_list'];if(!stl||!stl._window)return;var cmds=stl._window._winDef.commands;var idx=stl._window.index();var cmd=cmds&&cmds[idx]?cmds[idx]:null;if(cmd){this._ctx.stypeId=cmd.data;this._ctx.helpText='';this._ctx.selectedSkill=null;var skl=this._widgetMap['skill_list'];if(skl)skl._rebuildFromScript();}"
+        },
+        "handlers": {
+          "ok": {
+            "action": "focusWidget",
+            "target": "skill_list"
+          },
+          "cancel": {
+            "action": "popScene"
+          },
+          "pageup": {
+            "action": "script",
+            "code": "var sz=$gameParty.size();if(sz>1){SoundManager.playCursor();$ctx.actorIndex=($ctx.actorIndex-1+sz)%sz;$gameParty.setMenuActor($gameParty.members()[$ctx.actorIndex]);var actor=$gameParty.members()[$ctx.actorIndex];var st=actor?actor.addedSkillTypes().sort(function(a,b){return a-b;}):[];$ctx.stypeId=st[0]||1;$ctx.helpText='';$ctx.selectedSkill=null;var stl=this._widgetMap['skilltype_list'];if(stl)stl._rebuildFromScript();var skl=this._widgetMap['skill_list'];if(skl)skl._rebuildFromScript();}"
+          },
+          "pagedown": {
+            "action": "script",
+            "code": "var sz=$gameParty.size();if(sz>1){SoundManager.playCursor();$ctx.actorIndex=($ctx.actorIndex+1)%sz;$gameParty.setMenuActor($gameParty.members()[$ctx.actorIndex]);var actor=$gameParty.members()[$ctx.actorIndex];var st=actor?actor.addedSkillTypes().sort(function(a,b){return a-b;}):[];$ctx.stypeId=st[0]||1;$ctx.helpText='';$ctx.selectedSkill=null;var stl=this._widgetMap['skilltype_list'];if(stl)stl._rebuildFromScript();var skl=this._widgetMap['skill_list'];if(skl)skl._rebuildFromScript();}"
+          }
+        }
+      },
+      {
+        "id": "status_panel",
+        "type": "panel",
+        "windowed": true,
+        "x": 240,
+        "y": 108,
+        "width": 576,
+        "height": 180,
+        "children": [
+          {
+            "id": "sk_face",
+            "type": "image",
+            "imageSource": "actorFace",
+            "actorIndexExpr": "$ctx.actorIndex",
+            "x": 8,
+            "y": 8,
+            "width": 144,
+            "height": 144
+          },
+          {
+            "id": "sk_name",
+            "type": "label",
+            "fontSize": 26,
+            "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?a.name():'';})()}",
+            "verticalAlign": "middle",
+            "x": 162,
+            "y": 8,
+            "width": 200,
+            "height": 36
+          },
+          {
+            "id": "sk_class",
+            "type": "label",
+            "fontSize": 22,
+            "color": "#808080",
+            "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a&&$dataClasses[a._classId]?$dataClasses[a._classId].name:'';})()}",
+            "verticalAlign": "middle",
+            "x": 162,
+            "y": 44,
+            "width": 200,
+            "height": 36
+          },
+          {
+            "id": "sk_lv_label",
+            "type": "label",
+            "fontSize": 22,
+            "color": "#808080",
+            "text": "{TextManager.levelA}",
+            "verticalAlign": "middle",
+            "x": 162,
+            "y": 80,
+            "width": 36,
+            "height": 36
+          },
+          {
+            "id": "sk_lv",
+            "type": "label",
+            "fontSize": 22,
+            "align": "right",
+            "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?String(a.level):'';})()}",
+            "verticalAlign": "middle",
+            "x": 198,
+            "y": 80,
+            "width": 54,
+            "height": 36
+          },
+          {
+            "id": "sk_hp",
+            "type": "gauge",
+            "gaugeType": "hp",
+            "actorIndexExpr": "$ctx.actorIndex",
+            "x": 162,
+            "y": 116,
+            "width": 200,
+            "height": 36
+          },
+          {
+            "id": "sk_mp",
+            "type": "gauge",
+            "gaugeType": "mp",
+            "actorIndexExpr": "$ctx.actorIndex",
+            "x": 162,
+            "y": 152,
+            "width": 200,
+            "height": 36
+          }
+        ]
+      },
+      {
+        "id": "skill_list",
+        "type": "list",
+        "x": 0,
+        "y": 288,
+        "width": 816,
+        "height": 336,
+        "maxCols": 2,
+        "focusable": true,
+        "dataScript": "(function(){var actor=$gameParty.members()[$ctx.actorIndex];if(!actor)return[];return actor.skills().filter(function(s){return s.stypeId===$ctx.stypeId;}).map(function(s){var mpCost=actor.skillMpCost(s)||0;var tpCost=actor.skillTpCost(s)||0;var rt=tpCost>0?String(tpCost):mpCost>0?String(mpCost):'';var rtc=tpCost>0?29:23;return{name:s.name,symbol:'skill_'+s.id,iconIndex:s.iconIndex||0,enabled:actor.canUse(s),data:s,rightText:rt||undefined,rightTextColorIndex:rt?rtc:undefined};});})()",
+        "onCursor": {
+          "code": "var skl=this._widgetMap['skill_list'];if(!skl||!skl._window)return;var cmds=skl._window._winDef.commands;var idx=skl._window.index();var cmd=cmds&&cmds[idx]?cmds[idx]:null;this._ctx.selectedSkill=cmd?cmd.data:null;this._ctx.helpText=this._ctx.selectedSkill?(this._ctx.selectedSkill.description||''):'';var hw=this._widgetMap['help_win'];if(hw)hw.refresh();"
+        },
+        "handlers": {
+          "ok": {
+            "action": "useItem",
+            "itemExpr": "$ctx.selectedSkill",
+            "userExpr": "$gameParty.members()[$ctx.actorIndex]",
+            "soundType": "skill",
+            "setLastSkill": true,
+            "actorWidget": "actor_select"
+          },
+          "cancel": {
+            "action": "focusWidget",
+            "target": "skilltype_list"
+          }
+        }
+      },
+      {
+        "id": "actor_select",
+        "type": "rowSelector",
+        "x": 0,
+        "y": 108,
+        "width": 816,
+        "height": 516,
+        "numRows": "party",
+        "padding": 0,
+        "transparent": true,
+        "handlers": {
+          "cancel": {
+            "action": "focusWidget",
+            "target": "skill_list"
+          }
+        }
+      },
+      {
+        "id": "textArea_17722651297207",
+        "type": "textArea",
+        "x": 465,
+        "y": 510,
+        "width": 300,
+        "height": 80,
+        "text": "커스텀씬",
+        "align": "center",
+        "verticalAlign": "middle"
+      }
+    ]
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "id": "gameEnd",
+  "displayName": "게임 종료",
+  "formatVersion": 2,
+  "navigation": {
+    "defaultFocus": "cmd_gameend",
+    "cancelWidget": "cmd_gameend"
+  },
+  "root": {
+    "id": "root",
+    "type": "panel",
+    "x": 0,
+    "y": 0,
+    "width": 816,
+    "height": 624,
+    "windowed": false,
+    "children": [
+      {
+        "id": "bg",
+        "type": "background",
+        "bgAlpha": 0.502
+      },
+      {
+        "id": "cmd_gameend",
+        "type": "list",
+        "x": 288,
+        "y": 258,
+        "width": 240,
+        "items": [
+          {
+            "name": "{typeof TextManager!=='undefined'?TextManager.toTitle:'타이틀로'}",
+            "symbol": "toTitle"
+          },
+          {
+            "name": "{typeof TextManager!=='undefined'?TextManager.cancel:'취소'}",
+            "symbol": "cancel"
+          }
+        ],
+        "handlers": {
+          "toTitle": {
+            "action": "script",
+            "code": "this.fadeOutAll(); SceneManager.goto(Scene_Title);"
+          },
+          "cancel": {
+            "action": "popScene"
+          }
+        },
+        "height": 108
+      }
+    ]
+  }
+}

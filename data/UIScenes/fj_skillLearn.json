@@ -1,0 +1,153 @@
+{
+  "id": "fj_skillLearn",
+  "displayName": "스킬 습득",
+  "formatVersion": 2,
+  "prepareArgs": [],
+  "navigation": {
+    "defaultFocus": "skill_list",
+    "cancelWidget": "skill_list",
+    "focusOrder": [
+      "skill_list"
+    ]
+  },
+  "root": {
+    "id": "root",
+    "type": "panel",
+    "x": 0,
+    "y": 0,
+    "width": 816,
+    "height": 624,
+    "windowed": false,
+    "children": [
+      {
+        "id": "bg",
+        "type": "background",
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 624
+      },
+      {
+        "id": "status_panel",
+        "type": "panel",
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 68,
+        "windowed": true,
+        "children": [
+          {
+            "id": "sl_actor_name",
+            "type": "label",
+            "x": 8,
+            "y": 8,
+            "width": 480,
+            "height": 36,
+            "text": "{FJ.actorName()}",
+            "fontSize": 24
+          },
+          {
+            "id": "sl_jp_val",
+            "type": "label",
+            "x": 496,
+            "y": 8,
+            "width": 312,
+            "height": 36,
+            "text": "보유 {FJ.actorJp()}",
+            "fontSize": 22,
+            "color": "#88ccff",
+            "align": "right"
+          }
+        ]
+      },
+      {
+        "id": "skill_list",
+        "type": "list",
+        "x": 0,
+        "y": 68,
+        "width": 440,
+        "height": 556,
+        "windowed": true,
+        "dataScript": "FJ.skillItems()",
+        "onCursor": {
+          "code": "var lw=this._widgetMap['skill_list'];if(lw&&lw._window){var sym=lw._window.currentSymbol();FJ._curSkillId=sym?parseInt(sym.replace('sk_',''),10):0;}"
+        },
+        "handlers": {
+          "ok": {
+            "action": "script",
+            "code": "FJ.applySkillLearn();"
+          },
+          "cancel": {
+            "action": "popScene"
+          }
+        }
+      },
+      {
+        "id": "detail_panel",
+        "type": "panel",
+        "x": 440,
+        "y": 68,
+        "width": 376,
+        "height": 556,
+        "windowed": true,
+        "children": [
+          {
+            "id": "sk_name",
+            "type": "label",
+            "x": 8,
+            "y": 8,
+            "width": 360,
+            "height": 40,
+            "text": "{FJ.skillDetailName()}",
+            "fontSize": 26,
+            "color": "#e8d080"
+          },
+          {
+            "id": "sk_desc",
+            "type": "textArea",
+            "x": 8,
+            "y": 56,
+            "width": 360,
+            "height": 96,
+            "text": "{FJ.skillDetailDesc()}",
+            "fontSize": 18,
+            "lineHeight": 28,
+            "color": "#dddddd"
+          },
+          {
+            "id": "sk_sep",
+            "type": "separator",
+            "x": 8,
+            "y": 158,
+            "width": 360,
+            "height": 4
+          },
+          {
+            "id": "sk_cost",
+            "type": "textArea",
+            "x": 8,
+            "y": 168,
+            "width": 360,
+            "height": 60,
+            "text": "{FJ.skillDetailCost()}",
+            "fontSize": 18,
+            "lineHeight": 28,
+            "color": "#aaaaaa"
+          },
+          {
+            "id": "sk_hint",
+            "type": "label",
+            "x": 8,
+            "y": 510,
+            "width": 360,
+            "height": 28,
+            "text": "[ OK ] 스킬 습득",
+            "fontSize": 18,
+            "color": "#888888",
+            "align": "center"
+          }
+        ]
+      }
+    ]
+  }
+}

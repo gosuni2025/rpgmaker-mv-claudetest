@@ -1,0 +1,760 @@
+{
+  "id": "menu_v2",
+  "displayName": "게임 메뉴",
+  "formatVersion": 2,
+  "prepareArgs": [],
+  "navigation": {
+    "defaultFocus": "cmd_main",
+    "cancelWidget": "cmd_main",
+    "focusOrder": [
+      "cmd_main",
+      "actor_select"
+    ]
+  },
+  "root": {
+    "id": "root",
+    "type": "panel",
+    "x": 0,
+    "y": 0,
+    "width": 816,
+    "height": 624,
+    "windowed": false,
+    "children": [
+      {
+        "id": "bg",
+        "type": "background",
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 624
+      },
+      {
+        "id": "cmd_main",
+        "type": "list",
+        "x": 0,
+        "y": 0,
+        "width": 240,
+        "maxCols": 1,
+        "items": [
+          {
+            "name": "아이템",
+            "symbol": "item",
+            "enabled": true
+          },
+          {
+            "name": "스킬",
+            "symbol": "skill",
+            "enabled": true
+          },
+          {
+            "name": "장비",
+            "symbol": "equip",
+            "enabled": true
+          },
+          {
+            "name": "상태",
+            "symbol": "status",
+            "enabled": true
+          },
+          {
+            "name": "대형",
+            "symbol": "formation",
+            "enabledCondition": "$gameParty.size() >= 2 && $gameSystem.isFormationEnabled()"
+          },
+          {
+            "name": "옵션",
+            "symbol": "options",
+            "enabled": true
+          },
+          {
+            "name": "세이브",
+            "symbol": "save",
+            "enabledCondition": "$gameSystem.isSaveEnabled()"
+          },
+          {
+            "name": "게임 종료",
+            "symbol": "gameEnd",
+            "enabled": true
+          }
+        ],
+        "handlers": {
+          "item": {
+            "action": "gotoScene",
+            "target": "Scene_CS_item"
+          },
+          "skill": {
+            "action": "selectActor",
+            "widget": "actor_select",
+            "thenAction": {
+              "action": "gotoScene",
+              "target": "Scene_CS_fj_skillLearn"
+            }
+          },
+          "equip": {
+            "action": "selectActor",
+            "widget": "actor_select",
+            "thenAction": {
+              "action": "gotoScene",
+              "target": "Scene_CS_equip"
+            }
+          },
+          "status": {
+            "action": "selectActor",
+            "widget": "actor_select",
+            "thenAction": {
+              "action": "gotoScene",
+              "target": "Scene_CS_status"
+            }
+          },
+          "formation": {
+            "action": "formation",
+            "widget": "actor_select"
+          },
+          "options": {
+            "action": "gotoScene",
+            "target": "Scene_CS_options"
+          },
+          "save": {
+            "action": "gotoScene",
+            "target": "Scene_CS_save"
+          },
+          "gameEnd": {
+            "action": "gotoScene",
+            "target": "Scene_CS_gameEnd"
+          },
+          "cancel": {
+            "action": "popScene"
+          }
+        }
+      },
+      {
+        "id": "gold_win",
+        "type": "panel",
+        "x": 0,
+        "y": 552,
+        "width": 240,
+        "height": 72,
+        "windowed": true,
+        "children": [
+          {
+            "id": "gold_label",
+            "type": "label",
+            "x": 6,
+            "y": 6,
+            "width": 192,
+            "height": 36,
+            "text": "{gold}G",
+            "align": "right"
+          }
+        ]
+      },
+      {
+        "id": "party_panel",
+        "type": "panel",
+        "x": 240,
+        "y": 0,
+        "width": 576,
+        "height": 624,
+        "windowed": true,
+        "children": [
+          {
+            "id": "actor_row_0",
+            "type": "panel",
+            "x": 0,
+            "y": 0,
+            "width": 576,
+            "height": 156,
+            "windowed": false,
+            "children": [
+              {
+                "id": "face0",
+                "type": "image",
+                "imageSource": "actorFace",
+                "actorIndex": 0,
+                "x": 2,
+                "y": 6,
+                "width": 140,
+                "height": 140
+              },
+              {
+                "id": "name0",
+                "type": "label",
+                "x": 148,
+                "y": 6,
+                "width": 200,
+                "height": 36,
+                "text": "{actor[0].name}",
+                "fontSize": 26
+              },
+              {
+                "id": "class0",
+                "type": "label",
+                "x": 352,
+                "y": 6,
+                "width": 218,
+                "height": 36,
+                "text": "{actor[0].class}",
+                "fontSize": 22,
+                "color": "#aaaaaa"
+              },
+              {
+                "id": "lv0",
+                "type": "label",
+                "x": 148,
+                "y": 48,
+                "width": 200,
+                "height": 32,
+                "text": "Lv {actor[0].level}",
+                "fontSize": 22,
+                "color": "#aaaaaa"
+              },
+              {
+                "id": "hp0",
+                "type": "gauge",
+                "valueExpr": "$gameParty.members()[0].hp",
+                "maxExpr": "$gameParty.members()[0].mhp",
+                "gaugeSkinId": "gauge_hp",
+                "x": 352,
+                "y": 48,
+                "width": 218,
+                "height": 36,
+                "children": [
+                  {
+                    "id": "hp0_name",
+                    "type": "label",
+                    "text": "HP",
+                    "x": 0,
+                    "y": 0,
+                    "width": 61,
+                    "height": 22,
+                    "fontSize": 18
+                  },
+                  {
+                    "id": "hp0_cur",
+                    "type": "label",
+                    "text": "{$gameParty.members()[0].hp}",
+                    "x": 61,
+                    "y": 0,
+                    "width": 78,
+                    "height": 22,
+                    "align": "right",
+                    "fontSize": 18,
+                    "borderWidth": 1
+                  },
+                  {
+                    "id": "hp0_max",
+                    "type": "label",
+                    "text": "/{$gameParty.members()[0].mhp}",
+                    "x": 139,
+                    "y": 0,
+                    "width": 79,
+                    "height": 22,
+                    "fontSize": 18,
+                    "color": "#aaaaaa"
+                  }
+                ]
+              },
+              {
+                "id": "mp0",
+                "type": "gauge",
+                "valueExpr": "$gameParty.members()[0].mp",
+                "maxExpr": "$gameParty.members()[0].mmp",
+                "gaugeSkinId": "gauge_mp",
+                "x": 352,
+                "y": 88,
+                "width": 218,
+                "height": 36,
+                "children": [
+                  {
+                    "id": "mp0_name",
+                    "type": "label",
+                    "text": "MP",
+                    "x": 0,
+                    "y": 0,
+                    "width": 61,
+                    "height": 22,
+                    "fontSize": 18
+                  },
+                  {
+                    "id": "mp0_cur",
+                    "type": "label",
+                    "text": "{$gameParty.members()[0].mp}",
+                    "x": 61,
+                    "y": 0,
+                    "width": 78,
+                    "height": 22,
+                    "align": "right",
+                    "fontSize": 18
+                  },
+                  {
+                    "id": "mp0_max",
+                    "type": "label",
+                    "text": "/{$gameParty.members()[0].mmp}",
+                    "x": 139,
+                    "y": 0,
+                    "width": 79,
+                    "height": 22,
+                    "fontSize": 18,
+                    "color": "#aaaaaa"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "actor_row_1",
+            "type": "panel",
+            "x": 0,
+            "y": 156,
+            "width": 576,
+            "height": 156,
+            "windowed": false,
+            "children": [
+              {
+                "id": "face1",
+                "type": "image",
+                "imageSource": "actorFace",
+                "actorIndex": 1,
+                "x": 2,
+                "y": 6,
+                "width": 140,
+                "height": 140
+              },
+              {
+                "id": "name1",
+                "type": "label",
+                "x": 148,
+                "y": 6,
+                "width": 200,
+                "height": 36,
+                "text": "{actor[1].name}",
+                "fontSize": 26
+              },
+              {
+                "id": "class1",
+                "type": "label",
+                "x": 352,
+                "y": 6,
+                "width": 218,
+                "height": 36,
+                "text": "{actor[1].class}",
+                "fontSize": 22,
+                "color": "#aaaaaa"
+              },
+              {
+                "id": "lv1",
+                "type": "label",
+                "x": 148,
+                "y": 48,
+                "width": 200,
+                "height": 32,
+                "text": "Lv {actor[1].level}",
+                "fontSize": 22,
+                "color": "#aaaaaa"
+              },
+              {
+                "id": "hp1",
+                "type": "gauge",
+                "valueExpr": "$gameParty.members()[1].hp",
+                "maxExpr": "$gameParty.members()[1].mhp",
+                "gaugeSkinId": "gauge_hp",
+                "x": 352,
+                "y": 48,
+                "width": 218,
+                "height": 36,
+                "children": [
+                  {
+                    "id": "hp1_name",
+                    "type": "label",
+                    "text": "HP",
+                    "x": 0,
+                    "y": 0,
+                    "width": 61,
+                    "height": 22,
+                    "fontSize": 18
+                  },
+                  {
+                    "id": "hp1_cur",
+                    "type": "label",
+                    "text": "{$gameParty.members()[1].hp}",
+                    "x": 61,
+                    "y": 0,
+                    "width": 78,
+                    "height": 22,
+                    "align": "right",
+                    "fontSize": 18
+                  },
+                  {
+                    "id": "hp1_max",
+                    "type": "label",
+                    "text": "/{$gameParty.members()[1].mhp}",
+                    "x": 139,
+                    "y": 0,
+                    "width": 79,
+                    "height": 22,
+                    "fontSize": 18,
+                    "color": "#aaaaaa"
+                  }
+                ]
+              },
+              {
+                "id": "mp1",
+                "type": "gauge",
+                "valueExpr": "$gameParty.members()[1].mp",
+                "maxExpr": "$gameParty.members()[1].mmp",
+                "gaugeSkinId": "gauge_mp",
+                "x": 352,
+                "y": 88,
+                "width": 218,
+                "height": 36,
+                "children": [
+                  {
+                    "id": "mp1_name",
+                    "type": "label",
+                    "text": "MP",
+                    "x": 0,
+                    "y": 0,
+                    "width": 61,
+                    "height": 22,
+                    "fontSize": 18
+                  },
+                  {
+                    "id": "mp1_cur",
+                    "type": "label",
+                    "text": "{$gameParty.members()[1].mp}",
+                    "x": 61,
+                    "y": 0,
+                    "width": 78,
+                    "height": 22,
+                    "align": "right",
+                    "fontSize": 18
+                  },
+                  {
+                    "id": "mp1_max",
+                    "type": "label",
+                    "text": "/{$gameParty.members()[1].mmp}",
+                    "x": 139,
+                    "y": 0,
+                    "width": 79,
+                    "height": 22,
+                    "fontSize": 18,
+                    "color": "#aaaaaa"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "actor_row_2",
+            "type": "panel",
+            "x": 0,
+            "y": 312,
+            "width": 576,
+            "height": 156,
+            "windowed": false,
+            "children": [
+              {
+                "id": "face2",
+                "type": "image",
+                "imageSource": "actorFace",
+                "actorIndex": 2,
+                "x": 2,
+                "y": 6,
+                "width": 140,
+                "height": 140
+              },
+              {
+                "id": "name2",
+                "type": "label",
+                "x": 148,
+                "y": 6,
+                "width": 200,
+                "height": 36,
+                "text": "{actor[2].name}",
+                "fontSize": 26
+              },
+              {
+                "id": "class2",
+                "type": "label",
+                "x": 352,
+                "y": 6,
+                "width": 218,
+                "height": 36,
+                "text": "{actor[2].class}",
+                "fontSize": 22,
+                "color": "#aaaaaa"
+              },
+              {
+                "id": "lv2",
+                "type": "label",
+                "x": 148,
+                "y": 48,
+                "width": 200,
+                "height": 32,
+                "text": "Lv {actor[2].level}",
+                "fontSize": 22,
+                "color": "#aaaaaa"
+              },
+              {
+                "id": "hp2",
+                "type": "gauge",
+                "valueExpr": "$gameParty.members()[2].hp",
+                "maxExpr": "$gameParty.members()[2].mhp",
+                "gaugeSkinId": "gauge_hp",
+                "x": 352,
+                "y": 48,
+                "width": 218,
+                "height": 36,
+                "children": [
+                  {
+                    "id": "hp2_name",
+                    "type": "label",
+                    "text": "HP",
+                    "x": 0,
+                    "y": 0,
+                    "width": 61,
+                    "height": 22,
+                    "fontSize": 18
+                  },
+                  {
+                    "id": "hp2_cur",
+                    "type": "label",
+                    "text": "{$gameParty.members()[2].hp}",
+                    "x": 61,
+                    "y": 0,
+                    "width": 78,
+                    "height": 22,
+                    "align": "right",
+                    "fontSize": 18
+                  },
+                  {
+                    "id": "hp2_max",
+                    "type": "label",
+                    "text": "/{$gameParty.members()[2].mhp}",
+                    "x": 139,
+                    "y": 0,
+                    "width": 79,
+                    "height": 22,
+                    "fontSize": 18,
+                    "color": "#aaaaaa"
+                  }
+                ]
+              },
+              {
+                "id": "mp2",
+                "type": "gauge",
+                "valueExpr": "$gameParty.members()[2].mp",
+                "maxExpr": "$gameParty.members()[2].mmp",
+                "gaugeSkinId": "gauge_mp",
+                "x": 352,
+                "y": 88,
+                "width": 218,
+                "height": 36,
+                "children": [
+                  {
+                    "id": "mp2_name",
+                    "type": "label",
+                    "text": "MP",
+                    "x": 0,
+                    "y": 0,
+                    "width": 61,
+                    "height": 22,
+                    "fontSize": 18
+                  },
+                  {
+                    "id": "mp2_cur",
+                    "type": "label",
+                    "text": "{$gameParty.members()[2].mp}",
+                    "x": 61,
+                    "y": 0,
+                    "width": 78,
+                    "height": 22,
+                    "align": "right",
+                    "fontSize": 18
+                  },
+                  {
+                    "id": "mp2_max",
+                    "type": "label",
+                    "text": "/{$gameParty.members()[2].mmp}",
+                    "x": 139,
+                    "y": 0,
+                    "width": 79,
+                    "height": 22,
+                    "fontSize": 18,
+                    "color": "#aaaaaa"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "actor_row_3",
+            "type": "panel",
+            "x": 0,
+            "y": 468,
+            "width": 576,
+            "height": 156,
+            "windowed": false,
+            "children": [
+              {
+                "id": "face3",
+                "type": "image",
+                "imageSource": "actorFace",
+                "actorIndex": 3,
+                "x": 2,
+                "y": 6,
+                "width": 140,
+                "height": 140
+              },
+              {
+                "id": "name3",
+                "type": "label",
+                "x": 148,
+                "y": 6,
+                "width": 200,
+                "height": 36,
+                "text": "{actor[3].name}",
+                "fontSize": 26
+              },
+              {
+                "id": "class3",
+                "type": "label",
+                "x": 352,
+                "y": 6,
+                "width": 218,
+                "height": 36,
+                "text": "{actor[3].class}",
+                "fontSize": 22,
+                "color": "#aaaaaa"
+              },
+              {
+                "id": "lv3",
+                "type": "label",
+                "x": 148,
+                "y": 48,
+                "width": 200,
+                "height": 32,
+                "text": "Lv {actor[3].level}",
+                "fontSize": 22,
+                "color": "#aaaaaa"
+              },
+              {
+                "id": "hp3",
+                "type": "gauge",
+                "valueExpr": "$gameParty.members()[3].hp",
+                "maxExpr": "$gameParty.members()[3].mhp",
+                "gaugeSkinId": "gauge_hp",
+                "x": 352,
+                "y": 48,
+                "width": 218,
+                "height": 36,
+                "children": [
+                  {
+                    "id": "hp3_name",
+                    "type": "label",
+                    "text": "HP",
+                    "x": 0,
+                    "y": 0,
+                    "width": 61,
+                    "height": 22,
+                    "fontSize": 18
+                  },
+                  {
+                    "id": "hp3_cur",
+                    "type": "label",
+                    "text": "{$gameParty.members()[3].hp}",
+                    "x": 61,
+                    "y": 0,
+                    "width": 78,
+                    "height": 22,
+                    "align": "right",
+                    "fontSize": 18
+                  },
+                  {
+                    "id": "hp3_max",
+                    "type": "label",
+                    "text": "/{$gameParty.members()[3].mhp}",
+                    "x": 139,
+                    "y": 0,
+                    "width": 79,
+                    "height": 22,
+                    "fontSize": 18,
+                    "color": "#aaaaaa"
+                  }
+                ]
+              },
+              {
+                "id": "mp3",
+                "type": "gauge",
+                "valueExpr": "$gameParty.members()[3].mp",
+                "maxExpr": "$gameParty.members()[3].mmp",
+                "gaugeSkinId": "gauge_mp",
+                "x": 352,
+                "y": 88,
+                "width": 218,
+                "height": 36,
+                "children": [
+                  {
+                    "id": "mp3_name",
+                    "type": "label",
+                    "text": "MP",
+                    "x": 0,
+                    "y": 0,
+                    "width": 61,
+                    "height": 22,
+                    "fontSize": 18
+                  },
+                  {
+                    "id": "mp3_cur",
+                    "type": "label",
+                    "text": "{$gameParty.members()[3].mp}",
+                    "x": 61,
+                    "y": 0,
+                    "width": 78,
+                    "height": 22,
+                    "align": "right",
+                    "fontSize": 18
+                  },
+                  {
+                    "id": "mp3_max",
+                    "type": "label",
+                    "text": "/{$gameParty.members()[3].mmp}",
+                    "x": 139,
+                    "y": 0,
+                    "width": 79,
+                    "height": 22,
+                    "fontSize": 18,
+                    "color": "#aaaaaa"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "actor_select",
+            "type": "rowSelector",
+            "x": 0,
+            "y": 0,
+            "width": 576,
+            "height": 624,
+            "numRows": "party",
+            "transparent": true,
+            "padding": 0,
+            "previewSelectable": false
+          }
+        ]
+      },
+      {
+        "id": "textArea_17722543123303",
+        "type": "textArea",
+        "x": 17,
+        "y": 404,
+        "width": 300,
+        "height": 80,
+        "text": "커스텀씬",
+        "align": "center",
+        "verticalAlign": "middle"
+      }
+    ]
+  }
+}
