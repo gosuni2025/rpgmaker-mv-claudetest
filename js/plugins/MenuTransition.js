@@ -485,12 +485,23 @@
 
     // ── 배경 비트맵 그리기 ────────────────────────────────────────────────────
 
+    var _drawBgBitmapLogCount = 0;
     function _drawBgBitmap(bitmap, blurT) {
-        if (!_srcCanvas || !bitmap) return;
+        if (!_srcCanvas || !bitmap) {
+            if (_drawBgBitmapLogCount++ < 3)
+                console.warn('[MT] _drawBgBitmap skip — srcCanvas:', !!_srcCanvas, '| bitmap:', !!bitmap);
+            return;
+        }
         var w = bitmap.width, h = bitmap.height;
-        if (w <= 0 || h <= 0) return;
+        if (w <= 0 || h <= 0) {
+            if (_drawBgBitmapLogCount++ < 3)
+                console.warn('[MT] _drawBgBitmap skip — w:', w, 'h:', h);
+            return;
+        }
 
         var ctx  = bitmap._context;
+        if (!ctx && _drawBgBitmapLogCount++ < 3)
+            console.warn('[MT] _drawBgBitmap — bitmap._context is null!');
         var type = Cfg.transitionEffect || 'blur';
         ctx.clearRect(0, 0, w, h);
 
@@ -700,11 +711,22 @@
         };
 
         var _SCU_update = Scene_CustomUI.prototype.update;
+        var _scuUpdateLogCount = 0;
         Scene_CustomUI.prototype.update = function () {
             _SCU_update.call(this);
 
             if (!_bgBitmap && this._backgroundSprite && this._backgroundSprite.bitmap) {
                 _bgBitmap = this._backgroundSprite.bitmap;
+                console.log('[MT] SCU update — _bgBitmap 설정됨',
+                    '| width:', _bgBitmap.width, '| height:', _bgBitmap.height,
+                    '| _context:', !!_bgBitmap._context,
+                    '| _bgBlurDir:', _bgBlurDir,
+                    '| sprite.visible:', this._backgroundSprite.visible,
+                    '| sprite.alpha:', this._backgroundSprite.alpha,
+                    '| sprite.x:', this._backgroundSprite.x,
+                    '| sprite.y:', this._backgroundSprite.y,
+                    '| scene children count:', this.children && this.children.length,
+                    '| sprite index:', this.children && this.children.indexOf(this._backgroundSprite));
                 _drawBgBitmap(_bgBitmap, _bgBlurT);
             }
 
@@ -715,7 +737,13 @@
                     ? applyEase(raw)
                     : _bgBlurStartT * applyEase(1 - raw);
                 _drawBgBitmap(_bgBitmap, _bgBlurT);
-                if (raw >= 1) _bgBlurDir = 0;
+                if (_scuUpdateLogCount++ < 3) {
+                    console.log('[MT] SCU update draw — dir:', _bgBlurDir,
+                        '| blurT:', _bgBlurT.toFixed(3),
+                        '| srcCanvas:', !!_srcCanvas,
+                        '| bitmap._context:', !!_bgBitmap._context);
+                }
+                if (raw >= 1) { _bgBlurDir = 0; _scuUpdateLogCount = 0; }
             }
         };
 
