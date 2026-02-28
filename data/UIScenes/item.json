@@ -19,7 +19,7 @@
   "root": {
     "id": "root",
     "type": "panel",
-    "x": 0,
+    "x": 12,
     "y": 0,
     "width": 816,
     "height": 624,
