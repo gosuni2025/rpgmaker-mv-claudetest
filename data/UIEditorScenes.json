@@ -1667,7 +1667,8 @@
                 "autoHeight": true,
                 "dataScript": "(function(){var e=$ctx&&$ctx.enemy;if(!e)return[];var drops=[];e.dropItems.forEach(function(di){if(di.kind>0){var item=Game_Enemy.prototype.itemObject(di.kind,di.dataId);if(item)drops.push({name:item.name,symbol:'drop_'+drops.length,enabled:false});}});return drops;})()",
                 "windowed": false,
-                "handlers": {}
+                "handlers": {},
+                "maxCols": 1
               }
             ]
           },
