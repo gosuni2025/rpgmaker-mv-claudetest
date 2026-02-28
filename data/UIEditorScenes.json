@@ -4258,6 +4258,17 @@
                 "action": "popScene"
               }
             }
+          },
+          {
+            "id": "textArea_17722651369618",
+            "type": "textArea",
+            "x": 456,
+            "y": 480,
+            "width": 300,
+            "height": 80,
+            "text": "커스텀씬",
+            "align": "center",
+            "verticalAlign": "middle"
           }
         ]
       }
