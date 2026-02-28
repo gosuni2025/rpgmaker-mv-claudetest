@@ -1,0 +1,182 @@
+{
+  "id": "actor_row_item",
+  "displayName": "액터 행 (아이템 선택용)",
+  "formatVersion": 2,
+  "root": {
+    "id": "actor_row_item_root",
+    "type": "panel",
+    "x": 0,
+    "y": 0,
+    "width": 816,
+    "height": 120,
+    "windowed": false,
+    "children": [
+      {
+        "id": "face",
+        "type": "image",
+        "imageSource": "actorFace",
+        "actorIndexExpr": "$ctx.actorIndex",
+        "x": 2,
+        "y": 8,
+        "width": 100,
+        "height": 100
+      },
+      {
+        "id": "name",
+        "type": "label",
+        "x": 110,
+        "y": 8,
+        "width": 220,
+        "height": 34,
+        "text": "{actor[$ctx.actorIndex].name}",
+        "fontSize": 26
+      },
+      {
+        "id": "class",
+        "type": "label",
+        "x": 110,
+        "y": 46,
+        "width": 220,
+        "height": 28,
+        "text": "{actor[$ctx.actorIndex].class}",
+        "fontSize": 20,
+        "color": "#aaaaaa"
+      },
+      {
+        "id": "lv",
+        "type": "label",
+        "x": 110,
+        "y": 78,
+        "width": 220,
+        "height": 28,
+        "text": "Lv {actor[$ctx.actorIndex].level}",
+        "fontSize": 20,
+        "color": "#aaaaaa"
+      },
+      {
+        "id": "hp",
+        "type": "gauge",
+        "actorIndexExpr": "$ctx.actorIndex",
+        "gaugeType": "hp",
+        "gaugeSkinId": "gauge_hp",
+        "x": 340,
+        "y": 10,
+        "width": 230,
+        "height": 44,
+        "children": [
+          {
+            "id": "hp_name",
+            "type": "label",
+            "text": "HP",
+            "x": 0,
+            "y": 0,
+            "width": 52,
+            "height": 22,
+            "fontSize": 16
+          },
+          {
+            "id": "hp_cur",
+            "type": "label",
+            "text": "{actor[$ctx.actorIndex].hp}",
+            "x": 52,
+            "y": 0,
+            "width": 88,
+            "height": 22,
+            "align": "right",
+            "fontSize": 16,
+            "borderWidth": 1
+          },
+          {
+            "id": "hp_max",
+            "type": "label",
+            "text": "/{actor[$ctx.actorIndex].mhp}",
+            "x": 140,
+            "y": 0,
+            "width": 90,
+            "height": 22,
+            "fontSize": 16,
+            "color": "#aaaaaa"
+          }
+        ]
+      },
+      {
+        "id": "mp",
+        "type": "gauge",
+        "actorIndexExpr": "$ctx.actorIndex",
+        "gaugeType": "mp",
+        "gaugeSkinId": "gauge_mp",
+        "x": 340,
+        "y": 62,
+        "width": 230,
+        "height": 44,
+        "children": [
+          {
+            "id": "mp_name",
+            "type": "label",
+            "text": "MP",
+            "x": 0,
+            "y": 0,
+            "width": 52,
+            "height": 22,
+            "fontSize": 16
+          },
+          {
+            "id": "mp_cur",
+            "type": "label",
+            "text": "{actor[$ctx.actorIndex].mp}",
+            "x": 52,
+            "y": 0,
+            "width": 88,
+            "height": 22,
+            "align": "right",
+            "fontSize": 16
+          },
+          {
+            "id": "mp_max",
+            "type": "label",
+            "text": "/{actor[$ctx.actorIndex].mmp}",
+            "x": 140,
+            "y": 0,
+            "width": 90,
+            "height": 22,
+            "fontSize": 16,
+            "color": "#aaaaaa"
+          }
+        ]
+      },
+      {
+        "id": "tp",
+        "type": "gauge",
+        "actorIndexExpr": "$ctx.actorIndex",
+        "gaugeType": "tp",
+        "x": 580,
+        "y": 10,
+        "width": 228,
+        "height": 44,
+        "children": [
+          {
+            "id": "tp_name",
+            "type": "label",
+            "text": "TP",
+            "x": 0,
+            "y": 0,
+            "width": 52,
+            "height": 22,
+            "fontSize": 16
+          },
+          {
+            "id": "tp_cur",
+            "type": "label",
+            "text": "{actor[$ctx.actorIndex].tp}",
+            "x": 52,
+            "y": 0,
+            "width": 176,
+            "height": 22,
+            "align": "right",
+            "fontSize": 16
+          }
+        ]
+      }
+    ]
+  }
+}

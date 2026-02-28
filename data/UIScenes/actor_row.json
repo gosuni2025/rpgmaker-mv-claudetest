@@ -1,0 +1,149 @@
+{
+  "id": "actor_row",
+  "displayName": "액터 행 (메뉴용)",
+  "formatVersion": 2,
+  "root": {
+    "id": "actor_row_root",
+    "type": "panel",
+    "x": 0,
+    "y": 0,
+    "width": 576,
+    "height": 156,
+    "windowed": false,
+    "children": [
+      {
+        "id": "face",
+        "type": "image",
+        "imageSource": "actorFace",
+        "actorIndexExpr": "$ctx.actorIndex",
+        "x": 2,
+        "y": 6,
+        "width": 140,
+        "height": 140
+      },
+      {
+        "id": "name",
+        "type": "label",
+        "x": 148,
+        "y": 6,
+        "width": 200,
+        "height": 36,
+        "text": "{actor[$ctx.actorIndex].name}",
+        "fontSize": 26
+      },
+      {
+        "id": "class",
+        "type": "label",
+        "x": 352,
+        "y": 6,
+        "width": 218,
+        "height": 36,
+        "text": "{actor[$ctx.actorIndex].class}",
+        "fontSize": 22,
+        "color": "#aaaaaa"
+      },
+      {
+        "id": "lv",
+        "type": "label",
+        "x": 148,
+        "y": 48,
+        "width": 200,
+        "height": 32,
+        "text": "Lv {actor[$ctx.actorIndex].level}",
+        "fontSize": 22,
+        "color": "#aaaaaa"
+      },
+      {
+        "id": "hp",
+        "type": "gauge",
+        "actorIndexExpr": "$ctx.actorIndex",
+        "gaugeType": "hp",
+        "gaugeSkinId": "gauge_hp",
+        "x": 352,
+        "y": 48,
+        "width": 218,
+        "height": 36,
+        "children": [
+          {
+            "id": "hp_name",
+            "type": "label",
+            "text": "HP",
+            "x": 0,
+            "y": 0,
+            "width": 61,
+            "height": 22,
+            "fontSize": 18
+          },
+          {
+            "id": "hp_cur",
+            "type": "label",
+            "text": "{actor[$ctx.actorIndex].hp}",
+            "x": 61,
+            "y": 0,
+            "width": 78,
+            "height": 22,
+            "align": "right",
+            "fontSize": 18,
+            "borderWidth": 1
+          },
+          {
+            "id": "hp_max",
+            "type": "label",
+            "text": "/{actor[$ctx.actorIndex].mhp}",
+            "x": 139,
+            "y": 0,
+            "width": 79,
+            "height": 22,
+            "fontSize": 18,
+            "color": "#aaaaaa"
+          }
+        ]
+      },
+      {
+        "id": "mp",
+        "type": "gauge",
+        "actorIndexExpr": "$ctx.actorIndex",
+        "gaugeType": "mp",
+        "gaugeSkinId": "gauge_mp",
+        "x": 352,
+        "y": 88,
+        "width": 218,
+        "height": 36,
+        "children": [
+          {
+            "id": "mp_name",
+            "type": "label",
+            "text": "MP",
+            "x": 0,
+            "y": 0,
+            "width": 61,
+            "height": 22,
+            "fontSize": 18
+          },
+          {
+            "id": "mp_cur",
+            "type": "label",
+            "text": "{actor[$ctx.actorIndex].mp}",
+            "x": 61,
+            "y": 0,
+            "width": 78,
+            "height": 22,
+            "align": "right",
+            "fontSize": 18
+          },
+          {
+            "id": "mp_max",
+            "type": "label",
+            "text": "/{actor[$ctx.actorIndex].mmp}",
+            "x": 139,
+            "y": 0,
+            "width": 79,
+            "height": 22,
+            "fontSize": 18,
+            "color": "#aaaaaa"
+          }
+        ]
+      }
+    ]
+  }
+}
