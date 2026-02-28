@@ -2029,7 +2029,7 @@
             "handlers": {
               "ok": {
                 "action": "script",
-                "code": "var lw=this._widgetMap['slot_list'];if(lw&&lw._window){var sym=lw._window.currentSymbol();FJ._slot=sym?parseInt(sym.replace('slot_',''),10):0;FJ._curClassId=0;}",
+                "code": "FJ._curClassId=0;",
                 "thenAction": {
                   "action": "focusWidget",
                   "target": "class_list"
