@@ -240,7 +240,8 @@
                         "width": 78,
                         "height": 22,
                         "align": "right",
-                        "fontSize": 18
+                        "fontSize": 18,
+                        "borderWidth": 1
                       },
                       {
                         "id": "hp0_max",
