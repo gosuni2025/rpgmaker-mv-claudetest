@@ -1,3 +1,12 @@
 {
-  "overrides": {}
+  "overrides": {
+    "Window_CS_status_win": {
+      "className": "Window_CS_status_win",
+      "x": 0,
+      "y": 0
+    }
+  },
+  "sceneRedirects": {
+    "Scene_Status": "Scene_CS_status"
+  }
 }
