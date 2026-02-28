@@ -1648,6 +1648,16 @@
                 "handlers": {}
               }
             ]
+          },
+          {
+            "id": "textArea_1772250546038",
+            "type": "textArea",
+            "x": 150,
+            "y": 511,
+            "width": 300,
+            "height": 80,
+            "text": "커스텀씬",
+            "align": "center"
           }
         ]
       }
@@ -2361,157 +2371,6 @@
                 "color": "#888888",
                 "align": "center"
               }
-            ]
-          }
-        ]
-      }
-    },
-    "status": {
-      "id": "status",
-      "displayName": "캐릭터 상태",
-      "formatVersion": 2,
-      "prepareArgs": [],
-      "initCtx": {
-        "actorIndex": "$gameParty.menuActor() ? Math.max(0, $gameParty.members().indexOf($gameParty.menuActor())) : 0"
-      },
-      "keyHandlers": {
-        "pagedown": { "action": "script", "code": "if(typeof SoundManager!=='undefined')SoundManager.playCursor(); $ctx.actorIndex = ($ctx.actorIndex + 1) % $gameParty.size();" },
-        "pageup":   { "action": "script", "code": "if(typeof SoundManager!=='undefined')SoundManager.playCursor(); $ctx.actorIndex = ($ctx.actorIndex - 1 + $gameParty.size()) % $gameParty.size();" },
-        "cancel":   { "action": "script", "code": "if(typeof SoundManager!=='undefined')SoundManager.playCancel(); SceneManager.pop();" }
-      },
-      "navigation": {},
-      "root": {
-        "id": "root",
-        "type": "panel",
-        "x": 0, "y": 0,
-        "width": 816, "height": 624,
-        "windowed": false,
-        "children": [
-          { "id": "bg", "type": "background", "x": 0, "y": 0, "width": 816, "height": 624 },
-          {
-            "id": "status_win",
-            "type": "panel",
-            "x": 0, "y": 0,
-            "width": 816, "height": 624,
-            "windowed": true,
-            "children": [
-              { "id": "actor_name", "type": "label",
-                "x": 24, "y": 18, "width": 168, "height": 36,
-                "text": "{actor[$ctx.actorIndex].name}", "fontSize": 26 },
-              { "id": "actor_class", "type": "label",
-                "x": 210, "y": 18, "width": 240, "height": 36,
-                "text": "{actor[$ctx.actorIndex].class}", "fontSize": 22, "color": "#aaaaaa" },
-              { "id": "actor_nickname", "type": "label",
-                "x": 450, "y": 18, "width": 348, "height": 36,
-                "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?a.nickname():'';})()}",
-                "fontSize": 22, "color": "#aaaaaa" },
-
-              { "id": "line1", "type": "separator", "x": 18, "y": 54, "width": 780, "height": 4 },
-
-              { "id": "actor_face", "type": "image",
-                "imageSource": "actorFace", "actorIndexExpr": "$ctx.actorIndex",
-                "x": 30, "y": 90, "width": 144, "height": 144 },
-
-              { "id": "actor_level", "type": "label",
-                "x": 222, "y": 90, "width": 222, "height": 36,
-                "text": "Lv. {actor[$ctx.actorIndex].level}", "fontSize": 22, "color": "#aaaaaa" },
-              { "id": "actor_icons", "type": "icons",
-                "x": 222, "y": 126, "width": 222, "height": 32,
-                "iconsExpr": "(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?a.allIcons():[];})()",
-                "maxCols": 7, "iconSize": 28, "iconGap": 2 },
-              { "id": "hp_gauge", "type": "gauge",
-                "x": 222, "y": 162, "width": 222, "height": 36,
-                "gaugeType": "hp", "actorIndexExpr": "$ctx.actorIndex",
-                "showLabel": true, "showValue": true },
-              { "id": "mp_gauge", "type": "gauge",
-                "x": 222, "y": 198, "width": 222, "height": 36,
-                "gaugeType": "mp", "actorIndexExpr": "$ctx.actorIndex",
-                "showLabel": true, "showValue": true },
-
-              { "id": "exp_total_label", "type": "label",
-                "x": 474, "y": 90, "width": 270, "height": 36,
-                "text": "{(typeof TextManager!=='undefined'&&TextManager.expTotal)?TextManager.expTotal.format(TextManager.exp||'EXP'):'현재 경험치'}",
-                "fontSize": 20, "color": "#ffff99" },
-              { "id": "exp_total_val", "type": "label",
-                "x": 474, "y": 126, "width": 270, "height": 36,
-                "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?(a.isMaxLevel()?'-------':String(a.currentExp())):'';})()}",
-                "fontSize": 22, "align": "right" },
-              { "id": "exp_next_label", "type": "label",
-                "x": 474, "y": 162, "width": 270, "height": 36,
-                "text": "{(typeof TextManager!=='undefined'&&TextManager.expNext)?TextManager.expNext.format(TextManager.level||'Lv'):'다음 레벨까지'}",
-                "fontSize": 20, "color": "#ffff99" },
-              { "id": "exp_next_val", "type": "label",
-                "x": 474, "y": 198, "width": 270, "height": 36,
-                "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?(a.isMaxLevel()?'-------':String(a.nextRequiredExp())):'';})()}",
-                "fontSize": 22, "align": "right" },
-
-              { "id": "line2", "type": "separator", "x": 18, "y": 234, "width": 780, "height": 4 },
-
-              { "id": "p2_label", "type": "label",
-                "x": 30, "y": 270, "width": 160, "height": 36,
-                "text": "{typeof TextManager!=='undefined'?TextManager.param(2):'공격력'}",
-                "fontSize": 22, "color": "#ffff99" },
-              { "id": "p2_val", "type": "label",
-                "x": 190, "y": 270, "width": 60, "height": 36,
-                "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?a.param(2):0;})()}",
-                "fontSize": 22, "align": "right" },
-
-              { "id": "p3_label", "type": "label",
-                "x": 30, "y": 306, "width": 160, "height": 36,
-                "text": "{typeof TextManager!=='undefined'?TextManager.param(3):'방어력'}",
-                "fontSize": 22, "color": "#ffff99" },
-              { "id": "p3_val", "type": "label",
-                "x": 190, "y": 306, "width": 60, "height": 36,
-                "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?a.param(3):0;})()}",
-                "fontSize": 22, "align": "right" },
-
-              { "id": "p4_label", "type": "label",
-                "x": 30, "y": 342, "width": 160, "height": 36,
-                "text": "{typeof TextManager!=='undefined'?TextManager.param(4):'마법공격'}",
-                "fontSize": 22, "color": "#ffff99" },
-              { "id": "p4_val", "type": "label",
-                "x": 190, "y": 342, "width": 60, "height": 36,
-                "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?a.param(4):0;})()}",
-                "fontSize": 22, "align": "right" },
-
-              { "id": "p5_label", "type": "label",
-                "x": 30, "y": 378, "width": 160, "height": 36,
-                "text": "{typeof TextManager!=='undefined'?TextManager.param(5):'마법방어'}",
-                "fontSize": 22, "color": "#ffff99" },
-              { "id": "p5_val", "type": "label",
-                "x": 190, "y": 378, "width": 60, "height": 36,
-                "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?a.param(5):0;})()}",
-                "fontSize": 22, "align": "right" },
-
-              { "id": "p6_label", "type": "label",
-                "x": 30, "y": 414, "width": 160, "height": 36,
-                "text": "{typeof TextManager!=='undefined'?TextManager.param(6):'민첩성'}",
-                "fontSize": 22, "color": "#ffff99" },
-              { "id": "p6_val", "type": "label",
-                "x": 190, "y": 414, "width": 60, "height": 36,
-                "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?a.param(6):0;})()}",
-                "fontSize": 22, "align": "right" },
-
-              { "id": "p7_label", "type": "label",
-                "x": 30, "y": 450, "width": 160, "height": 36,
-                "text": "{typeof TextManager!=='undefined'?TextManager.param(7):'행운'}",
-                "fontSize": 22, "color": "#ffff99" },
-              { "id": "p7_val", "type": "label",
-                "x": 190, "y": 450, "width": 60, "height": 36,
-                "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?a.param(7):0;})()}",
-                "fontSize": 22, "align": "right" },
-
-              { "id": "equip_list", "type": "list",
-                "x": 450, "y": 270, "width": 348, "height": 216,
-                "focusable": false, "windowed": false,
-                "dataScript": "(function(){var a=$gameParty.members()[$ctx.actorIndex];if(!a)return [];return a.equips().map(function(e,i){var tn=($dataSystem&&$dataSystem.equipTypes&&$dataSystem.equipTypes[i+1])||('장비'+(i+1));return {name:tn+':  '+(e?e.name:'---'),symbol:'equip_'+i,enabled:false};});})()"},
-
-              { "id": "line3", "type": "separator", "x": 18, "y": 486, "width": 780, "height": 4 },
-
-              { "id": "actor_profile", "type": "textArea",
-                "x": 24, "y": 504, "width": 774, "height": 84,
-                "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];return a?a.profile():'';})()}",
-                "fontSize": 18 }
             ]
           }
         ]

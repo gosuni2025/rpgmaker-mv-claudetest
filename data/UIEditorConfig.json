@@ -1,6 +1,4 @@
 {
   "overrides": {},
-  "sceneRedirects": {
-    "Scene_Status": "Scene_CS_status"
-  }
+  "sceneRedirects": {}
 }
