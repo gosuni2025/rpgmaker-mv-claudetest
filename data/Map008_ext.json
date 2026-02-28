@@ -4807,6 +4807,10 @@
       "name": "직업 해금사",
       "showName": true
     },
+    "57": {
+      "name": "직업 길드장",
+      "showName": true
+    },
     "58": {
       "name": "스킬 사서",
       "showName": true
