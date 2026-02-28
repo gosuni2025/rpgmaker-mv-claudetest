@@ -531,6 +531,17 @@
         }
 
         bitmap._setDirty();
+
+        if (_drawBgBitmapLogCount < 3) {
+            _drawBgBitmapLogCount++;
+            var bt = bitmap._baseTexture || bitmap.baseTexture;
+            console.log('[MT] _drawBgBitmap complete — _setDirty 후',
+                '| _baseTexture:', !!bt,
+                '| bt.dirty:', bt && bt.dirty,
+                '| bt.needsUpdate:', bt && bt.needsUpdate,
+                '| bitmap.__canvas === _srcCanvas:', bitmap.__canvas === _srcCanvas,
+                '| bitmap._canvas:', !!bitmap._canvas);
+        }
     }
 
     // ── 커스텀 씬 감지 헬퍼 ──────────────────────────────────────────────────
@@ -717,16 +728,17 @@
 
             if (!_bgBitmap && this._backgroundSprite && this._backgroundSprite.bitmap) {
                 _bgBitmap = this._backgroundSprite.bitmap;
+                var childInfo = this.children ? this.children.map(function(c, i) {
+                    return i + ':' + (c.constructor && c.constructor.name || typeof c);
+                }).join(', ') : '';
                 console.log('[MT] SCU update — _bgBitmap 설정됨',
-                    '| width:', _bgBitmap.width, '| height:', _bgBitmap.height,
-                    '| _context:', !!_bgBitmap._context,
                     '| _bgBlurDir:', _bgBlurDir,
                     '| sprite.visible:', this._backgroundSprite.visible,
-                    '| sprite.alpha:', this._backgroundSprite.alpha,
-                    '| sprite.x:', this._backgroundSprite.x,
-                    '| sprite.y:', this._backgroundSprite.y,
-                    '| scene children count:', this.children && this.children.length,
-                    '| sprite index:', this.children && this.children.indexOf(this._backgroundSprite));
+                    '| sprite index:', this.children && this.children.indexOf(this._backgroundSprite),
+                    '| children:', childInfo,
+                    '| bitmap._baseTexture:', !!(_bgBitmap._baseTexture || _bgBitmap.baseTexture),
+                    '| bitmap.__canvas:', !!_bgBitmap.__canvas,
+                    '| bitmap._canvas:', !!_bgBitmap._canvas);
                 _drawBgBitmap(_bgBitmap, _bgBlurT);
             }
 
