@@ -2878,13 +2878,13 @@
             "x": 0,
             "y": 72,
             "width": 816,
-            "height": 54,
+            "height": 72,
             "maxCols": 4,
             "items": [
-              { "name": "아이템",      "symbol": "item",    "enabled": true },
-              { "name": "무기",        "symbol": "weapon",  "enabled": true },
-              { "name": "방어구",      "symbol": "armor",   "enabled": true },
-              { "name": "중요 아이템", "symbol": "keyItem", "enabled": true }
+              { "name": "{TextManager.item}",    "symbol": "item",    "enabled": true },
+              { "name": "{TextManager.weapon}",  "symbol": "weapon",  "enabled": true },
+              { "name": "{TextManager.armor}",   "symbol": "armor",   "enabled": true },
+              { "name": "{TextManager.keyItem}", "symbol": "keyItem", "enabled": true }
             ],
             "handlers": {
               "item": {
