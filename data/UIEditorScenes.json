@@ -2984,13 +2984,16 @@
           {
             "id": "textArea_17722650899211",
             "type": "textArea",
-            "x": 17,
-            "y": 404,
+            "x": 318,
+            "y": 449,
             "width": 300,
             "height": 80,
             "text": "커스텀씬",
             "align": "center",
-            "verticalAlign": "middle"
+            "verticalAlign": "middle",
+            "bgColor": "#f42525",
+            "borderRadius": 2,
+            "borderWidth": 2
           }
         ]
       }
