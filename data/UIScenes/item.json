@@ -164,7 +164,7 @@
         "children": [
           {
             "id": "actor_row_0",
-            "type": "subScene",
+            "type": "scene",
             "sceneId": "actor_row_item",
             "instanceCtx": {
               "actorIndex": 0
@@ -176,7 +176,7 @@
           },
           {
             "id": "actor_row_1",
-            "type": "subScene",
+            "type": "scene",
             "sceneId": "actor_row_item",
             "instanceCtx": {
               "actorIndex": 1
@@ -188,7 +188,7 @@
           },
           {
             "id": "actor_row_2",
-            "type": "subScene",
+            "type": "scene",
             "sceneId": "actor_row_item",
             "instanceCtx": {
               "actorIndex": 2
@@ -200,7 +200,7 @@
           },
           {
             "id": "actor_row_3",
-            "type": "subScene",
+            "type": "scene",
             "sceneId": "actor_row_item",
             "instanceCtx": {
               "actorIndex": 3
