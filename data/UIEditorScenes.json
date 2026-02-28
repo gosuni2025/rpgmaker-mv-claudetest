@@ -2813,6 +2813,143 @@
           }
         ]
       }
+    },
+    "save": {
+      "id": "save",
+      "displayName": "세이브",
+      "formatVersion": 2,
+      "prepareArgs": [],
+      "navigation": {
+        "defaultFocus": "saveList",
+        "cancelWidget": "saveList"
+      },
+      "root": {
+        "id": "root",
+        "type": "panel",
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 624,
+        "windowed": false,
+        "children": [
+          {
+            "id": "bg",
+            "type": "background",
+            "x": 0,
+            "y": 0,
+            "width": 816,
+            "height": 624
+          },
+          {
+            "id": "helpPanel",
+            "type": "panel",
+            "x": 0,
+            "y": 0,
+            "width": 816,
+            "height": 52,
+            "windowed": true,
+            "children": [
+              {
+                "id": "helpText",
+                "type": "label",
+                "x": 4,
+                "y": 2,
+                "width": 808,
+                "height": 36,
+                "text": "저장할 파일을 선택하세요."
+              }
+            ]
+          },
+          {
+            "id": "saveList",
+            "type": "list",
+            "x": 0,
+            "y": 52,
+            "width": 816,
+            "height": 572,
+            "rowHeight": 104,
+            "initialIndexExpr": "CSHelper.lastSavefileId() - 1",
+            "dataScript": "(function() { var items = []; var count = DataManager.maxSavefiles(); for (var i = 1; i <= count; i++) { var info = DataManager.loadSavefileInfo(i); var valid = DataManager.isThisGameFile(i); var chars = []; if (valid && info && info.characters) { for (var j = 0; j < Math.min(info.characters.length, 4); j++) { var c = info.characters[j]; chars.push([c[0], c[1], 220 + j * 48, 100]); } } items.push({ name: TextManager.file + ' ' + i, symbol: i, enabled: true, subText: (info && info.title) ? info.title : '', rightText: (info && info.playtime) ? info.playtime : '', characters: chars }); } return items; })()",
+            "handlers": {
+              "ok": {
+                "action": "script",
+                "code": "var id = this._widgetMap.saveList._window.currentSymbol(); $gameSystem.onBeforeSave(); if (DataManager.saveGame(id)) { SoundManager.playSave(); this.popScene(); } else { SoundManager.playBuzzer(); }"
+              },
+              "cancel": {
+                "action": "popScene"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "load": {
+      "id": "load",
+      "displayName": "로드",
+      "formatVersion": 2,
+      "prepareArgs": [],
+      "navigation": {
+        "defaultFocus": "loadList",
+        "cancelWidget": "loadList"
+      },
+      "root": {
+        "id": "root",
+        "type": "panel",
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 624,
+        "windowed": false,
+        "children": [
+          {
+            "id": "bg",
+            "type": "background",
+            "x": 0,
+            "y": 0,
+            "width": 816,
+            "height": 624
+          },
+          {
+            "id": "helpPanel",
+            "type": "panel",
+            "x": 0,
+            "y": 0,
+            "width": 816,
+            "height": 52,
+            "windowed": true,
+            "children": [
+              {
+                "id": "helpText",
+                "type": "label",
+                "x": 4,
+                "y": 2,
+                "width": 808,
+                "height": 36,
+                "text": "불러올 파일을 선택하세요."
+              }
+            ]
+          },
+          {
+            "id": "loadList",
+            "type": "list",
+            "x": 0,
+            "y": 52,
+            "width": 816,
+            "height": 572,
+            "rowHeight": 104,
+            "dataScript": "(function() { var items = []; var count = DataManager.maxSavefiles(); for (var i = 1; i <= count; i++) { var info = DataManager.loadSavefileInfo(i); var valid = DataManager.isThisGameFile(i); var chars = []; if (valid && info && info.characters) { for (var j = 0; j < Math.min(info.characters.length, 4); j++) { var c = info.characters[j]; chars.push([c[0], c[1], 220 + j * 48, 100]); } } items.push({ name: TextManager.file + ' ' + i, symbol: i, enabled: valid, subText: (info && info.title) ? info.title : '', rightText: (info && info.playtime) ? info.playtime : '', characters: chars }); } return items; })()",
+            "handlers": {
+              "ok": {
+                "action": "script",
+                "code": "var id = this._widgetMap.loadList._window.currentSymbol(); if (DataManager.loadGame(id)) { SceneManager.goto(Scene_Map); $gameSystem.onAfterLoad(); } else { SoundManager.playBuzzer(); }"
+              },
+              "cancel": {
+                "action": "popScene"
+              }
+            }
+          }
+        ]
+      }
     }
   }
 }
