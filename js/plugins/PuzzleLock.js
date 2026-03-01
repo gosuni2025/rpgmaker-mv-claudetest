@@ -159,7 +159,7 @@
     if (entered === this._code) {
       this._state = 'correct';
       this._stateTimer = 90; // 약 1.5초 후 씬 종료
-      AudioManager.playSe({ name: 'Unlock', pan: 0, pitch: 100, volume: 90 });
+      AudioManager.playSe({ name: 'Switch1', pan: 0, pitch: 100, volume: 90 });
     } else {
       this._state = 'wrong';
       this._stateTimer = 80;
@@ -176,7 +176,7 @@
   };
 
   Scene_PuzzleLock.prototype.onCancel = function () {
-    AudioManager.playCancel();
+    SoundManager.playCancel();
     SceneManager.pop();
   };
 

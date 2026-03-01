@@ -431,7 +431,7 @@
   };
 
   Scene_PuzzleSliding.prototype.onCancel = function() {
-    AudioManager.playCancel();
+    SoundManager.playCancel();
     SceneManager.pop();
   };
 

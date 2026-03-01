@@ -455,7 +455,7 @@
   };
 
   Scene_PuzzleSokoban.prototype.onCancel = function() {
-    AudioManager.playCancel();
+    SoundManager.playCancel();
     SceneManager.pop();
   };
 
