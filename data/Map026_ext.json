@@ -1837,6 +1837,16 @@
     ]
   },
   "animTileSettings": {
+    "0": {
+      "enabled": true,
+      "waveAmplitude": 0.002,
+      "waveFrequency": 1,
+      "waveSpeed": 2,
+      "waterAlpha": 1,
+      "specularStrength": 0.4,
+      "emissive": 0,
+      "emissiveColor": "#ffffff"
+    },
     "6": {
       "enabled": true,
       "waveAmplitude": 0.007,
