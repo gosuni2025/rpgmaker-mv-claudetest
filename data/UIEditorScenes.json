@@ -3943,7 +3943,7 @@
             "maxCols": 2,
             "dataScript": "(function(){var a=$gameParty.members()[$ctx.actorIndex];var slotId=$ctx.slotId||0;if(!a||!a.equipSlots)return [];var etypeId=a.equipSlots()[slotId];if(!etypeId)return [];var list=[{name:TextManager.none||'없음',symbol:'none',enabled:true,data:null}];$gameParty.equipItems().filter(function(it){return it.etypeId===etypeId&&a.canEquip(it);}).forEach(function(it){list.push({name:it.name,iconIndex:it.iconIndex,symbol:'eq_'+it.etypeId+'_'+it.id,enabled:true,data:it});});return list;})()",
             "onCursor": {
-              "code": "var iw=this._widgetMap['item_list'];if(!iw||!iw._window)return;var cmds=iw._window._winDef.commands;var idx=iw._window.index();var item=cmds&&cmds[idx]?cmds[idx].data:null;var a=$gameParty.members()[$ctx.actorIndex];if(a){var tmp=JsonEx.makeDeepCopy(a);tmp.forceChangeEquip($ctx.slotId||0,item);$ctx.tempActor=tmp;}$ctx.helpText=item?item.description:(TextManager.none||'없음');this._rootWidget.refresh();"
+              "code": "var iw=this._widgetMap['item_list'];if(!iw||!iw._window)return;var cmds=iw._window._winDef.commands;var idx=iw._window.index();var item=cmds&&cmds[idx]?cmds[idx].data:null;var a=$gameParty.members()[$ctx.actorIndex];if(a){var tmp=JsonEx.makeDeepCopy(a);var sid=($ctx.slotId>=0?$ctx.slotId:0);if(tmp._equips&&tmp._equips[sid]){tmp.forceChangeEquip(sid,item);$ctx.tempActor=tmp;}}$ctx.helpText=item?item.description:(TextManager.none||'없음');this._rootWidget.refresh();"
             },
             "handlers": {
               "ok": {
