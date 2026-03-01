@@ -1,0 +1,20 @@
+{
+  "npcData": {
+    "5": {
+      "name": "확인",
+      "showName": true
+    },
+    "6": {
+      "name": "힌트",
+      "showName": true
+    },
+    "8": {
+      "name": "출구",
+      "showName": true
+    },
+    "9": {
+      "name": "비밀번호",
+      "showName": true
+    }
+  }
+}

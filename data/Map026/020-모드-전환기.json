@@ -1,0 +1,160 @@
+{
+  "id": 20,
+  "name": "모드 전환기",
+  "x": 21,
+  "y": 19,
+  "note": "",
+  "pages": [
+    {
+      "conditions": {
+        "actorId": 1,
+        "actorValid": false,
+        "itemId": 1,
+        "itemValid": false,
+        "selfSwitchCh": "A",
+        "selfSwitchValid": false,
+        "switch1Id": 1,
+        "switch1Valid": false,
+        "switch2Id": 1,
+        "switch2Valid": false,
+        "variableId": 1,
+        "variableValid": false,
+        "variableValue": 0
+      },
+      "directionFix": false,
+      "image": {
+        "characterIndex": 7,
+        "characterName": "Actor1",
+        "direction": 2,
+        "pattern": 0,
+        "tileId": 0
+      },
+      "list": [
+        {
+          "code": 111,
+          "indent": 0,
+          "parameters": [
+            12,
+            "ConfigManager.mode3d",
+            "test"
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 1,
+          "parameters": [
+            "",
+            "",
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "현재 3D 모드입니다."
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "2D 모드로 전환합니다."
+          ]
+        },
+        {
+          "code": 221,
+          "indent": 1,
+          "parameters": []
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "Mode3D off"
+          ]
+        },
+        {
+          "code": 222,
+          "indent": 1,
+          "parameters": []
+        },
+        {
+          "code": 411,
+          "indent": 0,
+          "parameters": []
+        },
+        {
+          "code": 101,
+          "indent": 1,
+          "parameters": [
+            "",
+            "",
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "현재 2D 모드입니다."
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "3D 모드로 전환합니다."
+          ]
+        },
+        {
+          "code": 221,
+          "indent": 1,
+          "parameters": []
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "Mode3D on"
+          ]
+        },
+        {
+          "code": 222,
+          "indent": 1,
+          "parameters": []
+        },
+        {
+          "code": 412,
+          "indent": 0,
+          "parameters": []
+        },
+        {
+          "code": 0,
+          "indent": 0,
+          "parameters": []
+        }
+      ],
+      "moveFrequency": 3,
+      "moveRoute": {
+        "list": [
+          {
+            "code": 0
+          }
+        ],
+        "repeat": true,
+        "skippable": false,
+        "wait": false
+      },
+      "moveSpeed": 3,
+      "moveType": 0,
+      "priorityType": 1,
+      "stepAnime": false,
+      "through": false,
+      "trigger": 0,
+      "walkAnime": true
+    }
+  ]
+}

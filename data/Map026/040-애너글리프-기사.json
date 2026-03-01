@@ -1,0 +1,413 @@
+{
+  "id": 40,
+  "name": "애너글리프 기사",
+  "x": 17,
+  "y": 17,
+  "note": "",
+  "pages": [
+    {
+      "conditions": {
+        "actorId": 1,
+        "actorValid": false,
+        "itemId": 1,
+        "itemValid": false,
+        "selfSwitchCh": "A",
+        "selfSwitchValid": false,
+        "switch1Id": 1,
+        "switch1Valid": false,
+        "switch2Id": 1,
+        "switch2Valid": false,
+        "variableId": 1,
+        "variableValid": false,
+        "variableValue": 0
+      },
+      "directionFix": false,
+      "image": {
+        "characterIndex": 1,
+        "characterName": "Actor3",
+        "direction": 2,
+        "pattern": 0,
+        "tileId": 0
+      },
+      "list": [
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            2,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "빨간-청록 입체 안경 기사입니다."
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "애너글리프 3D 효과를 체험해보세요."
+          ]
+        },
+        {
+          "code": 102,
+          "indent": 0,
+          "parameters": [
+            [
+              "켜기 (서서히)",
+              "끄기 (서서히)",
+              "채널 분리 조절",
+              "색상 모드 변경",
+              "즉시 리셋",
+              "닫기"
+            ],
+            5,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            0,
+            "켜기 (서서히)"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "PPEffectAnaglyph on 1"
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 1,
+          "parameters": [
+            "",
+            0,
+            2,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "1초에 걸쳐 애너글리프가 활성화됩니다."
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            1,
+            "끄기 (서서히)"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "PPEffectAnaglyph off 1"
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 1,
+          "parameters": [
+            "",
+            0,
+            2,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "1초에 걸쳐 애너글리프가 비활성화됩니다."
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            2,
+            "채널 분리 조절"
+          ]
+        },
+        {
+          "code": 102,
+          "indent": 1,
+          "parameters": [
+            [
+              "약하게 (0.003)",
+              "보통 (0.007)",
+              "강하게 (0.015)",
+              "매우 강하게 (0.025)"
+            ],
+            3,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 1,
+          "parameters": [
+            0,
+            "약하게 (0.003)"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 2,
+          "parameters": [
+            "PPEffectAnaglyph separation 0.003 0.5"
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 1,
+          "parameters": [
+            1,
+            "보통 (0.007)"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 2,
+          "parameters": [
+            "PPEffectAnaglyph separation 0.007 0.5"
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 1,
+          "parameters": [
+            2,
+            "강하게 (0.015)"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 2,
+          "parameters": [
+            "PPEffectAnaglyph separation 0.015 0.5"
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 1,
+          "parameters": [
+            3,
+            "매우 강하게 (0.025)"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 2,
+          "parameters": [
+            "PPEffectAnaglyph separation 0.025 0.5"
+          ]
+        },
+        {
+          "code": 404,
+          "indent": 1,
+          "parameters": []
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            3,
+            "색상 모드 변경"
+          ]
+        },
+        {
+          "code": 102,
+          "indent": 1,
+          "parameters": [
+            [
+              "Red-Cyan (기본)",
+              "Red-Green",
+              "Magenta-Green"
+            ],
+            2,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 1,
+          "parameters": [
+            0,
+            "Red-Cyan (기본)"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 2,
+          "parameters": [
+            "PPEffectAnaglyph mode 0"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 2,
+          "parameters": [
+            "Red-Cyan 모드로 변경했습니다."
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 1,
+          "parameters": [
+            1,
+            "Red-Green"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 2,
+          "parameters": [
+            "PPEffectAnaglyph mode 1"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 2,
+          "parameters": [
+            "Red-Green 모드로 변경했습니다."
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 1,
+          "parameters": [
+            2,
+            "Magenta-Green"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 2,
+          "parameters": [
+            "PPEffectAnaglyph mode 2"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 2,
+          "parameters": [
+            "Magenta-Green 모드로 변경했습니다."
+          ]
+        },
+        {
+          "code": 404,
+          "indent": 1,
+          "parameters": []
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            4,
+            "즉시 리셋"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "PPEffectAnaglyph off 0"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "PPEffectAnaglyph separation 0.005"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "PPEffectAnaglyph mode 0"
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 1,
+          "parameters": [
+            "",
+            0,
+            2,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "애너글리프 효과를 초기화했습니다."
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            5,
+            "닫기"
+          ]
+        },
+        {
+          "code": 115,
+          "indent": 1,
+          "parameters": []
+        },
+        {
+          "code": 404,
+          "indent": 0,
+          "parameters": []
+        },
+        {
+          "code": 0,
+          "indent": 0,
+          "parameters": []
+        }
+      ],
+      "moveFrequency": 3,
+      "moveRoute": {
+        "list": [
+          {
+            "code": 0,
+            "parameters": []
+          }
+        ],
+        "repeat": true,
+        "skippable": false,
+        "wait": false
+      },
+      "moveSpeed": 3,
+      "moveType": 0,
+      "priorityType": 1,
+      "stepAnime": false,
+      "through": false,
+      "trigger": 0,
+      "walkAnime": true
+    }
+  ]
+}

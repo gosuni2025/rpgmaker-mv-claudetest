@@ -1,11 +1,11 @@
 {
   "npcData": {
-    "2": {
+    "27": {
       "name": "출구",
       "showName": true
     },
-    "3": {
-      "name": "리셋 (R)",
+    "28": {
+      "name": "리셋",
       "showName": true
     }
   }
