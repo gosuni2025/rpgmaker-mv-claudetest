@@ -1,44 +1,360 @@
 //=============================================================================
-// PuzzleSimon.js — 기억 게임(Simon Says) 미니게임
+// PuzzleSimon.js — 기억 게임(Simon Says) 미니게임 (맵 발판 방식)
 //=============================================================================
 /*:
- * @plugindesc 기억 게임(Simon Says) 미니게임 - 5라운드 달성으로 완료
+ * @plugindesc 기억 게임(Simon Says) - 맵 위의 발판 이벤트를 밟아 순서를 맞추는 퍼즐
  * @author RPGMaker MV Web Editor
  *
- * @help 플러그인 커맨드:
- *   PUZZLE_SIMON start [switchId]
- *   switchId — 완료 시 ON할 스위치 번호
+ * @help
+ * 맵에 4개의 발판 이벤트를 배치합니다.
+ * 각 발판 이벤트의 note에 <simon color=I> (I=0~3) 를 기재합니다.
+ * 컨트롤러 이벤트(parallel)에서 매 프레임 PUZZLE_SIMON_TICK을 호출합니다.
+ *
+ * 플러그인 커맨드:
+ *   PUZZLE_SIMON_INIT switchId
+ *       초기화. 5라운드 시퀀스 생성 후 첫 라운드 시작.
+ *       switchId — 완료 시 ON할 스위치 번호
+ *
+ *   PUZZLE_SIMON_INPUT colorIndex
+ *       발판 이벤트 터치 시 호출. colorIndex 는 0~3.
+ *
+ *   PUZZLE_SIMON_TICK
+ *       컨트롤러 이벤트(parallel)에서 매 프레임 호출.
+ *
+ *   PUZZLE_SIMON_RESET
+ *       게임 상태 리셋 (맵 떠날 때 등).
+ *
+ * 발판 이벤트 구성:
+ *   - note: <simon color=0> ~ <simon color=3>
+ *   - page1 (selfSwitch A = OFF): 꺼진 스프라이트
+ *   - page2 (selfSwitch A = ON) : 켜진 스프라이트
+ *   - trigger: 플레이어 터치(1)
+ *   - 이벤트 커맨드: 플러그인 커맨드 PUZZLE_SIMON_INPUT I
+ *
+ * 컨트롤러 이벤트 구성:
+ *   - trigger: 병렬처리(4)
+ *   - 이벤트 커맨드(반복): 플러그인 커맨드 PUZZLE_SIMON_TICK
+ *
+ * 맵 설정 (Map025 예시):
+ *   - 발판 4개: y=5, x=3,6,9,12, note: <simon color=0> ~ <simon color=3>
+ *   - 컨트롤러 이벤트: 임의 위치, parallel trigger
+ *   - 퍼즐 시작 이벤트: PUZZLE_SIMON_INIT [switchId]
  */
 
 (function() {
   'use strict';
 
   //-----------------------------------------------------------------------------
-  // 상수 정의
+  // Simon 상태 오브젝트
   //-----------------------------------------------------------------------------
 
-  var BUTTON_SIZE  = 180;  // 버튼 한 변 픽셀
-  var BUTTON_GAP   = 4;    // 버튼 사이 간격
-  var MAX_ROUNDS   = 5;    // 목표 라운드 수
+  var Simon = {
+    _active:     false,
+    _switchId:   0,
+    _sequence:   [],     // 전체 시퀀스 5개 (각 0~3 랜덤)
+    _round:      0,      // 현재 라운드 (1~5)
+    _phase:      'idle', // 'idle' | 'show' | 'input' | 'nextRound' | 'failed'
+    _showIndex:  0,      // show 단계: 현재 표시 중인 시퀀스 인덱스
+    _showTimer:  0,      // show/idle 단계 프레임 카운터
+    _inputIndex: 0,      // input 단계: 플레이어 입력 인덱스
+    _eventIds:   {},     // { colorIndex: eventId }
+    _litColor:   -1,     // 현재 점등 중인 색 인덱스 (-1=없음)
+    _litTimer:   0,      // input 정답 시 발판 켜짐 유지 타이머
+    _failTimer:  0,      // failed/nextRound 단계 대기 타이머
+    _nextRound:  0,      // nextRound 단계에서 진입할 라운드 번호
 
-  // 버튼 색 (인덱스: 0=빨강, 1=파랑, 2=녹색, 3=노랑)
-  var COLORS_DIM = ['#882222', '#224488', '#226622', '#886622'];
-  var COLORS_LIT = ['#ff4444', '#4488ff', '#44cc44', '#ffcc44'];
-
-  // 키보드 매핑: Q=0(빨강), W=1(파랑), A=2(녹색), S=3(노랑)  /  1=0, 2=1, 3=2, 4=3
-  var KEY_MAP = {
-    81: 0,  // Q
-    87: 1,  // W
-    65: 2,  // A
-    83: 3,  // S
-    49: 0,  // 1
-    50: 1,  // 2
-    51: 2,  // 3
-    52: 3   // 4
+    // 타이밍 상수
+    _SHOW_ON:   40,      // 발판 켜짐 프레임 수 (약 0.67초)
+    _SHOW_OFF:  20,      // 발판 꺼짐 프레임 수 (다음 발판 사이 간격, 약 0.33초)
+    _IDLE_WAIT: 60,      // 라운드 시작 전 대기 프레임 (1초)
+    _INPUT_LIT: 20,      // 정답 입력 시 발판 켜짐 유지 프레임 (약 0.33초)
+    _FAIL_WAIT: 120,     // 오답 후 리셋까지 대기 프레임 (2초)
+    _NEXT_WAIT: 80,      // 라운드 성공 후 다음 라운드까지 대기 프레임 (약 1.3초)
   };
 
-  // 각 버튼 효과음 피치 (Cursor1 기준)
-  var BUTTON_PITCH = [80, 100, 120, 140];
+  //-----------------------------------------------------------------------------
+  // 내부 유틸
+  //-----------------------------------------------------------------------------
+
+  /**
+   * note에서 <simon color=I> 파싱. 실패 시 -1 반환.
+   */
+  function parseSimonColor(note) {
+    if (!note) return -1;
+    var m = note.match(/<simon\s+color\s*=\s*(\d+)>/i);
+    return m ? parseInt(m[1]) : -1;
+  }
+
+  /**
+   * 맵의 모든 이벤트를 스캔하여 note 기반으로 _eventIds 구성
+   */
+  function buildEventIds() {
+    Simon._eventIds = {};
+    if (!$gameMap) return;
+    $gameMap.events().forEach(function(ev) {
+      var color = parseSimonColor(ev.event().note);
+      if (color >= 0 && color <= 3) {
+        Simon._eventIds[color] = ev.eventId();
+      }
+    });
+  }
+
+  /**
+   * selfSwitch A 로 발판 켜고 끄기
+   */
+  function setSelfSwitch(colorIdx, state) {
+    var evId = Simon._eventIds[colorIdx];
+    if (evId === undefined) return;
+    $gameSelfSwitches.setValue([$gameMap.mapId(), evId, 'A'], state);
+  }
+
+  /**
+   * 모든 발판 소등
+   */
+  function allOff() {
+    for (var i = 0; i < 4; i++) {
+      setSelfSwitch(i, false);
+    }
+    Simon._litColor = -1;
+  }
+
+  /**
+   * 5개 랜덤 시퀀스 생성 (각 0~3)
+   */
+  function generateSequence() {
+    var seq = [];
+    for (var i = 0; i < 5; i++) {
+      seq.push(Math.floor(Math.random() * 4));
+    }
+    return seq;
+  }
+
+  //-----------------------------------------------------------------------------
+  // SE 헬퍼
+  //-----------------------------------------------------------------------------
+
+  function playShowSE(colorIdx) {
+    AudioManager.playSe({
+      name:   'Cursor1',
+      pan:    0,
+      pitch:  80 + colorIdx * 20,  // 80, 100, 120, 140
+      volume: 80
+    });
+  }
+
+  function playInputSE(inputIndex) {
+    AudioManager.playSe({
+      name:   'Cursor2',
+      pan:    0,
+      pitch:  100 + inputIndex * 10,
+      volume: 80
+    });
+  }
+
+  function playCompleteSE() {
+    AudioManager.playSe({
+      name:   'Fanfare1',
+      pan:    0,
+      pitch:  100,
+      volume: 90
+    });
+  }
+
+  //-----------------------------------------------------------------------------
+  // 메시지 표시
+  //-----------------------------------------------------------------------------
+
+  function showMessage(text) {
+    if ($gameMessage && !$gameMessage.isBusy()) {
+      $gameMessage.newPage();
+      $gameMessage.add(text);
+    }
+  }
+
+  //-----------------------------------------------------------------------------
+  // 라운드 진입
+  //-----------------------------------------------------------------------------
+
+  function startRound(round) {
+    Simon._round      = round;
+    Simon._phase      = 'idle';
+    Simon._showTimer  = Simon._IDLE_WAIT;
+    Simon._showIndex  = 0;
+    Simon._inputIndex = 0;
+    Simon._litColor   = -1;
+    Simon._litTimer   = 0;
+    allOff();
+  }
+
+  //-----------------------------------------------------------------------------
+  // TICK 처리 (PUZZLE_SIMON_TICK 플러그인 커맨드에서 매 프레임 호출)
+  //-----------------------------------------------------------------------------
+
+  function tick() {
+    if (!Simon._active) return;
+
+    switch (Simon._phase) {
+
+      //--------------------------------------------------------------
+      // idle: 라운드 시작 전 대기 (_IDLE_WAIT 프레임 후 show로 전환)
+      //--------------------------------------------------------------
+      case 'idle':
+        Simon._showTimer--;
+        if (Simon._showTimer <= 0) {
+          Simon._phase     = 'show';
+          Simon._showIndex = 0;
+          Simon._showTimer = 0; // tickShow에서 첫 항목 즉시 시작
+        }
+        break;
+
+      //--------------------------------------------------------------
+      // show: 시퀀스 순서대로 발판 점멸 표시
+      //--------------------------------------------------------------
+      case 'show':
+        tickShow();
+        break;
+
+      //--------------------------------------------------------------
+      // input: 플레이어 발판 입력 대기
+      //        (실제 입력은 PUZZLE_SIMON_INPUT에서 처리)
+      //        여기서는 정답 입력 후 발판 켜짐 유지 타이머만 처리
+      //--------------------------------------------------------------
+      case 'input':
+        if (Simon._litTimer > 0) {
+          Simon._litTimer--;
+          if (Simon._litTimer === 0 && Simon._litColor >= 0) {
+            setSelfSwitch(Simon._litColor, false);
+            Simon._litColor = -1;
+          }
+        }
+        break;
+
+      //--------------------------------------------------------------
+      // nextRound: 라운드 성공 후 잠시 대기 후 다음 라운드 시작
+      //--------------------------------------------------------------
+      case 'nextRound':
+        Simon._failTimer--;
+        if (Simon._failTimer <= 0) {
+          startRound(Simon._nextRound);
+        }
+        break;
+
+      //--------------------------------------------------------------
+      // failed: 오답 후 발판 깜빡임 → 새 시퀀스로 라운드 1 재시작
+      //--------------------------------------------------------------
+      case 'failed':
+        Simon._failTimer--;
+        // 8프레임 주기로 깜빡임
+        var blink = Math.floor(Simon._failTimer / 8) % 2 === 0;
+        for (var i = 0; i < 4; i++) {
+          setSelfSwitch(i, blink);
+        }
+        if (Simon._failTimer <= 0) {
+          allOff();
+          Simon._sequence = generateSequence();
+          startRound(1);
+        }
+        break;
+    }
+  }
+
+  /**
+   * show 단계 서브 루틴
+   *
+   * 타이밍 구조 (한 항목당):
+   *   [점등: _SHOW_ON 프레임] → [소등: _SHOW_OFF 프레임] → 다음 항목
+   *
+   * _showTimer = 0 이면 이번 항목을 새로 시작.
+   * _showTimer = _SHOW_ON + _SHOW_OFF 에서 카운트다운.
+   * _showTimer = _SHOW_OFF 직전에 소등.
+   * _showTimer = 0 이 되면 showIndex++ 후 다음 프레임에 다음 항목 시작.
+   */
+  function tickShow() {
+    var total = Simon._SHOW_ON + Simon._SHOW_OFF;
+
+    // 현재 라운드 시퀀스를 모두 표시 완료 → input 단계로
+    if (Simon._showIndex >= Simon._round) {
+      allOff();
+      Simon._phase      = 'input';
+      Simon._inputIndex = 0;
+      return;
+    }
+
+    // _showTimer = 0: 이번 항목 점등 시작
+    if (Simon._showTimer <= 0) {
+      var colorIdx = Simon._sequence[Simon._showIndex];
+      allOff();
+      setSelfSwitch(colorIdx, true);
+      Simon._litColor  = colorIdx;
+      Simon._showTimer = total;
+      playShowSE(colorIdx);
+    }
+
+    Simon._showTimer--;
+
+    // 점등 구간 종료 → 소등 구간 진입
+    if (Simon._showTimer === Simon._SHOW_OFF) {
+      setSelfSwitch(Simon._litColor, false);
+      Simon._litColor = -1;
+    }
+
+    // 이 항목 완료
+    if (Simon._showTimer <= 0) {
+      Simon._showIndex++;
+      // _showTimer = 0 이므로 다음 프레임에 다음 항목 자동 시작
+    }
+  }
+
+  //-----------------------------------------------------------------------------
+  // INPUT 처리 (PUZZLE_SIMON_INPUT 플러그인 커맨드에서 호출)
+  //-----------------------------------------------------------------------------
+
+  function processInput(colorIdx) {
+    if (!Simon._active) return;
+    if (Simon._phase !== 'input') return;
+
+    var expected = Simon._sequence[Simon._inputIndex];
+
+    if (colorIdx === expected) {
+      // 정답
+      playInputSE(Simon._inputIndex);
+      allOff();
+      setSelfSwitch(colorIdx, true);
+      Simon._litColor = colorIdx;
+      Simon._litTimer = Simon._INPUT_LIT;
+      Simon._inputIndex++;
+
+      if (Simon._inputIndex >= Simon._round) {
+        // 이번 라운드 완료
+        if (Simon._round >= 5) {
+          // 게임 완료
+          Simon._active = false;
+          playCompleteSE();
+          if (Simon._switchId > 0) {
+            $gameSwitches.setValue(Simon._switchId, true);
+          }
+          showMessage('\\c[14]기억 게임 완료!\\c[0] 훌륭합니다!');
+        } else {
+          // 다음 라운드로 전환 (잠시 대기 후)
+          Simon._nextRound = Simon._round + 1;
+          Simon._failTimer = Simon._NEXT_WAIT;
+          Simon._phase     = 'nextRound';
+        }
+      }
+    } else {
+      // 오답
+      SoundManager.playBuzzer();
+      // 모든 발판 켜서 실패 표시 (깜빡임은 failed 단계 tick에서 처리)
+      for (var i = 0; i < 4; i++) {
+        setSelfSwitch(i, true);
+      }
+      Simon._litColor  = -1;
+      Simon._litTimer  = 0;
+      Simon._phase     = 'failed';
+      Simon._failTimer = Simon._FAIL_WAIT;
+      showMessage('\\c[18]틀렸습니다!\\c[0] 다시 시작합니다.');
+    }
+  }
 
   //-----------------------------------------------------------------------------
   // Plugin Command
@@ -47,522 +363,78 @@
   var _pluginCommand = Game_Interpreter.prototype.pluginCommand;
   Game_Interpreter.prototype.pluginCommand = function(command, args) {
     _pluginCommand.call(this, command, args);
-    if (command === 'PUZZLE_SIMON') {
-      if (args[0] === 'start') {
-        var switchId = parseInt(args[1]) || 0;
-        SceneManager.push(Scene_PuzzleSimon);
-        SceneManager.prepareNextScene(switchId);
-      }
-    }
-  };
 
-  //-----------------------------------------------------------------------------
-  // Scene_PuzzleSimon
-  //-----------------------------------------------------------------------------
+    switch (command) {
 
-  function Scene_PuzzleSimon() { this.initialize.apply(this, arguments); }
-  Scene_PuzzleSimon.prototype = Object.create(Scene_Base.prototype);
-  Scene_PuzzleSimon.prototype.constructor = Scene_PuzzleSimon;
+      //------------------------------------------------------------------
+      // PUZZLE_SIMON_INIT switchId
+      //   초기화: 5개 랜덤 시퀀스 생성, 이벤트 ID 파싱, 라운드 1 시작
+      //   안내 메시지 표시
+      //------------------------------------------------------------------
+      case 'PUZZLE_SIMON_INIT': {
+        var switchId = parseInt(args[0]) || 0;
+        Simon._switchId = switchId;
+        Simon._active   = true;
+        Simon._sequence = generateSequence();
+        buildEventIds();
+        startRound(1);
 
-  Scene_PuzzleSimon.prototype.initialize = function() {
-    Scene_Base.prototype.initialize.call(this);
-    this._switchId    = 0;
-    this._sequence    = [];    // 정답 시퀀스
-    this._round       = 0;    // 현재 라운드 (1-based)
-    this._phase       = 'idle'; // idle / showing / waiting / result
-    this._phaseTimer  = 0;
-    this._showIndex   = 0;    // 재생 중인 시퀀스 인덱스
-    this._playerInput = [];   // 이번 라운드 플레이어 입력
-    this._litButton   = -1;   // 현재 점등 중인 버튼 인덱스 (-1=소등)
-    this._litTimer    = 0;    // 점등 지속 타이머
-    this._resultText  = '';   // 결과 메시지
-    this._keyConsumed = {};   // 프레임별 키 소비 방지
-  };
-
-  Scene_PuzzleSimon.prototype.prepare = function(switchId) {
-    this._switchId = switchId;
-  };
-
-  //-----------------------------------------------------------------------------
-  // Create
-  //-----------------------------------------------------------------------------
-
-  Scene_PuzzleSimon.prototype.create = function() {
-    Scene_Base.prototype.create.call(this);
-    this._createBackground();
-    this._createOverlay();
-    this._createButtons();
-    this._createUI();
-    this._startGame();
-  };
-
-  Scene_PuzzleSimon.prototype._createBackground = function() {
-    this._backgroundSprite = new Sprite();
-    var bg = SceneManager.backgroundBitmap();
-    if (bg) {
-      this._backgroundSprite.bitmap = bg;
-    } else {
-      var bmp = new Bitmap(Graphics.width, Graphics.height);
-      bmp.fillAll('#000000');
-      this._backgroundSprite.bitmap = bmp;
-    }
-    this.addChild(this._backgroundSprite);
-  };
-
-  Scene_PuzzleSimon.prototype._createOverlay = function() {
-    this._overlaySprite = new Sprite();
-    var bmp = new Bitmap(Graphics.width, Graphics.height);
-    bmp.fillAll('rgba(0,0,0,0.72)');
-    this._overlaySprite.bitmap = bmp;
-    this.addChild(this._overlaySprite);
-  };
-
-  //-----------------------------------------------------------------------------
-  // 버튼 레이아웃 헬퍼
-  //-----------------------------------------------------------------------------
-
-  // 그리드 전체 폭/높이: 2*(BUTTON_SIZE+GAP) - GAP
-  Scene_PuzzleSimon.prototype._gridWidth = function() {
-    return 2 * BUTTON_SIZE + BUTTON_GAP;
-  };
-
-  Scene_PuzzleSimon.prototype._gridHeight = function() {
-    return 2 * BUTTON_SIZE + BUTTON_GAP;
-  };
-
-  // 버튼 인덱스 → 열/행 (0=좌상, 1=우상, 2=좌하, 3=우하)
-  Scene_PuzzleSimon.prototype._buttonCol = function(idx) { return idx % 2; };
-  Scene_PuzzleSimon.prototype._buttonRow = function(idx) { return Math.floor(idx / 2); };
-
-  // 그리드 왼쪽 상단 픽셀 좌표
-  Scene_PuzzleSimon.prototype._originX = function() {
-    return Math.floor((Graphics.width  - this._gridWidth())  / 2);
-  };
-
-  // 제목+라운드 영역 때문에 약간 아래로 이동
-  Scene_PuzzleSimon.prototype._originY = function() {
-    return Math.floor((Graphics.height - this._gridHeight()) / 2) + 24;
-  };
-
-  Scene_PuzzleSimon.prototype._buttonX = function(idx) {
-    return this._originX() + this._buttonCol(idx) * (BUTTON_SIZE + BUTTON_GAP);
-  };
-
-  Scene_PuzzleSimon.prototype._buttonY = function(idx) {
-    return this._originY() + this._buttonRow(idx) * (BUTTON_SIZE + BUTTON_GAP);
-  };
-
-  //-----------------------------------------------------------------------------
-  // Button Sprites
-  //-----------------------------------------------------------------------------
-
-  Scene_PuzzleSimon.prototype._createButtons = function() {
-    this._buttonContainer = new Sprite();
-    this.addChild(this._buttonContainer);
-
-    this._buttonSprites = [];
-    for (var i = 0; i < 4; i++) {
-      var spr = new Sprite();
-      spr.bitmap = new Bitmap(BUTTON_SIZE, BUTTON_SIZE);
-      spr.x = this._buttonX(i);
-      spr.y = this._buttonY(i);
-      this._buttonContainer.addChild(spr);
-      this._buttonSprites.push(spr);
-      this._drawButton(i, false);
-    }
-  };
-
-  // 버튼 라벨 (색 이름)
-  var BUTTON_LABELS = ['빨강', '파랑', '녹색', '노랑'];
-  // 키 안내 (Q/W/A/S)
-  var BUTTON_KEYS   = ['Q', 'W', 'A', 'S'];
-
-  Scene_PuzzleSimon.prototype._drawButton = function(idx, lit) {
-    var bmp = this._buttonSprites[idx].bitmap;
-    var color = lit ? COLORS_LIT[idx] : COLORS_DIM[idx];
-    bmp.clear();
-
-    // 배경
-    bmp.fillRect(0, 0, BUTTON_SIZE, BUTTON_SIZE, color);
-
-    // 테두리 (밝게)
-    if (lit) {
-      // 점등 시 밝은 흰 테두리
-      bmp.fillRect(0, 0, BUTTON_SIZE, 4, '#ffffff88');
-      bmp.fillRect(0, 0, 4, BUTTON_SIZE, '#ffffff88');
-      bmp.fillRect(0, BUTTON_SIZE - 4, BUTTON_SIZE, 4, '#00000055');
-      bmp.fillRect(BUTTON_SIZE - 4, 0, 4, BUTTON_SIZE, '#00000055');
-    } else {
-      // 소등 시 어두운 테두리
-      bmp.fillRect(0, 0, BUTTON_SIZE, 3, '#ffffff33');
-      bmp.fillRect(0, 0, 3, BUTTON_SIZE, '#ffffff33');
-      bmp.fillRect(0, BUTTON_SIZE - 3, BUTTON_SIZE, 3, '#00000066');
-      bmp.fillRect(BUTTON_SIZE - 3, 0, 3, BUTTON_SIZE, '#00000066');
-    }
-
-    // 라벨 (색 이름)
-    bmp.textColor = lit ? '#ffffff' : '#cccccc';
-    bmp.fontSize  = 28;
-    bmp.fontBold  = true;
-    bmp.drawText(BUTTON_LABELS[idx], 0, BUTTON_SIZE / 2 - 30, BUTTON_SIZE, 40, 'center');
-
-    // 키 안내
-    bmp.fontSize  = 20;
-    bmp.fontBold  = false;
-    bmp.textColor = lit ? '#ffffaa' : '#888888';
-    bmp.drawText('[' + BUTTON_KEYS[idx] + ']', 0, BUTTON_SIZE / 2 + 14, BUTTON_SIZE, 32, 'center');
-  };
-
-  Scene_PuzzleSimon.prototype._lightButton = function(idx, lit) {
-    // 이전 점등 버튼 소등 (인덱스가 유효하고 현재 켜진 버튼이 다를 때)
-    if (this._litButton >= 0 && (this._litButton !== idx || !lit)) {
-      this._drawButton(this._litButton, false);
-    }
-    if (idx < 0) {
-      this._litButton = -1;
-      return;
-    }
-    this._litButton = lit ? idx : -1;
-    this._drawButton(idx, lit);
-  };
-
-  //-----------------------------------------------------------------------------
-  // UI Sprites
-  //-----------------------------------------------------------------------------
-
-  Scene_PuzzleSimon.prototype._createUI = function() {
-    // 제목
-    this._titleSprite = new Sprite();
-    this._titleSprite.bitmap = new Bitmap(Graphics.width, 52);
-    this._titleSprite.x = 0;
-    this._titleSprite.y = 18;
-    this.addChild(this._titleSprite);
-    this._drawTitle();
-
-    // 라운드 표시
-    this._roundSprite = new Sprite();
-    this._roundSprite.bitmap = new Bitmap(Graphics.width, 38);
-    this._roundSprite.x = 0;
-    this._roundSprite.y = 72;
-    this.addChild(this._roundSprite);
-    this._drawRound();
-
-    // 상태 메시지 (준비하세요 / 입력하세요 / 결과)
-    this._msgSprite = new Sprite();
-    this._msgSprite.bitmap = new Bitmap(Graphics.width, 40);
-    this._msgSprite.x = 0;
-    this._msgSprite.y = this._originY() + this._gridHeight() + 18;
-    this.addChild(this._msgSprite);
-    this._drawMsg('');
-
-    // 하단 힌트
-    this._hintSprite = new Sprite();
-    this._hintSprite.bitmap = new Bitmap(Graphics.width, 32);
-    this._hintSprite.x = 0;
-    this._hintSprite.y = Graphics.height - 44;
-    this.addChild(this._hintSprite);
-    this._drawHint();
-  };
-
-  Scene_PuzzleSimon.prototype._drawTitle = function() {
-    var bmp = this._titleSprite.bitmap;
-    bmp.clear();
-    bmp.textColor = '#ffffff';
-    bmp.fontSize  = 34;
-    bmp.fontBold  = true;
-    bmp.drawText('기억 게임', 0, 0, Graphics.width, 52, 'center');
-  };
-
-  Scene_PuzzleSimon.prototype._drawRound = function() {
-    var bmp = this._roundSprite.bitmap;
-    bmp.clear();
-    bmp.textColor = '#aaddff';
-    bmp.fontSize  = 22;
-    bmp.fontBold  = false;
-    var text = this._round > 0 ? '라운드 ' + this._round + ' / ' + MAX_ROUNDS : '';
-    bmp.drawText(text, 0, 0, Graphics.width, 38, 'center');
-  };
-
-  Scene_PuzzleSimon.prototype._drawMsg = function(msg, color) {
-    var bmp = this._msgSprite.bitmap;
-    bmp.clear();
-    bmp.textColor = color || '#ffffff';
-    bmp.fontSize  = 22;
-    bmp.fontBold  = false;
-    if (msg) bmp.drawText(msg, 0, 0, Graphics.width, 40, 'center');
-  };
-
-  Scene_PuzzleSimon.prototype._drawHint = function() {
-    var bmp = this._hintSprite.bitmap;
-    bmp.clear();
-    bmp.textColor = '#888888';
-    bmp.fontSize  = 18;
-    bmp.drawText('[ESC] 취소   |   Q / W / A / S (또는 1~4) 로 입력', 0, 0, Graphics.width, 32, 'center');
-  };
-
-  //-----------------------------------------------------------------------------
-  // 게임 흐름 상태 머신
-  //-----------------------------------------------------------------------------
-
-  // 게임 시작: 시퀀스 초기화 후 1라운드 준비
-  Scene_PuzzleSimon.prototype._startGame = function() {
-    this._sequence    = [];
-    this._round       = 0;
-    this._litButton   = -1;
-    this._showIndex   = 0;
-    this._playerInput = [];
-    this._nextRound();
-  };
-
-  // 다음 라운드 진입
-  Scene_PuzzleSimon.prototype._nextRound = function() {
-    this._round++;
-    this._sequence.push(Math.floor(Math.random() * 4));
-    this._playerInput = [];
-    this._drawRound();
-    this._setPhase('ready', 60); // 1초 "준비하세요"
-    this._drawMsg('준비하세요...', '#ffee88');
-  };
-
-  // phase 변경 + 타이머 설정
-  Scene_PuzzleSimon.prototype._setPhase = function(phase, timer) {
-    this._phase      = phase;
-    this._phaseTimer = timer || 0;
-  };
-
-  //-----------------------------------------------------------------------------
-  // Update
-  //-----------------------------------------------------------------------------
-
-  Scene_PuzzleSimon.prototype.update = function() {
-    Scene_Base.prototype.update.call(this);
-    this._keyConsumed = {};
-
-    switch (this._phase) {
-      case 'ready':
-        this._updateReady();
-        break;
-      case 'showing':
-        this._updateShowing();
-        break;
-      case 'waiting':
-        this._updateWaiting();
-        break;
-      case 'result':
-        this._updateResult();
-        break;
-    }
-  };
-
-  // 준비 단계: 1초 대기 후 시퀀스 재생 시작
-  Scene_PuzzleSimon.prototype._updateReady = function() {
-    if (this._phaseTimer > 0) {
-      this._phaseTimer--;
-      return;
-    }
-    // 시퀀스 재생 시작
-    this._showIndex = 0;
-    this._litButton = -1;
-    this._drawMsg('잘 보세요!', '#aaddff');
-    this._setPhase('showing', 0);
-    this._updateShowing(); // 첫 프레임 즉시 처리
-  };
-
-  // 시퀀스 재생 단계
-  // 한 버튼당: 36프레임 점등(0.6초) → 12프레임 소등(0.2초) → 다음
-  Scene_PuzzleSimon.prototype._updateShowing = function() {
-    if (this._showIndex >= this._sequence.length) {
-      // 재생 완료 → 입력 대기
-      this._lightButton(-1, false); // 소등
-      this._litButton = -1;
-      this._drawMsg('입력하세요!', '#88ffaa');
-      this._setPhase('waiting', 0);
-      return;
-    }
-
-    var idx = this._sequence[this._showIndex];
-
-    // phaseTimer가 0이면 이번 버튼 점등 시작
-    if (this._phaseTimer <= 0) {
-      // 소등 간격 직후 점등 시작
-      this._lightButton(idx, true);
-      this._playSE(idx);
-      this._phaseTimer = 36 + 12; // 총 48프레임 (점등 36 + 소등 12)
-    }
-
-    this._phaseTimer--;
-
-    if (this._phaseTimer === 12) {
-      // 36프레임 점등 완료 → 소등
-      this._lightButton(idx, false);
-    }
-
-    if (this._phaseTimer <= 0) {
-      // 소등 12프레임 완료 → 다음 버튼
-      this._showIndex++;
-    }
-  };
-
-  // 플레이어 입력 대기 단계
-  Scene_PuzzleSimon.prototype._updateWaiting = function() {
-    // 점등 애니메이션 처리 (플레이어가 누른 버튼)
-    if (this._litTimer > 0) {
-      this._litTimer--;
-      if (this._litTimer === 0 && this._litButton >= 0) {
-        this._lightButton(this._litButton, false);
-        this._litButton = -1;
-      }
-    }
-
-    // ESC / cancel
-    if (Input.isTriggered('cancel') || Input.isTriggered('escape')) {
-      this.onCancel();
-      return;
-    }
-
-    // 점등 중 추가 입력 무시 (짧게만 무시)
-    var buttonIdx = this._detectInput();
-    if (buttonIdx < 0) return;
-
-    this._onPlayerInput(buttonIdx);
-  };
-
-  // 입력 감지: 마우스 / 터치 클릭 (키보드는 keydown 이벤트 리스너에서 처리)
-  Scene_PuzzleSimon.prototype._detectInput = function() {
-    if (TouchInput.isTriggered()) {
-      var tx = TouchInput.x;
-      var ty = TouchInput.y;
-      for (var i = 0; i < 4; i++) {
-        var bx = this._buttonX(i);
-        var by = this._buttonY(i);
-        if (tx >= bx && tx < bx + BUTTON_SIZE &&
-            ty >= by && ty < by + BUTTON_SIZE) {
-          return i;
+        if ($gameMessage && !$gameMessage.isBusy()) {
+          $gameMessage.newPage();
+          $gameMessage.add('\\c[14]기억 게임\\c[0]');
+          $gameMessage.add('발광하는 발판을 기억하고,');
+          $gameMessage.add('같은 순서로 밟으세요!');
         }
+        break;
       }
-    }
-    return -1;
-  };
 
-  // 플레이어 입력 처리
-  Scene_PuzzleSimon.prototype._onPlayerInput = function(buttonIdx) {
-    // 점등 애니메이션
-    this._lightButton(buttonIdx, true);
-    this._litTimer  = 12; // 0.2초 (12프레임)
-    this._playSE(buttonIdx);
-
-    this._playerInput.push(buttonIdx);
-    var pos = this._playerInput.length - 1;
-
-    if (this._playerInput[pos] !== this._sequence[pos]) {
-      // 오답
-      this._setPhase('result', 90); // 1.5초
-      this._drawMsg('틀렸습니다! 처음부터...', '#ff6666');
-      AudioManager.playSe({name: 'Buzzer1', pan: 0, pitch: 100, volume: 80});
-      return;
-    }
-
-    if (this._playerInput.length === this._sequence.length) {
-      // 이번 라운드 정답
-      if (this._round >= MAX_ROUNDS) {
-        // 게임 완료
-        this._drawMsg('완료!', '#ffee44');
-        this._setPhase('result', 90);
-        this._resultText = 'complete';
-      } else {
-        // 다음 라운드
-        this._drawMsg('정답!', '#88ffaa');
-        this._setPhase('result', 50);
-        this._resultText = 'next';
+      //------------------------------------------------------------------
+      // PUZZLE_SIMON_INPUT colorIndex
+      //   발판 이벤트 터치 시 호출. colorIndex = 0~3
+      //------------------------------------------------------------------
+      case 'PUZZLE_SIMON_INPUT': {
+        var colorIdx = parseInt(args[0]);
+        if (!isNaN(colorIdx)) {
+          processInput(colorIdx);
+        }
+        break;
       }
-    }
-  };
 
-  // 결과 표시 대기 후 다음 단계로
-  Scene_PuzzleSimon.prototype._updateResult = function() {
-    if (this._phaseTimer > 0) {
-      this._phaseTimer--;
-      return;
-    }
-    if (this._resultText === 'complete') {
-      this.onComplete();
-    } else if (this._resultText === 'next') {
-      this._resultText = '';
-      this._nextRound();
-    } else {
-      // 오답: 처음부터
-      this._resultText = '';
-      this._startGame();
-    }
-  };
+      //------------------------------------------------------------------
+      // PUZZLE_SIMON_TICK
+      //   컨트롤러 이벤트(parallel)에서 매 프레임 호출
+      //------------------------------------------------------------------
+      case 'PUZZLE_SIMON_TICK':
+        tick();
+        break;
 
-  //-----------------------------------------------------------------------------
-  // 키 감지 — keydown 이벤트 직접 수신 (Input 객체 우회)
-  //-----------------------------------------------------------------------------
-
-  Scene_PuzzleSimon.prototype.start = function() {
-    Scene_Base.prototype.start.call(this);
-    this._boundKeyDown = this._onKeyDown.bind(this);
-    document.addEventListener('keydown', this._boundKeyDown);
-  };
-
-  Scene_PuzzleSimon.prototype.terminate = function() {
-    Scene_Base.prototype.terminate.call(this);
-    if (this._boundKeyDown) {
-      document.removeEventListener('keydown', this._boundKeyDown);
-      this._boundKeyDown = null;
-    }
-    // 소등 정리
-    if (this._litButton >= 0) {
-      this._drawButton(this._litButton, false);
-    }
-  };
-
-  Scene_PuzzleSimon.prototype._onKeyDown = function(e) {
-    if (this._phase !== 'waiting') return;
-    if (this._litTimer > 0) return; // 직전 입력 애니메이션 중
-
-    var keyCode = e.keyCode;
-
-    // ESC (27)
-    if (keyCode === 27) {
-      this.onCancel();
-      return;
-    }
-
-    if (KEY_MAP[keyCode] !== undefined) {
-      e.preventDefault();
-      var buttonIdx = KEY_MAP[keyCode];
-      this._onPlayerInput(buttonIdx);
+      //------------------------------------------------------------------
+      // PUZZLE_SIMON_RESET
+      //   게임 상태 완전 리셋
+      //------------------------------------------------------------------
+      case 'PUZZLE_SIMON_RESET':
+        Simon._active   = false;
+        Simon._phase    = 'idle';
+        Simon._round    = 0;
+        Simon._sequence = [];
+        Simon._switchId = 0;
+        allOff();
+        break;
     }
   };
 
   //-----------------------------------------------------------------------------
-  // SE 재생
+  // Scene_Map 종료 시 클린업
+  // 맵을 벗어날 때 Simon 상태와 발판 selfSwitch 초기화
   //-----------------------------------------------------------------------------
 
-  Scene_PuzzleSimon.prototype._playSE = function(buttonIdx) {
-    AudioManager.playSe({
-      name:   'Cursor1',
-      pan:    0,
-      pitch:  BUTTON_PITCH[buttonIdx],
-      volume: 80
-    });
-  };
-
-  //-----------------------------------------------------------------------------
-  // Complete / Cancel
-  //-----------------------------------------------------------------------------
-
-  Scene_PuzzleSimon.prototype.onComplete = function() {
-    if (this._switchId > 0) $gameSwitches.setValue(this._switchId, true);
-    AudioManager.playSe({name: 'Applause1', pan: 0, pitch: 100, volume: 90});
-    SceneManager.pop();
-  };
-
-  Scene_PuzzleSimon.prototype.onCancel = function() {
-    SoundManager.playCancel();
-    SceneManager.pop();
+  var _Scene_Map_stop = Scene_Map.prototype.stop;
+  Scene_Map.prototype.stop = function() {
+    _Scene_Map_stop.call(this);
+    if (Simon._active) {
+      Simon._active = false;
+      allOff();
+    }
   };
 
 })();
