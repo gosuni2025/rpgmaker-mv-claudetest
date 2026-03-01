@@ -842,7 +842,7 @@
       "imageName": "Sprite-0001",
       "anchorY": 0.75,
       "imageScale": 1.2,
-      "visible": false
+      "visible": true
     },
     {
       "id": 5,
@@ -1266,7 +1266,7 @@
           }
         }
       ],
-      "visible": false
+      "visible": true
     },
     {
       "id": 7,
@@ -1411,7 +1411,7 @@
       "animationId": 2,
       "animationLoop": "forward",
       "animationSe": false,
-      "visible": false
+      "visible": true
     }
   ],
   "cameraZones": [

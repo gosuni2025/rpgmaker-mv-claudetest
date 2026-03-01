@@ -13,22 +13,31 @@
   "root": {
     "id": "root",
     "type": "panel",
-    "x": 0, "y": 0, "width": 816, "height": 624,
+    "x": 0,
+    "y": 0,
+    "width": 816,
+    "height": 624,
     "windowed": false,
     "children": [
       {
         "id": "bg",
         "type": "background",
-        "x": 0, "y": 0, "width": 816, "height": 624
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 624
       },
       {
         "id": "main_panel",
         "type": "panel",
-        "x": 208, "y": 122, "width": 400, "height": 380,
+        "x": 208,
+        "y": 122,
+        "width": 400,
+        "height": 380,
         "windowed": true,
         "scripts": {
-          "onCreate":  "$ctx.frameCount = 0; $ctx.secCount = 0; $ctx.refreshCount = 0; $ctx.createMsg = 'onCreate 실행됨 \u2713 (' + new Date().toLocaleTimeString() + ')';",
-          "onUpdate":  "$ctx.frameCount++; $ctx.secCount = Math.floor($ctx.frameCount / 60);",
+          "onCreate": "$ctx.frameCount = 0;\n$ctx.secCount = 0;\n$ctx.refreshCount = 0;\n$ctx.createMsg = 'onCreate 실행됨 ✓ (' + new Date().toLocaleTimeString() + ')';",
+          "onUpdate": "$ctx.frameCount++;\n$ctx.secCount = Math.floor($ctx.frameCount / 60);",
           "onRefresh": "$ctx.refreshCount++;",
           "onDestroy": "console.log('[scriptTest] onDestroy — 총', $ctx.frameCount, '프레임, 갱신', $ctx.refreshCount, '회');"
         },
@@ -36,7 +45,10 @@
           {
             "id": "title",
             "type": "label",
-            "x": 0, "y": 4, "width": 400, "height": 40,
+            "x": 0,
+            "y": 4,
+            "width": 400,
+            "height": 40,
             "text": "Widget 스크립트 테스트",
             "align": "center",
             "fontSize": 22,
@@ -45,12 +57,18 @@
           {
             "id": "sep1",
             "type": "separator",
-            "x": 12, "y": 52, "width": 376, "height": 2
+            "x": 12,
+            "y": 52,
+            "width": 376,
+            "height": 2
           },
           {
             "id": "create_label",
             "type": "label",
-            "x": 12, "y": 64, "width": 376, "height": 32,
+            "x": 12,
+            "y": 64,
+            "width": 376,
+            "height": 32,
             "text": "{$ctx.createMsg || 'onCreate: 대기 중...'}",
             "align": "left",
             "fontSize": 16,
@@ -59,7 +77,10 @@
           {
             "id": "update_label",
             "type": "label",
-            "x": 12, "y": 104, "width": 376, "height": 32,
+            "x": 12,
+            "y": 104,
+            "width": 376,
+            "height": 32,
             "text": "onUpdate: {$ctx.secCount || 0}초 경과 ({$ctx.frameCount || 0}프레임)",
             "align": "left",
             "fontSize": 16,
@@ -68,7 +89,10 @@
           {
             "id": "refresh_label",
             "type": "label",
-            "x": 12, "y": 144, "width": 376, "height": 32,
+            "x": 12,
+            "y": 144,
+            "width": 376,
+            "height": 32,
             "text": "onRefresh: {$ctx.refreshCount || 0}회 호출됨",
             "align": "left",
             "fontSize": 16,
@@ -77,12 +101,18 @@
           {
             "id": "sep2",
             "type": "separator",
-            "x": 12, "y": 186, "width": 376, "height": 2
+            "x": 12,
+            "y": 186,
+            "width": 376,
+            "height": 2
           },
           {
             "id": "hint_label",
             "type": "label",
-            "x": 12, "y": 196, "width": 376, "height": 52,
+            "x": 12,
+            "y": 196,
+            "width": 376,
+            "height": 52,
             "text": "onDestroy: 닫기 버튼 누르면\n콘솔에서 확인 (F12)",
             "align": "left",
             "fontSize": 15,
@@ -91,21 +121,36 @@
           {
             "id": "sep3",
             "type": "separator",
-            "x": 12, "y": 256, "width": 376, "height": 2
+            "x": 12,
+            "y": 256,
+            "width": 376,
+            "height": 2
           },
           {
             "id": "refresh_btn",
             "type": "button",
-            "x": 20, "y": 268, "width": 172, "height": 48,
+            "x": 21,
+            "y": 268,
+            "width": 172,
+            "height": 48,
             "label": "갱신 (onRefresh 호출)",
-            "action": { "action": "refreshWidgets" }
+            "action": {
+              "action": "refreshWidgets"
+            },
+            "navRight": "close_btn"
           },
           {
             "id": "close_btn",
             "type": "button",
-            "x": 208, "y": 268, "width": 172, "height": 48,
+            "x": 208,
+            "y": 268,
+            "width": 172,
+            "height": 48,
             "label": "닫기 (onDestroy 호출)",
-            "action": { "action": "popScene" }
+            "action": {
+              "action": "popScene"
+            },
+            "navLeft": "refresh_btn"
           }
         ]
       }

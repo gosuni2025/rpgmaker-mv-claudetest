@@ -13,13 +13,13 @@
   "load",
   "menu_v2",
   "minimap_hud",
+  "navTest",
   "options",
   "questJournal",
   "questTracker",
   "save",
+  "scriptTest",
   "shop",
   "skill",
-  "navTest",
-  "scriptTest",
   "status"
 ]
