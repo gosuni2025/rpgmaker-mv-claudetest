@@ -131,13 +131,13 @@
         "type": "list",
         "x": 0,
         "y": 144,
-        "width": 816,
+        "width": 408,
         "height": 480,
         "maxCols": 2,
         "itemScene": "item_row",
-        "dataScript": "(function() {\n  var cat = ($ctx && $ctx.itemCategory) || 'item';\n  var items = [];\n  if (cat === 'item') {\n    items = ($gameParty && $gameParty.items() || []).filter(function(i) {\n      return DataManager.isItem(i) && i.itypeId === 1;\n    });\n  } else if (cat === 'weapon') {\n    items = $gameParty && $gameParty.weapons() || [];\n  } else if (cat === 'armor') {\n    items = $gameParty && $gameParty.armors() || [];\n  } else if (cat === 'keyItem') {\n    items = ($gameParty && $gameParty.items() || []).filter(function(i) {\n      return DataManager.isItem(i) && i.itypeId === 2;\n    });\n  }\n  return items.map(function(item) {\n    return {\n      name: item.name,\n      iconIndex: item.iconIndex,\n      numberText: '×' + $gameParty.numItems(item),\n      symbol: 'item_' + item.id,\n      enabled: $gameParty.canUse(item),\n      data: item\n    };\n  });\n})()",
+        "dataScript": "(function() {\n  var cat = ($ctx && $ctx.itemCategory) || 'item';\n  var items = [];\n  if (cat === 'item') {\n    items = ($gameParty && $gameParty.items() || []).filter(function(i) {\n      return DataManager.isItem(i) && i.itypeId === 1;\n    });\n  } else if (cat === 'weapon') {\n    items = $gameParty && $gameParty.weapons() || [];\n  } else if (cat === 'armor') {\n    items = $gameParty && $gameParty.armors() || [];\n  } else if (cat === 'keyItem') {\n    items = ($gameParty && $gameParty.items() || []).filter(function(i) {\n      return DataManager.isItem(i) && i.itypeId === 2;\n    });\n  }\n  return items.map(function(item) {\n    return {\n      name: item.name,\n      iconIndex: item.iconIndex,\n      numberText: '×' + $gameParty.numItems(item),\n      symbol: 'item_' + item.id,\n      enabled: $gameParty.canUse(item) || !!(item.note && (item.note.indexOf('<detailPic>') >= 0 || item.note.indexOf('<detailTxt>') >= 0)),\n      data: item\n    };\n  });\n})()",
         "onCursor": {
-          "code": "var w = this._widgetMap && this._widgetMap['item_list'];\nvar idx = w && w._window ? w._window.index() : -1;\nvar cmd = idx >= 0 ? (w._window._winDef.commands && w._window._winDef.commands[idx]) : null;\nthis._ctx.helpText = (cmd && cmd.data && cmd.data.description) ? cmd.data.description : '';"
+          "code": "var w = this._widgetMap && this._widgetMap['item_list'];\nvar idx = w && w._window ? w._window.index() : -1;\nvar cmd = idx >= 0 ? (w._window._winDef.commands && w._window._winDef.commands[idx]) : null;\nthis._ctx.helpText = (cmd && cmd.data && cmd.data.description) ? cmd.data.description : '';\nthis._ctx.selectedItem = (cmd && cmd.data) ? cmd.data : null;"
         },
         "handlers": {
           "ok": {
