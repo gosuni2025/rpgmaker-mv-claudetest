@@ -2,7 +2,7 @@
   "id": "scriptTest",
   "displayName": "Widget 스크립트 테스트",
   "formatVersion": 2,
-  "category": null,
+  "category": "debug",
   "prepareArgs": [],
   "windows": [],
   "windowLinks": {},
