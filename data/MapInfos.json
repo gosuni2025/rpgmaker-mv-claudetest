@@ -114,7 +114,8 @@
     "order": 21,
     "parentId": 0,
     "scrollX": 0,
-    "scrollY": 0
+    "scrollY": 0,
+    "displayName": "소코반 레벨"
   },
   {
     "id": 22,
@@ -123,7 +124,8 @@
     "order": 22,
     "parentId": 0,
     "scrollX": 0,
-    "scrollY": 0
+    "scrollY": 0,
+    "displayName": "Lights Out 레벨"
   },
   {
     "id": 23,
@@ -132,7 +134,8 @@
     "order": 23,
     "parentId": 0,
     "scrollX": 0,
-    "scrollY": 0
+    "scrollY": 0,
+    "displayName": "슬라이딩 퍼즐 레벨"
   },
   {
     "id": 24,
@@ -141,7 +144,8 @@
     "order": 24,
     "parentId": 0,
     "scrollX": 0,
-    "scrollY": 0
+    "scrollY": 0,
+    "displayName": "잠금장치 레벨"
   },
   {
     "id": 25,
@@ -150,15 +154,17 @@
     "order": 25,
     "parentId": 0,
     "scrollX": 0,
-    "scrollY": 0
+    "scrollY": 0,
+    "displayName": "기억 게임 레벨"
   },
   {
     "id": 26,
     "expanded": false,
-    "name": "Big City",
+    "name": "TestMap",
     "order": 26,
     "parentId": 0,
     "scrollX": 0,
-    "scrollY": 0
+    "scrollY": 0,
+    "displayName": "빅시티"
   }
 ]
