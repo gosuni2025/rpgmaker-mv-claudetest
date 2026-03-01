@@ -1843,7 +1843,7 @@
       "waveFrequency": 1,
       "waveSpeed": 2,
       "waterAlpha": 1,
-      "specularStrength": 0.4,
+      "specularStrength": 0,
       "emissive": 0,
       "emissiveColor": "#ffffff"
     },
@@ -5200,6 +5200,14 @@
     },
     "56": {
       "name": "직업 해금사",
+      "showName": true
+    },
+    "57": {
+      "name": "직업 길드장",
+      "showName": true
+    },
+    "58": {
+      "name": "스킬 사서",
       "showName": true
     }
   },
