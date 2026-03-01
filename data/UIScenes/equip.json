@@ -109,8 +109,9 @@
             "height": 36,
             "fontSize": 24,
             "verticalAlign": "middle",
-            "useTextEx": true,
-            "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];var t=$ctx.tempActor;if(!a||!t)return '';var d=t.param(0)-a.param(0);return '\\\\c['+(d>0?24:d<0?25:0)+']'+t.param(0)+'\\\\c[0]';})()}"
+            "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];var t=$ctx.tempActor;if(!a||!t)return '';return String(t.param(0));})()} ",
+            "align": "right",
+            "color": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];var t=$ctx.tempActor;if(!a||!t)return '#dddddd';var d=t.param(0)-a.param(0);return d>0?'#4488ff':d<0?'#ff6666':'#dddddd';})()} "
           },
           {
             "type": "label",
@@ -158,8 +159,9 @@
             "height": 36,
             "fontSize": 24,
             "verticalAlign": "middle",
-            "useTextEx": true,
-            "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];var t=$ctx.tempActor;if(!a||!t)return '';var d=t.param(1)-a.param(1);return '\\\\c['+(d>0?24:d<0?25:0)+']'+t.param(1)+'\\\\c[0]';})()}"
+            "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];var t=$ctx.tempActor;if(!a||!t)return '';return String(t.param(1));})()} ",
+            "align": "right",
+            "color": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];var t=$ctx.tempActor;if(!a||!t)return '#dddddd';var d=t.param(1)-a.param(1);return d>0?'#4488ff':d<0?'#ff6666':'#dddddd';})()} "
           },
           {
             "type": "label",
@@ -207,8 +209,9 @@
             "height": 36,
             "fontSize": 24,
             "verticalAlign": "middle",
-            "useTextEx": true,
-            "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];var t=$ctx.tempActor;if(!a||!t)return '';var d=t.param(2)-a.param(2);return '\\\\c['+(d>0?24:d<0?25:0)+']'+t.param(2)+'\\\\c[0]';})()}"
+            "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];var t=$ctx.tempActor;if(!a||!t)return '';return String(t.param(2));})()} ",
+            "align": "right",
+            "color": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];var t=$ctx.tempActor;if(!a||!t)return '#dddddd';var d=t.param(2)-a.param(2);return d>0?'#4488ff':d<0?'#ff6666':'#dddddd';})()} "
           },
           {
             "type": "label",
@@ -256,8 +259,9 @@
             "height": 36,
             "fontSize": 24,
             "verticalAlign": "middle",
-            "useTextEx": true,
-            "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];var t=$ctx.tempActor;if(!a||!t)return '';var d=t.param(3)-a.param(3);return '\\\\c['+(d>0?24:d<0?25:0)+']'+t.param(3)+'\\\\c[0]';})()}"
+            "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];var t=$ctx.tempActor;if(!a||!t)return '';return String(t.param(3));})()} ",
+            "align": "right",
+            "color": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];var t=$ctx.tempActor;if(!a||!t)return '#dddddd';var d=t.param(3)-a.param(3);return d>0?'#4488ff':d<0?'#ff6666':'#dddddd';})()} "
           },
           {
             "type": "label",
@@ -305,8 +309,9 @@
             "height": 36,
             "fontSize": 24,
             "verticalAlign": "middle",
-            "useTextEx": true,
-            "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];var t=$ctx.tempActor;if(!a||!t)return '';var d=t.param(4)-a.param(4);return '\\\\c['+(d>0?24:d<0?25:0)+']'+t.param(4)+'\\\\c[0]';})()}"
+            "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];var t=$ctx.tempActor;if(!a||!t)return '';return String(t.param(4));})()} ",
+            "align": "right",
+            "color": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];var t=$ctx.tempActor;if(!a||!t)return '#dddddd';var d=t.param(4)-a.param(4);return d>0?'#4488ff':d<0?'#ff6666':'#dddddd';})()} "
           },
           {
             "type": "label",
@@ -354,8 +359,9 @@
             "height": 36,
             "fontSize": 24,
             "verticalAlign": "middle",
-            "useTextEx": true,
-            "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];var t=$ctx.tempActor;if(!a||!t)return '';var d=t.param(5)-a.param(5);return '\\\\c['+(d>0?24:d<0?25:0)+']'+t.param(5)+'\\\\c[0]';})()}"
+            "text": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];var t=$ctx.tempActor;if(!a||!t)return '';return String(t.param(5));})()} ",
+            "align": "right",
+            "color": "{(function(){var a=$gameParty.members()[$ctx.actorIndex];var t=$ctx.tempActor;if(!a||!t)return '#dddddd';var d=t.param(5)-a.param(5);return d>0?'#4488ff':d<0?'#ff6666':'#dddddd';})()} "
           }
         ]
       },
