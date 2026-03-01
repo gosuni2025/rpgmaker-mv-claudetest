@@ -551,6 +551,31 @@ ImageCache.prototype.isReady = function(){
     });
 };
 
+ImageCache.prototype.getLoadProgress = function(){
+    var items = this._items;
+    var total = 0, loaded = 0;
+    Object.keys(items).forEach(function(key) {
+        var item = items[key];
+        if (!item.bitmap.isRequestOnly()) {
+            total++;
+            if (item.bitmap.isReady()) loaded++;
+        }
+    });
+    return { total: total, loaded: loaded };
+};
+
+ImageCache.prototype.getCurrentLoadingPath = function(){
+    var items = this._items;
+    var keys = Object.keys(items);
+    for (var i = 0; i < keys.length; i++) {
+        var item = items[keys[i]];
+        if (!item.bitmap.isRequestOnly() && !item.bitmap.isReady() && !item.bitmap.isError()) {
+            return item.key;
+        }
+    }
+    return '';
+};
+
 ImageCache.prototype.getErrorBitmap = function(){
     var items = this._items;
     var bitmap = null;
@@ -622,11 +647,24 @@ function Point() {
     this.initialize.apply(this, arguments);
 }
 
-Point.prototype = Object.create(PIXI.Point.prototype);
 Point.prototype.constructor = Point;
 
 Point.prototype.initialize = function(x, y) {
-    PIXI.Point.call(this, x, y);
+    this.x = x || 0;
+    this.y = y || 0;
+};
+
+Point.prototype.copy = function(p) {
+    this.set(p.x, p.y);
+};
+
+Point.prototype.set = function(x, y) {
+    this.x = x || 0;
+    this.y = y || ((y !== 0) ? x || 0 : 0);
+};
+
+Point.prototype.equals = function(p) {
+    return (p.x === this.x) && (p.y === this.y);
 };
 
 /**
@@ -658,11 +696,35 @@ function Rectangle() {
     this.initialize.apply(this, arguments);
 }
 
-Rectangle.prototype = Object.create(PIXI.Rectangle.prototype);
 Rectangle.prototype.constructor = Rectangle;
 
 Rectangle.prototype.initialize = function(x, y, width, height) {
-    PIXI.Rectangle.call(this, x, y, width, height);
+    this.x = x || 0;
+    this.y = y || 0;
+    this.width = width || 0;
+    this.height = height || 0;
+};
+
+Rectangle.prototype.clone = function() {
+    return new Rectangle(this.x, this.y, this.width, this.height);
+};
+
+Rectangle.prototype.copy = function(rectangle) {
+    this.x = rectangle.x;
+    this.y = rectangle.y;
+    this.width = rectangle.width;
+    this.height = rectangle.height;
+    return this;
+};
+
+Rectangle.prototype.contains = function(x, y) {
+    if (this.width <= 0 || this.height <= 0) return false;
+    if (x >= this.x && x < this.x + this.width) {
+        if (y >= this.y && y < this.y + this.height) {
+            return true;
+        }
+    }
+    return false;
 };
 
 /**
@@ -753,7 +815,7 @@ Bitmap._reuseImages = [];
 
 Bitmap.prototype._createCanvas = function(width, height){
     this.__canvas = this.__canvas || document.createElement('canvas');
-    this.__context = this.__canvas.getContext('2d');
+    this.__context = this.__canvas.getContext('2d', { willReadFrequently: true });
 
     this.__canvas.width = Math.max(width || 0, 1);
     this.__canvas.height = Math.max(height || 0, 1);
@@ -772,17 +834,25 @@ Bitmap.prototype._createCanvas = function(width, height){
 };
 
 Bitmap.prototype._createBaseTexture = function(source){
-    this.__baseTexture = new PIXI.BaseTexture(source);
+    if (this.__baseTexture) {
+        this.__baseTexture.dispose();
+        Bitmap._gpuTexCount--;
+    }
+    this.__baseTexture = RendererFactory.createBaseTexture(source);
     this.__baseTexture.mipmap = false;
     this.__baseTexture.width = source.width;
     this.__baseTexture.height = source.height;
+    Bitmap._gpuTexCount++;
 
     if (this._smooth) {
-        this._baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
+        RendererFactory.setScaleMode(this._baseTexture, RendererFactory.SCALE_MODE_LINEAR);
     } else {
-        this._baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+        RendererFactory.setScaleMode(this._baseTexture, RendererFactory.SCALE_MODE_NEAREST);
     }
 };
+
+// GPU 텍스처 생성/해제 추적 카운터 (누수 디버깅용)
+Bitmap._gpuTexCount = 0;
 
 Bitmap.prototype._clearImgInstance = function(){
     this._image.src = "";
@@ -927,21 +997,12 @@ Bitmap.snap = function(stage) {
     var height = Graphics.height;
     var bitmap = new Bitmap(width, height);
     var context = bitmap._context;
-    var renderTexture = PIXI.RenderTexture.create(width, height);
     if (stage) {
-        Graphics._renderer.render(stage, renderTexture);
-        stage.worldTransform.identity();
-        var canvas = null;
-        if (Graphics.isWebGL()) {
-            canvas = Graphics._renderer.extract.canvas(renderTexture);
-        } else {
-            canvas = renderTexture.baseTexture._canvasRenderTarget.canvas;
+        var canvas = RendererStrategy.renderToCanvas(Graphics._renderer, stage, width, height);
+        if (canvas) {
+            context.drawImage(canvas, 0, 0);
         }
-        context.drawImage(canvas, 0, 0);
-    } else {
-
     }
-    renderTexture.destroy({ destroyBase: true });
     bitmap._setDirty();
     return bitmap;
 };
@@ -993,7 +1054,7 @@ Object.defineProperty(Bitmap.prototype, 'url', {
  * [read-only] The base texture that holds the image.
  *
  * @property baseTexture
- * @type PIXI.BaseTexture
+ * @type Object
  */
 Object.defineProperty(Bitmap.prototype, 'baseTexture', {
     get: function() {
@@ -1090,9 +1151,9 @@ Object.defineProperty(Bitmap.prototype, 'smooth', {
             this._smooth = value;
             if(this.__baseTexture){
                 if (this._smooth) {
-                    this._baseTexture.scaleMode = PIXI.SCALE_MODES.LINEAR;
+                    RendererFactory.setScaleMode(this._baseTexture, RendererFactory.SCALE_MODE_LINEAR);
                 } else {
-                    this._baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+                    RendererFactory.setScaleMode(this._baseTexture, RendererFactory.SCALE_MODE_NEAREST);
                 }
             }
         }
@@ -1345,7 +1406,7 @@ Bitmap.prototype.drawText = function(text, x, y, maxWidth, lineHeight, align) {
         }
         context.save();
         context.font = this._makeFontNameText();
-        context.textAlign = align;
+        context.textAlign = align || 'left';
         context.textBaseline = 'alphabetic';
         context.globalAlpha = 1;
         this._drawTextOutline(text, tx, ty, maxWidth);
@@ -1653,6 +1714,54 @@ Bitmap.prototype.checkDirty = function() {
     }
 };
 
+Bitmap.prototype.destroy = function() {
+    if (this.__baseTexture) {
+        this.__baseTexture.dispose();
+        this.__baseTexture = null;
+        Bitmap._gpuTexCount--;
+    }
+    if (Bitmap._trackEnabled) {
+        var idx = Bitmap._alive.indexOf(this);
+        if (idx >= 0) Bitmap._alive.splice(idx, 1);
+    }
+};
+
+// ── Bitmap 누수 추적 디버그 도구 (initialize/destroy 정의 이후에 배치) ──────
+// 콘솔에서 debugBitmaps() 호출 → 살아있는 bitmap을 생성 위치별로 그룹화 출력
+Bitmap._alive = [];
+Bitmap._nextId = 0;
+Bitmap._trackEnabled = true;
+
+(function() {
+    var _origInit = Bitmap.prototype.initialize;
+    Bitmap.prototype.initialize = function(w, h) {
+        _origInit.apply(this, arguments);
+        if (Bitmap._trackEnabled) {
+            this._dbgId = ++Bitmap._nextId;
+            var raw = new Error().stack || '';
+            this._dbgStack = raw.split('\n').slice(3, 7).join(' | ');
+            Bitmap._alive.push(this);
+        }
+    };
+})();
+
+window.debugBitmaps = function(verbose) {
+    var groups = {};
+    Bitmap._alive.forEach(function(bm) {
+        var key = (bm._dbgStack || 'unknown').substring(0, 120);
+        if (!groups[key]) groups[key] = { count: 0, sizes: [] };
+        groups[key].count++;
+        if (bm.__canvas) groups[key].sizes.push(bm.__canvas.width + 'x' + bm.__canvas.height);
+    });
+    var sorted = Object.keys(groups).sort(function(a, b) { return groups[b].count - groups[a].count; });
+    console.log('=== 살아있는 Bitmap: ' + Bitmap._alive.length + '개 (gpuTexCount=' + Bitmap._gpuTexCount + ') ===');
+    sorted.forEach(function(k) {
+        var g = groups[k];
+        console.log('[' + g.count + '개]', verbose ? k : k.substring(0, 100),
+                    '| sizes:', g.sizes.slice(0, 4).join(', '));
+    });
+};
+
 Bitmap.request = function(url){
     var bitmap = Object.create(Bitmap.prototype);
     bitmap._defer = true;
@@ -1763,6 +1872,9 @@ Graphics.initialize = function(width, height, type) {
     this._canUseSaturationBlend = false;
     this._hiddenCanvas = null;
 
+    // Initialize renderer backend based on type
+    this._initializeBackend();
+
     this._testCanvasBlendModes();
     this._modifyExistingElements();
     this._updateRealScale();
@@ -1771,6 +1883,19 @@ Graphics.initialize = function(width, height, type) {
     this._disableContextMenu();
     this._setupEventHandlers();
     this._setupCssFontLoading();
+
+    // Initialize filters that depend on the backend
+    this._initializeFilters();
+};
+
+Graphics._initializeBackend = function() {
+    RendererFactory.setBackend('threejs');
+    RendererStrategy.setStrategy('threejs');
+};
+
+Graphics._initializeFilters = function() {
+    Sprite._initVoidFilter();
+    WindowLayer._initVoidFilter();
 };
 
 
@@ -1798,7 +1923,7 @@ Graphics.canUseCssFontLoading = function(){
 Graphics.frameCount     = 0;
 
 /**
- * The alias of PIXI.blendModes.NORMAL.
+ * Blend mode: NORMAL.
  *
  * @static
  * @property BLEND_NORMAL
@@ -1808,7 +1933,7 @@ Graphics.frameCount     = 0;
 Graphics.BLEND_NORMAL   = 0;
 
 /**
- * The alias of PIXI.blendModes.ADD.
+ * Blend mode: ADD.
  *
  * @static
  * @property BLEND_ADD
@@ -1818,7 +1943,7 @@ Graphics.BLEND_NORMAL   = 0;
 Graphics.BLEND_ADD      = 1;
 
 /**
- * The alias of PIXI.blendModes.MULTIPLY.
+ * Blend mode: MULTIPLY.
  *
  * @static
  * @property BLEND_MULTIPLY
@@ -1828,7 +1953,7 @@ Graphics.BLEND_ADD      = 1;
 Graphics.BLEND_MULTIPLY = 2;
 
 /**
- * The alias of PIXI.blendModes.SCREEN.
+ * Blend mode: SCREEN.
  *
  * @static
  * @property BLEND_SCREEN
@@ -1872,10 +1997,7 @@ Graphics.render = function(stage) {
     if (this._skipCount === 0) {
         var startTime = Date.now();
         if (stage) {
-            this._renderer.render(stage);
-            if (this._renderer.gl && this._renderer.gl.flush) {
-                this._renderer.gl.flush();
-            }
+            RendererStrategy.render(this._renderer, stage);
         }
         var endTime = Date.now();
         var elapsed = endTime - startTime;
@@ -1896,7 +2018,7 @@ Graphics.render = function(stage) {
  * @return {Boolean} True if the renderer type is WebGL
  */
 Graphics.isWebGL = function() {
-    return this._renderer && this._renderer.type === PIXI.RENDERER_TYPE.WEBGL;
+    return RendererStrategy.isWebGL(this._renderer);
 };
 
 /**
@@ -2128,7 +2250,8 @@ Graphics.playVideo = function(src) {
  * @private
  */
 Graphics._playVideo = function(src) {
-    this._video.src = src;
+    var _cb = window.__CACHE_BUST__;
+    this._video.src = (_cb && _cb.video) ? src + '?v=' + _cb.buildId : src;
     this._video.onloadeddata = this._onVideoLoad.bind(this);
     this._video.onerror = this._videoLoader;
     this._video.onended = this._onVideoEnd.bind(this);
@@ -2184,8 +2307,12 @@ Graphics.setVideoVolume = function(value) {
  */
 Graphics.pageToCanvasX = function(x) {
     if (this._canvas) {
-        var left = this._canvas.offsetLeft;
-        return Math.round((x - left) / this._realScale);
+        var rect = this._canvas.getBoundingClientRect();
+        var scrollX = window.pageXOffset || document.documentElement.scrollLeft;
+        // getBCR 기반: X/Y 스케일을 각각 계산 (가로세로 비율이 달라도 정확)
+        var scaleX = rect.width > 0 ? this._width / rect.width : 1 / this._realScale;
+        var result = Math.round((x - scrollX - rect.left) * scaleX);
+        return result;
     } else {
         return 0;
     }
@@ -2202,8 +2329,12 @@ Graphics.pageToCanvasX = function(x) {
  */
 Graphics.pageToCanvasY = function(y) {
     if (this._canvas) {
-        var top = this._canvas.offsetTop;
-        return Math.round((y - top) / this._realScale);
+        var rect = this._canvas.getBoundingClientRect();
+        var scrollY = window.pageYOffset || document.documentElement.scrollTop;
+        // getBCR 기반: X/Y 스케일을 각각 계산 (가로세로 비율이 달라도 정확)
+        var scaleY = rect.height > 0 ? this._height / rect.height : 1 / this._realScale;
+        var result = Math.round((y - scrollY - rect.top) * scaleY);
+        return result;
     } else {
         return 0;
     }
@@ -2223,12 +2354,10 @@ Graphics.isInsideCanvas = function(x, y) {
 };
 
 /**
- * Calls pixi.js garbage collector
+ * Calls renderer garbage collector
  */
 Graphics.callGC = function() {
-    if (Graphics.isWebGL()) {
-        Graphics._renderer.textureGC.run();
-    }
+    RendererStrategy.callGC(Graphics._renderer);
 };
 
 
@@ -2406,7 +2535,7 @@ Graphics._testCanvasBlendModes = function() {
     canvas = document.createElement('canvas');
     canvas.width = 1;
     canvas.height = 1;
-    context = canvas.getContext('2d');
+    context = canvas.getContext('2d', { willReadFrequently: true });
     context.globalCompositeOperation = 'source-over';
     context.fillStyle = 'white';
     context.fillRect(0, 0, 1, 1);
@@ -2559,16 +2688,92 @@ Graphics._clearUpperCanvas = function() {
  */
 Graphics._paintUpperCanvas = function() {
     this._clearUpperCanvas();
-    if (this._loadingImage && this._loadingCount >= 20) {
+    if (this._loadingCount >= 20) {
         var context = this._upperCanvas.getContext('2d');
-        var dx = (this._width - this._loadingImage.width) / 2;
-        var dy = (this._height - this._loadingImage.height) / 2;
         var alpha = ((this._loadingCount - 20) / 30).clamp(0, 1);
         context.save();
         context.globalAlpha = alpha;
-        context.drawImage(this._loadingImage, dx, dy);
+
+        // Loading.png 이미지 (중앙 약간 위로)
+        if (this._loadingImage) {
+            var dx = (this._width - this._loadingImage.width) / 2;
+            var dy = (this._height - this._loadingImage.height) / 2 - 40;
+            context.drawImage(this._loadingImage, dx, dy);
+        }
+
+        // 프로그레스 계산
+        var progress = Graphics._getLoadingProgress();
+        var statusText = Graphics._getLoadingStatusText();
+
+        var barWidth = Math.min(400, this._width * 0.6);
+        var barHeight = 8;
+        var barX = (this._width - barWidth) / 2;
+        var barY = this._height / 2 + 30;
+
+        // 프로그레스 영역 반투명 배경
+        context.fillStyle = 'rgba(0,0,0,0.55)';
+        context.fillRect(barX - 16, barY - 28, barWidth + 32, barHeight + 54);
+
+        // 파일명 텍스트
+        context.font = '13px "Segoe UI", Arial, sans-serif';
+        context.textAlign = 'center';
+        context.fillStyle = '#bbb';
+        context.fillText(statusText, this._width / 2, barY - 10);
+
+        // 프로그레스바 트랙
+        context.fillStyle = '#222';
+        context.fillRect(barX, barY, barWidth, barHeight);
+
+        // 프로그레스바 진행
+        if (progress > 0) {
+            var grad = context.createLinearGradient(barX, 0, barX + barWidth, 0);
+            grad.addColorStop(0, '#2c6fc7');
+            grad.addColorStop(1, '#55aaff');
+            context.fillStyle = grad;
+            context.fillRect(barX, barY, barWidth * progress, barHeight);
+        }
+
+        // 퍼센트
+        context.font = '11px "Segoe UI", Arial, sans-serif';
+        context.fillStyle = '#888';
+        context.fillText(Math.floor(progress * 100) + '%', this._width / 2, barY + barHeight + 16);
+
         context.restore();
     }
+};
+
+Graphics._getLoadingProgress = function() {
+    var dbTotal  = (typeof DataManager !== 'undefined' ? DataManager._dbTotalCount  : 0) || 0;
+    var dbLoaded = (typeof DataManager !== 'undefined' ? DataManager._dbLoadedCount : 0) || 0;
+    var imgTotal = 0, imgLoaded = 0;
+    if (typeof ImageManager !== 'undefined' && ImageManager._imageCache &&
+            typeof ImageManager._imageCache.getLoadProgress === 'function') {
+        var p = ImageManager._imageCache.getLoadProgress();
+        imgTotal  = p.total;
+        imgLoaded = p.loaded;
+    }
+    var total  = dbTotal  + imgTotal;
+    var loaded = dbLoaded + imgLoaded;
+    return total > 0 ? Math.min(loaded / total, 1) : 0;
+};
+
+Graphics._getLoadingStatusText = function() {
+    var dbTotal  = (typeof DataManager !== 'undefined' ? DataManager._dbTotalCount  : 0) || 0;
+    var dbLoaded = (typeof DataManager !== 'undefined' ? DataManager._dbLoadedCount : 0) || 0;
+    if (dbLoaded < dbTotal) {
+        var file = (typeof DataManager !== 'undefined' ? DataManager._currentLoadingFile : '') || '';
+        return file || 'Loading database...';
+    }
+    if (typeof ImageManager !== 'undefined' && ImageManager._imageCache &&
+            typeof ImageManager._imageCache.getCurrentLoadingPath === 'function') {
+        var path = ImageManager._imageCache.getCurrentLoadingPath();
+        if (path) {
+            // "img/tilesets/Forest.png:0" → "Forest.png"
+            var filename = path.split('/').pop().split('?')[0].split(':')[0];
+            return filename;
+        }
+    }
+    return '';
 };
 
 /**
@@ -2577,26 +2782,11 @@ Graphics._paintUpperCanvas = function() {
  * @private
  */
 Graphics._createRenderer = function() {
-    PIXI.dontSayHello = true;
     var width = this._width;
     var height = this._height;
-    var options = { view: this._canvas };
+    var options = { view: this._canvas, type: this._rendererType };
     try {
-        switch (this._rendererType) {
-        case 'canvas':
-            this._renderer = new PIXI.CanvasRenderer(width, height, options);
-            break;
-        case 'webgl':
-            this._renderer = new PIXI.WebGLRenderer(width, height, options);
-            break;
-        default:
-            this._renderer = PIXI.autoDetectRenderer(width, height, options);
-            break;
-        }
-
-        if(this._renderer && this._renderer.textureGC)
-            this._renderer.textureGC.maxIdle = 1;
-
+        this._renderer = RendererStrategy.createRenderer(width, height, options);
     } catch (e) {
         this._renderer = null;
     }
@@ -2609,7 +2799,7 @@ Graphics._createRenderer = function() {
  */
 Graphics._updateRenderer = function() {
     if (this._renderer) {
-        this._renderer.resize(this._width, this._height);
+        RendererStrategy.resize(this._renderer, this._width, this._height);
     }
 };
 
@@ -2652,7 +2842,7 @@ Graphics._createModeBox = function() {
     text.style.color = 'white';
     text.style.textAlign = 'center';
     text.style.textShadow = '1px 1px 0 rgba(0,0,0,0.5)';
-    text.innerHTML = this.isWebGL() ? 'WebGL mode' : 'Canvas mode';
+    text.innerHTML = RendererStrategy.getModeText(this._renderer);
 
     document.body.appendChild(box);
     box.appendChild(text);
@@ -3691,7 +3881,7 @@ TouchInput._setupEventHandlers = function() {
     document.addEventListener('mousedown', this._onMouseDown.bind(this));
     document.addEventListener('mousemove', this._onMouseMove.bind(this));
     document.addEventListener('mouseup', this._onMouseUp.bind(this));
-    document.addEventListener('wheel', this._onWheel.bind(this));
+    document.addEventListener('wheel', this._onWheel.bind(this), isSupportPassive ? {passive: false} : false);
     document.addEventListener('touchstart', this._onTouchStart.bind(this), isSupportPassive ? {passive: false} : false);
     document.addEventListener('touchmove', this._onTouchMove.bind(this), isSupportPassive ? {passive: false} : false);
     document.addEventListener('touchend', this._onTouchEnd.bind(this));
@@ -3946,15 +4136,23 @@ function Sprite() {
     this.initialize.apply(this, arguments);
 }
 
-Sprite.prototype = Object.create(PIXI.Sprite.prototype);
+Sprite.prototype = Object.create(ThreeSprite.prototype);
 Sprite.prototype.constructor = Sprite;
 
-Sprite.voidFilter = new PIXI.filters.VoidFilter();
+Sprite.voidFilter = null;
+
+Sprite._initVoidFilter = function() {
+    Sprite.voidFilter = RendererFactory.createVoidFilter();
+};
 
 Sprite.prototype.initialize = function(bitmap) {
-    var texture = new PIXI.Texture(new PIXI.BaseTexture());
+    // 공유 placeholder texture — 매 Sprite 생성마다 새 GPU texture를 만들지 않음
+    if (!Sprite._sharedPlaceholderBaseTexture) {
+        Sprite._sharedPlaceholderBaseTexture = RendererFactory.createBaseTexture(document.createElement('canvas'));
+    }
+    var texture = RendererFactory.createTexture(Sprite._sharedPlaceholderBaseTexture);
 
-    PIXI.Sprite.call(this, texture);
+    ThreeSprite.call(this, texture);
 
     this._bitmap = null;
     this._frame = new Rectangle();
@@ -4251,14 +4449,14 @@ Sprite.prototype._needsTint = function() {
 Sprite.prototype._createTinter = function(w, h) {
     if (!this._canvas) {
         this._canvas = document.createElement('canvas');
-        this._context = this._canvas.getContext('2d');
+        this._context = this._canvas.getContext('2d', { willReadFrequently: true });
     }
 
     this._canvas.width = w;
     this._canvas.height = h;
 
     if (!this._tintTexture) {
-        this._tintTexture = new PIXI.BaseTexture(this._canvas);
+        this._tintTexture = RendererFactory.createBaseTexture(this._canvas);
     }
 
     this._tintTexture.width = w;
@@ -4327,9 +4525,6 @@ Sprite.prototype._executeTint = function(x, y, w, h) {
     context.drawImage(this._bitmap.canvas, x, y, w, h, 0, 0, w, h);
 };
 
-Sprite.prototype._renderCanvas_PIXI = PIXI.Sprite.prototype._renderCanvas;
-Sprite.prototype._renderWebGL_PIXI = PIXI.Sprite.prototype._renderWebGL;
-
 /**
  * @method _renderCanvas
  * @param {Object} renderer
@@ -4342,72 +4537,9 @@ Sprite.prototype._renderCanvas = function(renderer) {
     if(this.bitmap && !this.bitmap.isReady()){
         return;
     }
-
-    if (this.texture.frame.width > 0 && this.texture.frame.height > 0) {
-        this._renderCanvas_PIXI(renderer);
-    }
 };
 
-/**
- * checks if we need to speed up custom blendmodes
- * @param renderer
- * @private
- */
-Sprite.prototype._speedUpCustomBlendModes = function(renderer) {
-    var picture = renderer.plugins.picture;
-    var blend = this.blendMode;
-    if (renderer.renderingToScreen && renderer._activeRenderTarget.root) {
-        if (picture.drawModes[blend]) {
-            var stage = renderer._lastObjectRendered;
-            var f = stage._filters;
-            if (!f || !f[0]) {
-                setTimeout(function () {
-                    var f = stage._filters;
-                    if (!f || !f[0]) {
-                        stage.filters = [Sprite.voidFilter];
-                        stage.filterArea = new PIXI.Rectangle(0, 0, Graphics.width, Graphics.height);
-                    }
-                }, 0);
-            }
-        }
-    }
-};
-
-/**
- * @method _renderWebGL
- * @param {Object} renderer
- * @private
- */
-Sprite.prototype._renderWebGL = function(renderer) {
-    if (this.bitmap) {
-        this.bitmap.touch();
-    }
-    if(this.bitmap && !this.bitmap.isReady()){
-        return;
-    }
-    if (this.texture.frame.width > 0 && this.texture.frame.height > 0) {
-        if (this._bitmap) {
-            this._bitmap.checkDirty();
-        }
-
-        //copy of pixi-v4 internal code
-        this.calculateVertices();
-
-        if (this.pluginName === 'sprite' && this._isPicture) {
-            // use heavy renderer, which reduces artifacts and applies corrent blendMode,
-            // but does not use multitexture optimization
-            this._speedUpCustomBlendModes(renderer);
-            renderer.setObjectRenderer(renderer.plugins.picture);
-            renderer.plugins.picture.render(this);
-        } else {
-            // use pixi super-speed renderer
-            renderer.setObjectRenderer(renderer.plugins[this.pluginName]);
-			renderer.plugins[this.pluginName].render(this);
-        }
-    }
-};
-
-// The important members from Pixi.js
+// The important members
 
 /**
  * The visibility of the sprite.
@@ -4523,11 +4655,12 @@ function Tilemap() {
     this.initialize.apply(this, arguments);
 }
 
-Tilemap.prototype = Object.create(PIXI.Container.prototype);
+Tilemap.prototype = Object.create(ThreeContainer.prototype);
 Tilemap.prototype.constructor = Tilemap;
 
 Tilemap.prototype.initialize = function() {
-    PIXI.Container.call(this);
+    ThreeContainer.call(this);
+    this._needsRepaint = false;
 
     this._margin = 20;
     this._width = Graphics.width + this._margin * 2;
@@ -4753,7 +4886,7 @@ Tilemap.prototype.updateTransform = function() {
         this._needsRepaint = false;
     }
     this._sortChildren();
-    PIXI.Container.prototype.updateTransform.call(this);
+    ThreeContainer.prototype.updateTransform.call(this);
 };
 
 /**
@@ -5428,7 +5561,7 @@ Tilemap.WATERFALL_AUTOTILE_TABLE = [
     [[2,0],[3,0],[2,1],[3,1]],[[0,0],[3,0],[0,1],[3,1]]
 ];
 
-// The important members from Pixi.js
+// The important members
 
 /**
  * [read-only] The array of children of the tilemap.
@@ -5492,11 +5625,6 @@ function ShaderTilemap() {
 ShaderTilemap.prototype = Object.create(Tilemap.prototype);
 ShaderTilemap.prototype.constructor = ShaderTilemap;
 
-// we need this constant for some platforms (Samsung S4, S5, Tab4, HTC One H8)
-PIXI.glCore.VertexArrayObject.FORCE_NATIVE = true;
-PIXI.settings.GC_MODE = PIXI.GC_MODES.AUTO;
-PIXI.tilemap.TileRenderer.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
-PIXI.tilemap.TileRenderer.DO_CLEAR = true;
 
 /**
  * Uploads animation state in renderer
@@ -5507,32 +5635,34 @@ PIXI.tilemap.TileRenderer.DO_CLEAR = true;
 ShaderTilemap.prototype._hackRenderer = function(renderer) {
     var af = this.animationFrame % 4;
     if (af==3) af = 1;
-    renderer.plugins.tilemap.tileAnim[0] = af * this._tileWidth;
-    renderer.plugins.tilemap.tileAnim[1] = (this.animationFrame % 3) * this._tileHeight;
+    if (renderer.plugins && renderer.plugins.tilemap) {
+        renderer.plugins.tilemap.tileAnim[0] = af * this._tileWidth;
+        renderer.plugins.tilemap.tileAnim[1] = (this.animationFrame % 3) * this._tileHeight;
+    }
     return renderer;
 };
 
 /**
- * PIXI render method
+ * Render method
  *
  * @method renderCanvas
- * @param {Object} pixi renderer
+ * @param {Object} renderer
  */
 ShaderTilemap.prototype.renderCanvas = function(renderer) {
     this._hackRenderer(renderer);
-    PIXI.Container.prototype.renderCanvas.call(this, renderer);
+    ThreeContainer.prototype.renderCanvas.call(this, renderer);
 };
 
 
 /**
- * PIXI render method
+ * Render method
  *
  * @method renderWebGL
- * @param {Object} pixi renderer
+ * @param {Object} renderer
  */
 ShaderTilemap.prototype.renderWebGL = function(renderer) {
     this._hackRenderer(renderer);
-    PIXI.Container.prototype.renderWebGL.call(this, renderer);
+    ThreeContainer.prototype.renderWebGL.call(this, renderer);
 };
 
 /**
@@ -5554,9 +5684,25 @@ ShaderTilemap.prototype.refresh = function() {
  * @method updateBitmaps
  */
 ShaderTilemap.prototype.refreshTileset = function() {
-    var bitmaps = this.bitmaps.map(function(x) { return x._baseTexture ? new PIXI.Texture(x._baseTexture) : x; } );
+    var self = this;
+    var bitmaps = this.bitmaps.map(function(x) { return x._baseTexture ? RendererFactory.createTexture(x._baseTexture) : x; } );
     this.lowerLayer.setBitmaps(bitmaps);
     this.upperLayer.setBitmaps(bitmaps);
+    // 비트맵 로딩 전에 refreshTileset이 호출된 경우 (Windows 첫 실행 등),
+    // 모든 비트맵 로딩 완료 후 텍스처를 재갱신하여 물 타일 투명 렌더링 방지
+    var notReady = this.bitmaps.filter(function(b) { return b && !b.isReady(); });
+    if (notReady.length > 0) {
+        var remaining = notReady.length;
+        notReady.forEach(function(bitmap) {
+            bitmap.addLoadListener(function() {
+                remaining--;
+                if (remaining === 0) {
+                    self.refreshTileset();
+                    self._needsRepaint = true;
+                }
+            });
+        });
+    }
 };
 
 /**
@@ -5581,8 +5727,41 @@ ShaderTilemap.prototype.updateTransform = function() {
         this._paintAllTiles(startX, startY);
         this._needsRepaint = false;
     }
+    // Three.js 백엔드: renderWebGL/renderCanvas가 호출되지 않으므로
+    // updateTransform에서 tileAnim을 RectLayer에 직접 전파
+    this._updateTileAnimForThree();
+    // 물 셰이더 시간 갱신 + 라이트 방향 동기화 (매 프레임)
+    if (typeof ThreeWaterShader !== 'undefined') {
+        ThreeWaterShader._time += 1 / 60;
+        ThreeWaterShader.updateAllWaterMeshes(this, ThreeWaterShader._time);
+        ThreeWaterShader.syncLightDirection(this);
+    }
     this._sortChildren();
-    PIXI.Container.prototype.updateTransform.call(this);
+    ThreeContainer.prototype.updateTransform.call(this);
+};
+
+/**
+ * Three.js 백엔드용: 물 타일 애니메이션 오프셋을 RectLayer에 전파
+ * (PIXI에서는 _hackRenderer → renderer.plugins.tilemap.tileAnim으로 처리)
+ */
+ShaderTilemap.prototype._updateTileAnimForThree = function() {
+    var af = this.animationFrame % 4;
+    if (af === 3) af = 1;
+    var tileAnimX = af * this._tileWidth;
+    var tileAnimY = (this.animationFrame % 3) * this._tileHeight;
+    var layers = [this.lowerLayer, this.upperLayer];
+    for (var i = 0; i < layers.length; i++) {
+        var layer = layers[i];
+        if (layer && layer.children) {
+            for (var j = 0; j < layer.children.length; j++) {
+                var rect = layer.children[j];
+                if (rect && rect._tileAnimX !== undefined) {
+                    rect._tileAnimX = tileAnimX;
+                    rect._tileAnimY = tileAnimY;
+                }
+            }
+        }
+    }
 };
 
 /**
@@ -5601,15 +5780,20 @@ ShaderTilemap.prototype._createLayers = function() {
 
     if (!this.lowerZLayer) {
         //@hackerham: create layers only in initialization. Doesn't depend on width/height
-        this.addChild(this.lowerZLayer = new PIXI.tilemap.ZLayer(this, 0));
-        this.addChild(this.upperZLayer = new PIXI.tilemap.ZLayer(this, 4));
-
         var parameters = PluginManager.parameters('ShaderTilemap');
         var useSquareShader = Number(parameters.hasOwnProperty('squareShader') ? parameters['squareShader'] : 0);
 
-        this.lowerZLayer.addChild(this.lowerLayer = new PIXI.tilemap.CompositeRectTileLayer(0, [], useSquareShader));
+        var lowerResult = RendererFactory.createTilemapLayer(0, [], useSquareShader);
+        this.lowerZLayer = lowerResult.zLayer;
+        this.lowerLayer = lowerResult.layer;
+        this.addChild(this.lowerZLayer);
+
+        var upperResult = RendererFactory.createTilemapLayer(4, [], useSquareShader);
+        this.upperZLayer = upperResult.zLayer;
+        this.upperLayer = upperResult.layer;
+        this.addChild(this.upperZLayer);
+
         this.lowerLayer.shadowColor = new Float32Array([0.0, 0.0, 0.0, 0.5]);
-        this.upperZLayer.addChild(this.upperLayer = new PIXI.tilemap.CompositeRectTileLayer(4, [], useSquareShader));
     }
 };
 
@@ -5672,11 +5856,15 @@ ShaderTilemap.prototype._paintTiles = function(startX, startY, x, y) {
     var lowerLayer = this.lowerLayer.children[0];
     var upperLayer = this.upperLayer.children[0];
 
+    lowerLayer._currentDrawZ = 0;
+    upperLayer._currentDrawZ = 0;
     if (this._isHigherTile(tileId0)) {
         this._drawTile(upperLayer, tileId0, dx, dy);
     } else {
         this._drawTile(lowerLayer, tileId0, dx, dy);
     }
+    lowerLayer._currentDrawZ = 1;
+    upperLayer._currentDrawZ = 1;
     if (this._isHigherTile(tileId1)) {
         this._drawTile(upperLayer, tileId1, dx, dy);
     } else {
@@ -5691,14 +5879,22 @@ ShaderTilemap.prototype._paintTiles = function(startX, startY, x, y) {
     }
 
     if (this._isOverpassPosition(mx, my)) {
+        lowerLayer._currentDrawZ = 2;
+        upperLayer._currentDrawZ = 2;
         this._drawTile(upperLayer, tileId2, dx, dy);
+        lowerLayer._currentDrawZ = 3;
+        upperLayer._currentDrawZ = 3;
         this._drawTile(upperLayer, tileId3, dx, dy);
     } else {
+        lowerLayer._currentDrawZ = 2;
+        upperLayer._currentDrawZ = 2;
         if (this._isHigherTile(tileId2)) {
             this._drawTile(upperLayer, tileId2, dx, dy);
         } else {
             this._drawTile(lowerLayer, tileId2, dx, dy);
         }
+        lowerLayer._currentDrawZ = 3;
+        upperLayer._currentDrawZ = 3;
         if (this._isHigherTile(tileId3)) {
             this._drawTile(upperLayer, tileId3, dx, dy);
         } else {
@@ -5818,6 +6014,8 @@ ShaderTilemap.prototype._drawAutotile = function(layer, tileId, dx, dy) {
     var table = autotileTable[shape];
     var w1 = this._tileWidth / 2;
     var h1 = this._tileHeight / 2;
+    // A1 타일은 kind를 addRect에 전달 (kind별 셰이더 설정용)
+    var a1Kind = Tilemap.isTileA1(tileId) ? kind : -1;
     for (var i = 0; i < 4; i++) {
         var qsx = table[i][0];
         var qsy = table[i][1];
@@ -5834,10 +6032,10 @@ ShaderTilemap.prototype._drawAutotile = function(layer, tileId, dx, dy) {
             }
             var sx2 = (bx * 2 + qsx2) * w1;
             var sy2 = (by * 2 + qsy2) * h1;
-            layer.addRect(setNumber, sx2, sy2, dx1, dy1, w1, h1, animX, animY);
-            layer.addRect(setNumber, sx1, sy1, dx1, dy1+h1/2, w1, h1/2, animX, animY);
+            layer.addRect(setNumber, sx2, sy2, dx1, dy1, w1, h1, animX, animY, a1Kind);
+            layer.addRect(setNumber, sx1, sy1, dx1, dy1+h1/2, w1, h1/2, animX, animY, a1Kind);
         } else {
-            layer.addRect(setNumber, sx1, sy1, dx1, dy1, w1, h1, animX, animY);
+            layer.addRect(setNumber, sx1, sy1, dx1, dy1, w1, h1, animX, animY, a1Kind);
         }
     }
 };
@@ -5907,13 +6105,18 @@ function TilingSprite() {
     this.initialize.apply(this, arguments);
 }
 
-TilingSprite.prototype = Object.create(PIXI.extras.PictureTilingSprite.prototype);
+TilingSprite.prototype = Object.create(ThreeSprite.prototype);
 TilingSprite.prototype.constructor = TilingSprite;
 
 TilingSprite.prototype.initialize = function(bitmap) {
-    var texture = new PIXI.Texture(new PIXI.BaseTexture());
+    if (!Sprite._sharedPlaceholderBaseTexture) {
+        Sprite._sharedPlaceholderBaseTexture = RendererFactory.createBaseTexture(document.createElement('canvas'));
+    }
+    var texture = RendererFactory.createTexture(Sprite._sharedPlaceholderBaseTexture);
 
-    PIXI.extras.PictureTilingSprite.call(this, texture);
+    ThreeSprite.call(this, texture);
+    this._tilePosition = { x: 0, y: 0 };
+    this._tileScale = { x: 1, y: 1 };
 
     this._bitmap = null;
     this._width = 0;
@@ -5931,9 +6134,6 @@ TilingSprite.prototype.initialize = function(bitmap) {
     this.bitmap = bitmap;
 };
 
-TilingSprite.prototype._renderCanvas_PIXI = PIXI.extras.PictureTilingSprite.prototype._renderCanvas;
-TilingSprite.prototype._renderWebGL_PIXI = PIXI.extras.PictureTilingSprite.prototype._renderWebGL;
-
 /**
  * @method _renderCanvas
  * @param {Object} renderer
@@ -5942,9 +6142,6 @@ TilingSprite.prototype._renderWebGL_PIXI = PIXI.extras.PictureTilingSprite.proto
 TilingSprite.prototype._renderCanvas = function(renderer) {
     if (this._bitmap) {
         this._bitmap.touch();
-    }
-    if (this.texture.frame.width > 0 && this.texture.frame.height > 0) {
-        this._renderCanvas_PIXI(renderer);
     }
 };
 
@@ -5957,11 +6154,8 @@ TilingSprite.prototype._renderWebGL = function(renderer) {
     if (this._bitmap) {
         this._bitmap.touch();
     }
-    if (this.texture.frame.width > 0 && this.texture.frame.height > 0) {
-        if (this._bitmap) {
-            this._bitmap.checkDirty();
-        }
-        this._renderWebGL_PIXI(renderer);
+    if (this._bitmap) {
+        this._bitmap.checkDirty();
     }
 };
 
@@ -6055,12 +6249,46 @@ TilingSprite.prototype.setFrame = function(x, y, width, height) {
  * @private
  */
 TilingSprite.prototype.updateTransform = function() {
-    this.tilePosition.x = Math.round(-this.origin.x);
-    this.tilePosition.y = Math.round(-this.origin.y);
-    this.updateTransformTS();
+    this._tileOriginX = Math.round(-this.origin.x);
+    this._tileOriginY = Math.round(-this.origin.y);
+    this._tilePosition.x = this._tileOriginX;
+    this._tilePosition.y = this._tileOriginY;
+    ThreeSprite.prototype.updateTransform.call(this);
 };
 
-TilingSprite.prototype.updateTransformTS = PIXI.extras.TilingSprite.prototype.updateTransform;
+/**
+ * Override _updateTexture to apply RepeatWrapping for tiling.
+ */
+TilingSprite.prototype._updateTexture = function() {
+    ThreeSprite.prototype._updateTexture.call(this);
+    if (this._threeTexture) {
+        this._threeTexture.wrapS = THREE.RepeatWrapping;
+        this._threeTexture.wrapT = THREE.RepeatWrapping;
+        this._threeTexture.needsUpdate = true;
+    }
+};
+
+/**
+ * Override syncTransform to handle tile offset and repeat via UV manipulation.
+ */
+TilingSprite.prototype.syncTransform = function() {
+    ThreeSprite.prototype.syncTransform.call(this);
+
+    if (this._threeTexture && this._frameWidth > 0 && this._frameHeight > 0) {
+        var tw = this._threeTexture.image ? this._threeTexture.image.width : this._frameWidth;
+        var th = this._threeTexture.image ? this._threeTexture.image.height : this._frameHeight;
+
+        if (tw > 0 && th > 0) {
+            var offsetX = (this._tilePosition.x / tw) || 0;
+            var offsetY = (this._tilePosition.y / th) || 0;
+            var repeatX = (this._frameWidth / (tw * this._tileScale.x)) || 1;
+            var repeatY = (this._frameHeight / (th * this._tileScale.y)) || 1;
+
+            this._threeTexture.offset.set(-offsetX, -offsetY);
+            this._threeTexture.repeat.set(repeatX, repeatY);
+        }
+    }
+};
 
 /**
  * @method _onBitmapLoad
@@ -6087,25 +6315,7 @@ TilingSprite.prototype._refresh = function() {
 };
 
 
-TilingSprite.prototype._speedUpCustomBlendModes = Sprite.prototype._speedUpCustomBlendModes;
-
-/**
- * @method _renderWebGL
- * @param {Object} renderer
- * @private
- */
-TilingSprite.prototype._renderWebGL = function(renderer) {
-    if (this._bitmap) {
-        this._bitmap.touch();
-        this._bitmap.checkDirty();
-    }
-
-    this._speedUpCustomBlendModes(renderer);
-
-    this._renderWebGL_PIXI(renderer);
-};
-
-// The important members from Pixi.js
+// The important members
 
 /**
  * The visibility of the tiling sprite.
@@ -6139,13 +6349,13 @@ function ScreenSprite() {
     this.initialize.apply(this, arguments);
 }
 
-ScreenSprite.prototype = Object.create(PIXI.Container.prototype);
+ScreenSprite.prototype = Object.create(ThreeContainer.prototype);
 ScreenSprite.prototype.constructor = ScreenSprite;
 
 ScreenSprite.prototype.initialize = function () {
-    PIXI.Container.call(this);
+    ThreeContainer.call(this);
 
-    this._graphics = new PIXI.Graphics();
+    this._graphics = RendererFactory.createGraphicsNode();
     this.addChild(this._graphics);
     this.opacity = 0;
 
@@ -6259,11 +6469,11 @@ function Window() {
     this.initialize.apply(this, arguments);
 }
 
-Window.prototype = Object.create(PIXI.Container.prototype);
+Window.prototype = Object.create(ThreeContainer.prototype);
 Window.prototype.constructor = Window;
 
 Window.prototype.initialize = function() {
-    PIXI.Container.call(this);
+    ThreeContainer.call(this);
 
     this._isWindow = true;
     this._windowskin = null;
@@ -6358,6 +6568,8 @@ Object.defineProperty(Window.prototype, 'contents', {
         return this._windowContentsSprite.bitmap;
     },
     set: function(value) {
+        var old = this._windowContentsSprite._bitmap;
+        if (old && old !== value) old.destroy();
         this._windowContentsSprite.bitmap = value;
     },
     configurable: true
@@ -6608,12 +6820,35 @@ Window.prototype.addChildToBack = function(child) {
  * @method updateTransform
  * @private
  */
+/**
+ * Destroys the window and releases all GPU resources.
+ * Explicitly disposes internal bitmaps (contents, back, frame, cursor)
+ * then calls ThreeContainer.destroy() to dispose geometries/materials.
+ */
+Window.prototype.destroy = function() {
+    // 내부 bitmap들 명시적 해제 — ThreeSprite.destroy()는 bitmap을 처리하지 않으므로 반드시 여기서 처리
+    if (this._windowContentsSprite && this._windowContentsSprite._bitmap) {
+        this._windowContentsSprite._bitmap.destroy();
+    }
+    if (this._windowBackSprite && this._windowBackSprite._bitmap) {
+        this._windowBackSprite._bitmap.destroy();
+    }
+    if (this._windowFrameSprite && this._windowFrameSprite._bitmap) {
+        this._windowFrameSprite._bitmap.destroy();
+    }
+    if (this._windowCursorSprite && this._windowCursorSprite._bitmap) {
+        this._windowCursorSprite._bitmap.destroy();
+    }
+    // ThreeContainer.destroy(): 자식 ThreeSprite 재귀 destroy → geometry/material 해제
+    ThreeContainer.prototype.destroy.call(this);
+};
+
 Window.prototype.updateTransform = function() {
     this._updateCursor();
     this._updateArrows();
     this._updatePauseSign();
     this._updateContents();
-    PIXI.Container.prototype.updateTransform.call(this);
+    ThreeContainer.prototype.updateTransform.call(this);
 };
 
 /**
@@ -6621,7 +6856,7 @@ Window.prototype.updateTransform = function() {
  * @private
  */
 Window.prototype._createAllParts = function() {
-    this._windowSpriteContainer = new PIXI.Container();
+    this._windowSpriteContainer = RendererFactory.createContainer();
     this._windowBackSprite = new Sprite();
     this._windowCursorSprite = new Sprite();
     this._windowFrameSprite = new Sprite();
@@ -6631,6 +6866,23 @@ Window.prototype._createAllParts = function() {
     this._windowPauseSignSprite = new Sprite();
     this._windowBackSprite.bitmap = new Bitmap(1, 1);
     this._windowBackSprite.alpha = 192 / 255;
+    // UI 스프라이트는 3D 모드의 alphaTest:0.5 영향을 받으면 안 됨
+    // (커서·화살표 등은 반투명 픽셀로 구성되어 있어 alphaTest로 사라짐)
+    var _uiSprites = [
+        this._windowBackSprite, this._windowCursorSprite,
+        this._windowFrameSprite, this._windowContentsSprite,
+        this._downArrowSprite, this._upArrowSprite, this._windowPauseSignSprite
+    ];
+    for (var _si = 0; _si < _uiSprites.length; _si++) {
+        var _mat = _uiSprites[_si]._material;
+        if (_mat) {
+            _mat.alphaTest  = 0;
+            _mat.depthTest  = false;
+            _mat.depthWrite = false;
+            _mat.transparent = true;
+            _mat.needsUpdate = true;
+        }
+    }
     this.addChild(this._windowSpriteContainer);
     this._windowSpriteContainer.addChild(this._windowBackSprite);
     this._windowSpriteContainer.addChild(this._windowFrameSprite);
@@ -6670,6 +6922,8 @@ Window.prototype._refreshBack = function() {
     var m = this._margin;
     var w = this._width - m * 2;
     var h = this._height - m * 2;
+    var old = this._windowBackSprite._bitmap;
+    if (old) old.destroy();
     var bitmap = new Bitmap(w, h);
 
     this._windowBackSprite.bitmap = bitmap;
@@ -6697,6 +6951,8 @@ Window.prototype._refreshFrame = function() {
     var w = this._width;
     var h = this._height;
     var m = 24;
+    var old = this._windowFrameSprite._bitmap;
+    if (old) old.destroy();
     var bitmap = new Bitmap(w, h);
 
     this._windowFrameSprite.bitmap = bitmap;
@@ -6734,6 +6990,8 @@ Window.prototype._refreshCursor = function() {
     var oy = y - y2;
     var w2 = Math.min(w, this._width - pad - x2);
     var h2 = Math.min(h, this._height - pad - y2);
+    var old = this._windowCursorSprite._bitmap;
+    if (old) old.destroy();
     var bitmap = new Bitmap(w2, h2);
 
     this._windowCursorSprite.bitmap = bitmap;
@@ -6818,7 +7076,8 @@ Window.prototype._updateCursor = function() {
         }
     }
     this._windowCursorSprite.alpha = cursorOpacity / 255;
-    this._windowCursorSprite.visible = this.isOpen();
+    // PIXI 호환: cursorRect.width가 0이면 커서 숨김 (deselect 후 커서 잔류 방지)
+    this._windowCursorSprite.visible = this.isOpen() && this._cursorRect.width > 0;
 };
 
 /**
@@ -6865,7 +7124,7 @@ Window.prototype._updatePauseSign = function() {
     sprite.visible = this.isOpen();
 };
 
-// The important members from Pixi.js
+// The important members
 
 /**
  * The visibility of the window.
@@ -6946,35 +7205,32 @@ function WindowLayer() {
     this.initialize.apply(this, arguments);
 }
 
-WindowLayer.prototype = Object.create(PIXI.Container.prototype);
+WindowLayer.prototype = Object.create(ThreeContainer.prototype);
 WindowLayer.prototype.constructor = WindowLayer;
 
 WindowLayer.prototype.initialize = function() {
-    PIXI.Container.call(this);
+    ThreeContainer.call(this);
     this._width = 0;
     this._height = 0;
     this._tempCanvas = null;
     this._translationMatrix = [1, 0, 0, 0, 1, 0, 0, 0, 1];
 
-    this._windowMask = new PIXI.Graphics();
+    this._windowMask = RendererFactory.createGraphicsNode();
     this._windowMask.beginFill(0xffffff, 1);
     this._windowMask.drawRect(0, 0, 0, 0);
     this._windowMask.endFill();
-    this._windowRect = this._windowMask.graphicsData[0].shape;
+    this._windowRect = { x: 0, y: 0, width: 0, height: 0 };
 
     this._renderSprite = null;
-    this.filterArea = new PIXI.Rectangle();
+    this.filterArea = new Rectangle();
     this.filters = [WindowLayer.voidFilter];
-
-    //temporary fix for memory leak bug
-    this.on('removed', this.onRemoveAsAChild);
 };
 
-WindowLayer.prototype.onRemoveAsAChild = function() {
-    this.removeChildren();
-}
+WindowLayer.voidFilter = null;
 
-WindowLayer.voidFilter = new PIXI.filters.VoidFilter();
+WindowLayer._initVoidFilter = function() {
+    WindowLayer.voidFilter = RendererFactory.createVoidFilter();
+};
 
 /**
  * The width of the window layer in pixels.
@@ -7111,47 +7367,7 @@ WindowLayer.prototype._canvasClearWindowRect = function(renderSession, window) {
  * @private
  */
 WindowLayer.prototype.renderWebGL = function(renderer) {
-    if (!this.visible || !this.renderable) {
-        return;
-    }
-
-    if (this.children.length==0) {
-        return;
-    }
-
-    renderer.flush();
-    this.filterArea.copy(this);
-    renderer.filterManager.pushFilter(this, this.filters);
-    renderer.currentRenderer.start();
-
-    var shift = new PIXI.Point();
-    var rt = renderer._activeRenderTarget;
-    var projectionMatrix = rt.projectionMatrix;
-    shift.x = Math.round((projectionMatrix.tx + 1) / 2 * rt.sourceFrame.width);
-    shift.y = Math.round((projectionMatrix.ty + 1) / 2 * rt.sourceFrame.height);
-
-    for (var i = 0; i < this.children.length; i++) {
-        var child = this.children[i];
-        if (child._isWindow && child.visible && child.openness > 0) {
-            this._maskWindow(child, shift);
-            renderer.maskManager.pushScissorMask(this, this._windowMask);
-            renderer.clear();
-            renderer.maskManager.popScissorMask();
-            renderer.currentRenderer.start();
-            child.renderWebGL(renderer);
-            renderer.currentRenderer.flush();
-        }
-    }
-
-    renderer.flush();
-    renderer.filterManager.popFilter();
-    renderer.maskManager.popScissorMask();
-
-    for (var j = 0; j < this.children.length; j++) {
-        if (!this.children[j]._isWindow) {
-            this.children[j].renderWebGL(renderer);
-        }
-    }
+    // No-op: Three.js handles window rendering via scene graph
 };
 
 /**
@@ -7169,7 +7385,7 @@ WindowLayer.prototype._maskWindow = function(window, shift) {
     rect.height = window.height * window._openness / 255;
 };
 
-// The important members from Pixi.js
+// The important members
 
 /**
  * The x coordinate of the window layer.
@@ -7243,11 +7459,11 @@ function Weather() {
     this.initialize.apply(this, arguments);
 }
 
-Weather.prototype = Object.create(PIXI.Container.prototype);
+Weather.prototype = Object.create(ThreeContainer.prototype);
 Weather.prototype.constructor = Weather;
 
 Weather.prototype.initialize = function() {
-    PIXI.Container.call(this);
+    ThreeContainer.call(this);
 
     this._width = Graphics.width;
     this._height = Graphics.height;
@@ -7437,14 +7653,14 @@ Weather.prototype._rebornSprite = function(sprite) {
  * The color matrix filter for WebGL.
  *
  * @class ToneFilter
- * @extends PIXI.Filter
+ * @extends ThreeColorMatrixFilter
  * @constructor
  */
 function ToneFilter() {
-    PIXI.filters.ColorMatrixFilter.call(this);
+    ThreeColorMatrixFilter.call(this);
 }
 
-ToneFilter.prototype = Object.create(PIXI.filters.ColorMatrixFilter.prototype);
+ToneFilter.prototype = Object.create(ThreeColorMatrixFilter.prototype);
 ToneFilter.prototype.constructor = ToneFilter;
 
 /**
@@ -7504,11 +7720,11 @@ function ToneSprite() {
     this.initialize.apply(this, arguments);
 }
 
-ToneSprite.prototype = Object.create(PIXI.Container.prototype);
+ToneSprite.prototype = Object.create(ThreeContainer.prototype);
 ToneSprite.prototype.constructor = ToneSprite;
 
 ToneSprite.prototype.initialize = function() {
-    PIXI.Container.call(this);
+    ThreeContainer.call(this);
     this.clear();
 };
 
@@ -7609,11 +7825,11 @@ function Stage() {
     this.initialize.apply(this, arguments);
 }
 
-Stage.prototype = Object.create(PIXI.Container.prototype);
+Stage.prototype = Object.create(ThreeContainer.prototype);
 Stage.prototype.constructor = Stage;
 
 Stage.prototype.initialize = function() {
-    PIXI.Container.call(this);
+    ThreeContainer.call(this);
 
     // The interactive flag causes a memory leak.
     this.interactive = false;

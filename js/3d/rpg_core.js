@@ -1720,6 +1720,46 @@ Bitmap.prototype.destroy = function() {
         this.__baseTexture = null;
         Bitmap._gpuTexCount--;
     }
+    if (Bitmap._trackEnabled) {
+        var idx = Bitmap._alive.indexOf(this);
+        if (idx >= 0) Bitmap._alive.splice(idx, 1);
+    }
+};
+
+// ── Bitmap 누수 추적 디버그 도구 (initialize/destroy 정의 이후에 배치) ──────
+// 콘솔에서 debugBitmaps() 호출 → 살아있는 bitmap을 생성 위치별로 그룹화 출력
+Bitmap._alive = [];
+Bitmap._nextId = 0;
+Bitmap._trackEnabled = true;
+
+(function() {
+    var _origInit = Bitmap.prototype.initialize;
+    Bitmap.prototype.initialize = function(w, h) {
+        _origInit.apply(this, arguments);
+        if (Bitmap._trackEnabled) {
+            this._dbgId = ++Bitmap._nextId;
+            var raw = new Error().stack || '';
+            this._dbgStack = raw.split('\n').slice(3, 7).join(' | ');
+            Bitmap._alive.push(this);
+        }
+    };
+})();
+
+window.debugBitmaps = function(verbose) {
+    var groups = {};
+    Bitmap._alive.forEach(function(bm) {
+        var key = (bm._dbgStack || 'unknown').substring(0, 120);
+        if (!groups[key]) groups[key] = { count: 0, sizes: [] };
+        groups[key].count++;
+        if (bm.__canvas) groups[key].sizes.push(bm.__canvas.width + 'x' + bm.__canvas.height);
+    });
+    var sorted = Object.keys(groups).sort(function(a, b) { return groups[b].count - groups[a].count; });
+    console.log('=== 살아있는 Bitmap: ' + Bitmap._alive.length + '개 (gpuTexCount=' + Bitmap._gpuTexCount + ') ===');
+    sorted.forEach(function(k) {
+        var g = groups[k];
+        console.log('[' + g.count + '개]', verbose ? k : k.substring(0, 100),
+                    '| sizes:', g.sizes.slice(0, 4).join(', '));
+    });
 };
 
 Bitmap.request = function(url){
@@ -4106,7 +4146,11 @@ Sprite._initVoidFilter = function() {
 };
 
 Sprite.prototype.initialize = function(bitmap) {
-    var texture = RendererFactory.createTexture(RendererFactory.createBaseTexture(document.createElement('canvas')));
+    // 공유 placeholder texture — 매 Sprite 생성마다 새 GPU texture를 만들지 않음
+    if (!Sprite._sharedPlaceholderBaseTexture) {
+        Sprite._sharedPlaceholderBaseTexture = RendererFactory.createBaseTexture(document.createElement('canvas'));
+    }
+    var texture = RendererFactory.createTexture(Sprite._sharedPlaceholderBaseTexture);
 
     ThreeSprite.call(this, texture);
 
@@ -6065,7 +6109,10 @@ TilingSprite.prototype = Object.create(ThreeSprite.prototype);
 TilingSprite.prototype.constructor = TilingSprite;
 
 TilingSprite.prototype.initialize = function(bitmap) {
-    var texture = RendererFactory.createTexture(RendererFactory.createBaseTexture(document.createElement('canvas')));
+    if (!Sprite._sharedPlaceholderBaseTexture) {
+        Sprite._sharedPlaceholderBaseTexture = RendererFactory.createBaseTexture(document.createElement('canvas'));
+    }
+    var texture = RendererFactory.createTexture(Sprite._sharedPlaceholderBaseTexture);
 
     ThreeSprite.call(this, texture);
     this._tilePosition = { x: 0, y: 0 };
