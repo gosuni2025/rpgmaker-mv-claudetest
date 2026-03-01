@@ -3919,7 +3919,7 @@
             "focusable": true,
             "dataScript": "(function(){var a=$gameParty.members()[$ctx.actorIndex];if(!a)return [];return a.equipSlots().map(function(etypeId,i){var eq=a.equips()[i];return {name:'',symbol:'slot_'+i,enabled:a.isEquipChangeOk(i),data:i,cols:[{text:($dataSystem.equipTypes[etypeId]||''),width:138,color:8},{text:eq?eq.name:'',iconIndex:eq?(eq.iconIndex||0):0}]};});})()",
             "onCursor": {
-              "code": "var sw=this._widgetMap['slot_list'];if(sw&&sw._window){$ctx.slotId=sw._window.index();$ctx.tempActor=null;$ctx.helpText='';var iw=this._widgetMap['item_list'];if(iw)iw._rebuildFromScript();}"
+              "code": "var sw=this._widgetMap['slot_list'];if(sw&&sw._window){var sidx=sw._window.index();if(sidx<0)return;$ctx.slotId=sidx;$ctx.tempActor=null;$ctx.helpText='';var iw=this._widgetMap['item_list'];if(iw)iw._rebuildFromScript();}"
             },
             "handlers": {
               "ok": {
@@ -3941,9 +3941,9 @@
             "height": 228,
             "focusable": true,
             "maxCols": 2,
-            "dataScript": "(function(){var a=$gameParty.members()[$ctx.actorIndex];var slotId=$ctx.slotId||0;if(!a||!a.equipSlots)return [];var etypeId=a.equipSlots()[slotId];if(!etypeId)return [];var list=[{name:TextManager.none||'없음',symbol:'none',enabled:true,data:null}];$gameParty.equipItems().filter(function(it){return it.etypeId===etypeId&&a.canEquip(it);}).forEach(function(it){list.push({name:it.name,iconIndex:it.iconIndex,symbol:'eq_'+it.etypeId+'_'+it.id,enabled:true,data:it});});return list;})()",
+            "dataScript": "(function(){var a=$gameParty.members()[$ctx.actorIndex];var slotId=($ctx.slotId>=0?$ctx.slotId:0);if(!a||!a.equipSlots)return [];var etypeId=a.equipSlots()[slotId];if(!etypeId)return [];var list=[{name:TextManager.none||'없음',symbol:'none',enabled:true,data:null}];$gameParty.equipItems().filter(function(it){return it.etypeId===etypeId&&a.canEquip(it);}).forEach(function(it){list.push({name:it.name,iconIndex:it.iconIndex,symbol:'eq_'+it.etypeId+'_'+it.id,enabled:true,data:it});});return list;})()",
             "onCursor": {
-              "code": "var iw=this._widgetMap['item_list'];if(!iw||!iw._window)return;var cmds=iw._window._winDef.commands;var idx=iw._window.index();var item=cmds&&cmds[idx]?cmds[idx].data:null;var a=$gameParty.members()[$ctx.actorIndex];if(a){var tmp=JsonEx.makeDeepCopy(a);var sid=($ctx.slotId>=0?$ctx.slotId:0);if(tmp._equips&&tmp._equips[sid]){tmp.forceChangeEquip(sid,item);$ctx.tempActor=tmp;}}$ctx.helpText=item?item.description:(TextManager.none||'없음');this._rootWidget.refresh();"
+              "code": "var iw=this._widgetMap['item_list'];if(!iw||!iw._window)return;var cmds=iw._window._winDef.commands;var idx=iw._window.index();var item=cmds&&cmds[idx]?cmds[idx].data:null;var a=$gameParty.members()[$ctx.actorIndex];if(a){var tmp=JsonEx.makeDeepCopy(a);if(tmp._equips&&typeof Game_Item==='function'){for(var ei=0;ei<tmp._equips.length;ei++){var oe=tmp._equips[ei];if(oe&&!oe.setObject){var gi=new Game_Item();gi._dataClass=oe._dataClass||'';gi._itemId=oe._itemId||0;tmp._equips[ei]=gi;}}}var sid=($ctx.slotId>=0?$ctx.slotId:0);if(tmp._equips&&tmp._equips[sid]){tmp.forceChangeEquip(sid,item);$ctx.tempActor=tmp;}}$ctx.helpText=item?item.description:(TextManager.none||'없음');this._rootWidget.refresh();"
             },
             "handlers": {
               "ok": {
