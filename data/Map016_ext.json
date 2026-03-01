@@ -1,1 +1,24 @@
-{"npcData": {"4": {"name": "슬라이딩 퍼즐", "showName": true}, "5": {"name": "소코반", "showName": true}, "6": {"name": "잠금장치", "showName": true}, "7": {"name": "기억 게임", "showName": true}, "8": {"name": "파이프 퍼즐", "showName": true}}}
+{
+  "npcData": {
+    "4": {
+      "name": "슬라이딩 퍼즐",
+      "showName": true
+    },
+    "5": {
+      "name": "소코반",
+      "showName": true
+    },
+    "6": {
+      "name": "잠금장치",
+      "showName": true
+    },
+    "7": {
+      "name": "기억 게임",
+      "showName": true
+    },
+    "8": {
+      "name": "파이프 퍼즐",
+      "showName": true
+    }
+  }
+}
