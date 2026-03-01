@@ -3537,24 +3537,22 @@
         "children": [
           {
             "type": "panel",
-            "id": "help_panel",
+            "id": "help_win",
             "x": 0,
             "y": 0,
             "width": 816,
-            "height": 108,
+            "height": 72,
             "windowed": true,
             "children": [
               {
-                "type": "textarea",
+                "type": "textArea",
                 "id": "help_text",
                 "x": 6,
-                "y": 0,
+                "y": 6,
                 "width": 780,
-                "height": 108,
-                "text": "{$ctx.helpText||''}",
-                "verticalAlign": "middle",
-                "lineHeight": 36,
-                "fontSize": 26
+                "height": 60,
+                "text": "{$ctx.helpText}",
+                "fontSize": 22
               }
             ]
           },
@@ -3562,7 +3560,7 @@
             "type": "panel",
             "id": "status_panel",
             "x": 0,
-            "y": 108,
+            "y": 72,
             "width": 312,
             "height": 288,
             "windowed": true,
@@ -3878,7 +3876,7 @@
             "type": "list",
             "id": "cmd_list",
             "x": 312,
-            "y": 108,
+            "y": 72,
             "width": 504,
             "height": 72,
             "maxCols": 3,
@@ -3913,7 +3911,7 @@
             "type": "list",
             "id": "slot_list",
             "x": 312,
-            "y": 180,
+            "y": 144,
             "width": 504,
             "height": 216,
             "focusable": true,
@@ -3936,14 +3934,14 @@
             "type": "list",
             "id": "item_list",
             "x": 0,
-            "y": 396,
+            "y": 360,
             "width": 816,
             "height": 228,
             "focusable": true,
             "maxCols": 2,
             "dataScript": "(function(){var a=$gameParty.members()[$ctx.actorIndex];var slotId=($ctx.slotId>=0?$ctx.slotId:0);if(!a||!a.equipSlots)return [];var etypeId=a.equipSlots()[slotId];if(!etypeId)return [];var list=[{name:TextManager.none||'없음',symbol:'none',enabled:true,data:null}];$gameParty.equipItems().filter(function(it){return it.etypeId===etypeId&&a.canEquip(it);}).forEach(function(it){list.push({name:it.name,iconIndex:it.iconIndex,symbol:'eq_'+it.etypeId+'_'+it.id,enabled:true,data:it});});return list;})()",
             "onCursor": {
-              "code": "var iw=this._widgetMap['item_list'];if(!iw||!iw._window)return;var cmds=iw._window._winDef.commands;var idx=iw._window.index();var item=cmds&&cmds[idx]?cmds[idx].data:null;var a=$gameParty.members()[$ctx.actorIndex];if(a){var tmp=JsonEx.makeDeepCopy(a);if(tmp._equips&&typeof Game_Item==='function'){for(var ei=0;ei<tmp._equips.length;ei++){var oe=tmp._equips[ei];if(oe&&!oe.setObject){var gi=new Game_Item();gi._dataClass=oe._dataClass||'';gi._itemId=oe._itemId||0;tmp._equips[ei]=gi;}}}var sid=($ctx.slotId>=0?$ctx.slotId:0);if(tmp._equips&&tmp._equips[sid]){tmp.forceChangeEquip(sid,item);$ctx.tempActor=tmp;}}$ctx.helpText=item?item.description:(TextManager.none||'없음');this._rootWidget.refresh();"
+              "code": "var iw=this._widgetMap['item_list'];if(!iw||!iw._window)return;var cmds=iw._window._winDef.commands;var idx=iw._window.index();var item=cmds&&cmds[idx]?cmds[idx].data:null;var a=$gameParty.members()[$ctx.actorIndex];if(a){var sid=($ctx.slotId>=0?$ctx.slotId:0);var tmp=JsonEx.makeDeepCopy(a);if(tmp._equips&&typeof Game_Item==='function'){for(var ei=0;ei<tmp._equips.length;ei++){var oe=tmp._equips[ei];if(oe&&typeof oe.setObject!=='function'){var gi=new Game_Item();gi._dataClass=oe._dataClass||'';gi._itemId=oe._itemId||0;tmp._equips[ei]=gi;}}}if(tmp._equips&&tmp._equips[sid]&&typeof tmp._equips[sid].setObject==='function'){tmp._equips[sid].setObject(item);$ctx.tempActor=tmp;}}$ctx.helpText=item?item.description:(TextManager.none||'없음');this._rootWidget.refresh();"
             },
             "handlers": {
               "ok": {
@@ -3955,17 +3953,6 @@
                 "code": "$ctx.tempActor=null;$ctx.helpText='';var iw=this._widgetMap['item_list'];if(iw&&iw._window)iw._window.deselect();var sw=this._widgetMap['slot_list'];if(sw)sw.activate();"
               }
             }
-          },
-          {
-            "id": "textArea_17722651220466",
-            "type": "textArea",
-            "x": 487,
-            "y": 500,
-            "width": 300,
-            "height": 80,
-            "text": "커스텀씬",
-            "align": "center",
-            "verticalAlign": "middle"
           }
         ]
       }
