@@ -52,7 +52,7 @@
     "expanded": false,
     "name": "슬라이딩 퍼즐",
     "order": 0,
-    "parentId": 27,
+    "parentId": 28,
     "scrollX": 0,
     "scrollY": 0,
     "displayName": "슬라이딩 퍼즐"
@@ -61,8 +61,8 @@
     "id": 16,
     "expanded": false,
     "name": "Lights Out",
-    "order": 10,
-    "parentId": 27,
+    "order": 9,
+    "parentId": 28,
     "scrollX": 0,
     "scrollY": 0,
     "displayName": "Lights Out"
@@ -71,8 +71,8 @@
     "id": 17,
     "expanded": false,
     "name": "소코반",
-    "order": 9,
-    "parentId": 27,
+    "order": 8,
+    "parentId": 28,
     "scrollX": 0,
     "scrollY": 0,
     "displayName": "소코반"
@@ -82,7 +82,7 @@
     "expanded": false,
     "name": "잠금장치",
     "order": 1,
-    "parentId": 27,
+    "parentId": 28,
     "scrollX": 0,
     "scrollY": 0,
     "displayName": "잠금장치"
@@ -92,7 +92,7 @@
     "expanded": false,
     "name": "기억 게임",
     "order": 2,
-    "parentId": 27,
+    "parentId": 28,
     "scrollX": 0,
     "scrollY": 0,
     "displayName": "기억 게임"
@@ -102,7 +102,7 @@
     "expanded": false,
     "name": "파이프 퍼즐",
     "order": 3,
-    "parentId": 27,
+    "parentId": 28,
     "scrollX": 0,
     "scrollY": 0,
     "displayName": "파이프 퍼즐"
@@ -112,7 +112,7 @@
     "expanded": false,
     "name": "소코반 레벨",
     "order": 4,
-    "parentId": 27,
+    "parentId": 28,
     "scrollX": 0,
     "scrollY": 0,
     "displayName": "소코반 레벨"
@@ -122,7 +122,7 @@
     "expanded": false,
     "name": "Lights Out 레벨",
     "order": 5,
-    "parentId": 27,
+    "parentId": 28,
     "scrollX": 0,
     "scrollY": 0,
     "displayName": "Lights Out 레벨"
@@ -132,7 +132,7 @@
     "expanded": false,
     "name": "슬라이딩 퍼즐 레벨",
     "order": 6,
-    "parentId": 27,
+    "parentId": 28,
     "scrollX": 0,
     "scrollY": 0,
     "displayName": "슬라이딩 퍼즐 레벨"
@@ -142,7 +142,7 @@
     "expanded": false,
     "name": "잠금장치 레벨",
     "order": 7,
-    "parentId": 27,
+    "parentId": 28,
     "scrollX": 0,
     "scrollY": 0,
     "displayName": "잠금장치 레벨"
@@ -151,8 +151,8 @@
     "id": 25,
     "expanded": false,
     "name": "기억 게임 레벨",
-    "order": 2,
-    "parentId": 0,
+    "order": 10,
+    "parentId": 28,
     "scrollX": 0,
     "scrollY": 0,
     "displayName": "기억 게임 레벨"
@@ -161,19 +161,21 @@
     "id": 26,
     "expanded": false,
     "name": "TestMap",
-    "order": 8,
-    "parentId": 27,
+    "order": 2,
+    "parentId": 0,
     "scrollX": 0,
     "scrollY": 0,
     "displayName": "테스트맵"
   },
+  null,
   {
-    "id": 27,
-    "expanded": false,
+    "id": 28,
+    "expanded": true,
     "name": "MiniGames",
-    "order": 4,
-    "parentId": 0,
+    "order": 15,
+    "parentId": 12,
     "scrollX": 0,
-    "scrollY": 0
+    "scrollY": 0,
+    "isFolder": true
   }
 ]
