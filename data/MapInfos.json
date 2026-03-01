@@ -165,6 +165,15 @@
     "parentId": 0,
     "scrollX": 0,
     "scrollY": 0,
-    "displayName": "빅시티"
+    "displayName": "테스트맵"
+  },
+  {
+    "id": 27,
+    "expanded": false,
+    "name": "MiniGames",
+    "order": 27,
+    "parentId": 0,
+    "scrollX": 0,
+    "scrollY": 0
   }
 ]
