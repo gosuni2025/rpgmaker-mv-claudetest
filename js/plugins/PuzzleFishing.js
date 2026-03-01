@@ -188,10 +188,12 @@
         _pluginCommand.call(this, command, args);
         if (command === 'PUZZLE_FISHING_START') {
             var switchId = parseInt(args[0]) || 0;
-            var scene = new Scene_Fishing();
-            scene.prepare(switchId);
-            SceneManager.push(scene);
+            SceneManager.push(Scene_Fishing);
+            SceneManager.prepareNextScene(switchId);
         }
     };
+
+    // 전역 노출 (SceneManager가 생성자로 사용할 수 있도록)
+    window.Scene_Fishing = Scene_Fishing;
 
 })();
