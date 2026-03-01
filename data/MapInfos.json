@@ -35,7 +35,8 @@
     "order": 13,
     "parentId": 0,
     "scrollX": 0,
-    "scrollY": 0
+    "scrollY": 0,
+    "displayName": "하늘 월드맵"
   },
   {
     "id": 14,
@@ -53,7 +54,8 @@
     "order": 15,
     "parentId": 0,
     "scrollX": 0,
-    "scrollY": 0
+    "scrollY": 0,
+    "displayName": "슬라이딩 퍼즐"
   },
   {
     "id": 16,
@@ -62,7 +64,8 @@
     "order": 16,
     "parentId": 0,
     "scrollX": 0,
-    "scrollY": 0
+    "scrollY": 0,
+    "displayName": "Lights Out"
   },
   {
     "id": 17,
@@ -71,7 +74,8 @@
     "order": 17,
     "parentId": 0,
     "scrollX": 0,
-    "scrollY": 0
+    "scrollY": 0,
+    "displayName": "소코반"
   },
   {
     "id": 18,
@@ -80,7 +84,8 @@
     "order": 18,
     "parentId": 0,
     "scrollX": 0,
-    "scrollY": 0
+    "scrollY": 0,
+    "displayName": "잠금장치"
   },
   {
     "id": 19,
@@ -89,7 +94,8 @@
     "order": 19,
     "parentId": 0,
     "scrollX": 0,
-    "scrollY": 0
+    "scrollY": 0,
+    "displayName": "기억 게임"
   },
   {
     "id": 20,
@@ -98,15 +104,17 @@
     "order": 20,
     "parentId": 0,
     "scrollX": 0,
-    "scrollY": 0
+    "scrollY": 0,
+    "displayName": "파이프 퍼즐"
   },
   {
     "id": 21,
     "expanded": false,
-    "name": "Big City",
+    "name": "EventTest",
     "order": 21,
     "parentId": 0,
     "scrollX": 0,
-    "scrollY": 0
+    "scrollY": 0,
+    "displayName": "빅시티"
   }
 ]
