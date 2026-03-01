@@ -35,5 +35,6 @@ var $plugins =
 {"name":"PuzzleLock","status":true,"description":"잠금장치 조합 퍼즐 미니게임","parameters":{}},
 {"name":"PuzzleSimon","status":true,"description":"기억 게임(Simon Says) 미니게임","parameters":{}},
 {"name":"PuzzlePipe","status":true,"description":"파이프 연결 퍼즐 미니게임","parameters":{}},
-{"name":"PuzzleIce","status":true,"description":"얼음 미끄럼 퍼즐 미니게임","parameters":{}}
+{"name":"PuzzleIce","status":true,"description":"얼음 미끄럼 퍼즐 미니게임","parameters":{}},
+{"name":"PuzzleFishing","status":true,"description":"낚시 미니게임","parameters":{}}
 ];
