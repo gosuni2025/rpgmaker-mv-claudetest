@@ -1492,7 +1492,9 @@
     this._align = def.align || 'left';
     this._vAlign = def.verticalAlign || 'middle';
     this._fontSize = def.fontSize || 28;
-    this._color = def.color || '#ffffff';
+    var colorVal = def.color || '#ffffff';
+    this._colorTemplate = (colorVal && colorVal.charAt(0) === '{') ? colorVal : null;
+    this._color = this._colorTemplate ? '#ffffff' : colorVal;
     this._useTextEx = def.useTextEx === true;
     if (this._useTextEx) {
       // Window_Base 기반: drawTextEx로 \c[N] 색상 코드 지원
@@ -1536,13 +1538,15 @@
     }
     if (!this._bitmap) return;
     var text = resolveTemplate(this._template);
-    if (text === this._lastText && this._align === this._lastAlign && this._vAlign === this._lastVAlign) return;
+    var color = this._colorTemplate ? ((resolveTemplate(this._colorTemplate) || '').trim() || '#ffffff') : this._color;
+    if (text === this._lastText && color === this._lastColor && this._align === this._lastAlign && this._vAlign === this._lastVAlign) return;
     this._lastText = text;
+    this._lastColor = color;
     this._lastAlign = this._align;
     this._lastVAlign = this._vAlign;
     this._bitmap.clear();
     this._drawDecoBg(this._bitmap, this._width, this._height, this._def);
-    this._bitmap.textColor = this._color;
+    this._bitmap.textColor = color;
     var textH = this._fontSize + 8;
     var ty;
     if (this._vAlign === 'top') {
