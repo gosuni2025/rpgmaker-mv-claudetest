@@ -53,5 +53,59 @@
     "parentId": 13,
     "scrollX": 0,
     "scrollY": 0
+  },
+  {
+    "id": 15,
+    "expanded": false,
+    "name": "슬라이딩 퍼즐",
+    "order": 15,
+    "parentId": 0,
+    "scrollX": 0,
+    "scrollY": 0
+  },
+  {
+    "id": 16,
+    "expanded": false,
+    "name": "Lights Out",
+    "order": 16,
+    "parentId": 0,
+    "scrollX": 0,
+    "scrollY": 0
+  },
+  {
+    "id": 17,
+    "expanded": false,
+    "name": "소코반",
+    "order": 17,
+    "parentId": 0,
+    "scrollX": 0,
+    "scrollY": 0
+  },
+  {
+    "id": 18,
+    "expanded": false,
+    "name": "잠금장치",
+    "order": 18,
+    "parentId": 0,
+    "scrollX": 0,
+    "scrollY": 0
+  },
+  {
+    "id": 19,
+    "expanded": false,
+    "name": "기억 게임",
+    "order": 19,
+    "parentId": 0,
+    "scrollX": 0,
+    "scrollY": 0
+  },
+  {
+    "id": 20,
+    "expanded": false,
+    "name": "파이프 퍼즐",
+    "order": 20,
+    "parentId": 0,
+    "scrollX": 0,
+    "scrollY": 0
   }
 ]

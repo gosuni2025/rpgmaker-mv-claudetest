@@ -28,5 +28,11 @@ var $plugins =
 {"name":"ImageCacheManager","status":true,"description":"이미지 캐시를 제어합니다. 용량·정리 주기 조정 및 캐시 완전 비활성화(MZ 방식) 지원.","parameters":{"cacheMode":"disabled","imageCacheLimit":"10","cleanupInterval":"30"}}
 ,
 {"name":"QuestSystem","status":true,"description":"유연한 퀘스트 시스템","parameters":{"journalKey":"J","showTracker":"true","trackerX":"0","trackerY":"0","trackerWidth":"300","autoGiveRewards":"true"}},
-{"name":"FlexibleJobs","status":true,"description":"유연한 직업 시스템","parameters":{"subClassSlots":"2","subStatRate":"50","subExpRate":"50","jpPerBattle":"10","jpPerLevel":"50","jpName":"JP","cmdClassChange":"전직","cmdSkillLearn":"스킬 습득"}}
+{"name":"FlexibleJobs","status":true,"description":"유연한 직업 시스템","parameters":{"subClassSlots":"2","subStatRate":"50","subExpRate":"50","jpPerBattle":"10","jpPerLevel":"50","jpName":"JP","cmdClassChange":"전직","cmdSkillLearn":"스킬 습득"}},
+{"name":"PuzzleSliding","status":true,"description":"슬라이딩 퍼즐 미니게임","parameters":{}},
+{"name":"PuzzleLightsOut","status":true,"description":"Lights Out 스위치 퍼즐 미니게임","parameters":{}},
+{"name":"PuzzleSokoban","status":true,"description":"소코반 박스 밀기 퍼즐 미니게임","parameters":{}},
+{"name":"PuzzleLock","status":true,"description":"잠금장치 조합 퍼즐 미니게임","parameters":{}},
+{"name":"PuzzleSimon","status":true,"description":"기억 게임(Simon Says) 미니게임","parameters":{}},
+{"name":"PuzzlePipe","status":true,"description":"파이프 연결 퍼즐 미니게임","parameters":{}}
 ];
