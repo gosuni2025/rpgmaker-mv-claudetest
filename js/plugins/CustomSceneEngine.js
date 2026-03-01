@@ -2679,8 +2679,11 @@
     } else {
       self._focusables = all;
     }
+    console.log('[NavMgr] buildFocusList: count=', this._focusables.length,
+      '| ids=', this._focusables.map(function(w){return w._id;}));
   };
   NavigationManager.prototype.start = function() {
+    console.log('[NavMgr] start: focusables=', this._focusables.length, '| defaultFocus=', this._defaultFocusId);
     if (this._focusables.length === 0) return;
     var startIdx = 0;
     if (this._defaultFocusId) {
@@ -2688,6 +2691,7 @@
         if (this._focusables[i]._id === this._defaultFocusId) { startIdx = i; break; }
       }
     }
+    console.log('[NavMgr] start: activating idx=', startIdx);
     this._activateAt(startIdx);
   };
   NavigationManager.prototype._activateAt = function(idx) {
@@ -2720,7 +2724,17 @@
     var activeWidget = this._activeIndex >= 0 ? this._focusables[this._activeIndex] : null;
 
     // ── 방향키 명시적 네비게이션 (navUp/navDown/navLeft/navRight) ──
-    // isTriggered 대신 isRepeated 사용: Window_Selectable 업데이트 순서와 무관하게 안정적 처리
+    // DEBUG 로그
+    var anyDir = Input.isRepeated('up') || Input.isRepeated('down') || Input.isRepeated('left') || Input.isRepeated('right');
+    if (anyDir) {
+      console.log('[NavMgr] dir key detected | activeWidget:', activeWidget ? activeWidget._id : 'null',
+        '| hasDef:', !!(activeWidget && activeWidget._def),
+        '| def.navUp:', activeWidget && activeWidget._def ? activeWidget._def.navUp : 'N/A',
+        '| def.navDown:', activeWidget && activeWidget._def ? activeWidget._def.navDown : 'N/A',
+        '| def.navLeft:', activeWidget && activeWidget._def ? activeWidget._def.navLeft : 'N/A',
+        '| def.navRight:', activeWidget && activeWidget._def ? activeWidget._def.navRight : 'N/A'
+      );
+    }
     if (activeWidget && activeWidget._def) {
       var def = activeWidget._def;
       var navTarget = null;
@@ -2729,6 +2743,7 @@
       else if (Input.isRepeated('left')  && def.navLeft)  navTarget = def.navLeft;
       else if (Input.isRepeated('right') && def.navRight) navTarget = def.navRight;
       if (navTarget) {
+        console.log('[NavMgr] moving to:', navTarget);
         if (typeof SoundManager !== 'undefined') SoundManager.playCursor();
         this.focusWidget(navTarget);
         return;
@@ -3546,6 +3561,10 @@
   Scene_CustomUI.prototype.update = function() {
     Scene_Base.prototype.update.call(this);
     WidgetAnimator.update();
+    if (!this._navManager && !this._navManagerWarnOnce) {
+      this._navManagerWarnOnce = true;
+      console.warn('[Scene_CustomUI] _navManager is null on update!');
+    }
     if (this._navManager) this._navManager.update();
     if (this._rootWidget) this._rootWidget.update();
     // 씬 레벨 keyHandlers: pageup/pagedown/cancel 등 임의 키 처리
