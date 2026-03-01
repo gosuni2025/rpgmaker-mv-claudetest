@@ -433,7 +433,7 @@
         "handlers": {
           "ok": {
             "action": "script",
-            "code": "var iw=this._widgetMap['item_list'];if(!iw||!iw._window)return;var cmds=iw._window._winDef.commands;var idx=iw._window.index();var item=cmds&&cmds[idx]?cmds[idx].data:null;var a=$gameParty.members()[$ctx.actorIndex];if(a){SoundManager.playEquip();a.changeEquip(($ctx.slotId>=0?$ctx.slotId:0),item);}$ctx.tempActor=null;$ctx.helpText='';var sw=this._widgetMap['slot_list'];if(sw){sw._rebuildFromScript();sw._window.activate();}iw._window.deselect();this._rootWidget.refresh();"
+            "code": "var iw=this._widgetMap['item_list'];if(!iw||!iw._window)return;var cmds=iw._window._winDef.commands;var idx=iw._window.index();var item=cmds&&cmds[idx]?cmds[idx].data:null;var a=$gameParty.members()[$ctx.actorIndex];console.log('[ok] idx='+idx+' item='+(item?item.name:'null')+' slotId='+$ctx.slotId+' hasItem='+(item?$gameParty.hasItem(item):'-')+' etypeMatch='+(item&&a?a.equipSlots()[$ctx.slotId]+'==='+item.etypeId:'-'));if(a){SoundManager.playEquip();a.changeEquip(($ctx.slotId>=0?$ctx.slotId:0),item);console.log('[ok after] equipped='+(a.equips()[$ctx.slotId]?a.equips()[$ctx.slotId].name:'null'));}$ctx.tempActor=null;$ctx.helpText='';var sw=this._widgetMap['slot_list'];if(sw){sw._rebuildFromScript();sw._window.activate();}iw._window.deselect();this._rootWidget.refresh();"
           },
           "cancel": {
             "action": "script",
