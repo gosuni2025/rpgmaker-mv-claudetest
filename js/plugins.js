@@ -4,6 +4,7 @@ var $plugins =
 [
 {"name":"UITheme","status":true,"description":"UI 테마 (에디터 관리)","parameters":{}},
 {"name":"BattleDebugPanel","status":true,"description":"전투 디버그 패널 — 전투화면 우측 상단에 디버그 버튼 표시","parameters":{}},
+{"name":"EnemyHPBar","status":true,"description":"적 체력바 표시 (지연 감소 + 버프/디버프 아이콘)","parameters":{"barHeight":"10","barOffset":"6","iconSize":"22","maxIcons":"10","delaySpeed":"0.6"}},
 {"name":"CustomSceneEngine","status":true,"description":"커스텀 씬 엔진 (에디터 관리)","parameters":{}},
 {"name":"Community_Basic","status":true,"description":"Basic plugin for manipulating important parameters.","parameters":{"cacheLimit":"20","screenWidth":"816","screenHeight":"624","changeWindowWidthTo":"","changeWindowHeightTo":"","renderingMode":"auto","alwaysDash":"on"}},
 {"name":"MadeWithMv","status":false,"description":"Show a Splash Screen \"Made with MV\" and/or a Custom Splash Screen before going to main screen.","parameters":{"Show Made With MV":"true","Made with MV Image":"MadeWithMv","Show Custom Splash":"false","Custom Image":"","Fade Out Time":"120","Fade In Time":"120","Wait Time":"160"}},
