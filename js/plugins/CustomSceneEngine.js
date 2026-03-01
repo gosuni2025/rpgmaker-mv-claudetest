@@ -1533,6 +1533,9 @@
       if (!this._win) return;
       var text = resolveTemplate(this._template);
       if (text === this._lastText) return;
+      if (this._id && /^p\d+_new$/.test(this._id) && text !== '') {
+        console.log('[Label:' + this._id + '] text=' + JSON.stringify(text));
+      }
       this._lastText = text;
       this._win.contents.clear();
       var lh = this._win.lineHeight();
