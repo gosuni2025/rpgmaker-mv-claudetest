@@ -307,7 +307,7 @@
     bmp.textColor = '#cccccc';
     bmp.fontSize  = 20;
     bmp.fontBold  = false;
-    bmp.drawText('クリック数: ' + this._clickCount, 0, 40, bmp.width, 32, 'center');
+    bmp.drawText('클릭 수: ' + this._clickCount, 0, 40, bmp.width, 32, 'center');
   };
 
   Scene_PuzzleLightsOut.prototype._renderHelp = function() {
@@ -315,7 +315,7 @@
     bmp.clear();
     bmp.textColor = '#aaaaaa';
     bmp.fontSize  = 18;
-    bmp.drawText('[クリック/Enter] トグル    [矢印] カーソル移動    [ESC] キャンセル',
+    bmp.drawText('[클릭/Enter] 토글    [화살표] 커서 이동    [ESC] 취소',
       0, 0, bmp.width, 40, 'center');
   };
 
