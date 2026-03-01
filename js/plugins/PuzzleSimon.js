@@ -372,6 +372,7 @@
       //   안내 메시지 표시
       //------------------------------------------------------------------
       case 'PUZZLE_SIMON_INIT': {
+        if (Simon._active) break;
         var switchId = parseInt(args[0]) || 0;
         Simon._switchId = switchId;
         Simon._active   = true;
