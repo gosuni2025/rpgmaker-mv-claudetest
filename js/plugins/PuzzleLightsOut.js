@@ -1,495 +1,341 @@
-//=============================================================================
-// PuzzleLightsOut.js — Lights Out 퍼즐 미니게임
-//=============================================================================
 /*:
- * @plugindesc Lights Out 불 끄기 퍼즐 미니게임 (5×5)
- * @author RPGMaker MV Web Editor
+ * @plugindesc Lights Out Puzzle — 실제 맵 위에서 전구를 토글해 모두 끄는 퍼즐.
+ * @author Claude
  *
- * @help 플러그인 커맨드:
- *   PUZZLE_LIGHTSOUT start [switchId]
- *   switchId — 완료 시 ON할 스위치 번호 (생략 시 0)
+ * @help
+ * ============================================================================
+ * Lights Out Puzzle Plugin
+ * ============================================================================
+ *
+ * Map022에 25개 전구 이벤트를 5x5 그리드로 배치합니다.
+ * 각 이벤트 note: <light row=R col=C>  (R, C = 0~4)
+ * 이벤트 page1 (SelfSwitch A: off) = 꺼진 전구(!Switch2 sprite)
+ * 이벤트 page2 (SelfSwitch A: on)  = 켜진 전구(!Switch1 sprite)
+ * 이벤트 trigger = 1 (플레이어 터치)
+ *
+ * ============================================================================
+ * 플러그인 커맨드
+ * ============================================================================
+ *
+ * PUZZLE_LIGHTSOUT_INIT switchId
+ *   퍼즐을 초기화합니다.
+ *   switchId : 퍼즐 완료 시 ON으로 설정할 게임 스위치 ID
+ *   예) PUZZLE_LIGHTSOUT_INIT 5
+ *
+ * PUZZLE_LIGHTSOUT_TOGGLE r c
+ *   (r, c) 및 상하좌우 인접 전구를 모두 토글합니다.
+ *   이벤트 trigger(플레이어 터치) 에서 플러그인 커맨드로 호출하세요.
+ *   예) PUZZLE_LIGHTSOUT_TOGGLE 2 3
+ *   스크립트에서 직접 호출: $gameMap.callPuzzleLightsOutToggle(r, c)
+ *
+ * PUZZLE_LIGHTSOUT_RESET
+ *   퍼즐을 초기 상태(체커보드 패턴)로 리셋합니다.
+ *
+ * ============================================================================
+ * 이벤트 설정 방법
+ * ============================================================================
+ *
+ * Map022에 25개 이벤트를 배치합니다.
+ *   위치: x = 2,4,6,8,10 / y = 2,4,6,8,10 (5x5 그리드)
+ *   각 이벤트 note: <light row=R col=C>  (R=행 0~4, C=열 0~4)
+ *
+ * 각 이벤트 구성:
+ *   Page 1 (조건: SelfSwitch A = OFF)
+ *     - Trigger: Player Touch
+ *     - Sprite: !Switch2 (꺼진 전구)
+ *     - 내용: 플러그인 커맨드 PUZZLE_LIGHTSOUT_TOGGLE R C
+ *
+ *   Page 2 (조건: SelfSwitch A = ON)
+ *     - Trigger: Player Touch
+ *     - Sprite: !Switch1 (켜진 전구)
+ *     - 내용: 플러그인 커맨드 PUZZLE_LIGHTSOUT_TOGGLE R C
+ *
+ * ============================================================================
  */
 
 (function() {
-  'use strict';
+    'use strict';
 
-  //===========================================================================
-  // 플러그인 커맨드 등록
-  //===========================================================================
-  var _pluginCommand = Game_Interpreter.prototype.pluginCommand;
-  Game_Interpreter.prototype.pluginCommand = function(command, args) {
-    _pluginCommand.call(this, command, args);
-    if (command === 'PUZZLE_LIGHTSOUT') {
-      if (args[0] === 'start') {
-        var switchId = parseInt(args[1]) || 0;
-        SceneManager.push(Scene_PuzzleLightsOut);
-        SceneManager.prepareNextScene(switchId);
-      }
-    }
-  };
+    // -------------------------------------------------------------------------
+    // 핵심 데이터 구조
+    // -------------------------------------------------------------------------
+    var LightsOut = {
+        _active: false,
+        _switchId: 0,
+        _grid: [],        // 5x5 boolean 배열 (true = 켜짐)
+        _initGrid: [],    // 초기 상태 (reset 용)
+        _eventMap: {}     // { row: { col: eventId } } 매핑
+    };
 
-  //===========================================================================
-  // 상수 정의
-  //===========================================================================
-  var GRID_SIZE    = 5;
-  var CELL_SIZE    = 80;
-  var CELL_GAP     = 8;
-  var GRID_TOTAL   = GRID_SIZE * CELL_SIZE + (GRID_SIZE - 1) * CELL_GAP;
+    // -------------------------------------------------------------------------
+    // 내부 헬퍼
+    // -------------------------------------------------------------------------
 
-  var COLOR_ON_FILL   = '#ffe066';
-  var COLOR_ON_GLOW   = '#ffffff';
-  var COLOR_OFF_FILL  = '#333344';
-  var COLOR_OFF_EDGE  = '#22223a';
-  var COLOR_BG_OVERLAY = 'rgba(0,0,0,0.75)';
-
-  var SHUFFLE_COUNT_MIN = 10;
-  var SHUFFLE_COUNT_MAX = 20;
-
-  //===========================================================================
-  // Scene_PuzzleLightsOut
-  //===========================================================================
-  function Scene_PuzzleLightsOut() {
-    this.initialize.apply(this, arguments);
-  }
-
-  Scene_PuzzleLightsOut.prototype = Object.create(Scene_Base.prototype);
-  Scene_PuzzleLightsOut.prototype.constructor = Scene_PuzzleLightsOut;
-
-  Scene_PuzzleLightsOut.prototype.initialize = function() {
-    Scene_Base.prototype.initialize.call(this);
-    this._switchId    = 0;
-    this._grid        = [];
-    this._cursorX     = 2;
-    this._cursorY     = 2;
-    this._clickCount  = 0;
-    this._completed   = false;
-    this._completeTimer = 0;
-    this._flashPhase  = 0;   // 완료 후 점멸 단계
-    this._exitReady   = false;
-  };
-
-  Scene_PuzzleLightsOut.prototype.prepare = function(switchId) {
-    this._switchId = switchId;
-  };
-
-  //-------------------------------------------------------------------------
-  // Scene ライフサイクル
-  //-------------------------------------------------------------------------
-  Scene_PuzzleLightsOut.prototype.create = function() {
-    Scene_Base.prototype.create.call(this);
-    this._initGrid();
-    this._createBackground();
-    this._createGridSprite();
-    this._createTitleSprite();
-    this._createHelpSprite();
-    this._createCompleteSprite();
-    this._renderAll();
-  };
-
-  Scene_PuzzleLightsOut.prototype.start = function() {
-    Scene_Base.prototype.start.call(this);
-  };
-
-  Scene_PuzzleLightsOut.prototype.update = function() {
-    Scene_Base.prototype.update.call(this);
-    if (this._exitReady) return;
-
-    if (this._completed) {
-      this._updateComplete();
-    } else {
-      this._updateInput();
-    }
-  };
-
-  Scene_PuzzleLightsOut.prototype.terminate = function() {
-    Scene_Base.prototype.terminate.call(this);
-  };
-
-  //-------------------------------------------------------------------------
-  // グリッド初期化・シャッフル
-  //-------------------------------------------------------------------------
-  Scene_PuzzleLightsOut.prototype._initGrid = function() {
-    // 全 OFF 初期状態
-    this._grid = [];
-    for (var i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
-      this._grid.push(false);
+    /**
+     * 5x5 boolean 배열을 깊은 복사합니다.
+     */
+    function cloneGrid(grid) {
+        return grid.map(function(row) { return row.slice(); });
     }
 
-    // ランダムクリックで必ず解ける盤面を生成
-    var count = SHUFFLE_COUNT_MIN +
-      Math.floor(Math.random() * (SHUFFLE_COUNT_MAX - SHUFFLE_COUNT_MIN + 1));
-
-    // 全 OFF にならないよう、シャッフル後に確認して再試行
-    var attempts = 0;
-    do {
-      for (var i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
-        this._grid[i] = false;
-      }
-      for (var s = 0; s < count; s++) {
-        var rx = Math.floor(Math.random() * GRID_SIZE);
-        var ry = Math.floor(Math.random() * GRID_SIZE);
-        this._toggleCell(rx, ry);
-      }
-      attempts++;
-    } while (this._isAllOff() && attempts < 100);
-
-    this._clickCount = 0;
-  };
-
-  Scene_PuzzleLightsOut.prototype._idx = function(x, y) {
-    return y * GRID_SIZE + x;
-  };
-
-  Scene_PuzzleLightsOut.prototype._toggleCell = function(x, y) {
-    // 自分 + 上下左右をトグル
-    var dirs = [[0,0],[0,-1],[0,1],[-1,0],[1,0]];
-    for (var d = 0; d < dirs.length; d++) {
-      var nx = x + dirs[d][0];
-      var ny = y + dirs[d][1];
-      if (nx >= 0 && nx < GRID_SIZE && ny >= 0 && ny < GRID_SIZE) {
-        this._grid[this._idx(nx, ny)] = !this._grid[this._idx(nx, ny)];
-      }
-    }
-  };
-
-  Scene_PuzzleLightsOut.prototype._isAllOff = function() {
-    for (var i = 0; i < this._grid.length; i++) {
-      if (this._grid[i]) return false;
-    }
-    return true;
-  };
-
-  //-------------------------------------------------------------------------
-  // スプライト作成
-  //-------------------------------------------------------------------------
-  Scene_PuzzleLightsOut.prototype._createBackground = function() {
-    // シーン背景(前のシーンのスナップショット)
-    this._backgroundSprite = new Sprite(SceneManager.backgroundBitmap());
-    this.addChild(this._backgroundSprite);
-
-    // 半透明オーバーレイ
-    this._overlayBitmap = new Bitmap(Graphics.width, Graphics.height);
-    this._overlayBitmap.fillAll(COLOR_BG_OVERLAY);
-    this._overlaySprite = new Sprite(this._overlayBitmap);
-    this.addChild(this._overlaySprite);
-  };
-
-  Scene_PuzzleLightsOut.prototype._createGridSprite = function() {
-    var w = GRID_TOTAL;
-    var h = GRID_TOTAL;
-    this._gridBitmap = new Bitmap(w, h);
-    this._gridSprite = new Sprite(this._gridBitmap);
-    this._gridSprite.x = Math.floor((Graphics.width  - w) / 2);
-    this._gridSprite.y = Math.floor((Graphics.height - h) / 2) + 20;
-    this.addChild(this._gridSprite);
-  };
-
-  Scene_PuzzleLightsOut.prototype._createTitleSprite = function() {
-    var w = Graphics.width;
-    var h = 80;
-    this._titleBitmap = new Bitmap(w, h);
-    this._titleSprite = new Sprite(this._titleBitmap);
-    this._titleSprite.x = 0;
-    this._titleSprite.y = this._gridSprite.y - 70;
-    this.addChild(this._titleSprite);
-  };
-
-  Scene_PuzzleLightsOut.prototype._createHelpSprite = function() {
-    var w = Graphics.width;
-    var h = 48;
-    this._helpBitmap = new Bitmap(w, h);
-    this._helpSprite = new Sprite(this._helpBitmap);
-    this._helpSprite.x = 0;
-    this._helpSprite.y = this._gridSprite.y + GRID_TOTAL + 12;
-    this.addChild(this._helpSprite);
-  };
-
-  Scene_PuzzleLightsOut.prototype._createCompleteSprite = function() {
-    var w = Graphics.width;
-    var h = 80;
-    this._completeBitmap = new Bitmap(w, h);
-    this._completeSprite = new Sprite(this._completeBitmap);
-    this._completeSprite.x = 0;
-    this._completeSprite.y = Math.floor((Graphics.height - h) / 2);
-    this._completeSprite.visible = false;
-    this.addChild(this._completeSprite);
-  };
-
-  //-------------------------------------------------------------------------
-  // 描画
-  //-------------------------------------------------------------------------
-  Scene_PuzzleLightsOut.prototype._renderAll = function() {
-    this._renderGrid();
-    this._renderTitle();
-    this._renderHelp();
-  };
-
-  Scene_PuzzleLightsOut.prototype._renderGrid = function() {
-    var bmp = this._gridBitmap;
-    var ctx = bmp._context;
-    bmp.clear();
-
-    for (var gy = 0; gy < GRID_SIZE; gy++) {
-      for (var gx = 0; gx < GRID_SIZE; gx++) {
-        var px = gx * (CELL_SIZE + CELL_GAP);
-        var py = gy * (CELL_SIZE + CELL_GAP);
-        var on = this._grid[this._idx(gx, gy)];
-        var isCursor = (!this._completed && gx === this._cursorX && gy === this._cursorY);
-
-        this._drawCell(ctx, px, py, on, isCursor);
-      }
-    }
-    bmp._setDirty();
-  };
-
-  Scene_PuzzleLightsOut.prototype._drawCell = function(ctx, px, py, on, isCursor) {
-    var r = 8; // 角丸半径
-    var s = CELL_SIZE;
-
-    ctx.save();
-
-    if (on) {
-      // 発光エフェクト (シャドウ)
-      ctx.shadowColor = COLOR_ON_GLOW;
-      ctx.shadowBlur  = 18;
+    /**
+     * 이벤트 note 문자열에서 <light row=R col=C> 태그를 파싱합니다.
+     * @returns {{ row: number, col: number } | null}
+     */
+    function parseLightNote(note) {
+        if (!note) return null;
+        var match = note.match(/<light\s+row=(\d+)\s+col=(\d+)>/i);
+        if (!match) return null;
+        return { row: parseInt(match[1], 10), col: parseInt(match[2], 10) };
     }
 
-    // セル背景
-    ctx.beginPath();
-    ctx.moveTo(px + r, py);
-    ctx.lineTo(px + s - r, py);
-    ctx.quadraticCurveTo(px + s, py, px + s, py + r);
-    ctx.lineTo(px + s, py + s - r);
-    ctx.quadraticCurveTo(px + s, py + s, px + s - r, py + s);
-    ctx.lineTo(px + r, py + s);
-    ctx.quadraticCurveTo(px, py + s, px, py + s - r);
-    ctx.lineTo(px, py + r);
-    ctx.quadraticCurveTo(px, py, px + r, py);
-    ctx.closePath();
-    ctx.fillStyle = on ? COLOR_ON_FILL : COLOR_OFF_FILL;
-    ctx.fill();
-
-    ctx.shadowBlur = 0;
-
-    // カーソル枠
-    if (isCursor) {
-      ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth   = 3;
-      ctx.stroke();
-    } else if (!on) {
-      // OFF セルは薄いエッジ
-      ctx.strokeStyle = COLOR_OFF_EDGE;
-      ctx.lineWidth   = 1.5;
-      ctx.stroke();
+    /**
+     * (row, col)에 해당하는 이벤트 ID를 _eventMap에서 찾습니다.
+     * @returns {number|null}
+     */
+    function getEventId(row, col) {
+        var rowMap = LightsOut._eventMap[row];
+        if (!rowMap) return null;
+        return (rowMap[col] != null) ? rowMap[col] : null;
     }
 
-    // ON セル: 内側ハイライト (上部の明るいライン)
-    if (on) {
-      ctx.beginPath();
-      ctx.moveTo(px + r + 4, py + 6);
-      ctx.lineTo(px + s - r - 4, py + 6);
-      ctx.strokeStyle = 'rgba(255,255,255,0.55)';
-      ctx.lineWidth   = 2;
-      ctx.stroke();
+    /**
+     * 단일 셀의 SelfSwitch A를 _grid 값에 맞게 설정합니다.
+     */
+    function applySelfSwitch(row, col) {
+        var evId = getEventId(row, col);
+        if (evId == null) return;
+        var key = [$gameMap.mapId(), evId, 'A'];
+        $gameSelfSwitches.setValue(key, LightsOut._grid[row][col]);
     }
 
-    ctx.restore();
-  };
-
-  Scene_PuzzleLightsOut.prototype._renderTitle = function() {
-    var bmp = this._titleBitmap;
-    bmp.clear();
-    bmp.textColor = '#ffffff';
-    bmp.fontSize  = 28;
-    bmp.fontBold  = true;
-    bmp.drawText('Lights Out', 0, 0, bmp.width, 40, 'center');
-
-    bmp.textColor = '#cccccc';
-    bmp.fontSize  = 20;
-    bmp.fontBold  = false;
-    bmp.drawText('클릭 수: ' + this._clickCount, 0, 40, bmp.width, 32, 'center');
-  };
-
-  Scene_PuzzleLightsOut.prototype._renderHelp = function() {
-    var bmp = this._helpBitmap;
-    bmp.clear();
-    bmp.textColor = '#aaaaaa';
-    bmp.fontSize  = 18;
-    bmp.drawText('[클릭/Enter] 토글    [화살표] 커서 이동    [ESC] 취소',
-      0, 0, bmp.width, 40, 'center');
-  };
-
-  Scene_PuzzleLightsOut.prototype._renderCompleteMessage = function(alpha) {
-    var bmp = this._completeBitmap;
-    bmp.clear();
-    // フラッシュ時の輝度調整はスプライトの opacity で行う
-    bmp.textColor = '#ffe066';
-    bmp.fontSize  = 36;
-    bmp.fontBold  = true;
-    bmp.drawText('Puzzle Clear!', 0, 0, bmp.width, 80, 'center');
-    this._completeSprite.opacity = Math.floor(alpha * 255);
-  };
-
-  //-------------------------------------------------------------------------
-  // 入力処理
-  //-------------------------------------------------------------------------
-  Scene_PuzzleLightsOut.prototype._updateInput = function() {
-    // キーボード移動
-    if (Input.isRepeated('left')) {
-      this._cursorX = (this._cursorX - 1 + GRID_SIZE) % GRID_SIZE;
-      SoundManager.playCursor();
-      this._renderGrid();
-    } else if (Input.isRepeated('right')) {
-      this._cursorX = (this._cursorX + 1) % GRID_SIZE;
-      SoundManager.playCursor();
-      this._renderGrid();
-    } else if (Input.isRepeated('up')) {
-      this._cursorY = (this._cursorY - 1 + GRID_SIZE) % GRID_SIZE;
-      SoundManager.playCursor();
-      this._renderGrid();
-    } else if (Input.isRepeated('down')) {
-      this._cursorY = (this._cursorY + 1) % GRID_SIZE;
-      SoundManager.playCursor();
-      this._renderGrid();
-    }
-
-    // 決定 (Z / Enter / Space)
-    if (Input.isTriggered('ok')) {
-      this._doToggle(this._cursorX, this._cursorY);
-    }
-
-    // キャンセル (ESC / X)
-    if (Input.isTriggered('cancel')) {
-      this.onCancel();
-    }
-
-    // マウスクリック
-    if (TouchInput.isTriggered()) {
-      this._handleTouch(TouchInput.x, TouchInput.y);
-    }
-  };
-
-  Scene_PuzzleLightsOut.prototype._handleTouch = function(tx, ty) {
-    var ox = this._gridSprite.x;
-    var oy = this._gridSprite.y;
-    var lx = tx - ox;
-    var ly = ty - oy;
-
-    if (lx < 0 || ly < 0 || lx >= GRID_TOTAL || ly >= GRID_TOTAL) return;
-
-    var step = CELL_SIZE + CELL_GAP;
-    var gx   = Math.floor(lx / step);
-    var gy   = Math.floor(ly / step);
-
-    // セルの実ピクセル範囲内かチェック (ギャップ部分を除外)
-    var localX = lx - gx * step;
-    var localY = ly - gy * step;
-    if (localX >= CELL_SIZE || localY >= CELL_SIZE) return;
-    if (gx < 0 || gx >= GRID_SIZE || gy < 0 || gy >= GRID_SIZE) return;
-
-    this._cursorX = gx;
-    this._cursorY = gy;
-    this._doToggle(gx, gy);
-  };
-
-  Scene_PuzzleLightsOut.prototype._doToggle = function(x, y) {
-    this._toggleCell(x, y);
-    this._clickCount++;
-    SoundManager.playOk();
-    this._renderAll();
-
-    if (this._isAllOff()) {
-      this._startComplete();
-    }
-  };
-
-  //-------------------------------------------------------------------------
-  // 完了シーケンス
-  //-------------------------------------------------------------------------
-  Scene_PuzzleLightsOut.prototype._startComplete = function() {
-    this._completed       = true;
-    this._completeTimer   = 0;
-    this._flashPhase      = 0;
-    this._completeSprite.visible = true;
-    this._renderCompleteMessage(1.0);
-
-    // タイトル更新
-    this._renderTitle();
-    this._renderHelp();
-
-    // ヘルプ非表示
-    this._helpSprite.visible = false;
-  };
-
-  Scene_PuzzleLightsOut.prototype._updateComplete = function() {
-    this._completeTimer++;
-
-    // フェーズ 0: 点滅アニメ (60フレーム)
-    // フェーズ 1: 完了メッセージ安定表示 (90フレーム)
-    // フェーズ 2: フェードアウト → 終了
-
-    if (this._flashPhase === 0) {
-      // セルを高速点滅
-      if (this._completeTimer <= 60) {
-        var t = this._completeTimer;
-        // 5フレームごとに全セル ON/OFF トグル
-        if (t % 5 === 1) {
-          var allOn = (Math.floor(t / 5) % 2 === 0);
-          for (var i = 0; i < this._grid.length; i++) {
-            this._grid[i] = allOn;
-          }
-          this._renderGrid();
+    /**
+     * 모든 셀의 SelfSwitch A를 _grid에 맞게 갱신합니다.
+     */
+    function applyAllSelfSwitches() {
+        for (var r = 0; r < 5; r++) {
+            for (var c = 0; c < 5; c++) {
+                applySelfSwitch(r, c);
+            }
         }
-        // "Clear!" テキストをフラッシュ
-        var alpha = 0.5 + 0.5 * Math.sin(t * 0.3);
-        this._renderCompleteMessage(alpha);
-      } else {
-        // 全セル OFF に確定
-        for (var i = 0; i < this._grid.length; i++) {
-          this._grid[i] = false;
+    }
+
+    /**
+     * 승리 조건 체크: 모든 셀이 false(꺼짐)이면 true.
+     * @returns {boolean}
+     */
+    function checkWin() {
+        for (var r = 0; r < 5; r++) {
+            for (var c = 0; c < 5; c++) {
+                if (LightsOut._grid[r][c]) return false;
+            }
         }
-        this._renderGrid();
-        this._flashPhase = 1;
-        this._completeTimer = 0;
-        this._renderCompleteMessage(1.0);
-        // 完了音
-        AudioManager.playSe({name: 'Applause1', pan: 0, pitch: 100, volume: 90});
-      }
-    } else if (this._flashPhase === 1) {
-      // 安定表示
-      if (this._completeTimer > 90) {
-        this._flashPhase = 2;
-        this._completeTimer = 0;
-      }
-    } else if (this._flashPhase === 2) {
-      // フェードアウト
-      var fadeFrames = 30;
-      var ratio = 1.0 - Math.min(this._completeTimer / fadeFrames, 1.0);
-      this._overlaySprite.opacity = Math.floor(ratio * 255);
-      this._gridSprite.opacity    = Math.floor(ratio * 255);
-      this._titleSprite.opacity   = Math.floor(ratio * 255);
-      this._completeSprite.opacity = Math.floor(ratio * 255);
-
-      if (this._completeTimer >= fadeFrames) {
-        this._exitReady = true;
-        this.onComplete();
-      }
+        return true;
     }
-  };
 
-  //-------------------------------------------------------------------------
-  // コールバック
-  //-------------------------------------------------------------------------
-  Scene_PuzzleLightsOut.prototype.onComplete = function() {
-    if (this._switchId > 0) {
-      $gameSwitches.setValue(this._switchId, true);
+    /**
+     * 승리 처리: 게임 스위치 ON, 팡파레 SE, 완성 메시지.
+     */
+    function handleWin() {
+        LightsOut._active = false;
+
+        if (LightsOut._switchId > 0) {
+            $gameSwitches.setValue(LightsOut._switchId, true);
+        }
+
+        AudioManager.playSe({ name: 'Fanfare1', pan: 0, pitch: 100, volume: 90 });
+
+        $gameMessage.add('\\C[14]★ Lights Out 퍼즐 완료! ★\\C[0]');
+        $gameMessage.add('모든 전구를 껐습니다!');
+        if (LightsOut._switchId > 0) {
+            $gameMessage.add('스위치 #' + LightsOut._switchId + ' 가 ON 으로 설정되었습니다.');
+        }
     }
-    SceneManager.pop();
-  };
 
-  Scene_PuzzleLightsOut.prototype.onCancel = function() {
-    SoundManager.playCancel();
-    SceneManager.pop();
-  };
+    // -------------------------------------------------------------------------
+    // INIT 커맨드
+    // -------------------------------------------------------------------------
+
+    /**
+     * PUZZLE_LIGHTSOUT_INIT switchId
+     * 이벤트 note를 파싱하여 _eventMap을 구성하고,
+     * 체커보드 초기 패턴을 설정하며 SelfSwitch를 적용합니다.
+     */
+    function cmdInit(args) {
+        var switchId = parseInt(args[0], 10) || 0;
+        LightsOut._switchId = switchId;
+        LightsOut._active   = true;
+
+        // 이벤트 note 파싱으로 _eventMap 구성
+        LightsOut._eventMap = {};
+        var events = $gameMap.events();
+        events.forEach(function(ev) {
+            var data = ev.event();
+            if (!data) return;
+            var parsed = parseLightNote(data.note);
+            if (!parsed) return;
+            var r = parsed.row;
+            var c = parsed.col;
+            if (!LightsOut._eventMap[r]) {
+                LightsOut._eventMap[r] = {};
+            }
+            LightsOut._eventMap[r][c] = ev.eventId();
+        });
+
+        // 초기 ON/OFF 패턴 — 체커보드 (솔루션이 존재하는 패턴)
+        LightsOut._initGrid = [
+            [true,  false, true,  false, true ],
+            [false, true,  false, true,  false],
+            [true,  false, true,  false, true ],
+            [false, true,  false, true,  false],
+            [true,  false, true,  false, true ]
+        ];
+        LightsOut._grid = cloneGrid(LightsOut._initGrid);
+
+        // SelfSwitch 적용
+        applyAllSelfSwitches();
+
+        // 안내 메시지
+        $gameMessage.add('\\C[6]Lights Out 퍼즐\\C[0]');
+        $gameMessage.add('모든 전구를 꺼야 합니다!');
+        $gameMessage.add('전구 위에 서면 해당 전구와 상하좌우가 토글됩니다.');
+    }
+
+    // -------------------------------------------------------------------------
+    // TOGGLE 커맨드
+    // -------------------------------------------------------------------------
+
+    /**
+     * PUZZLE_LIGHTSOUT_TOGGLE r c
+     * (r, c) 및 4방향 인접 셀을 flip하고 SelfSwitch를 갱신합니다.
+     * 승리 조건을 충족하면 handleWin()을 호출합니다.
+     */
+    function cmdToggle(args) {
+        if (!LightsOut._active) return;
+
+        var row = parseInt(args[0], 10);
+        var col = parseInt(args[1], 10);
+
+        if (isNaN(row) || isNaN(col) || row < 0 || row > 4 || col < 0 || col > 4) {
+            console.warn('[PuzzleLightsOut] TOGGLE: 범위를 벗어난 좌표 r=%s c=%s', args[0], args[1]);
+            return;
+        }
+
+        // 토글할 셀 목록: 자신 + 4방향 인접
+        var targets = [
+            [row,     col    ],
+            [row - 1, col    ],
+            [row + 1, col    ],
+            [row,     col - 1],
+            [row,     col + 1]
+        ];
+
+        targets.forEach(function(pos) {
+            var nr = pos[0];
+            var nc = pos[1];
+            if (nr < 0 || nr > 4 || nc < 0 || nc > 4) return;
+            LightsOut._grid[nr][nc] = !LightsOut._grid[nr][nc];
+            applySelfSwitch(nr, nc);
+        });
+
+        // 스위치 토글 SE
+        AudioManager.playSe({ name: 'Switch1', pan: 0, pitch: 100, volume: 80 });
+
+        // 승리 체크
+        if (checkWin()) {
+            handleWin();
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // RESET 커맨드
+    // -------------------------------------------------------------------------
+
+    /**
+     * PUZZLE_LIGHTSOUT_RESET
+     * 초기 체커보드 패턴으로 리셋하고 SelfSwitch를 갱신합니다.
+     */
+    function cmdReset() {
+        if (LightsOut._initGrid.length === 0) {
+            console.warn('[PuzzleLightsOut] RESET: 초기화되지 않은 상태입니다. INIT 먼저 실행하세요.');
+            return;
+        }
+        LightsOut._active = true;
+        LightsOut._grid = cloneGrid(LightsOut._initGrid);
+        applyAllSelfSwitches();
+        AudioManager.playSe({ name: 'Decision1', pan: 0, pitch: 100, volume: 80 });
+        $gameMessage.add('퍼즐이 초기 상태로 리셋되었습니다.');
+    }
+
+    // -------------------------------------------------------------------------
+    // 플러그인 커맨드 등록
+    // -------------------------------------------------------------------------
+
+    var _Game_Interpreter_pluginCommand =
+        Game_Interpreter.prototype.pluginCommand;
+
+    Game_Interpreter.prototype.pluginCommand = function(command, args) {
+        _Game_Interpreter_pluginCommand.call(this, command, args);
+        switch (command) {
+            case 'PUZZLE_LIGHTSOUT_INIT':
+                cmdInit(args);
+                break;
+            case 'PUZZLE_LIGHTSOUT_TOGGLE':
+                cmdToggle(args);
+                break;
+            case 'PUZZLE_LIGHTSOUT_RESET':
+                cmdReset();
+                break;
+        }
+    };
+
+    // -------------------------------------------------------------------------
+    // 편의 API — 이벤트 스크립트에서 직접 호출 가능
+    // -------------------------------------------------------------------------
+
+    /**
+     * 이벤트 스크립트에서:
+     *   $gameMap.callPuzzleLightsOutToggle(r, c)
+     */
+    Game_Map.prototype.callPuzzleLightsOutToggle = function(r, c) {
+        cmdToggle([String(r), String(c)]);
+    };
+
+    // -------------------------------------------------------------------------
+    // Scene_Map 훅 — 맵을 나갈 때 _active = false
+    // -------------------------------------------------------------------------
+
+    var _Scene_Map_stop = Scene_Map.prototype.stop;
+    Scene_Map.prototype.stop = function() {
+        _Scene_Map_stop.call(this);
+        // 맵 이동 또는 메뉴 등으로 씬이 정지될 때 active 해제.
+        // SelfSwitch 상태는 $gameSelfSwitches에 보존되므로,
+        // 같은 맵으로 돌아와도 전구 상태는 유지됩니다.
+        LightsOut._active = false;
+    };
+
+    /**
+     * Scene_Map.start 시 퍼즐 맵으로 복귀했을 때 active를 복원합니다.
+     * (전투 후 귀환 등)
+     */
+    var _Scene_Map_start = Scene_Map.prototype.start;
+    Scene_Map.prototype.start = function() {
+        _Scene_Map_start.call(this);
+        // _initGrid가 설정되어 있고, 현재 맵에 light 이벤트가 존재하면 복원
+        if (LightsOut._initGrid.length > 0 && !LightsOut._active) {
+            var hasLightEvent = $gameMap.events().some(function(ev) {
+                var data = ev.event();
+                return data && parseLightNote(data.note) !== null;
+            });
+            if (hasLightEvent) {
+                LightsOut._active = true;
+            }
+        }
+    };
+
+    // -------------------------------------------------------------------------
+    // 전역 노출 (디버그용)
+    // -------------------------------------------------------------------------
+    window.PuzzleLightsOut = LightsOut;
 
 })();
