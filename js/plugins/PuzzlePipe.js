@@ -68,28 +68,27 @@
   }
 
   var LEVELS = [
-    // 레벨 1: 기본 경로
+    // 레벨 1: 가로 뱀형 경로 (검증됨 — 정답 exists)
     {
       grid: [
-        [ cell('source',0), cell('straight',1), cell('elbow',1),  cell('straight',0), cell('elbow',2)  ],
-        [ cell('elbow',1),  cell('elbow',3),    cell('elbow',0),  cell('elbow',2),    cell('straight',0)],
-        [ cell('straight',0),cell('t',0),       cell('straight',1),cell('t',2),       cell('straight',0)],
-        [ cell('elbow',0),  cell('elbow',2),    cell('elbow',1),  cell('elbow',3),    cell('straight',0)],
-        [ cell('straight',1),cell('elbow',3),   cell('straight',1),cell('elbow',0),   cell('sink',0)   ]
+        [ cell('source',0), cell('straight',0), cell('straight',0), cell('straight',0), cell('elbow',1) ],
+        [ cell('elbow',2),  cell('straight',0), cell('straight',0), cell('straight',0), cell('elbow',1) ],
+        [ cell('elbow',2),  cell('straight',0), cell('straight',0), cell('straight',0), cell('elbow',1) ],
+        [ cell('elbow',2),  cell('straight',0), cell('straight',0), cell('straight',0), cell('elbow',0) ],
+        [ cell('elbow',2),  cell('straight',0), cell('straight',0), cell('straight',0), cell('sink',0)  ]
       ],
-      // 초기 상태에서 이미 연결된 레벨은 재미없으므로 일부 셀 rotation을 섞어둠
-      hint: '파이프를 클릭하여 회전시켜 연결하세요!'
+      hint: '좌→우로 뱀처럼 이어지는 경로를 찾아보세요!'
     },
-    // 레벨 2: 더 복잡한 경로
+    // 레벨 2: 세로 뱀형 경로 (검증됨 — 정답 exists)
     {
       grid: [
-        [ cell('source',0), cell('elbow',1),    cell('straight',1), cell('elbow',2),   cell('straight',0) ],
-        [ cell('straight',0),cell('cross',0),   cell('t',3),        cell('cross',0),   cell('straight',0) ],
-        [ cell('elbow',0),  cell('t',1),        cell('elbow',3),    cell('t',1),       cell('elbow',2)    ],
-        [ cell('straight',0),cell('cross',0),   cell('t',1),        cell('cross',0),   cell('straight',0) ],
-        [ cell('elbow',1),  cell('straight',1), cell('elbow',0),    cell('straight',1),cell('sink',0)     ]
+        [ cell('source',0), cell('elbow',0),    cell('elbow',1),    cell('elbow',2),    cell('elbow',0)  ],
+        [ cell('straight',1),cell('straight',1),cell('straight',1), cell('straight',1), cell('straight',1)],
+        [ cell('straight',1),cell('straight',1),cell('straight',1), cell('straight',1), cell('straight',1)],
+        [ cell('straight',1),cell('straight',1),cell('straight',1), cell('straight',1), cell('straight',1)],
+        [ cell('elbow',3),  cell('elbow',2),    cell('elbow',1),    cell('elbow',1),    cell('sink',0)   ]
       ],
-      hint: '교차점을 잘 활용하세요!'
+      hint: '위→아래로 뱀처럼 내려가는 경로를 찾아보세요!'
     }
   ];
 
