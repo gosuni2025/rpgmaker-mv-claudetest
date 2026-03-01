@@ -2802,10 +2802,11 @@
   };
 
   Scene_CustomUI.prototype.create = function () {
+    console.log('[CSE] Scene_CustomUI.create called, _sceneId=', this._sceneId);
     Scene_Base.prototype.create.call(this);
     this.createWindowLayer();
     var sceneDef = this._getSceneDef();
-    if (!sceneDef) return;
+    if (!sceneDef) { console.warn('[CSE] sceneDef not found for:', this._sceneId); return; }
 
     // _ctx 초기화: initCtx (씬 정의) → prepareData (prepare() 인자) 순서로 덮어쓰기
     var initCtx = sceneDef.initCtx || {};
@@ -3219,14 +3220,20 @@
             this._ctx._pendingUseItemUser = useUser;
             this._pendingPersonalAction = { action: 'applyItemToActor', itemListWidget: null };
             this._personalOriginWidget = widget;
-            // skill_list 숨기기 + actor_select 표시를 위한 상태 저장
+            // skill_list 숨기기 + actor_select/actor_panels 표시를 위한 상태 저장
             this._pendingItemListWidgetId = widget ? widget._id : null;
             this._pendingActorWidgetId = handler.actorWidget || null;
             if (widget && widget.displayObject()) widget.displayObject().visible = false;
             if (widget && widget._rowOverlay) widget._rowOverlay.visible = false;
+            // actorPanelsWidget 표시 (menu_v2 party_panel 패턴)
+            if (handler.actorPanelsWidget) {
+              this._pendingActorPanelsWidgetId = handler.actorPanelsWidget;
+              var apwShowNew = this._widgetMap[handler.actorPanelsWidget];
+              if (apwShowNew && apwShowNew.displayObject()) apwShowNew.displayObject().visible = true;
+            }
             var sawUI = this._widgetMap[handler.actorWidget];
             if (sawUI) {
-              if (sawUI.displayObject()) sawUI.displayObject().visible = true; // 명시적으로 표시
+              if (sawUI.displayObject()) sawUI.displayObject().visible = true;
               sawUI.setFormationMode(false);
               if (this._navManager) this._navManager.focusWidget(handler.actorWidget);
             }

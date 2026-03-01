@@ -4165,13 +4165,318 @@
                 "userExpr": "$gameParty.members()[$ctx.actorIndex]",
                 "soundType": "skill",
                 "setLastSkill": true,
-                "actorWidget": "actor_select"
+                "actorWidget": "actor_select",
+                "actorPanelsWidget": "actor_panels"
               },
               "cancel": {
                 "action": "focusWidget",
                 "target": "skilltype_list"
               }
             }
+          },
+          {
+            "id": "actor_panels",
+            "type": "panel",
+            "x": 0,
+            "y": 288,
+            "width": 816,
+            "height": 336,
+            "windowed": true,
+            "visible": false,
+            "children": [
+              {
+                "id": "ap_row_0",
+                "type": "panel",
+                "x": 0,
+                "y": 0,
+                "width": 816,
+                "height": 84,
+                "windowed": false,
+                "children": [
+                  {
+                    "id": "ap_face0",
+                    "type": "image",
+                    "imageSource": "actorFace",
+                    "actorIndex": 0,
+                    "x": 6,
+                    "y": 6,
+                    "width": 72,
+                    "height": 72
+                  },
+                  {
+                    "id": "ap_name0",
+                    "type": "label",
+                    "text": "{actor[0].name}",
+                    "fontSize": 24,
+                    "x": 84,
+                    "y": 8,
+                    "width": 200,
+                    "height": 30
+                  },
+                  {
+                    "id": "ap_class0",
+                    "type": "label",
+                    "text": "{actor[0].class}",
+                    "fontSize": 20,
+                    "color": "#aaaaaa",
+                    "x": 84,
+                    "y": 46,
+                    "width": 200,
+                    "height": 28
+                  },
+                  {
+                    "id": "ap_lv0",
+                    "type": "label",
+                    "text": "{TextManager.levelA} {actor[0].level}",
+                    "fontSize": 20,
+                    "color": "#aaaaaa",
+                    "x": 290,
+                    "y": 8,
+                    "width": 84,
+                    "height": 30
+                  },
+                  {
+                    "id": "ap_hp0",
+                    "type": "gauge",
+                    "gaugeType": "hp",
+                    "actorIndex": 0,
+                    "x": 382,
+                    "y": 8,
+                    "width": 224,
+                    "height": 32
+                  },
+                  {
+                    "id": "ap_mp0",
+                    "type": "gauge",
+                    "gaugeType": "mp",
+                    "actorIndex": 0,
+                    "x": 382,
+                    "y": 46,
+                    "width": 224,
+                    "height": 32
+                  }
+                ]
+              },
+              {
+                "id": "ap_row_1",
+                "type": "panel",
+                "x": 0,
+                "y": 84,
+                "width": 816,
+                "height": 84,
+                "windowed": false,
+                "children": [
+                  {
+                    "id": "ap_face1",
+                    "type": "image",
+                    "imageSource": "actorFace",
+                    "actorIndex": 1,
+                    "x": 6,
+                    "y": 6,
+                    "width": 72,
+                    "height": 72
+                  },
+                  {
+                    "id": "ap_name1",
+                    "type": "label",
+                    "text": "{actor[1].name}",
+                    "fontSize": 24,
+                    "x": 84,
+                    "y": 8,
+                    "width": 200,
+                    "height": 30
+                  },
+                  {
+                    "id": "ap_class1",
+                    "type": "label",
+                    "text": "{actor[1].class}",
+                    "fontSize": 20,
+                    "color": "#aaaaaa",
+                    "x": 84,
+                    "y": 46,
+                    "width": 200,
+                    "height": 28
+                  },
+                  {
+                    "id": "ap_lv1",
+                    "type": "label",
+                    "text": "{TextManager.levelA} {actor[1].level}",
+                    "fontSize": 20,
+                    "color": "#aaaaaa",
+                    "x": 290,
+                    "y": 8,
+                    "width": 84,
+                    "height": 30
+                  },
+                  {
+                    "id": "ap_hp1",
+                    "type": "gauge",
+                    "gaugeType": "hp",
+                    "actorIndex": 1,
+                    "x": 382,
+                    "y": 8,
+                    "width": 224,
+                    "height": 32
+                  },
+                  {
+                    "id": "ap_mp1",
+                    "type": "gauge",
+                    "gaugeType": "mp",
+                    "actorIndex": 1,
+                    "x": 382,
+                    "y": 46,
+                    "width": 224,
+                    "height": 32
+                  }
+                ]
+              },
+              {
+                "id": "ap_row_2",
+                "type": "panel",
+                "x": 0,
+                "y": 168,
+                "width": 816,
+                "height": 84,
+                "windowed": false,
+                "children": [
+                  {
+                    "id": "ap_face2",
+                    "type": "image",
+                    "imageSource": "actorFace",
+                    "actorIndex": 2,
+                    "x": 6,
+                    "y": 6,
+                    "width": 72,
+                    "height": 72
+                  },
+                  {
+                    "id": "ap_name2",
+                    "type": "label",
+                    "text": "{actor[2].name}",
+                    "fontSize": 24,
+                    "x": 84,
+                    "y": 8,
+                    "width": 200,
+                    "height": 30
+                  },
+                  {
+                    "id": "ap_class2",
+                    "type": "label",
+                    "text": "{actor[2].class}",
+                    "fontSize": 20,
+                    "color": "#aaaaaa",
+                    "x": 84,
+                    "y": 46,
+                    "width": 200,
+                    "height": 28
+                  },
+                  {
+                    "id": "ap_lv2",
+                    "type": "label",
+                    "text": "{TextManager.levelA} {actor[2].level}",
+                    "fontSize": 20,
+                    "color": "#aaaaaa",
+                    "x": 290,
+                    "y": 8,
+                    "width": 84,
+                    "height": 30
+                  },
+                  {
+                    "id": "ap_hp2",
+                    "type": "gauge",
+                    "gaugeType": "hp",
+                    "actorIndex": 2,
+                    "x": 382,
+                    "y": 8,
+                    "width": 224,
+                    "height": 32
+                  },
+                  {
+                    "id": "ap_mp2",
+                    "type": "gauge",
+                    "gaugeType": "mp",
+                    "actorIndex": 2,
+                    "x": 382,
+                    "y": 46,
+                    "width": 224,
+                    "height": 32
+                  }
+                ]
+              },
+              {
+                "id": "ap_row_3",
+                "type": "panel",
+                "x": 0,
+                "y": 252,
+                "width": 816,
+                "height": 84,
+                "windowed": false,
+                "children": [
+                  {
+                    "id": "ap_face3",
+                    "type": "image",
+                    "imageSource": "actorFace",
+                    "actorIndex": 3,
+                    "x": 6,
+                    "y": 6,
+                    "width": 72,
+                    "height": 72
+                  },
+                  {
+                    "id": "ap_name3",
+                    "type": "label",
+                    "text": "{actor[3].name}",
+                    "fontSize": 24,
+                    "x": 84,
+                    "y": 8,
+                    "width": 200,
+                    "height": 30
+                  },
+                  {
+                    "id": "ap_class3",
+                    "type": "label",
+                    "text": "{actor[3].class}",
+                    "fontSize": 20,
+                    "color": "#aaaaaa",
+                    "x": 84,
+                    "y": 46,
+                    "width": 200,
+                    "height": 28
+                  },
+                  {
+                    "id": "ap_lv3",
+                    "type": "label",
+                    "text": "{TextManager.levelA} {actor[3].level}",
+                    "fontSize": 20,
+                    "color": "#aaaaaa",
+                    "x": 290,
+                    "y": 8,
+                    "width": 84,
+                    "height": 30
+                  },
+                  {
+                    "id": "ap_hp3",
+                    "type": "gauge",
+                    "gaugeType": "hp",
+                    "actorIndex": 3,
+                    "x": 382,
+                    "y": 8,
+                    "width": 224,
+                    "height": 32
+                  },
+                  {
+                    "id": "ap_mp3",
+                    "type": "gauge",
+                    "gaugeType": "mp",
+                    "actorIndex": 3,
+                    "x": 382,
+                    "y": 46,
+                    "width": 224,
+                    "height": 32
+                  }
+                ]
+              }
+            ]
           },
           {
             "id": "actor_select",
@@ -4186,7 +4491,7 @@
             "handlers": {
               "cancel": {
                 "action": "script",
-                "code": "var sl=this._widgetMap['skill_list'];if(sl&&sl.displayObject())sl.displayObject().visible=true;if(sl&&sl._rowOverlay)sl._rowOverlay.visible=true;this._pendingItemListWidgetId=null;this._pendingActorWidgetId=null;if(this._navManager)this._navManager.focusWidget('skill_list');"
+                "code": "var sl=this._widgetMap['skill_list'];if(sl&&sl.displayObject())sl.displayObject().visible=true;if(sl&&sl._rowOverlay)sl._rowOverlay.visible=true;var ap=this._widgetMap['actor_panels'];if(ap&&ap.displayObject())ap.displayObject().visible=false;this._pendingItemListWidgetId=null;this._pendingActorWidgetId=null;this._pendingActorPanelsWidgetId=null;if(this._navManager)this._navManager.focusWidget('skill_list');"
               }
             }
           },
