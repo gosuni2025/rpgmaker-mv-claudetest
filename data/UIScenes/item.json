@@ -1,1 +1,232 @@
-{"id":"item","displayName":"아이템","formatVersion":2,"prepareArgs":[],"initCtx":{"itemCategory":"item","helpText":""},"navigation":{"defaultFocus":"category_list","cancelWidget":"category_list","focusOrder":["category_list","item_list","actor_select"]},"root":{"id":"root","type":"panel","x":0,"y":0,"width":816,"height":624,"windowed":false,"children":[{"id":"bg","type":"background","x":0,"y":0,"width":816,"height":624},{"id":"help_win","type":"panel","x":0,"y":0,"width":816,"height":72,"windowed":true,"children":[{"id":"help_text","type":"textArea","x":6,"y":6,"width":780,"height":60,"text":"{$ctx.helpText}","fontSize":22,"verticalAlign":"middle"}]},{"id":"category_list","type":"textList","x":0,"y":72,"width":816,"height":72,"maxCols":4,"items":[{"name":"{TextManager.item}","symbol":"item","enabled":true},{"name":"{TextManager.weapon}","symbol":"weapon","enabled":true},{"name":"{TextManager.armor}","symbol":"armor","enabled":true},{"name":"{TextManager.keyItem}","symbol":"keyItem","enabled":true}],"onCursor":{"code":"var w = this._widgetMap['category_list'];\nvar idx = w && w._window ? w._window.index() : -1;\nvar cmds = w && w._window ? w._window._winDef.commands : null;\nvar sym = cmds && cmds[idx] ? cmds[idx].symbol : null;\nif (sym && this._ctx.itemCategory !== sym) {\n  this._ctx.itemCategory = sym;\n  var il = this._widgetMap['item_list'];\n  if (il && il._rebuildFromScript) il._rebuildFromScript();\n}"},"handlers":{"item":{"action":"script","code":"$ctx.itemCategory='item';","thenAction":{"action":"focusWidget","target":"item_list"}},"weapon":{"action":"script","code":"$ctx.itemCategory='weapon';","thenAction":{"action":"focusWidget","target":"item_list"}},"armor":{"action":"script","code":"$ctx.itemCategory='armor';","thenAction":{"action":"focusWidget","target":"item_list"}},"keyItem":{"action":"script","code":"$ctx.itemCategory='keyItem';","thenAction":{"action":"focusWidget","target":"item_list"}},"cancel":{"action":"popScene"}}},{"id":"item_list","type":"list","x":0,"y":144,"width":816,"height":480,"maxCols":2,"itemScene":"item_row","dataScript":"(function() {\n  var cat = ($ctx && $ctx.itemCategory) || 'item';\n  var items = [];\n  if (cat === 'item') {\n    items = ($gameParty && $gameParty.items() || []).filter(function(i) {\n      return DataManager.isItem(i) && i.itypeId === 1;\n    });\n  } else if (cat === 'weapon') {\n    items = $gameParty && $gameParty.weapons() || [];\n  } else if (cat === 'armor') {\n    items = $gameParty && $gameParty.armors() || [];\n  } else if (cat === 'keyItem') {\n    items = ($gameParty && $gameParty.items() || []).filter(function(i) {\n      return DataManager.isItem(i) && i.itypeId === 2;\n    });\n  }\n  return items.map(function(item) {\n    return {\n      name: item.name,\n      iconIndex: item.iconIndex,\n      numberText: '×' + $gameParty.numItems(item),\n      symbol: 'item_' + item.id,\n      enabled: $gameParty.canUse(item) || !!(item.note && (item.note.indexOf('<detailPic>') >= 0 || item.note.indexOf('<detailTxt>') >= 0)),\n      data: item\n    };\n  });\n})()","onCursor":{"code":"var w = this._widgetMap && this._widgetMap['item_list'];\nvar idx = w && w._window ? w._window.index() : -1;\nvar cmd = idx >= 0 ? (w._window._winDef.commands && w._window._winDef.commands[idx]) : null;\nthis._ctx.helpText = (cmd && cmd.data && cmd.data.description) ? cmd.data.description : '';\nthis._ctx.selectedItem = (cmd && cmd.data) ? cmd.data : null;"},"handlers":{"ok":{"action":"useItem","itemListWidget":"item_list","actorWidget":"actor_select","actorPanelsWidget":"actor_panels"},"cancel":{"action":"focusWidget","target":"category_list"}}},{"id":"actor_panels","type":"panel","x":0,"y":144,"width":816,"height":480,"visible":false,"children":[{"id":"actor_row_0","type":"scene","sceneId":"actor_row_item","instanceCtx":{"actorIndex":0},"x":0,"y":0,"width":816,"height":120},{"id":"actor_row_1","type":"scene","sceneId":"actor_row_item","instanceCtx":{"actorIndex":1},"x":0,"y":120,"width":816,"height":120},{"id":"actor_row_2","type":"scene","sceneId":"actor_row_item","instanceCtx":{"actorIndex":2},"x":0,"y":240,"width":816,"height":120},{"id":"actor_row_3","type":"scene","sceneId":"actor_row_item","instanceCtx":{"actorIndex":3},"x":0,"y":360,"width":816,"height":120}]},{"id":"actor_select","type":"rowSelector","x":0,"y":144,"width":816,"height":480,"numRows":"party","transparent":true,"padding":0}],"enterAnimation":{"type":"fade","duration":15,"delay":0}}}
+{
+  "id": "item",
+  "displayName": "아이템",
+  "formatVersion": 2,
+  "prepareArgs": [],
+  "initCtx": {
+    "itemCategory": "item",
+    "helpText": ""
+  },
+  "navigation": {
+    "defaultFocus": "category_list",
+    "cancelWidget": "category_list",
+    "focusOrder": [
+      "category_list",
+      "item_list",
+      "actor_select"
+    ]
+  },
+  "root": {
+    "id": "root",
+    "type": "panel",
+    "x": 0,
+    "y": 0,
+    "width": 816,
+    "height": 624,
+    "windowed": false,
+    "children": [
+      {
+        "id": "bg",
+        "type": "background",
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 624
+      },
+      {
+        "id": "help_win",
+        "type": "panel",
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 72,
+        "windowed": true,
+        "children": [
+          {
+            "id": "help_text",
+            "type": "textArea",
+            "x": 6,
+            "y": 6,
+            "width": 780,
+            "height": 60,
+            "text": "{$ctx.helpText}",
+            "fontSize": 22,
+            "verticalAlign": "middle"
+          }
+        ]
+      },
+      {
+        "id": "category_list",
+        "type": "textList",
+        "x": 0,
+        "y": 72,
+        "width": 816,
+        "height": 72,
+        "maxCols": 4,
+        "items": [
+          {
+            "name": "{TextManager.item}",
+            "symbol": "item",
+            "enabled": true
+          },
+          {
+            "name": "{TextManager.weapon}",
+            "symbol": "weapon",
+            "enabled": true
+          },
+          {
+            "name": "{TextManager.armor}",
+            "symbol": "armor",
+            "enabled": true
+          },
+          {
+            "name": "{TextManager.keyItem}",
+            "symbol": "keyItem",
+            "enabled": true
+          }
+        ],
+        "onCursor": {
+          "code": "var w = this._widgetMap['category_list'];\nvar idx = w && w._window ? w._window.index() : -1;\nvar cmds = w && w._window ? w._window._winDef.commands : null;\nvar sym = cmds && cmds[idx] ? cmds[idx].symbol : null;\nif (sym && this._ctx.itemCategory !== sym) {\n  this._ctx.itemCategory = sym;\n  var il = this._widgetMap['item_list'];\n  if (il && il._rebuildFromScript) il._rebuildFromScript();\n}"
+        },
+        "handlers": {
+          "item": {
+            "action": "script",
+            "code": "$ctx.itemCategory='item';",
+            "thenAction": {
+              "action": "focusWidget",
+              "target": "item_list"
+            }
+          },
+          "weapon": {
+            "action": "script",
+            "code": "$ctx.itemCategory='weapon';",
+            "thenAction": {
+              "action": "focusWidget",
+              "target": "item_list"
+            }
+          },
+          "armor": {
+            "action": "script",
+            "code": "$ctx.itemCategory='armor';",
+            "thenAction": {
+              "action": "focusWidget",
+              "target": "item_list"
+            }
+          },
+          "keyItem": {
+            "action": "script",
+            "code": "$ctx.itemCategory='keyItem';",
+            "thenAction": {
+              "action": "focusWidget",
+              "target": "item_list"
+            }
+          },
+          "cancel": {
+            "action": "popScene"
+          }
+        }
+      },
+      {
+        "id": "item_list",
+        "type": "list",
+        "x": 0,
+        "y": 144,
+        "width": 816,
+        "height": 480,
+        "maxCols": 2,
+        "itemScene": "item_row",
+        "dataScript": "(function() {\n  var cat = ($ctx && $ctx.itemCategory) || 'item';\n  var items = [];\n  if (cat === 'item') {\n    items = ($gameParty && $gameParty.items() || []).filter(function(i) {\n      return DataManager.isItem(i) && i.itypeId === 1;\n    });\n  } else if (cat === 'weapon') {\n    items = $gameParty && $gameParty.weapons() || [];\n  } else if (cat === 'armor') {\n    items = $gameParty && $gameParty.armors() || [];\n  } else if (cat === 'keyItem') {\n    items = ($gameParty && $gameParty.items() || []).filter(function(i) {\n      return DataManager.isItem(i) && i.itypeId === 2;\n    });\n  }\n  return items.map(function(item) {\n    return {\n      name: item.name,\n      iconIndex: item.iconIndex,\n      numberText: '×' + $gameParty.numItems(item),\n      symbol: 'item_' + item.id,\n      enabled: $gameParty.canUse(item) || !!(item.note && (item.note.indexOf('<detailPic>') >= 0 || item.note.indexOf('<detailTxt>') >= 0)),\n      data: item\n    };\n  });\n})()",
+        "onCursor": {
+          "code": "var w = this._widgetMap && this._widgetMap['item_list'];\nvar idx = w && w._window ? w._window.index() : -1;\nvar cmd = idx >= 0 ? (w._window._winDef.commands && w._window._winDef.commands[idx]) : null;\nthis._ctx.helpText = (cmd && cmd.data && cmd.data.description) ? cmd.data.description : '';\nthis._ctx.selectedItem = (cmd && cmd.data) ? cmd.data : null;"
+        },
+        "handlers": {
+          "ok": {
+            "action": "useItem",
+            "itemListWidget": "item_list",
+            "actorWidget": "actor_select",
+            "actorPanelsWidget": "actor_panels"
+          },
+          "cancel": {
+            "action": "focusWidget",
+            "target": "category_list"
+          }
+        }
+      },
+      {
+        "id": "actor_panels",
+        "type": "panel",
+        "x": 0,
+        "y": 144,
+        "width": 816,
+        "height": 480,
+        "visible": false,
+        "children": [
+          {
+            "id": "actor_row_0",
+            "type": "scene",
+            "sceneId": "actor_row_item",
+            "instanceCtx": {
+              "actorIndex": 0
+            },
+            "x": 0,
+            "y": 0,
+            "width": 816,
+            "height": 120
+          },
+          {
+            "id": "actor_row_1",
+            "type": "scene",
+            "sceneId": "actor_row_item",
+            "instanceCtx": {
+              "actorIndex": 1
+            },
+            "x": 0,
+            "y": 120,
+            "width": 816,
+            "height": 120
+          },
+          {
+            "id": "actor_row_2",
+            "type": "scene",
+            "sceneId": "actor_row_item",
+            "instanceCtx": {
+              "actorIndex": 2
+            },
+            "x": 0,
+            "y": 240,
+            "width": 816,
+            "height": 120
+          },
+          {
+            "id": "actor_row_3",
+            "type": "scene",
+            "sceneId": "actor_row_item",
+            "instanceCtx": {
+              "actorIndex": 3
+            },
+            "x": 0,
+            "y": 360,
+            "width": 816,
+            "height": 120
+          }
+        ]
+      },
+      {
+        "id": "actor_select",
+        "type": "rowSelector",
+        "x": 0,
+        "y": 144,
+        "width": 816,
+        "height": 480,
+        "numRows": "party",
+        "transparent": true,
+        "padding": 0
+      }
+    ],
+    "enterAnimation": {
+      "type": "fade",
+      "duration": 15,
+      "delay": 0
+    }
+  }
+}
