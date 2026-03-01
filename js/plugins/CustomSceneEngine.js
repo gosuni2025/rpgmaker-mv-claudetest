@@ -1514,6 +1514,10 @@
     if (this._useTextEx) {
       if (!this._win) return;
       var text = resolveTemplate(this._template);
+      if (this._id && /^p\d+_new$/.test(this._id)) {
+        var ctx = (SceneManager._scene && SceneManager._scene._ctx) || {};
+        console.log('[Widget_Label:' + this._id + '] text=', JSON.stringify(text), '_lastText=', JSON.stringify(this._lastText), 'tempActor=', ctx.tempActor ? 'set' : 'null');
+      }
       if (text === this._lastText) return;
       this._lastText = text;
       this._win.contents.clear();
