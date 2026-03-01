@@ -3,7 +3,7 @@
   "name": "포스터화 데모",
   "x": 10,
   "y": 29,
-  "note": "",
+  "note": "[외부 파일] data/Map008/035-포스터화-데모.json",
   "pages": [
     {
       "conditions": {
@@ -30,124 +30,6 @@
         "tileId": 0
       },
       "list": [
-        {
-          "code": 101,
-          "indent": 0,
-          "parameters": [
-            "",
-            0,
-            0,
-            2
-          ]
-        },
-        {
-          "code": 401,
-          "indent": 0,
-          "parameters": [
-            "\\C[4][포스터화]\\C[0]"
-          ]
-        },
-        {
-          "code": 401,
-          "indent": 0,
-          "parameters": [
-            "색상을 단계적으로 줄여 레트로 느낌을 줍니다."
-          ]
-        },
-        {
-          "code": 401,
-          "indent": 0,
-          "parameters": [
-            "PS1 시절의 적은 색상 게임을 연상시킵니다."
-          ]
-        },
-        {
-          "code": 102,
-          "indent": 0,
-          "parameters": [
-            [
-              "켜기 (8단계, 1초)",
-              "끄기 (1초)",
-              "강렬하게 (4단계)",
-              "부드럽게 (16단계)",
-              "종료"
-            ],
-            4
-          ]
-        },
-        {
-          "code": 402,
-          "indent": 0,
-          "parameters": [
-            0,
-            "켜기 (8단계, 1초)"
-          ]
-        },
-        {
-          "code": 356,
-          "indent": 1,
-          "parameters": [
-            "PPEffectPosterize on 8 1"
-          ]
-        },
-        {
-          "code": 402,
-          "indent": 0,
-          "parameters": [
-            1,
-            "끄기 (1초)"
-          ]
-        },
-        {
-          "code": 356,
-          "indent": 1,
-          "parameters": [
-            "PPEffectPosterize off 1"
-          ]
-        },
-        {
-          "code": 402,
-          "indent": 0,
-          "parameters": [
-            2,
-            "강렬하게 (4단계)"
-          ]
-        },
-        {
-          "code": 356,
-          "indent": 1,
-          "parameters": [
-            "PPEffectPosterize steps 4 0.5"
-          ]
-        },
-        {
-          "code": 402,
-          "indent": 0,
-          "parameters": [
-            3,
-            "부드럽게 (16단계)"
-          ]
-        },
-        {
-          "code": 356,
-          "indent": 1,
-          "parameters": [
-            "PPEffectPosterize steps 16 0.5"
-          ]
-        },
-        {
-          "code": 402,
-          "indent": 0,
-          "parameters": [
-            4,
-            "종료"
-          ]
-        },
-        {
-          "code": 404,
-          "indent": 0,
-          "parameters": []
-        },
         {
           "code": 0,
           "indent": 0,

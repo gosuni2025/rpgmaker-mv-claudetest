@@ -3,7 +3,7 @@
   "name": "파일 참조 기능 테스트",
   "x": 35,
   "y": 11,
-  "note": "",
+  "note": "[외부 파일] data/Map008/049-파일-참조-기능-테스트.json",
   "pages": [
     {
       "conditions": {
@@ -30,20 +30,6 @@
         "tileId": 0
       },
       "list": [
-        {
-          "code": 355,
-          "indent": 0,
-          "parameters": [
-            "/* @script-file: js/file-ref-test.js */"
-          ]
-        },
-        {
-          "code": 655,
-          "indent": 0,
-          "parameters": [
-            "eval(require('fs').readFileSync(require('path').resolve(nw.App.startPath, 'js/file-ref-test.js'), 'utf8'));"
-          ]
-        },
         {
           "code": 0,
           "indent": 0,

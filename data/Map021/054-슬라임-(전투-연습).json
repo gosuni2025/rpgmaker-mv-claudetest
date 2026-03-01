@@ -3,7 +3,7 @@
   "name": "슬라임 (전투 연습)",
   "x": 25,
   "y": 17,
-  "note": "",
+  "note": "[외부 파일] data/Map008/054-슬라임-(전투-연습).json",
   "pages": [
     {
       "conditions": {
@@ -30,16 +30,6 @@
         "tileId": 0
       },
       "list": [
-        {
-          "code": 301,
-          "indent": 0,
-          "parameters": [
-            0,
-            2,
-            true,
-            false
-          ]
-        },
         {
           "code": 0,
           "indent": 0,
