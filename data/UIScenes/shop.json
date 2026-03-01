@@ -67,7 +67,7 @@
         "x": 576,
         "y": 72,
         "width": 240,
-        "height": 56,
+        "height": 72,
         "windowed": true,
         "children": [
           {
@@ -91,7 +91,7 @@
         "x": 0,
         "y": 72,
         "width": 576,
-        "height": 56,
+        "height": 72,
         "maxCols": 3,
         "items": [
           {
@@ -134,18 +134,18 @@
         "id": "dummy_win",
         "type": "panel",
         "x": 0,
-        "y": 128,
+        "y": 144,
         "width": 816,
-        "height": 496,
+        "height": 480,
         "windowed": true
       },
       {
         "id": "buy_list",
         "type": "textList",
         "x": 0,
-        "y": 128,
+        "y": 144,
         "width": 456,
-        "height": 496,
+        "height": 480,
         "visible": false,
         "dataScript": "(function() {\n  var goods = $ctx.shopGoods || [];\n  var money = $gameParty.gold();\n  var items = [];\n  var itemData = [];\n  goods.forEach(function(g) {\n    var item = g[0] === 0 ? $dataItems[g[1]] : g[0] === 1 ? $dataWeapons[g[1]] : $dataArmors[g[1]];\n    if (item) {\n      var price = g[2] === 0 ? item.price : g[3];\n      items.push({\n        name: item.name,\n        symbol: 'buy',\n        iconIndex: item.iconIndex,\n        enabled: price <= money && !$gameParty.hasMaxItems(item),\n        numberText: String(price)\n      });\n      itemData.push({\n        item: item,\n        price: price\n      });\n    }\n  });\n  $ctx.buyItems = itemData;\n  return items;\n})()",
         "onCursor": {
@@ -172,9 +172,9 @@
         "id": "number_win",
         "type": "shopNumber",
         "x": 0,
-        "y": 128,
+        "y": 144,
         "width": 456,
-        "height": 496,
+        "height": 480,
         "visible": false,
         "handlers": {
           "ok": {
@@ -197,9 +197,9 @@
         "id": "status_win",
         "type": "panel",
         "x": 456,
-        "y": 128,
+        "y": 144,
         "width": 360,
-        "height": 496,
+        "height": 480,
         "windowed": true,
         "visible": false,
         "children": [
@@ -222,7 +222,7 @@
         "id": "category_win",
         "type": "textList",
         "x": 0,
-        "y": 128,
+        "y": 144,
         "width": 816,
         "height": 56,
         "maxCols": 4,
@@ -270,9 +270,9 @@
         "id": "sell_list",
         "type": "textList",
         "x": 0,
-        "y": 184,
+        "y": 200,
         "width": 816,
-        "height": 440,
+        "height": 424,
         "visible": false,
         "dataScript": "(function() {\n  var cat = $ctx.sellCategory || 'all';\n  var all = $gameParty.allItems();\n  var filtered = all.filter(function(item) {\n    if (!item || item.price <= 0) return false;\n    if (cat === 'item') return DataManager.isItem(item) && item.itypeId === 1;\n    if (cat === 'weapon') return DataManager.isWeapon(item);\n    if (cat === 'armor') return DataManager.isArmor(item);\n    if (cat === 'keyItem') return DataManager.isItem(item) && item.itypeId === 2;\n    return true;\n  });\n  $ctx.sellItems = filtered;\n  return filtered.map(function(item) {\n    return {\n      name: item.name,\n      symbol: 'sell',\n      iconIndex: item.iconIndex,\n      enabled: true,\n      numberText: String($gameParty.numItems(item))\n    };\n  });\n})()",
         "onCursor": {
@@ -294,17 +294,6 @@
             }
           }
         }
-      },
-      {
-        "id": "textArea_17722651166925",
-        "type": "textArea",
-        "x": 462,
-        "y": 224,
-        "width": 300,
-        "height": 80,
-        "text": "커스텀씬",
-        "align": "center",
-        "verticalAlign": "middle"
       }
     ]
   }
