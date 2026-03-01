@@ -3,7 +3,7 @@
   "name": "불꽃 그림 셰이더 데모",
   "x": 12,
   "y": 29,
-  "note": "[외부 파일] data/Map008/039-불꽃-그림-셰이더-데모.json",
+  "note": "",
   "pages": [
     {
       "conditions": {
@@ -48,6 +48,177 @@
         "tileId": 0
       },
       "list": [
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "\\C[2][불꽃 그림 셰이더]\\C[0]"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "그림에 불꽃 효과를 1.5초에 걸쳐 켭니다."
+          ]
+        },
+        {
+          "code": 231,
+          "indent": 0,
+          "parameters": [
+            1,
+            "Sprite-0001",
+            1,
+            2,
+            0,
+            0,
+            100,
+            100,
+            255,
+            0,
+            null,
+            {
+              "presetX": 3,
+              "presetY": 3,
+              "offsetX": 0,
+              "offsetY": 0
+            },
+            null
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 0,
+          "parameters": [
+            "PictureShaderFireOn 1 1.5"
+          ]
+        },
+        {
+          "code": 230,
+          "indent": 0,
+          "parameters": [
+            90
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "불꽃이 타오릅니다!"
+          ]
+        },
+        {
+          "code": 102,
+          "indent": 0,
+          "parameters": [
+            [
+              "효과 끄기 (1초)",
+              "속도 3배속",
+              "높이 낮추기 (0.2)",
+              "끝내기 (종료+지우기)"
+            ],
+            3
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            0,
+            "효과 끄기 (1초)"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "PictureShaderFireOff 1 1"
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            1,
+            "속도 3배속"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "PictureShaderFireParam 1 speed 3.0 0.5"
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            2,
+            "높이 낮추기 (0.2)"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "PictureShaderFireParam 1 height 0.2 0.5"
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            3,
+            "끝내기 (종료+지우기)"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "PictureShaderFireOff 1 0.5"
+          ]
+        },
+        {
+          "code": 230,
+          "indent": 1,
+          "parameters": [
+            45
+          ]
+        },
+        {
+          "code": 235,
+          "indent": 1,
+          "parameters": [
+            1
+          ]
+        },
+        {
+          "code": 404,
+          "indent": 0,
+          "parameters": []
+        },
         {
           "code": 0,
           "indent": 0,

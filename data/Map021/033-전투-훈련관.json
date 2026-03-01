@@ -3,7 +3,7 @@
   "name": "전투 훈련관",
   "x": 20,
   "y": 29,
-  "note": "[외부 파일] data/Map008/033-전투-훈련관.json",
+  "note": "",
   "pages": [
     {
       "conditions": {
@@ -30,6 +30,321 @@
         "tileId": 0
       },
       "list": [
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "전투 훈련관: 어서 오시오, 용사여."
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "어떤 적과 훈련하겠소?"
+          ]
+        },
+        {
+          "code": 102,
+          "indent": 0,
+          "parameters": [
+            [
+              "박쥐*2",
+              "슬라임*2",
+              "오크",
+              "미노타우루스"
+            ],
+            -2,
+            0,
+            2,
+            0
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            0,
+            "박쥐*2"
+          ]
+        },
+        {
+          "code": 301,
+          "indent": 1,
+          "parameters": [
+            0,
+            1,
+            true,
+            false
+          ]
+        },
+        {
+          "code": 0,
+          "indent": 1,
+          "parameters": []
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            1,
+            "슬라임*2"
+          ]
+        },
+        {
+          "code": 301,
+          "indent": 1,
+          "parameters": [
+            0,
+            2,
+            true,
+            false
+          ]
+        },
+        {
+          "code": 0,
+          "indent": 1,
+          "parameters": []
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            2,
+            "오크"
+          ]
+        },
+        {
+          "code": 301,
+          "indent": 1,
+          "parameters": [
+            0,
+            3,
+            true,
+            false
+          ]
+        },
+        {
+          "code": 0,
+          "indent": 1,
+          "parameters": []
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            3,
+            "미노타우루스"
+          ]
+        },
+        {
+          "code": 301,
+          "indent": 1,
+          "parameters": [
+            0,
+            4,
+            true,
+            false
+          ]
+        },
+        {
+          "code": 0,
+          "indent": 1,
+          "parameters": []
+        },
+        {
+          "code": 403,
+          "indent": 0,
+          "parameters": []
+        },
+        {
+          "code": 0,
+          "indent": 1,
+          "parameters": []
+        },
+        {
+          "code": 404,
+          "indent": 0,
+          "parameters": []
+        },
+        {
+          "code": 205,
+          "indent": 0,
+          "parameters": [
+            0,
+            {
+              "list": [
+                {
+                  "code": 4
+                },
+                {
+                  "code": 4
+                },
+                {
+                  "code": 4
+                },
+                {
+                  "code": 4
+                },
+                {
+                  "code": 4
+                },
+                {
+                  "code": 4
+                },
+                {
+                  "code": 4
+                },
+                {
+                  "code": 2
+                },
+                {
+                  "code": 2
+                },
+                {
+                  "code": 2
+                },
+                {
+                  "code": 1
+                },
+                {
+                  "code": 1
+                },
+                {
+                  "code": 1
+                },
+                {
+                  "code": 1
+                },
+                {
+                  "code": 1
+                },
+                {
+                  "code": 1
+                },
+                {
+                  "code": 1
+                },
+                {
+                  "code": 1
+                },
+                {
+                  "code": 1
+                },
+                {
+                  "code": 1
+                },
+                {
+                  "code": 1
+                },
+                {
+                  "code": 1
+                },
+                {
+                  "code": 0
+                }
+              ],
+              "repeat": false,
+              "skippable": false,
+              "wait": true
+            }
+          ]
+        },
+        {
+          "code": 205,
+          "indent": 0,
+          "parameters": [
+            -1,
+            {
+              "list": [
+                {
+                  "code": 1
+                },
+                {
+                  "code": 1
+                },
+                {
+                  "code": 1
+                },
+                {
+                  "code": 2
+                },
+                {
+                  "code": 2
+                },
+                {
+                  "code": 4
+                },
+                {
+                  "code": 4
+                },
+                {
+                  "code": 4
+                },
+                {
+                  "code": 0
+                }
+              ],
+              "repeat": false,
+              "skippable": false,
+              "wait": true
+            }
+          ]
+        },
+        {
+          "code": 205,
+          "indent": 0,
+          "parameters": [
+            0,
+            {
+              "list": [
+                {
+                  "code": 1
+                },
+                {
+                  "code": 1
+                },
+                {
+                  "code": 3
+                },
+                {
+                  "code": 3
+                },
+                {
+                  "code": 3
+                },
+                {
+                  "code": 4
+                },
+                {
+                  "code": 4
+                },
+                {
+                  "code": 4
+                },
+                {
+                  "code": 4
+                },
+                {
+                  "code": 0
+                }
+              ],
+              "repeat": false,
+              "skippable": false,
+              "wait": true
+            }
+          ]
+        },
         {
           "code": 0,
           "indent": 0,

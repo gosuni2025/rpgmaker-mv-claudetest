@@ -3,7 +3,7 @@
   "name": "퀘스트 테스트 NPC (길드 마스터)",
   "x": 24,
   "y": 17,
-  "note": "[외부 파일] data/Map008/053-퀘스트-테스트-NPC-(길드-마스터).json",
+  "note": "",
   "pages": [
     {
       "conditions": {
@@ -30,6 +30,142 @@
         "tileId": 0
       },
       "list": [
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "Actor1",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "길드 마스터: 어서오시오, 모험가."
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "요즘 마을 근처 초원에 슬라임이 너무 많아서 문제요."
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "슬라임 3마리를 처치해주시겠소?"
+          ]
+        },
+        {
+          "code": 102,
+          "indent": 0,
+          "parameters": [
+            [
+              "수락",
+              "거절"
+            ],
+            -2,
+            0,
+            2,
+            0
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            0,
+            "수락"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "QuestSystem add q001"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "QuestSystem start q001"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "QuestSystem track q001"
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 1,
+          "parameters": [
+            "Actor1",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "훌륭하오! [퀘스트: 첫 의뢰] 등록됨."
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "J 키를 눌러 퀘스트 저널을 확인하시오."
+          ]
+        },
+        {
+          "code": 123,
+          "indent": 1,
+          "parameters": [
+            "A",
+            0
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            1,
+            "거절"
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 1,
+          "parameters": [
+            "Actor1",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "언제든 마음이 바뀌면 찾아오시오."
+          ]
+        },
+        {
+          "code": 404,
+          "indent": 0,
+          "parameters": []
+        },
         {
           "code": 0,
           "indent": 0,
@@ -81,6 +217,104 @@
         "tileId": 0
       },
       "list": [
+        {
+          "code": 111,
+          "indent": 0,
+          "parameters": [
+            12,
+            "var oe=$gameSystem.getObjectiveEntry('q001',1); oe&&oe.status==='completed'"
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 1,
+          "parameters": [
+            "Actor1",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "오오! 슬라임을 모두 처치했군요!"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "수고하셨소. 약속한 보상 300골드와 경험치를 드리겠소."
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "QuestSystem completeObjective q001 2"
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 1,
+          "parameters": [
+            "Actor1",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "앞으로도 길드를 잘 부탁하오!"
+          ]
+        },
+        {
+          "code": 123,
+          "indent": 1,
+          "parameters": [
+            "B",
+            0
+          ]
+        },
+        {
+          "code": 411,
+          "indent": 0,
+          "parameters": []
+        },
+        {
+          "code": 101,
+          "indent": 1,
+          "parameters": [
+            "Actor1",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "아직 슬라임을 처치 중이군요."
+          ]
+        },
+        {
+          "code": 355,
+          "indent": 1,
+          "parameters": [
+            "var oe=$gameSystem.getObjectiveEntry('q001',1);var p=oe?(oe.progress||0):0;$gameMessage.newPage();$gameMessage.add('처치 현황: '+p+' / 3마리');$gameMessage.add('초원에서 슬라임을 처치하고 돌아오시오.');"
+          ]
+        },
+        {
+          "code": 412,
+          "indent": 0,
+          "parameters": []
+        },
         {
           "code": 0,
           "indent": 0,
@@ -132,6 +366,30 @@
         "tileId": 0
       },
       "list": [
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "Actor1",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "길드 마스터: 덕분에 마을이 한결 안전해졌소!"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "또 의뢰가 생기면 부탁드리겠소."
+          ]
+        },
         {
           "code": 0,
           "indent": 0,

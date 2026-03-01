@@ -3,7 +3,7 @@
   "name": "EV029",
   "x": 26,
   "y": 28,
-  "note": "[외부 파일] data/Map008/029-EV029.json",
+  "note": "",
   "pages": [
     {
       "conditions": {
@@ -30,6 +30,14 @@
         "tileId": 0
       },
       "list": [
+        {
+          "code": 103,
+          "indent": 0,
+          "parameters": [
+            1,
+            4
+          ]
+        },
         {
           "code": 0,
           "indent": 0,

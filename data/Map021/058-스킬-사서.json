@@ -3,7 +3,7 @@
   "name": "스킬 사서",
   "x": 29,
   "y": 17,
-  "note": "[외부 파일] data/Map008/058-스킬-사서.json",
+  "note": "",
   "pages": [
     {
       "conditions": {
@@ -30,6 +30,79 @@
         "tileId": 0
       },
       "list": [
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "People2",
+            4,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "스킬 사서: 어서오세요, 모험가."
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "JP를 사용하여 스킬을 영구 습득할 수 있어요."
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "JP는 전투 또는 레벨업 시 획득합니다."
+          ]
+        },
+        {
+          "code": 102,
+          "indent": 0,
+          "parameters": [
+            [
+              "스킬 배우기",
+              "닫기"
+            ],
+            1,
+            0,
+            2,
+            0
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            0,
+            "스킬 배우기"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "OpenSkillLearn"
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            1,
+            "닫기"
+          ]
+        },
+        {
+          "code": 404,
+          "indent": 0,
+          "parameters": []
+        },
         {
           "code": 0,
           "indent": 0,

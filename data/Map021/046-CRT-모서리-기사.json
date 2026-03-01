@@ -3,7 +3,7 @@
   "name": "CRT 모서리 기사",
   "x": 6,
   "y": 23,
-  "note": "[외부 파일] data/Map008/046-CRT-모서리-기사.json",
+  "note": "",
   "pages": [
     {
       "conditions": {
@@ -30,6 +30,241 @@
         "tileId": 0
       },
       "list": [
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<color value=#88ffcc>◈ 모서리 기사 / 라운도</color>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "CRT 화면의 <color value=#aaffdd>둥근 모서리</color> 마스크입니다."
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "실제 브라운관은 유리 곡면 때문에 화면 모서리가"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "어둡게 처리됩니다. 그 특징을 재현합니다."
+          ]
+        },
+        {
+          "code": 102,
+          "indent": 0,
+          "parameters": [
+            [
+              "약한 라운드 (0.05)",
+              "중간 라운드 (0.1)",
+              "강한 라운드 (0.18)",
+              "끄기",
+              "취소"
+            ],
+            4
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            0,
+            "약한 라운드 (0.05)"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "PPEffectCRTCorner on 0.05"
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 1,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "<color value=#88ffcc>◈ 모서리 기사 / 라운도</color>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "<color value=#aaffaa>약한 모서리 마스크!</color>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "살짝 둥근 모서리입니다."
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            1,
+            "중간 라운드 (0.1)"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "PPEffectCRTCorner on 0.1"
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 1,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "<color value=#88ffcc>◈ 모서리 기사 / 라운도</color>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "<color value=#aaffaa>중간 모서리 마스크!</color>"
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            2,
+            "강한 라운드 (0.18)"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "PPEffectCRTCorner on 0.18"
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 1,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "<color value=#88ffcc>◈ 모서리 기사 / 라운도</color>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "<color value=#aaffaa>강한 모서리 마스크!</color>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "초기 CRT처럼 모서리가 크게 잘립니다."
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            3,
+            "끄기"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "PPEffectCRTCorner off"
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 1,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "<color value=#88ffcc>◈ 모서리 기사 / 라운도</color>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "<color value=#ffaa88>모서리 마스크 해제.</color>"
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            4,
+            "취소"
+          ]
+        },
+        {
+          "code": 404,
+          "indent": 0,
+          "parameters": []
+        },
         {
           "code": 0,
           "indent": 0,

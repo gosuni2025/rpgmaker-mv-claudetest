@@ -3,7 +3,7 @@
   "name": "CRT 잡음 기사",
   "x": 6,
   "y": 25,
-  "note": "[외부 파일] data/Map008/045-CRT-잡음-기사.json",
+  "note": "",
   "pages": [
     {
       "conditions": {
@@ -30,6 +30,248 @@
         "tileId": 0
       },
       "list": [
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<color value=#ff9977>◈ 잡음 기사 / 스태틱</color>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<color value=#ffccaa>수평 지터</color>와 <color value=#ffccaa>신호 잡음</color> 효과입니다."
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "TV 수신 불량 시 나타나는 스캔라인 흔들림과"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "랜덤 노이즈를 재현합니다."
+          ]
+        },
+        {
+          "code": 102,
+          "indent": 0,
+          "parameters": [
+            [
+              "약한 잡음",
+              "강한 잡음 (눈보라)",
+              "지터만 (흔들림)",
+              "끄기",
+              "취소"
+            ],
+            4
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            0,
+            "약한 잡음"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "PPEffectCRTNoise on 0.002 0.03"
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 1,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "<color value=#ff9977>◈ 잡음 기사 / 스태틱</color>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "<color value=#aaffaa>약한 잡음 활성화!</color>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "거의 눈치채기 어려운 미세한 잡음입니다."
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            1,
+            "강한 잡음 (눈보라)"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "PPEffectCRTNoise on 0.008 0.12"
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 1,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "<color value=#ff9977>◈ 잡음 기사 / 스태틱</color>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "<color value=#aaffaa>강한 잡음!</color>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "수신 불량처럼 강하게 흔들립니다."
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            2,
+            "지터만 (흔들림)"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "PPEffectCRTNoise on 0.006 0.02"
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 1,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "<color value=#ff9977>◈ 잡음 기사 / 스태틱</color>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "<color value=#aaffaa>수평 지터 활성화!</color>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "일부 스캔라인이 수평으로 밀립니다."
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            3,
+            "끄기"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "PPEffectCRTNoise off"
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 1,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "<color value=#ff9977>◈ 잡음 기사 / 스태틱</color>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "<color value=#ffaa88>신호 잡음 해제.</color>"
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            4,
+            "취소"
+          ]
+        },
+        {
+          "code": 404,
+          "indent": 0,
+          "parameters": []
+        },
         {
           "code": 0,
           "indent": 0,

@@ -3,7 +3,7 @@
   "name": "이미지NPC테스트",
   "x": 21,
   "y": 13,
-  "note": "[외부 파일] data/Map008/032-이미지NPC테스트.json",
+  "note": "",
   "pages": [
     {
       "conditions": {
@@ -30,6 +30,23 @@
         "tileId": 0
       },
       "list": [
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "이미지도 MCP로 지정 가능!"
+          ]
+        },
         {
           "code": 0,
           "indent": 0,
