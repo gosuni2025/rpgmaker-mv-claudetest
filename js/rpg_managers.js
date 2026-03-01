@@ -44,6 +44,9 @@ var $testEvent        = null;
 DataManager._globalId       = 'RPGMV';
 DataManager._lastAccessedId = 1;
 DataManager._errorUrl       = null;
+DataManager._dbTotalCount   = 0;
+DataManager._dbLoadedCount  = 0;
+DataManager._currentLoadingFile = '';
 
 DataManager._databaseFiles = [
     { name: '$dataActors',       src: 'Actors.json'       },
@@ -77,12 +80,16 @@ DataManager.loadDatabase = function() {
 
 DataManager.loadDataFile = function(name, src) {
     var xhr = new XMLHttpRequest();
-    var url = 'data/' + src;
+    var _cb = window.__CACHE_BUST__;
+    var url = 'data/' + src + (_cb && _cb.data ? '?v=' + _cb.buildId : '');
+    DataManager._dbTotalCount++;
+    DataManager._currentLoadingFile = src;
     xhr.open('GET', url);
     xhr.overrideMimeType('application/json');
     xhr.onload = function() {
         if (xhr.status < 400) {
             window[name] = JSON.parse(xhr.responseText);
+            DataManager._dbLoadedCount++;
             DataManager.onLoad(window[name]);
         }
     };
@@ -107,10 +114,44 @@ DataManager.loadMapData = function(mapId) {
     if (mapId > 0) {
         var filename = 'Map%1.json'.format(mapId.padZero(3));
         this._mapLoader = ResourceHandler.createLoader('data/' + filename, this.loadDataFile.bind(this, '$dataMap', filename));
+        this._mapExtLoaded = false;
+        this._pendingExtData = null;
         this.loadDataFile('$dataMap', filename);
+        this._loadMapExtFile(filename.replace('.json', '_ext.json'));
     } else {
+        this._mapExtLoaded = true;
         this.makeEmptyMap();
     }
+};
+
+DataManager._loadMapExtFile = function(extFilename) {
+    var xhr = new XMLHttpRequest();
+    var _cb = window.__CACHE_BUST__;
+    var _extUrl = 'data/' + extFilename + (_cb && _cb.data ? '?v=' + _cb.buildId : '');
+    xhr.open('GET', _extUrl);
+    xhr.overrideMimeType('application/json');
+    // 서버가 응답하지 않을 경우 무한 대기 방지 (3초 타임아웃)
+    xhr.timeout = 3000;
+    xhr.onload = function() {
+        if (xhr.status < 400) {
+            try {
+                var extData = JSON.parse(xhr.responseText);
+                if ($dataMap) {
+                    Object.assign($dataMap, extData);
+                } else {
+                    DataManager._pendingExtData = extData;
+                }
+            } catch (e) {}
+        }
+        DataManager._mapExtLoaded = true;
+    };
+    xhr.onerror = function() {
+        DataManager._mapExtLoaded = true;
+    };
+    xhr.ontimeout = function() {
+        DataManager._mapExtLoaded = true;
+    };
+    xhr.send();
 };
 
 DataManager.makeEmptyMap = function() {
@@ -124,14 +165,21 @@ DataManager.makeEmptyMap = function() {
 
 DataManager.isMapLoaded = function() {
     this.checkError();
-    return !!$dataMap;
+    return !!$dataMap && !!this._mapExtLoaded;
 };
 
 DataManager.onLoad = function(object) {
     var array;
     if (object === $dataMap) {
+        if (DataManager._pendingExtData) {
+            Object.assign($dataMap, DataManager._pendingExtData);
+            DataManager._pendingExtData = null;
+        }
         this.extractMetadata(object);
         array = object.events;
+        // 맵 JSON 완료 즉시 타일셋/캐릭터 이미지 미리 예약
+        // → DB 로딩과 이미지 로딩 카운트가 합산되어 로딩 바가 한 번만 채워짐
+        this._preloadMapImages(object);
     } else {
         array = object;
     }
@@ -147,6 +195,31 @@ DataManager.onLoad = function(object) {
         Decrypter.hasEncryptedImages = !!object.hasEncryptedImages;
         Decrypter.hasEncryptedAudio = !!object.hasEncryptedAudio;
         Scene_Boot.loadSystemImages();
+    }
+};
+
+DataManager._preloadMapImages = function(mapData) {
+    if (!mapData) return;
+    // 타일셋 이미지
+    if ($dataTilesets && mapData.tilesetId) {
+        var tileset = $dataTilesets[mapData.tilesetId];
+        if (tileset && tileset.tilesetNames) {
+            tileset.tilesetNames.forEach(function(name) {
+                if (name) ImageManager.reserveTileset(name);
+            });
+        }
+    }
+    // 이벤트 캐릭터 이미지
+    if (Array.isArray(mapData.events)) {
+        mapData.events.forEach(function(event) {
+            if (!event || !Array.isArray(event.pages)) return;
+            event.pages.forEach(function(page) {
+                var img = page && page.image;
+                if (img && img.characterName) {
+                    ImageManager.reserveCharacter(img.characterName);
+                }
+            });
+        });
     }
 };
 
@@ -856,9 +929,36 @@ ImageManager.loadTitle2 = function(filename, hue) {
     return this.loadBitmap('img/titles2/', filename, hue, true);
 };
 
+// WebP ↔ PNG 폴백: .webp 로드 실패 시 .png 재시도 (또는 반대)
+(function() {
+    var _origOnError = Bitmap.prototype._onError;
+    Bitmap.prototype._onError = function() {
+        var url = this._url || '';
+        var webpMatch = url.match(/^(.*)\.(webp|png)(\?.*)?$/i);
+        if (webpMatch) {
+            var base = webpMatch[1], ext = webpMatch[2].toLowerCase(), query = webpMatch[3] || '';
+            var altExt = ext === 'webp' ? 'png' : 'webp';
+            var altUrl = base + '.' + altExt + query;
+            if (!this._webpFallbackTried) {
+                this._webpFallbackTried = true;
+                this._url = altUrl;
+                this._loadingState = 'requesting';
+                this._image.removeEventListener('load', this._loadListener);
+                this._image.removeEventListener('error', this._errorListener);
+                this._image.addEventListener('load', this._loadListener = Bitmap.prototype._onLoad.bind(this));
+                this._image.addEventListener('error', this._errorListener = _origOnError.bind(this));
+                this._image.src = altUrl;
+                return;
+            }
+        }
+        _origOnError.call(this);
+    };
+})();
+
 ImageManager.loadBitmap = function(folder, filename, hue, smooth) {
     if (filename) {
-        var path = folder + encodeURIComponent(filename) + '.png';
+        var _ext = (window.__CACHE_BUST__ && window.__CACHE_BUST__.webp) ? '.webp' : '.png';
+        var path = folder + encodeURIComponent(filename) + _ext;
         var bitmap = this.loadNormalBitmap(path, hue || 0);
         bitmap.smooth = smooth;
         return bitmap;
@@ -879,10 +979,12 @@ ImageManager.loadEmptyBitmap = function() {
 };
 
 ImageManager.loadNormalBitmap = function(path, hue) {
-    var key = this._generateCacheKey(path, hue);
+    var _cb = window.__CACHE_BUST__;
+    var _loadPath = (_cb && _cb.images) ? path + '?v=' + _cb.buildId : path;
+    var key = this._generateCacheKey(_loadPath, hue);
     var bitmap = this._imageCache.get(key);
     if (!bitmap) {
-        bitmap = Bitmap.load(decodeURIComponent(path));
+        bitmap = Bitmap.load(decodeURIComponent(_loadPath));
         bitmap.addLoadListener(function() {
             bitmap.rotateHue(hue);
         });
@@ -975,7 +1077,8 @@ ImageManager.reserveTitle2 = function(filename, hue, reservationId) {
 
 ImageManager.reserveBitmap = function(folder, filename, hue, smooth, reservationId) {
     if (filename) {
-        var path = folder + encodeURIComponent(filename) + '.png';
+        var _ext = (window.__CACHE_BUST__ && window.__CACHE_BUST__.webp) ? '.webp' : '.png';
+        var path = folder + encodeURIComponent(filename) + _ext;
         var bitmap = this.reserveNormalBitmap(path, hue || 0, reservationId || this._defaultReservationId);
         bitmap.smooth = smooth;
         return bitmap;
@@ -1058,7 +1161,8 @@ ImageManager.requestTitle2 = function(filename, hue) {
 
 ImageManager.requestBitmap = function(folder, filename, hue, smooth) {
     if (filename) {
-        var path = folder + encodeURIComponent(filename) + '.png';
+        var _ext = (window.__CACHE_BUST__ && window.__CACHE_BUST__.webp) ? '.webp' : '.png';
+        var path = folder + encodeURIComponent(filename) + _ext;
         var bitmap = this.requestNormalBitmap(path, hue || 0);
         bitmap.smooth = smooth;
         return bitmap;
@@ -1464,6 +1568,8 @@ AudioManager.makeEmptyAudioObject = function() {
 AudioManager.createBuffer = function(folder, name) {
     var ext = this.audioFileExt();
     var url = this._path + folder + '/' + encodeURIComponent(name) + ext;
+    var _cb = window.__CACHE_BUST__;
+    if (_cb && _cb.audio) url += '?v=' + _cb.buildId;
     if (this.shouldUseHtml5Audio() && folder === 'bgm') {
         if(this._blobUrl) Html5Audio.setup(this._blobUrl);
         else Html5Audio.setup(url);
@@ -1822,23 +1928,17 @@ SceneManager.initGraphics = function() {
     Graphics.initialize(this._screenWidth, this._screenHeight, type);
     Graphics.boxWidth = this._boxWidth;
     Graphics.boxHeight = this._boxHeight;
-    Graphics.setLoadingImage('img/system/Loading.png');
+    Graphics.setLoadingImage((window.__CACHE_BUST__ && window.__CACHE_BUST__.webp) ? 'img/system/Loading.webp' : 'img/system/Loading.png');
     if (Utils.isOptionValid('showfps')) {
         Graphics.showFps();
     }
-    if (type === 'webgl') {
+    if (type === 'webgl' || type === 'threejs') {
         this.checkWebGL();
     }
 };
 
 SceneManager.preferableRendererType = function() {
-    if (Utils.isOptionValid('canvas')) {
-        return 'canvas';
-    } else if (Utils.isOptionValid('webgl')) {
-        return 'webgl';
-    } else {
-        return 'auto';
-    }
+    return 'threejs';
 };
 
 SceneManager.shouldUseCanvasRenderer = function() {
@@ -1998,6 +2098,9 @@ SceneManager.changeScene = function() {
             this._scene.terminate();
             this._scene.detachReservation();
             this._previousClass = this._scene.constructor;
+            if (this._scene.destroy) {
+                this._scene.destroy();
+            }
         }
         this._scene = this._nextScene;
         if (this._scene) {
@@ -2110,6 +2213,9 @@ SceneManager.snap = function() {
 };
 
 SceneManager.snapForBackground = function() {
+    if (this._backgroundBitmap && this._backgroundBitmap.destroy) {
+        this._backgroundBitmap.destroy();
+    }
     this._backgroundBitmap = this.snap();
     this._backgroundBitmap.blur();
 };
@@ -2824,7 +2930,9 @@ PluginManager.setParameters = function(name, parameters) {
 };
 
 PluginManager.loadScript = function(name) {
+    var _cb = window.__CACHE_BUST__;
     var url = this._path + name;
+    if (_cb && _cb.scripts) url += '?v=' + _cb.buildId;
     var script = document.createElement('script');
     script.type = 'text/javascript';
     script.src = url;
