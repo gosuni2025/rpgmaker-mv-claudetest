@@ -116,8 +116,8 @@
             var px = this._emptyGx + chosen.dx;
             var py = this._emptyGy + chosen.dy;
             this._swapGrid(px, py, this._emptyGx, this._emptyGy);
-            this._emptyGx -= chosen.dx;
-            this._emptyGy -= chosen.dy;
+            this._emptyGx = px;
+            this._emptyGy = py;
             lastDx = chosen.dx;
             lastDy = chosen.dy;
         }
