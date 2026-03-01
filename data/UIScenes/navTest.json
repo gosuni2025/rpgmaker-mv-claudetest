@@ -34,9 +34,6 @@
         "width": 400,
         "height": 370,
         "windowed": true,
-        "scripts": {
-          "onCreate": "$ctx.selected = '중앙 버튼에서 시작합니다';"
-        },
         "children": [
           {
             "id": "title",
@@ -68,9 +65,12 @@
             "label": "↖ 좌상",
             "navRight": "btn_t",
             "navDown": "btn_l",
+            "scripts": {
+              "onFocus": "$ctx.focused = '↖ 좌상 — ↓왼쪽 →위';"
+            },
             "action": {
               "action": "script",
-              "code": "$ctx.selected = '↖ 좌상 버튼 — navRight:위, navDown:왼쪽';"
+              "code": "$ctx.focused = '[OK] ↖ 좌상 선택됨';"
             }
           },
           {
@@ -84,9 +84,12 @@
             "navLeft": "btn_tl",
             "navRight": "btn_tr",
             "navDown": "btn_c",
+            "scripts": {
+              "onFocus": "$ctx.focused = '↑ 위 — ←좌상 ↓중앙 →우상';"
+            },
             "action": {
               "action": "script",
-              "code": "$ctx.selected = '↑ 위 버튼 — navLeft:좌상, navRight:우상, navDown:중앙';"
+              "code": "$ctx.focused = '[OK] ↑ 위 선택됨';"
             }
           },
           {
@@ -99,9 +102,12 @@
             "label": "↗ 우상",
             "navLeft": "btn_t",
             "navDown": "btn_r",
+            "scripts": {
+              "onFocus": "$ctx.focused = '↗ 우상 — ←위 ↓오른쪽';"
+            },
             "action": {
               "action": "script",
-              "code": "$ctx.selected = '↗ 우상 버튼 — navLeft:위, navDown:오른쪽';"
+              "code": "$ctx.focused = '[OK] ↗ 우상 선택됨';"
             }
           },
           {
@@ -115,9 +121,12 @@
             "navUp": "btn_tl",
             "navRight": "btn_c",
             "navDown": "btn_bl",
+            "scripts": {
+              "onFocus": "$ctx.focused = '← 왼쪽 — ↑좌상 →중앙 ↓좌하';"
+            },
             "action": {
               "action": "script",
-              "code": "$ctx.selected = '← 왼쪽 버튼 — navUp:좌상, navRight:중앙, navDown:좌하';"
+              "code": "$ctx.focused = '[OK] ← 왼쪽 선택됨';"
             }
           },
           {
@@ -132,9 +141,12 @@
             "navDown": "btn_b",
             "navLeft": "btn_l",
             "navRight": "btn_r",
+            "scripts": {
+              "onFocus": "$ctx.focused = '★ 중앙 — 4방향 모두 연결됨';"
+            },
             "action": {
               "action": "script",
-              "code": "$ctx.selected = '★ 중앙 버튼 — 4방향 모두 설정됨';"
+              "code": "$ctx.focused = '[OK] ★ 중앙 선택됨';"
             }
           },
           {
@@ -148,9 +160,12 @@
             "navUp": "btn_tr",
             "navLeft": "btn_c",
             "navDown": "btn_br",
+            "scripts": {
+              "onFocus": "$ctx.focused = '→ 오른쪽 — ↑우상 ←중앙 ↓우하';"
+            },
             "action": {
               "action": "script",
-              "code": "$ctx.selected = '→ 오른쪽 버튼 — navUp:우상, navLeft:중앙, navDown:우하';"
+              "code": "$ctx.focused = '[OK] → 오른쪽 선택됨';"
             }
           },
           {
@@ -163,9 +178,12 @@
             "label": "↙ 좌하",
             "navUp": "btn_l",
             "navRight": "btn_b",
+            "scripts": {
+              "onFocus": "$ctx.focused = '↙ 좌하 — ↑왼쪽 →아래';"
+            },
             "action": {
               "action": "script",
-              "code": "$ctx.selected = '↙ 좌하 버튼 — navUp:왼쪽, navRight:아래';"
+              "code": "$ctx.focused = '[OK] ↙ 좌하 선택됨';"
             }
           },
           {
@@ -179,9 +197,12 @@
             "navUp": "btn_c",
             "navLeft": "btn_bl",
             "navRight": "btn_br",
+            "scripts": {
+              "onFocus": "$ctx.focused = '↓ 아래 — ↑중앙 ←좌하 →우하';"
+            },
             "action": {
               "action": "script",
-              "code": "$ctx.selected = '↓ 아래 버튼 — navUp:중앙, navLeft:좌하, navRight:우하';"
+              "code": "$ctx.focused = '[OK] ↓ 아래 선택됨';"
             }
           },
           {
@@ -194,9 +215,12 @@
             "label": "↘ 우하",
             "navUp": "btn_r",
             "navLeft": "btn_b",
+            "scripts": {
+              "onFocus": "$ctx.focused = '↘ 우하 — ↑오른쪽 ←아래';"
+            },
             "action": {
               "action": "script",
-              "code": "$ctx.selected = '↘ 우하 버튼 — navUp:오른쪽, navLeft:아래';"
+              "code": "$ctx.focused = '[OK] ↘ 우하 선택됨';"
             }
           },
           {
@@ -208,13 +232,13 @@
             "height": 2
           },
           {
-            "id": "selected_label",
+            "id": "focus_label",
             "type": "label",
             "x": 12,
             "y": 253,
             "width": 376,
             "height": 40,
-            "text": "{$ctx.selected || '버튼을 눌러보세요'}",
+            "text": "{$ctx.focused || '★ 중앙에서 시작 — 방향키로 이동해보세요'}",
             "align": "left",
             "fontSize": 14,
             "color": "#ffee88"
@@ -236,6 +260,9 @@
             "height": 48,
             "label": "닫기",
             "navUp": "btn_b",
+            "scripts": {
+              "onFocus": "$ctx.focused = '닫기 버튼 — OK로 씬 종료';"
+            },
             "action": {
               "action": "popScene"
             }
