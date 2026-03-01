@@ -1412,6 +1412,671 @@
       "animationLoop": "forward",
       "animationSe": false,
       "visible": true
+    },
+    {
+      "id": 8,
+      "name": "OBJ8",
+      "x": 25,
+      "y": 19,
+      "tileIds": [
+        [
+          [
+            93,
+            0,
+            0,
+            0
+          ]
+        ],
+        [
+          [
+            101,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 2,
+      "zHeight": 0,
+      "passability": [
+        [
+          true
+        ],
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 9,
+      "name": "OBJ9",
+      "x": 26,
+      "y": 19,
+      "tileIds": [
+        [
+          [
+            93,
+            0,
+            0,
+            0
+          ]
+        ],
+        [
+          [
+            101,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 2,
+      "zHeight": 0,
+      "passability": [
+        [
+          true
+        ],
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 10,
+      "name": "OBJ10",
+      "x": 27,
+      "y": 19,
+      "tileIds": [
+        [
+          [
+            93,
+            0,
+            0,
+            0
+          ]
+        ],
+        [
+          [
+            101,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 2,
+      "zHeight": 0,
+      "passability": [
+        [
+          true
+        ],
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 11,
+      "name": "OBJ11",
+      "x": 28,
+      "y": 19,
+      "tileIds": [
+        [
+          [
+            93,
+            0,
+            0,
+            0
+          ]
+        ],
+        [
+          [
+            101,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 2,
+      "zHeight": 0,
+      "passability": [
+        [
+          true
+        ],
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 12,
+      "name": "OBJ12",
+      "x": 29,
+      "y": 19,
+      "tileIds": [
+        [
+          [
+            93,
+            0,
+            0,
+            0
+          ]
+        ],
+        [
+          [
+            101,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 2,
+      "zHeight": 0,
+      "passability": [
+        [
+          true
+        ],
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 13,
+      "name": "OBJ13",
+      "x": 30,
+      "y": 19,
+      "tileIds": [
+        [
+          [
+            93,
+            0,
+            0,
+            0
+          ]
+        ],
+        [
+          [
+            101,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 2,
+      "zHeight": 0,
+      "passability": [
+        [
+          true
+        ],
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 14,
+      "name": "OBJ14",
+      "x": 31,
+      "y": 19,
+      "tileIds": [
+        [
+          [
+            93,
+            0,
+            0,
+            0
+          ]
+        ],
+        [
+          [
+            101,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 2,
+      "zHeight": 0,
+      "passability": [
+        [
+          true
+        ],
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 15,
+      "name": "OBJ15",
+      "x": 32,
+      "y": 19,
+      "tileIds": [
+        [
+          [
+            93,
+            0,
+            0,
+            0
+          ]
+        ],
+        [
+          [
+            101,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 2,
+      "zHeight": 0,
+      "passability": [
+        [
+          true
+        ],
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 16,
+      "name": "OBJ16",
+      "x": 33,
+      "y": 19,
+      "tileIds": [
+        [
+          [
+            93,
+            0,
+            0,
+            0
+          ]
+        ],
+        [
+          [
+            101,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 2,
+      "zHeight": 0,
+      "passability": [
+        [
+          true
+        ],
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 17,
+      "name": "OBJ17",
+      "x": 31,
+      "y": 21,
+      "tileIds": [
+        [
+          [
+            93,
+            0,
+            0,
+            0
+          ]
+        ],
+        [
+          [
+            101,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 2,
+      "zHeight": 0,
+      "passability": [
+        [
+          true
+        ],
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 18,
+      "name": "OBJ18",
+      "x": 31,
+      "y": 23,
+      "tileIds": [
+        [
+          [
+            93,
+            0,
+            0,
+            0
+          ]
+        ],
+        [
+          [
+            101,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 2,
+      "zHeight": 0,
+      "passability": [
+        [
+          true
+        ],
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 19,
+      "name": "OBJ19",
+      "x": 31,
+      "y": 25,
+      "tileIds": [
+        [
+          [
+            93,
+            0,
+            0,
+            0
+          ]
+        ],
+        [
+          [
+            101,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 2,
+      "zHeight": 0,
+      "passability": [
+        [
+          true
+        ],
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 20,
+      "name": "OBJ20",
+      "x": 24,
+      "y": 27,
+      "tileIds": [
+        [
+          [
+            93,
+            0,
+            0,
+            0
+          ]
+        ],
+        [
+          [
+            101,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 2,
+      "zHeight": 0,
+      "passability": [
+        [
+          true
+        ],
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 21,
+      "name": "OBJ21",
+      "x": 25,
+      "y": 27,
+      "tileIds": [
+        [
+          [
+            93,
+            0,
+            0,
+            0
+          ]
+        ],
+        [
+          [
+            101,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 2,
+      "zHeight": 0,
+      "passability": [
+        [
+          true
+        ],
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 22,
+      "name": "OBJ22",
+      "x": 26,
+      "y": 27,
+      "tileIds": [
+        [
+          [
+            93,
+            0,
+            0,
+            0
+          ]
+        ],
+        [
+          [
+            101,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 2,
+      "zHeight": 0,
+      "passability": [
+        [
+          true
+        ],
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 23,
+      "name": "OBJ23",
+      "x": 27,
+      "y": 27,
+      "tileIds": [
+        [
+          [
+            93,
+            0,
+            0,
+            0
+          ]
+        ],
+        [
+          [
+            101,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 2,
+      "zHeight": 0,
+      "passability": [
+        [
+          true
+        ],
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 24,
+      "name": "OBJ24",
+      "x": 28,
+      "y": 27,
+      "tileIds": [
+        [
+          [
+            93,
+            0,
+            0,
+            0
+          ]
+        ],
+        [
+          [
+            101,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 2,
+      "zHeight": 0,
+      "passability": [
+        [
+          true
+        ],
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 25,
+      "name": "OBJ25",
+      "x": 29,
+      "y": 27,
+      "tileIds": [
+        [
+          [
+            93,
+            0,
+            0,
+            0
+          ]
+        ],
+        [
+          [
+            101,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 2,
+      "zHeight": 0,
+      "passability": [
+        [
+          true
+        ],
+        [
+          false
+        ]
+      ]
+    },
+    {
+      "id": 26,
+      "name": "OBJ26",
+      "x": 30,
+      "y": 27,
+      "tileIds": [
+        [
+          [
+            93,
+            0,
+            0,
+            0
+          ]
+        ],
+        [
+          [
+            101,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "width": 1,
+      "height": 2,
+      "zHeight": 0,
+      "passability": [
+        [
+          true
+        ],
+        [
+          false
+        ]
+      ]
     }
   ],
   "cameraZones": [

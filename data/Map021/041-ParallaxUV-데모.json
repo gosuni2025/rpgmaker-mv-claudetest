@@ -3,7 +3,7 @@
   "name": "ParallaxUV 데모",
   "x": 21,
   "y": 15,
-  "note": "",
+  "note": "[외부 파일] data/Map008/041-ParallaxUV-데모.json",
   "pages": [
     {
       "conditions": {
@@ -30,129 +30,6 @@
         "tileId": 0
       },
       "list": [
-        {
-          "code": 231,
-          "indent": 0,
-          "parameters": [
-            1,
-            "Mountains1",
-            1,
-            0,
-            408,
-            312,
-            100,
-            100,
-            255,
-            0
-          ]
-        },
-        {
-          "code": 356,
-          "indent": 0,
-          "parameters": [
-            "PictureShaderParallaxOn 1 1.0"
-          ]
-        },
-        {
-          "code": 101,
-          "indent": 0,
-          "parameters": [
-            "",
-            0,
-            0,
-            2
-          ]
-        },
-        {
-          "code": 401,
-          "indent": 0,
-          "parameters": [
-            "\\c[6][ParallaxUV 효과 데모]\\c[0]"
-          ]
-        },
-        {
-          "code": 401,
-          "indent": 0,
-          "parameters": [
-            "텍스처의 밝기를 높이맵으로 사용하여"
-          ]
-        },
-        {
-          "code": 401,
-          "indent": 0,
-          "parameters": [
-            "입체감 있는 시차 효과를 연출합니다."
-          ]
-        },
-        {
-          "code": 356,
-          "indent": 0,
-          "parameters": [
-            "PictureShaderParallaxParam 1 animSpeed 3.0 0.5"
-          ]
-        },
-        {
-          "code": 101,
-          "indent": 0,
-          "parameters": [
-            "",
-            0,
-            0,
-            2
-          ]
-        },
-        {
-          "code": 401,
-          "indent": 0,
-          "parameters": [
-            "회전 속도를 빠르게 바꿔봅니다..."
-          ]
-        },
-        {
-          "code": 356,
-          "indent": 0,
-          "parameters": [
-            "PictureShaderParallaxParam 1 scale 0.15 0.5"
-          ]
-        },
-        {
-          "code": 101,
-          "indent": 0,
-          "parameters": [
-            "",
-            0,
-            0,
-            2
-          ]
-        },
-        {
-          "code": 401,
-          "indent": 0,
-          "parameters": [
-            "깊이감도 더 강하게 설정됩니다!"
-          ]
-        },
-        {
-          "code": 356,
-          "indent": 0,
-          "parameters": [
-            "PictureShaderParallaxOff 1 1.0"
-          ]
-        },
-        {
-          "code": 230,
-          "indent": 0,
-          "parameters": [
-            80
-          ]
-        },
-        {
-          "code": 235,
-          "indent": 0,
-          "parameters": [
-            1
-          ]
-        },
         {
           "code": 0,
           "indent": 0,

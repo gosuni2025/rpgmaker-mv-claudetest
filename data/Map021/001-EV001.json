@@ -3,7 +3,7 @@
   "name": "EV001",
   "x": 19,
   "y": 18,
-  "note": "",
+  "note": "[외부 파일] data/Map008/001-EV001.json",
   "pages": [
     {
       "conditions": {
@@ -30,34 +30,6 @@
         "tileId": 0
       },
       "list": [
-        {
-          "code": 356,
-          "indent": 0,
-          "parameters": [
-            "ShadowLight ambientColor #ffffff 2"
-          ]
-        },
-        {
-          "code": 356,
-          "indent": 0,
-          "parameters": [
-            "ShadowLight pointLight 1 intensity 0 2"
-          ]
-        },
-        {
-          "code": 356,
-          "indent": 0,
-          "parameters": [
-            "PPEffect vignette on"
-          ]
-        },
-        {
-          "code": 356,
-          "indent": 0,
-          "parameters": [
-            "MapObject showWithShader 1 fade 5"
-          ]
-        },
         {
           "code": 0,
           "indent": 0,
