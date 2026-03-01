@@ -75,6 +75,8 @@
      */
     ThreeRendererFactory.createBaseTexture = function(source) {
         var texture;
+        // DEBUG: 텍스처 생성 추적
+        console.warn('[TEX+]', new Error().stack.split('\n').slice(1, 5).join(' | '));
 
         if (source instanceof HTMLCanvasElement) {
             texture = new THREE.CanvasTexture(source);

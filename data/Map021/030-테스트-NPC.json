@@ -3,7 +3,7 @@
   "name": "테스트 NPC",
   "x": 5,
   "y": 5,
-  "note": "[외부 파일] data/Map008/030-테스트-NPC.json",
+  "note": "",
   "pages": [
     {
       "conditions": {
@@ -30,6 +30,23 @@
         "tileId": 0
       },
       "list": [
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "안녕하세요! MCP로 생성된 NPC입니다."
+          ]
+        },
         {
           "code": 0,
           "indent": 0,

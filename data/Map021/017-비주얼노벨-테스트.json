@@ -3,7 +3,7 @@
   "name": "비주얼노벨 테스트",
   "x": 24,
   "y": 28,
-  "note": "[외부 파일] data/Map008/017-비주얼노벨-테스트.json",
+  "note": "",
   "pages": [
     {
       "conditions": {
@@ -30,6 +30,464 @@
         "tileId": 0
       },
       "list": [
+        {
+          "code": 356,
+          "indent": 0,
+          "parameters": [
+            "VisualNovel enter"
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "나는 <color value=#ffdd44>레기나드</color>. 이 도시의 역사를"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "수십 년간 기록해온 <gradient color1=#ffffff color2=#aaaaaa>늙은 학자</gradient>라네."
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<outline color=#00ccff thickness=3>오늘은 특별한 마법 문자를 보여주겠네.</outline>"
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "▶ 흔들림 계열"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<shake amplitude=2 speed=2>작은 흔들림 (amp=2)</shake>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<shake amplitude=5 speed=4>강한 흔들림! (amp=5)</shake>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<shake amplitude=3 speed=1>느린 흔들림... (speed=1)</shake>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<shake amplitude=2 speed=3><color value=#ff4444>붉게 흔들리는 경고!</color></shake>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<shake amplitude=3 speed=2><gradient color1=#ff8800 color2=#ffff00>황금빛 흔들림</gradient></shake>"
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "▶ 홀로그램 계열"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<hologram scanline=5>일반 홀로그램 (scanline=5)</hologram>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<hologram scanline=2>촘촘한 홀로그램 (scanline=2)</hologram>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<hologram scanline=4><color value=#00ffff>청록 홀로그램</color></hologram>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<hologram scanline=6><gradient color1=#00ffff color2=#0044ff>그라데이션 홀로그램</gradient></hologram>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<shake amplitude=2 speed=3><hologram scanline=3>흔들리는 홀로그램!</hologram></shake>"
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "▶ 그라데이션 & 무지개파동"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<gradient color1=#ffff00 color2=#ff0000>노랑→빨강 (가로)</gradient>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<gradient color1=#00ffff color2=#ff00ff direction=v>하늘→마젠타 (세로)</gradient>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<gradient-wave speed=1>천천히 흐르는 무지개</gradient-wave>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<gradient-wave speed=4>빠르게 흐르는 무지개!</gradient-wave>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<gradient-wave speed=2><shake amplitude=2 speed=1>무지개+흔들림</shake></gradient-wave>"
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "▶ 외곽선 계열"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<outline color=#ff0000 thickness=3>빨간 외곽선</outline>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<outline color=#00ff88 thickness=6>두꺼운 녹색 외곽선</outline>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<outline color=#ffff00 thickness=4><gradient color1=#ff8800 color2=#ff0000>황금 외곽+그라데이션</gradient></outline>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<outline color=#00ffff thickness=3><shake amplitude=1 speed=5>외곽+흔들림</shake></outline>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<outline color=#ff88ff thickness=4><hologram scanline=4>외곽+홀로그램</hologram></outline>"
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "▶ 등장 연출 계열"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<fade duration=60>서서히 나타나는 글자 (duration=60)</fade>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<fade duration=150>느리게 나타나기 (duration=150)</fade>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<dissolve speed=0.5>디졸브 등장! (speed=0.5)</dissolve>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<dissolve speed=2>빠른 디졸브 (speed=2)</dissolve>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<blur-fade duration=120>흐릿하게 나타나기 (blur-fade)</blur-fade>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<blur-fade duration=240>천천히 선명해지기</blur-fade>"
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "▶ 3중 복합 이펙트"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<shake amplitude=2 speed=4><hologram scanline=6><color value=#ff00ff>흔들+홀로+마젠타</color></hologram></shake>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<outline color=#00ff88 thickness=3><shake amplitude=1 speed=5><gradient color1=#ffffff color2=#00ff88>외곽+흔들+그라데이션</gradient></shake></outline>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<gradient-wave speed=2><hologram scanline=4><shake amplitude=1 speed=3>무지개+홀로+흔들</shake></hologram></gradient-wave>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<fade duration=90><shake amplitude=2 speed=2><color value=#44ffff>페이드+흔들+색상</color></shake></fade>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<outline color=#ff4400 thickness=3><gradient-wave speed=3><hologram scanline=5>외곽+무지개+홀로</hologram></gradient-wave></outline>"
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "▶ 총정리 쇼케이스"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "일반 텍스트 (기준값)"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "\\C[4]RPG Maker 기본 색상\\C[0]"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<color value=#ff6600>오렌지 커스텀 색상</color>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<gradient color1=#ff0000 color2=#0000ff>빨강→파랑 그라데이션</gradient>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<shake amplitude=3 speed=2>흔들흔들!</shake>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<hologram scanline=4>홀로그램!</hologram>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<gradient-wave speed=2>무지개 파동!</gradient-wave>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<fade duration=60>페이드인!</fade>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<dissolve speed=1>디졸브!</dissolve>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<blur-fade duration=90>블러 페이드!</blur-fade>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<shake amplitude=2 speed=3><hologram scanline=3><gradient-wave speed=2>최대 조합!</gradient-wave></hologram></shake>"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 0,
+          "parameters": [
+            "VisualNovel exit"
+          ]
+        },
         {
           "code": 0,
           "indent": 0,

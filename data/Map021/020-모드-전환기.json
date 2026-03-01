@@ -3,7 +3,7 @@
   "name": "모드 전환기",
   "x": 21,
   "y": 19,
-  "note": "[외부 파일] data/Map008/020-모드-전환기.json",
+  "note": "",
   "pages": [
     {
       "conditions": {
@@ -30,6 +30,107 @@
         "tileId": 0
       },
       "list": [
+        {
+          "code": 111,
+          "indent": 0,
+          "parameters": [
+            12,
+            "ConfigManager.mode3d",
+            "test"
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 1,
+          "parameters": [
+            "",
+            "",
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "현재 3D 모드입니다."
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "2D 모드로 전환합니다."
+          ]
+        },
+        {
+          "code": 221,
+          "indent": 1,
+          "parameters": []
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "Mode3D off"
+          ]
+        },
+        {
+          "code": 222,
+          "indent": 1,
+          "parameters": []
+        },
+        {
+          "code": 411,
+          "indent": 0,
+          "parameters": []
+        },
+        {
+          "code": 101,
+          "indent": 1,
+          "parameters": [
+            "",
+            "",
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "현재 2D 모드입니다."
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "3D 모드로 전환합니다."
+          ]
+        },
+        {
+          "code": 221,
+          "indent": 1,
+          "parameters": []
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "Mode3D on"
+          ]
+        },
+        {
+          "code": 222,
+          "indent": 1,
+          "parameters": []
+        },
+        {
+          "code": 412,
+          "indent": 0,
+          "parameters": []
+        },
         {
           "code": 0,
           "indent": 0,

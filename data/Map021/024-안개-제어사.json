@@ -3,7 +3,7 @@
   "name": "안개 제어사",
   "x": 16,
   "y": 25,
-  "note": "[외부 파일] data/Map008/024-안개-제어사.json",
+  "note": "",
   "pages": [
     {
       "conditions": {
@@ -30,6 +30,404 @@
         "tileId": 0
       },
       "list": [
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            2,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "전쟁의 안개를 관리하는 제어사입니다."
+          ]
+        },
+        {
+          "code": 102,
+          "indent": 0,
+          "parameters": [
+            [
+              "안개 켜기",
+              "안개 끄기",
+              "안개 색깔",
+              "촉수 설정",
+              "전체 공개",
+              "닫기"
+            ],
+            5,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            0,
+            "안개 켜기"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "FogOfWar Enable"
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 1,
+          "parameters": [
+            "",
+            0,
+            2,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "안개가 활성화되었습니다."
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            1,
+            "안개 끄기"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "FogOfWar Disable"
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 1,
+          "parameters": [
+            "",
+            0,
+            2,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "안개가 비활성화되었습니다."
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            2,
+            "안개 색깔"
+          ]
+        },
+        {
+          "code": 102,
+          "indent": 1,
+          "parameters": [
+            [
+              "검정 (기본)",
+              "파랑",
+              "보라",
+              "빨강",
+              "초록",
+              "뒤로"
+            ],
+            5,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 1,
+          "parameters": [
+            0,
+            "검정 (기본)"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 2,
+          "parameters": [
+            "FogOfWar FogColor #000000"
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 1,
+          "parameters": [
+            1,
+            "파랑"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 2,
+          "parameters": [
+            "FogOfWar FogColor #000044"
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 1,
+          "parameters": [
+            2,
+            "보라"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 2,
+          "parameters": [
+            "FogOfWar FogColor #1a0033"
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 1,
+          "parameters": [
+            3,
+            "빨강"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 2,
+          "parameters": [
+            "FogOfWar FogColor #330000"
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 1,
+          "parameters": [
+            4,
+            "초록"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 2,
+          "parameters": [
+            "FogOfWar FogColor #001a00"
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 1,
+          "parameters": [
+            5,
+            "뒤로"
+          ]
+        },
+        {
+          "code": 404,
+          "indent": 1,
+          "parameters": []
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            3,
+            "촉수 설정"
+          ]
+        },
+        {
+          "code": 102,
+          "indent": 1,
+          "parameters": [
+            [
+              "날카롭게 (8.0)",
+              "부드럽게 (1.0)",
+              "길게 (5.0)",
+              "짧게 (1.0)",
+              "빠르게 (3.0)",
+              "기본값 리셋"
+            ],
+            5,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 1,
+          "parameters": [
+            0,
+            "날카롭게 (8.0)"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 2,
+          "parameters": [
+            "FogOfWar TentacleSharpness 8.0"
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 1,
+          "parameters": [
+            1,
+            "부드럽게 (1.0)"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 2,
+          "parameters": [
+            "FogOfWar TentacleSharpness 1.0"
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 1,
+          "parameters": [
+            2,
+            "길게 (5.0)"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 2,
+          "parameters": [
+            "FogOfWar TentacleLength 2"
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 1,
+          "parameters": [
+            3,
+            "짧게 (1.0)"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 2,
+          "parameters": [
+            "FogOfWar TentacleLength 1.0"
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 1,
+          "parameters": [
+            4,
+            "빠르게 (3.0)"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 2,
+          "parameters": [
+            "FogOfWar TentacleSpeed 3.0"
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 1,
+          "parameters": [
+            5,
+            "기본값 리셋"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 2,
+          "parameters": [
+            "FogOfWar TentacleSharpness 3.0"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 2,
+          "parameters": [
+            "FogOfWar TentacleLength 2.0"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 2,
+          "parameters": [
+            "FogOfWar TentacleSpeed 1.0"
+          ]
+        },
+        {
+          "code": 404,
+          "indent": 1,
+          "parameters": []
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            4,
+            "전체 공개"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "FogOfWar RevealAll"
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 1,
+          "parameters": [
+            "",
+            0,
+            2,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "맵 전체가 공개되었습니다."
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            5,
+            "닫기"
+          ]
+        },
+        {
+          "code": 115,
+          "indent": 1,
+          "parameters": []
+        },
+        {
+          "code": 404,
+          "indent": 0,
+          "parameters": []
+        },
         {
           "code": 0,
           "indent": 0,

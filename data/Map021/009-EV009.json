@@ -3,7 +3,7 @@
   "name": "EV009",
   "x": 21,
   "y": 21,
-  "note": "[외부 파일] data/Map008/009-EV009.json",
+  "note": "",
   "pages": [
     {
       "conditions": {
@@ -30,6 +30,78 @@
         "tileId": 0
       },
       "list": [
+        {
+          "code": 250,
+          "indent": 0,
+          "parameters": [
+            {
+              "name": "Chest1",
+              "pan": 0,
+              "pitch": 100,
+              "volume": 90
+            }
+          ]
+        },
+        {
+          "code": 205,
+          "indent": 0,
+          "parameters": [
+            0,
+            {
+              "list": [
+                {
+                  "code": 41,
+                  "parameters": [
+                    "!Chest",
+                    0,
+                    2,
+                    0
+                  ]
+                },
+                {
+                  "code": 0
+                }
+              ],
+              "repeat": false,
+              "skippable": false,
+              "wait": true
+            }
+          ]
+        },
+        {
+          "code": 125,
+          "indent": 0,
+          "parameters": [
+            0,
+            0,
+            100
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "100\\G를 손에 넣었다!"
+          ]
+        },
+        {
+          "code": 123,
+          "indent": 0,
+          "parameters": [
+            "A",
+            0
+          ]
+        },
         {
           "code": 0,
           "indent": 0,

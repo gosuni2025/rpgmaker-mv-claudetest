@@ -3,7 +3,7 @@
   "name": "CRT 배럴 왜곡 데모",
   "x": 6,
   "y": 29,
-  "note": "[외부 파일] data/Map008/036-CRT-배럴-왜곡-데모.json",
+  "note": "",
   "pages": [
     {
       "conditions": {
@@ -30,6 +30,124 @@
         "tileId": 0
       },
       "list": [
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "\\C[4][CRT 배럴 왜곡]\\C[0]"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "오래된 CRT 모니터의 볼록한 화면을 재현합니다."
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "1초에 걸쳐 서서히 켜고 끌 수 있습니다."
+          ]
+        },
+        {
+          "code": 102,
+          "indent": 0,
+          "parameters": [
+            [
+              "켜기 (0.08, 1초)",
+              "끄기 (1초)",
+              "약하게 (0.03)",
+              "강하게 (0.2)",
+              "종료"
+            ],
+            4
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            0,
+            "켜기 (0.08, 1초)"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "PPEffectBarrel on 0.08 1"
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            1,
+            "끄기 (1초)"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "PPEffectBarrel off 1"
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            2,
+            "약하게 (0.03)"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "PPEffectBarrel curvature 0.03 0.5"
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            3,
+            "강하게 (0.2)"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "PPEffectBarrel curvature 0.2 0.5"
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            4,
+            "종료"
+          ]
+        },
+        {
+          "code": 404,
+          "indent": 0,
+          "parameters": []
+        },
         {
           "code": 0,
           "indent": 0,

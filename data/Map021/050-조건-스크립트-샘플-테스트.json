@@ -3,7 +3,7 @@
   "name": "조건 스크립트 샘플 테스트",
   "x": 33,
   "y": 11,
-  "note": "[외부 파일] data/Map008/050-조건-스크립트-샘플-테스트.json",
+  "note": "",
   "pages": [
     {
       "conditions": {
@@ -30,6 +30,538 @@
         "tileId": 0
       },
       "list": [
+        {
+          "code": 355,
+          "indent": 0,
+          "parameters": [
+            "(function testCondSamples() {"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  var ok = 0, fail = 0, fails = [];"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  function run(name, expr) {"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "    try { eval(expr); console.log('[OK] ' + name); ok++; }"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "    catch(e) { console.error('[FAIL] ' + name + ' -> ' + e.message); fail++; fails.push(name + ': ' + e.message); }"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  }"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            ""
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  // ── ConfigManager ──"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"ConfigManager.bgmVolume >= 50\", \"ConfigManager.bgmVolume >= 50\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"ConfigManager.bgsVolume >= 50\", \"ConfigManager.bgsVolume >= 50\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"ConfigManager.seVolume >= 50\", \"ConfigManager.seVolume >= 50\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"ConfigManager.meVolume >= 50\", \"ConfigManager.meVolume >= 50\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"ConfigManager.isFullScreen\", \"ConfigManager.isFullScreen\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"ConfigManager.isAlwaysDash\", \"ConfigManager.isAlwaysDash\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"ConfigManager.isCommandRemember\", \"ConfigManager.isCommandRemember\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"ConfigManager.touchUI !== false\", \"ConfigManager.touchUI !== false\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            ""
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  // ── 소지금 ──"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"$gameParty.gold() >= 1000\", \"$gameParty.gold() >= 1000\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"$gameParty.gold() <= 500\", \"$gameParty.gold() <= 500\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"$gameParty.gold() === 0\", \"$gameParty.gold() === 0\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            ""
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  // ── 변수 ──"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"$gameVariables.value(1) >= 10\", \"$gameVariables.value(1) >= 10\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"$gameVariables.value(1) <= 5\", \"$gameVariables.value(1) <= 5\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"$gameVariables.value(1) === 0\", \"$gameVariables.value(1) === 0\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"\\ubcc0\\uc218#1 > \\ubcc0\\uc218#2\", \"$gameVariables.value(1) > $gameVariables.value(2)\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            ""
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  // ── 스위치 ──"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"$gameSwitches.value(1)\", \"$gameSwitches.value(1)\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"!$gameSwitches.value(1)\", \"!$gameSwitches.value(1)\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"\\uc2a4\\uc704\\uce58 [1,2,3] \\ubaa8\\ub450 ON\", \"[1,2,3].every(function(id){return $gameSwitches.value(id);})\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"\\uc140\\ud504\\uc2a4\\uc704\\uce58 A ON\", \"$gameSelfSwitches.value([$gameMap.mapId(), this._eventId, \\\"A\\\"])\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            ""
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  // ── 파티 / 아이템 ──"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"hasItem($dataItems[1])\", \"$gameParty.hasItem($dataItems[1])\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"hasItem($dataWeapons[1],true)\", \"$gameParty.hasItem($dataWeapons[1], true)\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"hasItem($dataArmors[1],true)\", \"$gameParty.hasItem($dataArmors[1], true)\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"$gameParty.size() >= 3\", \"$gameParty.size() >= 3\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"\\ud30c\\ud2f0\\uc6d0 \\uc911 \\uc0ac\\ub9dd\\uc790 \\uc788\\uc74c\", \"$gameParty.members().some(function(a){return a.isDead();})\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"\\ub9ac\\ub354 \\uc0ac\\ub9dd\", \"$gameParty.leader().isDead()\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"$gameParty.isAllDead()\", \"$gameParty.isAllDead()\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            ""
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  // ── 액터 ──"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"actor(1).hp <= 100\", \"$gameActors.actor(1).hp <= 100\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"actor(1).hpRate() <= 0.25\", \"$gameActors.actor(1).hpRate() <= 0.25\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"actor(1).level >= 10\", \"$gameActors.actor(1).level >= 10\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"actor(1).isStateAffected(4)\", \"$gameActors.actor(1).isStateAffected(4)\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"actor(1).hasSkill(7)\", \"$gameActors.actor(1).hasSkill(7)\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"actor(1).isAlive()\", \"$gameActors.actor(1).isAlive()\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"actorId===2 in party\", \"$gameParty.members().some(function(a){return a.actorId()===2;})\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            ""
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  // ── 플레이어 / 맵 ──"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"\\ud50c\\ub808\\uc774\\uc5b4 \\uc88c\\ud45c (10,8)\", \"$gamePlayer.x === 10 && $gamePlayer.y === 8\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"regionId \\ud655\\uc778\", \"$gameMap.regionId($gamePlayer.x, $gamePlayer.y) === 1\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"terrainTag \\ud655\\uc778\", \"$gameMap.terrainTag($gamePlayer.x, $gamePlayer.y) === 1\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"$gamePlayer.isInVehicle()\", \"$gamePlayer.isInVehicle()\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"$gamePlayer.isInAirship()\", \"$gamePlayer.isInAirship()\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"$gameMap.mapId() === 3\", \"$gameMap.mapId() === 3\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            ""
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  // ── 게임 상태 ──"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"$gameSystem.isSaveEnabled()\", \"$gameSystem.isSaveEnabled()\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"$gameSystem.isMenuEnabled()\", \"$gameSystem.isMenuEnabled()\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"$gameParty.inBattle()\", \"$gameParty.inBattle()\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"BattleManager.canEscape()\", \"BattleManager.canEscape()\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"$gameTimer.isWorking()\", \"$gameTimer.isWorking()\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  run(\"\\ud0c0\\uc774\\uba38 10\\ucd08 \\uc774\\ud558\", \"$gameTimer.isWorking() && $gameTimer.seconds() <= 10\");"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            ""
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  // 결과 출력"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  fails.forEach(function(r){ console.error('[FAIL] ' + r); });"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  console.log('=== 조건 스크립트 샘플 테스트: OK=' + ok + '  FAIL=' + fail + ' / 총 ' + (ok+fail) + '개 ===');"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  var result = '\\\\C[3]OK=' + ok + '\\\\C[0]  \\\\C[2]FAIL=' + fail + '\\\\C[0] / 총 ' + (ok+fail) + '개';"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  $gameMessage.add('조건 스크립트 샘플 테스트');"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  $gameMessage.add(result);"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "  if (fail > 0) $gameMessage.add('자세한 내용은 콘솔(F8)을 확인하세요.');"
+          ]
+        },
+        {
+          "code": 655,
+          "indent": 0,
+          "parameters": [
+            "})();"
+          ]
+        },
         {
           "code": 0,
           "indent": 0,

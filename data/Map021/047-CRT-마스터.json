@@ -3,7 +3,7 @@
   "name": "CRT 마스터",
   "x": 21,
   "y": 17,
-  "note": "[외부 파일] data/Map008/047-CRT-마스터.json",
+  "note": "",
   "pages": [
     {
       "conditions": {
@@ -30,6 +30,266 @@
         "tileId": 0
       },
       "list": [
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "<color value=#ffff44>★ CRT 마스터 / 레트로</color>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "모든 CRT 효과를 종합한 <color value=#ffff99>\"올드 브라운관\"</color> 프리셋."
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "형광체·반사광·글로우·잡음·모서리·스캔라인·배럴"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "7가지 효과를 한번에 적용합니다."
+          ]
+        },
+        {
+          "code": 102,
+          "indent": 0,
+          "parameters": [
+            [
+              "■ CRT 모드 ON",
+              "□ CRT 모드 OFF",
+              "취소"
+            ],
+            2
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            0,
+            "■ CRT 모드 ON"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "PPEffectCRTCorner on 0.07"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "PPEffectBarrel on 0.05 1"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "PPEffectScanlines on 0.25 1"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "PPEffectCRTPhosphor on 0 0.25"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "PPEffectCRTGlare on 0.5"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "PPEffect crtGlare posX 0.15"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "PPEffect crtGlare posY 0.82"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "PPEffectCRTGlow on 0.8"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "PPEffectCRTNoise on 0.002 0.03"
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 1,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "<color value=#ffff44>★ CRT 마스터 / 레트로</color>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "<color value=#aaffaa>✓ 올드 브라운관 모드 ON!</color>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "모서리·배럴·스캔라인·형광체·반사광"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "글로우·신호잡음 — 전부 활성화!"
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            1,
+            "□ CRT 모드 OFF"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "PPEffectCRTCorner off"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "PPEffectBarrel off 1"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "PPEffectScanlines off 1"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "PPEffectCRTPhosphor off"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "PPEffectCRTGlare off"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "PPEffectCRTGlow off"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "PPEffectCRTNoise off"
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 1,
+          "parameters": [
+            "",
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "<color value=#ffff44>★ CRT 마스터 / 레트로</color>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "<color value=#ffaa88>✗ CRT 모드 해제.</color>"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "모든 CRT 효과가 비활성화되었습니다."
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            2,
+            "취소"
+          ]
+        },
+        {
+          "code": 404,
+          "indent": 0,
+          "parameters": []
+        },
         {
           "code": 0,
           "indent": 0,

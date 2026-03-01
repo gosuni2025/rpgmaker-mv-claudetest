@@ -3,7 +3,7 @@
   "name": "수집품 관리인",
   "x": 16,
   "y": 21,
-  "note": "[외부 파일] data/Map008/022-수집품-관리인.json",
+  "note": "",
   "pages": [
     {
       "conditions": {
@@ -30,6 +30,143 @@
         "tileId": 0
       },
       "list": [
+        {
+          "code": 101,
+          "indent": 0,
+          "parameters": [
+            "",
+            0,
+            2,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "아이템 도감에 오신 것을 환영합니다!"
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 0,
+          "parameters": [
+            "수집한 아이템들을 빠짐없이 기록해드려요."
+          ]
+        },
+        {
+          "code": 102,
+          "indent": 0,
+          "parameters": [
+            [
+              "도감 열기",
+              "전부 등록",
+              "도감 초기화",
+              "닫기"
+            ],
+            3,
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            0,
+            "도감 열기"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "ItemBook open"
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            1,
+            "전부 등록"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "ItemBook complete"
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 1,
+          "parameters": [
+            "",
+            0,
+            2,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "모든 아이템이 도감에 등록되었습니다!"
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            2,
+            "도감 초기화"
+          ]
+        },
+        {
+          "code": 356,
+          "indent": 1,
+          "parameters": [
+            "ItemBook clear"
+          ]
+        },
+        {
+          "code": 101,
+          "indent": 1,
+          "parameters": [
+            "",
+            0,
+            2,
+            2
+          ]
+        },
+        {
+          "code": 401,
+          "indent": 1,
+          "parameters": [
+            "도감이 초기화되었습니다."
+          ]
+        },
+        {
+          "code": 402,
+          "indent": 0,
+          "parameters": [
+            3,
+            "닫기"
+          ]
+        },
+        {
+          "code": 115,
+          "indent": 1,
+          "parameters": []
+        },
+        {
+          "code": 404,
+          "indent": 0,
+          "parameters": []
+        },
         {
           "code": 0,
           "indent": 0,
