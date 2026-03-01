@@ -97,7 +97,7 @@
     };
 
     Scene_Fishing.prototype._checkInput = function() {
-        if (Input.isTriggered('ok') || Input.isTriggered('cancel')) {
+        if (Input.isTriggered('ok')) {
             this._attempts++;
             // 성공 판정: 인디케이터가 목표 구간 안에 있는가?
             var indBottom = this._indY + this._indH;
