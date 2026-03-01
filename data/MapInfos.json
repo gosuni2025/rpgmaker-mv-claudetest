@@ -15,15 +15,7 @@
   null,
   null,
   null,
-  {
-    "id": 8,
-    "expanded": false,
-    "name": "Big City",
-    "order": 8,
-    "parentId": 7,
-    "scrollX": 0,
-    "scrollY": 0
-  },
+  null,
   null,
   null,
   null,
@@ -104,6 +96,15 @@
     "expanded": false,
     "name": "파이프 퍼즐",
     "order": 20,
+    "parentId": 0,
+    "scrollX": 0,
+    "scrollY": 0
+  },
+  {
+    "id": 21,
+    "expanded": false,
+    "name": "Big City",
+    "order": 21,
     "parentId": 0,
     "scrollX": 0,
     "scrollY": 0
