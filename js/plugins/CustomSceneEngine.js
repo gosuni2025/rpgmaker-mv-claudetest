@@ -2256,12 +2256,17 @@
     this._btnState = 'normal';
     this._transitionOverlay = null;
     this._transitionDisabled = false;
+    this._labelSprite = null;
+    this._labelBitmap = null;
     var hasChildren = !!(def.children && def.children.length > 0);
     var win;
+    // windowed=true 텍스트 버튼은 기존 Window_CustomCommand 유지 (패딩 있는 창 스타일)
+    // windowed=false(기본) 텍스트 버튼은 Window_ButtonRow + _labelSprite (Label 방식, 패딩 없음)
+    this._useWindowLabel = def.windowed === true && !hasChildren && this._label !== '';
     if (hasChildren || this._label === '') {
       // 자식 위젯이 텍스트 렌더링 — 커서/하이라이트만 제공
       win = new Window_ButtonRow(this._x, this._y, this._width, this._height || 52);
-    } else {
+    } else if (this._useWindowLabel) {
       var btnDef = {
         id: def.id, width: def.width,
         commands: [{ name: this._label, symbol: 'ok', enabled: true }],
@@ -2269,6 +2274,9 @@
       };
       if (def.height) btnDef.height = def.height;
       win = new Window_CustomCommand(this._x, this._y, btnDef);
+    } else {
+      // windowed=false 텍스트 버튼: Window_ButtonRow (커서) + _labelSprite (텍스트)
+      win = new Window_ButtonRow(this._x, this._y, this._width, this._height || 52);
     }
     win._customClassName = 'Widget_CS_' + this._id;
     win.deactivate();
@@ -2279,6 +2287,7 @@
     this._window = win;
     this._displayObject = win;
     this._createDecoSprite(def, this._width, this._height || 52);
+    this._createButtonLabel(def);
     this._createTransitionSprite(def);
   };
   Widget_Button.prototype.collectFocusable = function(out) {
@@ -2298,6 +2307,38 @@
   };
   Widget_Button.prototype.setDisabled = function(disabled) {
     this._transitionDisabled = !!disabled;
+  };
+  // windowed=false 텍스트 버튼용 Label 스프라이트 생성 (Widget_Label 방식)
+  Widget_Button.prototype._createButtonLabel = function(def) {
+    if (this._useWindowLabel || !this._label) return;
+    var w = this._width || 120;
+    var h = this._height || 52;
+    var fontSize = def.fontSize || 28;
+    var bold = !!def.bold;
+    var bmp = new Bitmap(Math.max(1, w), Math.max(1, h));
+    bmp.fontSize = fontSize;
+    bmp.fontBold = bold;
+    var sprite = new Sprite(bmp);
+    sprite.x = def.x || 0;
+    sprite.y = def.y || 0;
+    this._labelSprite = sprite;
+    this._labelBitmap = bmp;
+    this._refreshButtonLabel();
+  };
+  Widget_Button.prototype._refreshButtonLabel = function() {
+    var bmp = this._labelBitmap;
+    if (!bmp) return;
+    var def = this._def;
+    var fontSize = def.fontSize || 28;
+    var color = def.color || '#ffffff';
+    var align = def.align || 'center';
+    var w = this._width || 120;
+    var h = this._height || 52;
+    bmp.clear();
+    bmp.textColor = color;
+    var textH = fontSize + 8;
+    var ty = Math.max(0, Math.floor((h - textH) / 2));
+    bmp.drawText(this._label, 0, ty, w, textH, align);
   };
   // Transition 스프라이트 생성 (colorTint: 오버레이, spriteSwap: 이미지 스프라이트)
   Widget_Button.prototype._createTransitionSprite = function(def) {
@@ -2382,6 +2423,10 @@
     Widget_Base.prototype.update.call(this);
     if (this._transition !== 'system') {
       this._updateTransitionState();
+    }
+    // _labelSprite disabled dimming
+    if (this._labelSprite) {
+      this._labelSprite.opacity = this._transitionDisabled ? 128 : 255;
     }
   };
   window.Widget_Button = Widget_Button;
@@ -3039,6 +3084,14 @@
       var obj = w2.displayObject();
       if (obj && obj instanceof Window_Base) {
         this.addWindow(obj);
+      }
+    }
+
+    // Widget_Button의 _labelSprite를 windowLayer 위에 addChild (커서 하이라이트 위에 텍스트)
+    for (var idL in this._widgetMap) {
+      var wL = this._widgetMap[idL];
+      if (wL._labelSprite) {
+        this.addChild(wL._labelSprite);
       }
     }
 
