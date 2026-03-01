@@ -215,7 +215,9 @@
             "id": "actor_row_0",
             "type": "scene",
             "sceneId": "actor_row_item",
-            "instanceCtx": { "actorIndex": 0 },
+            "instanceCtx": {
+              "actorIndex": 0
+            },
             "x": 0,
             "y": 0,
             "width": 816,
@@ -225,7 +227,9 @@
             "id": "actor_row_1",
             "type": "scene",
             "sceneId": "actor_row_item",
-            "instanceCtx": { "actorIndex": 1 },
+            "instanceCtx": {
+              "actorIndex": 1
+            },
             "x": 0,
             "y": 120,
             "width": 816,
@@ -235,7 +239,9 @@
             "id": "actor_row_2",
             "type": "scene",
             "sceneId": "actor_row_item",
-            "instanceCtx": { "actorIndex": 2 },
+            "instanceCtx": {
+              "actorIndex": 2
+            },
             "x": 0,
             "y": 240,
             "width": 816,
@@ -245,7 +251,9 @@
             "id": "actor_row_3",
             "type": "scene",
             "sceneId": "actor_row_item",
-            "instanceCtx": { "actorIndex": 3 },
+            "instanceCtx": {
+              "actorIndex": 3
+            },
             "x": 0,
             "y": 360,
             "width": 816,
