@@ -377,7 +377,7 @@
         "handlers": {
           "equip": {
             "action": "script",
-            "code": "$ctx.tempActor=null;$ctx.helpText='';var sw=this._widgetMap['slot_list'];if(sw&&sw._window){sw._rebuildFromScript();sw._window.activate();sw._window.select(0);$ctx.slotId=0;}"
+            "code": "$ctx.tempActor=null;$ctx.helpText='';$ctx.slotId=0;if(this._navManager)this._navManager.focusWidget('slot_list');"
           },
           "optimize": {
             "action": "script",
@@ -415,11 +415,11 @@
         "handlers": {
           "ok": {
             "action": "script",
-            "code": "var sw=this._widgetMap['slot_list'];if(!sw||!sw._window)return;$ctx.slotId=sw._window.index();var iw=this._widgetMap['item_list'];if(iw){iw._rebuildFromScript();iw._window.activate();iw._window.select(0);}"
+            "code": "var sw=this._widgetMap['slot_list'];if(!sw||!sw._window)return;$ctx.slotId=sw._window.index();if(this._navManager)this._navManager.focusWidget('item_list');"
           },
           "cancel": {
             "action": "script",
-            "code": "var sw=this._widgetMap['slot_list'];if(sw&&sw._window)sw._window.deselect();var cw=this._widgetMap['cmd_list'];if(cw)cw.activate();"
+            "code": "if(this._navManager)this._navManager.focusWidget('cmd_list');"
           }
         }
       },
@@ -439,11 +439,11 @@
         "handlers": {
           "ok": {
             "action": "script",
-            "code": "var iw=this._widgetMap['item_list'];if(!iw||!iw._window)return;var item=($ctx.pendingItem!==undefined?$ctx.pendingItem:null);$ctx.pendingItem=undefined;var a=$gameParty.members()[$ctx.actorIndex];if(a){SoundManager.playEquip();a.changeEquip(($ctx.slotId>=0?$ctx.slotId:0),item);}$ctx.tempActor=null;$ctx.helpText='';var sw=this._widgetMap['slot_list'];if(sw){sw._rebuildFromScript();sw._window.activate();}iw._window.deselect();this._rootWidget.refresh();"
+            "code": "var item=($ctx.pendingItem!==undefined?$ctx.pendingItem:null);$ctx.pendingItem=undefined;var a=$gameParty.members()[$ctx.actorIndex];if(a){SoundManager.playEquip();a.changeEquip(($ctx.slotId>=0?$ctx.slotId:0),item);}$ctx.tempActor=null;$ctx.helpText='';if(this._navManager)this._navManager.focusWidget('slot_list');this._rootWidget.refresh();"
           },
           "cancel": {
             "action": "script",
-            "code": "$ctx.tempActor=null;$ctx.helpText='';$ctx.pendingItem=undefined;var iw=this._widgetMap['item_list'];if(iw&&iw._window)iw._window.deselect();var sw=this._widgetMap['slot_list'];if(sw)sw.activate();"
+            "code": "$ctx.tempActor=null;$ctx.helpText='';$ctx.pendingItem=undefined;if(this._navManager)this._navManager.focusWidget('slot_list');"
           }
         }
       },

@@ -2548,6 +2548,7 @@
       this._applyWindowStyle(win, def);
       if (def.windowed !== false && def.bgAlpha !== undefined) win.opacity = Math.round(def.bgAlpha * 255);
     }
+    this._baseOpacity = win.opacity;
     this._window = win;
     this._displayObject = win;
     this._createDecoSprite(def, this._width, def.height || 400);
@@ -2584,19 +2585,19 @@
       if (this._window.refresh) this._window.refresh();
       // itemScene 모드: 행 Sprite 재구성
       if (this._itemSceneId) this._rebuildRows();
-      // 빈 목록이거나 비활성이면 커서 숨김
-      if (items.length === 0 || !this._window.active) {
-        // deselect() = select(-1) → callUpdateHelp() 발화로 onCursor 코드가 실행되어
-        // 다른 위젯의 상태(FJ._curClassId 등)를 리셋하는 부작용을 방지하기 위해
-        // 비활성 창은 callUpdateHelp 없이 직접 _index를 -1로 설정
-        if (!this._window.active) {
-          this._window._index = -1;
-          this._window.updateCursor();
-        } else {
-          this._window.deselect();
-        }
-        // height=0일 때 커서 스프라이트가 창 밖으로 삐져나오는 문제 방지
+      if (items.length === 0) {
+        // 빈 목록: 커서 숨김
+        this._window.deselect();
         if (this._window._windowCursorSprite) this._window._windowCursorSprite.visible = false;
+      } else if (!this._window.active) {
+        // 비활성이면 커서를 마지막 위치에 정지(freeze). callUpdateHelp 없이 직접 처리
+        var clampedIdx = (this._lastIndex !== undefined && this._lastIndex >= 0 && this._lastIndex < items.length)
+          ? this._lastIndex : 0;
+        if (this._window._index !== clampedIdx) {
+          this._window._index = clampedIdx;
+          this._window.updateCursor();
+        }
+        if (this._window._windowCursorSprite) this._window._windowCursorSprite.visible = true;
       }
     } catch(e) {
       console.error('[Widget_List] dataScript error:', e);
@@ -2739,7 +2740,7 @@
     if (this._window) {
       this._lastIndex = this._window.index();
       this._window.deactivate();
-      this._window.deselect();
+      // deselect() 제거 — 비활성 시 커서를 현재 위치에 정지(freeze)
     }
   };
   Widget_TextList.prototype.refresh = function() {
@@ -2777,6 +2778,12 @@
           rw._withCtx(function() { rw._subRoot.update(); });
         })(this._rowWidgets[ri]);
       }
+    }
+    // 비활성 창 auto-dim: _window.active 기반으로 투명도 조절
+    if (this._window && this._def && this._def.dimOnInactive !== false && !this._itemSceneId) {
+      var baseOp = this._baseOpacity !== undefined ? this._baseOpacity : 255;
+      var targetOp = this._window.active ? baseOp : Math.round(baseOp * 0.63);
+      if (this._window.opacity !== targetOp) this._window.opacity = targetOp;
     }
     Widget_Base.prototype.update.call(this);
   };
@@ -3344,6 +3351,7 @@
       }
       case 'script': {
         if (handler.code) {
+          var prevNavIdx = this._navManager ? this._navManager._activeIndex : -99;
           try {
             var $ctx = this._ctx;
             var fn = new Function('$ctx', handler.code);
@@ -3352,9 +3360,10 @@
             console.error('[CustomScene] script error:', e);
           }
           if (this._rootWidget) this._rootWidget.refresh();
+          var navFocusChanged = this._navManager && this._navManager._activeIndex !== prevNavIdx;
           if (handler.thenAction) {
             this._executeWidgetHandler(handler.thenAction, widget);
-          } else {
+          } else if (!navFocusChanged) {
             if (widget && widget.activate) widget.activate();
           }
         }

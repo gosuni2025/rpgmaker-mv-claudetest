@@ -5209,6 +5209,10 @@
     "58": {
       "name": "스킬 사서",
       "showName": true
+    },
+    "59": {
+      "name": "아이템 상인",
+      "showName": true
     }
   },
   "minimapData": {
