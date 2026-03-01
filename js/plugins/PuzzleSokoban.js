@@ -1,556 +1,278 @@
 //=============================================================================
-// PuzzleSokoban.js — 소코반 퍼즐 미니게임
+// PuzzleSokoban.js — 인게임 소코반 퍼즐 (맵 위 직접 플레이)
 //=============================================================================
 /*:
- * @plugindesc 소코반(박스 밀기) 퍼즐 미니게임
+ * @plugindesc 소코반(박스 밀기) 퍼즐 — 별도 씬 없이 실제 맵 위에서 플레이
  * @author RPGMaker MV Web Editor
  *
- * @help 플러그인 커맨드:
- *   PUZZLE_SOKOBAN start [switchId]
- *   switchId — 완료 시 ON할 스위치 번호
+ * @help
+ * 플레이어가 실제 맵 위에서 박스 이벤트를 밀어 목표 위치에 넣는 퍼즐입니다.
+ *
+ * ─────────────────────────────────────────────
+ * 설정 방법
+ * ─────────────────────────────────────────────
+ * 1. 박스로 사용할 이벤트의 노트(메모)에 <sokoban_box> 를 입력하세요.
+ *    - 이벤트 속성: through=false, 우선도=통상 캐릭터와 동일
+ *
+ * 2. 목표 위치 타일에 region ID 1 을 설정하세요.
+ *
+ * ─────────────────────────────────────────────
+ * 플러그인 커맨드
+ * ─────────────────────────────────────────────
+ *   PUZZLE_SOKOBAN_INIT switchId
+ *     퍼즐을 초기화합니다.
+ *     switchId — 모든 박스가 목표 위치에 들어갔을 때 ON 할 스위치 번호
+ *
+ *   PUZZLE_SOKOBAN_RESET
+ *     박스 위치를 초기 위치로 복구합니다.
+ *
+ * ─────────────────────────────────────────────
+ * 조작
+ * ─────────────────────────────────────────────
+ *   방향키  : 이동 / 박스 밀기
+ *   R 키    : 박스 위치 리셋 (RPG Maker MV 에서 R = pagedown)
  */
 
-(function() {
-  'use strict';
+(function () {
+    'use strict';
 
-  //=============================================================================
-  // 레벨 데이터
-  //=============================================================================
-  // '#' = 벽, ' ' = 바닥, '@' = 플레이어, '$' = 박스
-  // '.' = 목표, '*' = 박스+목표, '+' = 플레이어+목표
-
-  var LEVELS = [
-    // 레벨 1: 입문 (7×7)
-    [
-      '#######',
-      '#     #',
-      '# $@$.#',
-      '#  .  #',
-      '#  $  #',
-      '#     #',
-      '#######'
-    ],
-    // 레벨 2: 중급 (9×9)
-    [
-      '#########',
-      '#   #   #',
-      '# $ . $ #',
-      '#   #   #',
-      '### @ ###',
-      '#   #   #',
-      '# . # . #',
-      '#   $   #',
-      '#########'
-    ]
-  ];
-
-  //=============================================================================
-  // 플러그인 커맨드
-  //=============================================================================
-  var _pluginCommand = Game_Interpreter.prototype.pluginCommand;
-  Game_Interpreter.prototype.pluginCommand = function(command, args) {
-    _pluginCommand.call(this, command, args);
-    if (command === 'PUZZLE_SOKOBAN') {
-      if (args[0] === 'start') {
-        var switchId = parseInt(args[1]) || 0;
-        SceneManager.push(Scene_PuzzleSokoban);
-        SceneManager.prepareNextScene(switchId);
-      }
-    }
-  };
-
-  //=============================================================================
-  // Scene_PuzzleSokoban
-  //=============================================================================
-  function Scene_PuzzleSokoban() { this.initialize.apply(this, arguments); }
-  Scene_PuzzleSokoban.prototype = Object.create(Scene_Base.prototype);
-  Scene_PuzzleSokoban.prototype.constructor = Scene_PuzzleSokoban;
-
-  Scene_PuzzleSokoban.prototype.prepare = function(switchId) {
-    this._switchId = switchId;
-  };
-
-  Scene_PuzzleSokoban.prototype.initialize = function() {
-    Scene_Base.prototype.initialize.call(this);
-    this._switchId = 0;
-    this._levelIndex = 0;
-    this._moveCount = 0;
-    this._history = [];
-    this._state = null;
-    this._inputDelay = 0;
-  };
-
-  Scene_PuzzleSokoban.prototype.create = function() {
-    Scene_Base.prototype.create.call(this);
-    this._loadLevel(this._levelIndex);
-    this._createSprites();
-  };
-
-  Scene_PuzzleSokoban.prototype._loadLevel = function(index) {
-    var raw = LEVELS[index];
-    this._levelRows = raw.length;
-    this._levelCols = raw[0].length;
-    this._moveCount = 0;
-    this._history = [];
-
-    // 그리드를 숫자 배열로 파싱
-    // 0=빈, 1=벽, 2=바닥, 3=목표, 4=박스, 5=박스+목표
-    // 플레이어는 별도 좌표로 관리
-    this._grid = [];
-    this._playerX = 0;
-    this._playerY = 0;
-    this._playerOnGoal = false;
-
-    for (var r = 0; r < this._levelRows; r++) {
-      var row = [];
-      for (var c = 0; c < this._levelCols; c++) {
-        var ch = raw[r][c] || ' ';
-        switch (ch) {
-          case '#': row.push(1); break;   // 벽
-          case ' ': row.push(2); break;   // 바닥
-          case '.': row.push(3); break;   // 목표
-          case '$': row.push(4); break;   // 박스
-          case '*': row.push(5); break;   // 박스+목표
-          case '@':
-            row.push(2);                  // 바닥으로 처리
-            this._playerX = c;
-            this._playerY = r;
-            this._playerOnGoal = false;
-            break;
-          case '+':
-            row.push(3);                  // 목표로 처리
-            this._playerX = c;
-            this._playerY = r;
-            this._playerOnGoal = true;
-            break;
-          default:  row.push(0); break;   // 빈
-        }
-      }
-      this._grid.push(row);
-    }
-  };
-
-  Scene_PuzzleSokoban.prototype._createSprites = function() {
-    this._backgroundSprite = new Sprite(new Bitmap(Graphics.width, Graphics.height));
-    this._backgroundSprite.bitmap.fillAll('rgba(0,0,0,0.75)');
-    this.addChild(this._backgroundSprite);
-
-    this._boardLayer = new Sprite();
-    this.addChild(this._boardLayer);
-
-    this._uiLayer = new Sprite();
-    this.addChild(this._uiLayer);
-
-    this._drawBoard();
-    this._drawUI();
-  };
-
-  //=============================================================================
-  // 그리기 헬퍼
-  //=============================================================================
-  var CELL = 64; // 셀 크기(px)
-  var WALL_COLOR    = '#445566';
-  var FLOOR_COLOR   = '#1e2a3a';
-  var GOAL_COLOR    = '#1e2a3a';
-  var BOX_COLOR     = '#8B4513';
-  var BOX_DARK      = '#5C2D0A';
-  var BOX_DONE_COLOR= '#DAA520';
-  var BOX_DONE_DARK = '#A07800';
-  var PLAYER_COLOR  = '#4488ff';
-  var PLAYER_DARK   = '#2255bb';
-
-  Scene_PuzzleSokoban.prototype._boardOrigin = function() {
-    var bw = this._levelCols * CELL;
-    var bh = this._levelRows * CELL;
-    return {
-      x: Math.floor((Graphics.width  - bw) / 2),
-      y: Math.floor((Graphics.height - bh) / 2) + 10
-    };
-  };
-
-  Scene_PuzzleSokoban.prototype._drawBoard = function() {
-    var bw = this._levelCols * CELL;
-    var bh = this._levelRows * CELL;
-    var origin = this._boardOrigin();
-
-    if (!this._boardBitmap || this._boardBitmap.width !== bw || this._boardBitmap.height !== bh) {
-      this._boardBitmap = new Bitmap(bw, bh);
-      this._boardLayer.bitmap = this._boardBitmap;
-      this._boardLayer.x = origin.x;
-      this._boardLayer.y = origin.y;
-    }
-
-    var bmp = this._boardBitmap;
-    bmp.clear();
-
-    for (var r = 0; r < this._levelRows; r++) {
-      for (var c = 0; c < this._levelCols; c++) {
-        var x = c * CELL;
-        var y = r * CELL;
-        var cell = this._grid[r][c];
-
-        switch (cell) {
-          case 0: // 빈
-            break;
-          case 1: // 벽
-            this._drawWall(bmp, x, y);
-            break;
-          case 2: // 바닥
-            this._drawFloor(bmp, x, y);
-            break;
-          case 3: // 목표
-            this._drawGoal(bmp, x, y);
-            break;
-          case 4: // 박스
-            this._drawFloor(bmp, x, y);
-            this._drawBox(bmp, x, y, false);
-            break;
-          case 5: // 박스+목표
-            this._drawGoal(bmp, x, y);
-            this._drawBox(bmp, x, y, true);
-            break;
-        }
-      }
-    }
-
-    // 플레이어
-    var px = this._playerX * CELL;
-    var py = this._playerY * CELL;
-    if (this._playerOnGoal) {
-      this._drawGoal(bmp, px, py);
-    } else {
-      this._drawFloor(bmp, px, py);
-    }
-    this._drawPlayer(bmp, px, py);
-  };
-
-  Scene_PuzzleSokoban.prototype._drawWall = function(bmp, x, y) {
-    bmp.fillRect(x, y, CELL, CELL, WALL_COLOR);
-    // 하이라이트 (좌,상단)
-    bmp.fillRect(x, y, CELL, 3, '#6688aa');
-    bmp.fillRect(x, y, 3, CELL, '#6688aa');
-    // 그림자 (우,하단)
-    bmp.fillRect(x + CELL - 3, y, 3, CELL, '#223344');
-    bmp.fillRect(x, y + CELL - 3, CELL, 3, '#223344');
-  };
-
-  Scene_PuzzleSokoban.prototype._drawFloor = function(bmp, x, y) {
-    bmp.fillRect(x, y, CELL, CELL, FLOOR_COLOR);
-    bmp.fillRect(x, y, CELL, 1, '#2a3a4a');
-    bmp.fillRect(x, y, 1, CELL, '#2a3a4a');
-  };
-
-  Scene_PuzzleSokoban.prototype._drawGoal = function(bmp, x, y) {
-    bmp.fillRect(x, y, CELL, CELL, GOAL_COLOR);
-    bmp.fillRect(x, y, CELL, 1, '#2a3a4a');
-    bmp.fillRect(x, y, 1, CELL, '#2a3a4a');
-    // 황금색 별 (★)
-    bmp.fontSize = 32;
-    bmp.textColor = '#DAA520';
-    bmp.drawText('★', x, y + (CELL - 36) / 2, CELL, 36, 'center');
-  };
-
-  Scene_PuzzleSokoban.prototype._drawBox = function(bmp, x, y, onGoal) {
-    var pad = 6;
-    var baseColor = onGoal ? BOX_DONE_COLOR : BOX_COLOR;
-    var darkColor = onGoal ? BOX_DONE_DARK  : BOX_DARK;
-    // 본체
-    bmp.fillRect(x + pad, y + pad, CELL - pad * 2, CELL - pad * 2, baseColor);
-    // 테두리 밝게
-    bmp.fillRect(x + pad, y + pad, CELL - pad * 2, 4, onGoal ? '#ffe066' : '#c06030');
-    bmp.fillRect(x + pad, y + pad, 4, CELL - pad * 2, onGoal ? '#ffe066' : '#c06030');
-    // 테두리 어둡게
-    bmp.fillRect(x + CELL - pad - 4, y + pad, 4, CELL - pad * 2, darkColor);
-    bmp.fillRect(x + pad, y + CELL - pad - 4, CELL - pad * 2, 4, darkColor);
-  };
-
-  Scene_PuzzleSokoban.prototype._drawPlayer = function(bmp, x, y) {
-    // 원형을 직접 그리기 위해 canvas context 접근
-    var canvas = bmp._canvas;
-    if (!canvas) return;
-    var ctx = canvas.getContext('2d');
-    var cx = x + CELL / 2;
-    var cy = y + CELL / 2;
-    var r  = CELL / 2 - 10;
-
-    ctx.save();
-    // 그림자(아래쪽 반원)
-    ctx.beginPath();
-    ctx.arc(cx, cy + 2, r, 0, Math.PI * 2);
-    ctx.fillStyle = PLAYER_DARK;
-    ctx.fill();
-    // 본체
-    ctx.beginPath();
-    ctx.arc(cx, cy, r, 0, Math.PI * 2);
-    ctx.fillStyle = PLAYER_COLOR;
-    ctx.fill();
-    // 하이라이트
-    ctx.beginPath();
-    ctx.arc(cx - r * 0.3, cy - r * 0.3, r * 0.3, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(255,255,255,0.45)';
-    ctx.fill();
-    ctx.restore();
-
-    // Bitmap의 내부 dirty 처리 강제
-    bmp._setDirty();
-  };
-
-  //=============================================================================
-  // UI (상단 정보 / 하단 안내)
-  //=============================================================================
-  Scene_PuzzleSokoban.prototype._drawUI = function() {
-    if (!this._uiBitmap) {
-      this._uiBitmap = new Bitmap(Graphics.width, Graphics.height);
-      this._uiLayer.bitmap = this._uiBitmap;
-    }
-    var bmp = this._uiBitmap;
-    bmp.clear();
-
-    // 상단 — 레벨 / 이동 횟수
-    bmp.fontSize = 22;
-    bmp.textColor = '#ffffff';
-    var levelText = '레벨 ' + (this._levelIndex + 1) + ' / ' + LEVELS.length;
-    var moveText  = '이동: ' + this._moveCount;
-    bmp.drawText(levelText, 0, 12, Graphics.width, 28, 'center');
-    bmp.drawText(moveText,  0, 44, Graphics.width, 28, 'center');
-
-    // 하단 — 조작 안내
-    bmp.fontSize = 18;
-    bmp.textColor = '#aabbcc';
-    var hint = '[화살표] 이동   [R] 리셋   [Z] 되돌리기   [ESC] 취소';
-    bmp.drawText(hint, 0, Graphics.height - 36, Graphics.width, 28, 'center');
-  };
-
-  //=============================================================================
-  // 게임 로직
-  //=============================================================================
-  Scene_PuzzleSokoban.prototype._cloneGrid = function() {
-    return this._grid.map(function(row) { return row.slice(); });
-  };
-
-  Scene_PuzzleSokoban.prototype._tryMove = function(dx, dy) {
-    var nx = this._playerX + dx;
-    var ny = this._playerY + dy;
-
-    if (ny < 0 || ny >= this._levelRows || nx < 0 || nx >= this._levelCols) return false;
-    var nCell = this._grid[ny][nx];
-
-    // 벽 or 빈 공간
-    if (nCell === 1 || nCell === 0) return false;
-
-    // 박스 처리
-    if (nCell === 4 || nCell === 5) {
-      var bx = nx + dx;
-      var by = ny + dy;
-      if (by < 0 || by >= this._levelRows || bx < 0 || bx >= this._levelCols) return false;
-      var bCell = this._grid[by][bx];
-      if (bCell === 1 || bCell === 0 || bCell === 4 || bCell === 5) return false;
-
-      // 스냅샷 저장 (undo용)
-      this._history.push({
-        grid: this._cloneGrid(),
-        playerX: this._playerX,
-        playerY: this._playerY,
-        playerOnGoal: this._playerOnGoal
-      });
-
-      // 박스 이동
-      var newBoxCell = (bCell === 3) ? 5 : 4; // 목표 위면 박스+목표
-      this._grid[by][bx] = newBoxCell;
-      // 박스가 있던 자리는 목표(was *) or 바닥(was $)
-      this._grid[ny][nx] = (nCell === 5) ? 3 : 2;
-    } else {
-      // 박스가 없는 이동 (스냅샷)
-      this._history.push({
-        grid: this._cloneGrid(),
-        playerX: this._playerX,
-        playerY: this._playerY,
-        playerOnGoal: this._playerOnGoal
-      });
-    }
-
-    // 플레이어 이동
-    this._playerOnGoal = (this._grid[ny][nx] === 3);
-    this._playerX = nx;
-    this._playerY = ny;
-    this._moveCount++;
-
-    AudioManager.playSe({name: 'Cursor2', pan: 0, pitch: 100 + (dx ? 5 : 0), volume: 60});
-    return true;
-  };
-
-  Scene_PuzzleSokoban.prototype._undo = function() {
-    if (this._history.length === 0) return;
-    var snap = this._history.pop();
-    this._grid = snap.grid;
-    this._playerX = snap.playerX;
-    this._playerY = snap.playerY;
-    this._playerOnGoal = snap.playerOnGoal;
-    if (this._moveCount > 0) this._moveCount--;
-    AudioManager.playSe({name: 'Cancel2', pan: 0, pitch: 120, volume: 70});
-  };
-
-  Scene_PuzzleSokoban.prototype._isCleared = function() {
-    for (var r = 0; r < this._levelRows; r++) {
-      for (var c = 0; c < this._levelCols; c++) {
-        if (this._grid[r][c] === 4) return false; // 목표에 없는 박스 존재
-      }
-    }
-    return true;
-  };
-
-  Scene_PuzzleSokoban.prototype._resetLevel = function() {
-    this._loadLevel(this._levelIndex);
-    AudioManager.playSe({name: 'Cancel2', pan: 0, pitch: 90, volume: 80});
-  };
-
-  Scene_PuzzleSokoban.prototype._advanceLevel = function() {
-    this._levelIndex++;
-    if (this._levelIndex >= LEVELS.length) {
-      this.onComplete();
-    } else {
-      this._loadLevel(this._levelIndex);
-      this._drawBoard();
-      this._drawUI();
-      this._showMessage('레벨 ' + this._levelIndex + ' 클리어!', 90);
-    }
-  };
-
-  //=============================================================================
-  // 메시지 오버레이 (클리어 알림)
-  //=============================================================================
-  Scene_PuzzleSokoban.prototype._showMessage = function(text, frames) {
-    this._messageText   = text;
-    this._messageFrames = frames;
-    if (!this._msgBitmap) {
-      this._msgBitmap = new Bitmap(Graphics.width, 60);
-      this._msgSprite = new Sprite(this._msgBitmap);
-      this._msgSprite.y = Math.floor(Graphics.height / 2) - 30;
-      this.addChild(this._msgSprite);
-    }
-    this._msgBitmap.clear();
-    this._msgBitmap.fillRect(0, 0, Graphics.width, 60, 'rgba(0,0,0,0.7)');
-    this._msgBitmap.fontSize = 28;
-    this._msgBitmap.textColor = '#FFD700';
-    this._msgBitmap.drawText(text, 0, 10, Graphics.width, 40, 'center');
-    this._msgSprite.visible = true;
-  };
-
-  Scene_PuzzleSokoban.prototype._updateMessage = function() {
-    if (this._messageFrames > 0) {
-      this._messageFrames--;
-      if (this._messageFrames === 0 && this._msgSprite) {
-        this._msgSprite.visible = false;
-      }
-    }
-  };
-
-  //=============================================================================
-  // 완료 / 취소
-  //=============================================================================
-  Scene_PuzzleSokoban.prototype.onComplete = function() {
-    if (this._switchId > 0) $gameSwitches.setValue(this._switchId, true);
-    AudioManager.playSe({name: 'Applause1', pan: 0, pitch: 100, volume: 90});
-    SceneManager.pop();
-  };
-
-  Scene_PuzzleSokoban.prototype.onCancel = function() {
-    SoundManager.playCancel();
-    SceneManager.pop();
-  };
-
-  //=============================================================================
-  // 업데이트 루프
-  //=============================================================================
-  Scene_PuzzleSokoban.prototype.update = function() {
-    Scene_Base.prototype.update.call(this);
-
-    this._updateMessage();
-
-    if (this._inputDelay > 0) {
-      this._inputDelay--;
-      return;
-    }
-
-    // ESC — 취소
-    if (Input.isTriggered('cancel')) {
-      this.onCancel();
-      return;
-    }
-
-    // R — 리셋
-    if (Input.isTriggered('r') || (Input.isPressed('r'))) {
-      if (Input.isTriggered('r')) {
-        this._resetLevel();
-        this._drawBoard();
-        this._drawUI();
-        this._inputDelay = 12;
-        return;
-      }
-    }
-
-    // Z — 되돌리기
-    if (Input.isTriggered('z') || Input.isPressed('z')) {
-      if (Input.isTriggered('z')) {
-        this._undo();
-        this._drawBoard();
-        this._drawUI();
-        this._inputDelay = 8;
-        return;
-      }
-    }
-
-    // 방향 이동
-    var moved = false;
-    if (Input.isTriggered('left')  || Input.isRepeated('left'))  { moved = this._tryMove(-1,  0); }
-    if (Input.isTriggered('right') || Input.isRepeated('right')) { moved = this._tryMove( 1,  0); }
-    if (Input.isTriggered('up')    || Input.isRepeated('up'))    { moved = this._tryMove( 0, -1); }
-    if (Input.isTriggered('down')  || Input.isRepeated('down'))  { moved = this._tryMove( 0,  1); }
-
-    if (moved) {
-      this._drawBoard();
-      this._drawUI();
-      this._inputDelay = 5;
-
-      if (this._isCleared()) {
-        this._inputDelay = 90;
-        var self = this;
-        var delay = 0;
-        // 클리어 연출 후 다음 레벨 or 완료
-        var origDelay = this._inputDelay;
-        this._onClearScheduled = true;
-        this._clearCountdown = 90;
-        this._showMessage(
-          this._levelIndex + 1 < LEVELS.length
-            ? '클리어! 다음 레벨로...'
-            : '모든 레벨 클리어!',
-          85
-        );
-      }
-    }
-
-    // 클리어 카운트다운
-    if (this._onClearScheduled) {
-      this._clearCountdown--;
-      if (this._clearCountdown <= 0) {
-        this._onClearScheduled = false;
-        this._advanceLevel();
-      }
-    }
-  };
-
-  //=============================================================================
-  // 키 입력 매핑 (RPG Maker MV Input 시스템에 r, z 키 추가)
-  //=============================================================================
-  (function() {
-    var _Input_initialize = Input.initialize;
-    Input.initialize = function() {
-      _Input_initialize.call(this);
+    //=========================================================================
+    // Sokoban 네임스페이스
+    //=========================================================================
+    var Sokoban = {
+        _active:    false,
+        _switchId:  0,
+        _boxes:     [],   // [{eventId, x, y}]  현재 위치
+        _goals:     [],   // [{x, y}]            region ID 1 인 타일
+        _originals: []    // [{eventId, x, y}]   초기 위치 (reset 용)
     };
 
-    // keyMapper 에 없는 키는 isTriggered가 작동하지 않으므로 추가
-    if (!Input.keyMapper[82]) Input.keyMapper[82] = 'r'; // R
-    if (!Input.keyMapper[90]) Input.keyMapper[90] = 'z'; // Z
-  })();
+    //-------------------------------------------------------------------------
+    // 맵의 모든 region ID 1 타일 좌표를 수집
+    //-------------------------------------------------------------------------
+    Sokoban.collectGoals = function () {
+        this._goals = [];
+        var map = $dataMap;
+        if (!map) return;
+        var w = map.width;
+        var h = map.height;
+        // region ID 는 레이어 z=5 에 저장됨
+        // $gameMap.regionId(x, y) 사용
+        for (var y = 0; y < h; y++) {
+            for (var x = 0; x < w; x++) {
+                if ($gameMap.regionId(x, y) === 1) {
+                    this._goals.push({ x: x, y: y });
+                }
+            }
+        }
+    };
+
+    //-------------------------------------------------------------------------
+    // 현재 맵의 <sokoban_box> 이벤트를 수집
+    //-------------------------------------------------------------------------
+    Sokoban.collectBoxes = function () {
+        this._boxes     = [];
+        this._originals = [];
+        var events = $gameMap.events();
+        for (var i = 0; i < events.length; i++) {
+            var ev = events[i];
+            var note = ev.event().note || '';
+            if (note.indexOf('<sokoban_box>') >= 0) {
+                var entry = { eventId: ev.eventId(), x: ev.x, y: ev.y };
+                this._boxes.push(entry);
+                this._originals.push({ eventId: ev.eventId(), x: ev.x, y: ev.y });
+            }
+        }
+    };
+
+    //-------------------------------------------------------------------------
+    // 좌표 (x, y) 에 박스가 있는지 확인 → 있으면 해당 박스 객체 반환, 없으면 null
+    //-------------------------------------------------------------------------
+    Sokoban.boxAt = function (x, y) {
+        for (var i = 0; i < this._boxes.length; i++) {
+            if (this._boxes[i].x === x && this._boxes[i].y === y) {
+                return this._boxes[i];
+            }
+        }
+        return null;
+    };
+
+    //-------------------------------------------------------------------------
+    // 승리 체크: 모든 박스가 목표 위치에 있는가
+    //-------------------------------------------------------------------------
+    Sokoban.isCleared = function () {
+        if (this._boxes.length === 0 || this._goals.length === 0) return false;
+        for (var i = 0; i < this._boxes.length; i++) {
+            var bx = this._boxes[i].x;
+            var by = this._boxes[i].y;
+            var onGoal = false;
+            for (var j = 0; j < this._goals.length; j++) {
+                if (this._goals[j].x === bx && this._goals[j].y === by) {
+                    onGoal = true;
+                    break;
+                }
+            }
+            if (!onGoal) return false;
+        }
+        return true;
+    };
+
+    //-------------------------------------------------------------------------
+    // 초기화
+    //-------------------------------------------------------------------------
+    Sokoban.init = function (switchId) {
+        this._active   = true;
+        this._switchId = switchId || 0;
+        this.collectGoals();
+        this.collectBoxes();
+
+        // 안내 메시지 표시
+        $gameMessage.setBackground(0);
+        $gameMessage.setPositionType(2);
+        $gameMessage.add('\\{소코반 퍼즐\\}');
+        $gameMessage.add('상자(□)를 ★ 표시된 목표 위치에 밀어 넣으세요.');
+        $gameMessage.add('R키: 리셋 | 방향키: 이동');
+    };
+
+    //-------------------------------------------------------------------------
+    // 리셋: 박스를 초기 위치로 복원
+    //-------------------------------------------------------------------------
+    Sokoban.reset = function () {
+        SoundManager.playCancel();
+        for (var i = 0; i < this._originals.length; i++) {
+            var orig = this._originals[i];
+            var ev   = $gameMap.event(orig.eventId);
+            if (ev) {
+                ev.locate(orig.x, orig.y);
+            }
+            // _boxes 동기화
+            for (var j = 0; j < this._boxes.length; j++) {
+                if (this._boxes[j].eventId === orig.eventId) {
+                    this._boxes[j].x = orig.x;
+                    this._boxes[j].y = orig.y;
+                    break;
+                }
+            }
+        }
+    };
+
+    //=========================================================================
+    // 플러그인 커맨드
+    //=========================================================================
+    var _pluginCommand = Game_Interpreter.prototype.pluginCommand;
+    Game_Interpreter.prototype.pluginCommand = function (command, args) {
+        _pluginCommand.call(this, command, args);
+        if (command === 'PUZZLE_SOKOBAN_INIT') {
+            var switchId = parseInt(args[0]) || 0;
+            Sokoban.init(switchId);
+        } else if (command === 'PUZZLE_SOKOBAN_RESET') {
+            Sokoban.reset();
+        }
+    };
+
+    //=========================================================================
+    // Game_Player.prototype.moveStraight 훅
+    // 박스 밀기 처리
+    //=========================================================================
+    var _moveStraight = Game_Player.prototype.moveStraight;
+    Game_Player.prototype.moveStraight = function (d) {
+        if (!Sokoban._active) {
+            _moveStraight.call(this, d);
+            return;
+        }
+
+        // 이동 방향으로의 한 칸 앞 좌표 계산
+        var nx = $gameMap.roundXWithDirection(this.x, d);
+        var ny = $gameMap.roundYWithDirection(this.y, d);
+
+        var box = Sokoban.boxAt(nx, ny);
+
+        if (!box) {
+            // 박스 없음 — 기본 이동
+            _moveStraight.call(this, d);
+            return;
+        }
+
+        // 박스 너머 좌표
+        var bx = $gameMap.roundXWithDirection(nx, d);
+        var by = $gameMap.roundYWithDirection(ny, d);
+
+        // 박스를 밀 수 있는지 확인
+        // 1) 맵 통과 가능 여부 (벽, 지형 등)
+        // 2) 다른 박스가 없는지 확인
+        var passable  = $gameMap.isPassable(nx, ny, d);
+        var anotherBox = Sokoban.boxAt(bx, by);
+
+        if (!passable || anotherBox) {
+            // 밀 수 없음
+            SoundManager.playBuzzer();
+            return; // 이동 취소
+        }
+
+        // 박스 이동
+        var ev = $gameMap.event(box.eventId);
+        if (ev) {
+            ev.locate(bx, by);
+        }
+        box.x = bx;
+        box.y = by;
+
+        // 박스 밀기 SE
+        AudioManager.playSe({ name: 'Cursor1', pan: 0, pitch: 100, volume: 80 });
+
+        // 플레이어 이동 허용
+        _moveStraight.call(this, d);
+
+        // 승리 체크
+        if (Sokoban.isCleared()) {
+            Sokoban._active = false;
+            if (Sokoban._switchId > 0) {
+                $gameSwitches.setValue(Sokoban._switchId, true);
+            }
+            AudioManager.playSe({ name: 'Fanfare1', pan: 0, pitch: 100, volume: 90 });
+            $gameMessage.setBackground(0);
+            $gameMessage.setPositionType(2);
+            $gameMessage.add('\\{퍼즐 완성!\\}');
+            $gameMessage.add('모든 상자를 목표 위치에 넣었습니다!');
+        }
+    };
+
+    //=========================================================================
+    // Scene_Map.prototype.stop 훅
+    // 맵을 나갈 때 소코반 비활성화
+    //=========================================================================
+    var _sceneMapStop = Scene_Map.prototype.stop;
+    Scene_Map.prototype.stop = function () {
+        _sceneMapStop.call(this);
+        Sokoban._active = false;
+    };
+
+    //=========================================================================
+    // R키(pagedown) 감지 → 리셋
+    // Scene_Map.prototype.update 에 훅
+    //=========================================================================
+    var _sceneMapUpdate = Scene_Map.prototype.update;
+    Scene_Map.prototype.update = function () {
+        _sceneMapUpdate.call(this);
+
+        if (Sokoban._active) {
+            // 메시지 창이 열려 있으면 키 입력 무시
+            if (!$gameMessage.isBusy()) {
+                if (Input.isTriggered('pagedown')) {
+                    Sokoban.reset();
+                }
+            }
+        }
+    };
+
+    //=========================================================================
+    // 맵 전환 시 상태 리셋
+    // Game_Player.prototype.reserveTransfer 훅
+    //=========================================================================
+    var _reserveTransfer = Game_Player.prototype.reserveTransfer;
+    Game_Player.prototype.reserveTransfer = function (mapId, x, y, d, fadeType) {
+        Sokoban._active = false;
+        _reserveTransfer.call(this, mapId, x, y, d, fadeType);
+    };
 
 })();
