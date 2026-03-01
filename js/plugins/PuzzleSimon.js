@@ -379,12 +379,6 @@
         buildEventIds();
         startRound(1);
 
-        if ($gameMessage && !$gameMessage.isBusy()) {
-          $gameMessage.newPage();
-          $gameMessage.add('\\c[14]기억 게임\\c[0]');
-          $gameMessage.add('발광하는 발판을 기억하고,');
-          $gameMessage.add('같은 순서로 밟으세요!');
-        }
         break;
       }
 
