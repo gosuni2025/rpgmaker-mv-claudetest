@@ -204,7 +204,7 @@
               "action": "script",
               "code": "$ctx.focused = '[OK] ↓ 아래 선택됨';"
             },
-            "navDown": "navTest/root/main_panel/btn_close"
+            "navDown": "btn_close"
           },
           {
             "id": "btn_br",
