@@ -193,7 +193,8 @@
             "userExpr": "$gameParty.members()[$ctx.actorIndex]",
             "soundType": "skill",
             "setLastSkill": true,
-            "actorWidget": "actor_select"
+            "actorWidget": "actor_select",
+            "actorPanelsWidget": "actor_panels"
           },
           "cancel": {
             "action": "focusWidget",
@@ -202,21 +203,66 @@
         }
       },
       {
+        "id": "actor_panels",
+        "type": "panel",
+        "x": 0,
+        "y": 108,
+        "width": 816,
+        "height": 480,
+        "visible": false,
+        "children": [
+          {
+            "id": "actor_row_0",
+            "type": "scene",
+            "sceneId": "actor_row_item",
+            "instanceCtx": { "actorIndex": 0 },
+            "x": 0,
+            "y": 0,
+            "width": 816,
+            "height": 120
+          },
+          {
+            "id": "actor_row_1",
+            "type": "scene",
+            "sceneId": "actor_row_item",
+            "instanceCtx": { "actorIndex": 1 },
+            "x": 0,
+            "y": 120,
+            "width": 816,
+            "height": 120
+          },
+          {
+            "id": "actor_row_2",
+            "type": "scene",
+            "sceneId": "actor_row_item",
+            "instanceCtx": { "actorIndex": 2 },
+            "x": 0,
+            "y": 240,
+            "width": 816,
+            "height": 120
+          },
+          {
+            "id": "actor_row_3",
+            "type": "scene",
+            "sceneId": "actor_row_item",
+            "instanceCtx": { "actorIndex": 3 },
+            "x": 0,
+            "y": 360,
+            "width": 816,
+            "height": 120
+          }
+        ]
+      },
+      {
         "id": "actor_select",
         "type": "rowSelector",
         "x": 0,
         "y": 108,
         "width": 816,
-        "height": 516,
+        "height": 480,
         "numRows": "party",
         "padding": 0,
-        "transparent": true,
-        "handlers": {
-          "cancel": {
-            "action": "focusWidget",
-            "target": "skill_list"
-          }
-        }
+        "transparent": true
       },
       {
         "id": "textArea_17722651297207",
