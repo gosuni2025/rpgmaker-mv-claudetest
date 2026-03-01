@@ -380,11 +380,24 @@ Scene_Boot.prototype.isReady = function() {
 Scene_Boot.prototype.isGameFontLoaded = function() {
     if (Graphics.isFontLoaded('GameFont')) {
         return true;
-    } else if (!Graphics.canUseCssFontLoading()){
+    } else if (Graphics.canUseCssFontLoading()) {
+        // CSS Font Loading API 사용 가능: 명시적으로 폰트 로딩 트리거
+        // (fontSize=0px div 방식은 Chromium에서 폰트 다운로드를 트리거하지 않을 수 있음)
+        if (!this._fontLoadPromise) {
+            this._fontLoadPromise = document.fonts.load('10px "GameFont"');
+        }
+        var elapsed = Date.now() - this._startDate;
+        if (elapsed >= 30000) {
+            // 30초 타임아웃: 폰트 로딩 실패해도 게임 진행
+            return true;
+        }
+        return false;
+    } else {
         var elapsed = Date.now() - this._startDate;
         if (elapsed >= 60000) {
             throw new Error('Failed to load GameFont');
         }
+        return false;
     }
 };
 
@@ -655,6 +668,27 @@ Scene_Map.prototype.terminate = function() {
     this.removeChild(this._mapNameWindow);
     this.removeChild(this._windowLayer);
     this.removeChild(this._spriteset);
+};
+
+Scene_Map.prototype.destroy = function(options) {
+    // terminate()에서 removeChild로 분리된 orphan 멤버들을 명시적으로 해제
+    if (this._mapNameWindow && this._mapNameWindow.destroy) {
+        this._mapNameWindow.destroy(options);
+        this._mapNameWindow = null;
+    }
+    if (this._windowLayer && this._windowLayer.destroy) {
+        this._windowLayer.destroy(options);
+        this._windowLayer = null;
+    }
+    if (this._spriteset && this._spriteset.destroy) {
+        this._spriteset.destroy(options);
+        this._spriteset = null;
+    }
+    if (this._fadeSprite && this._fadeSprite.destroy) {
+        this._fadeSprite.destroy(options);
+        this._fadeSprite = null;
+    }
+    ThreeContainer.prototype.destroy.call(this, options);
 };
 
 Scene_Map.prototype.needsFadeIn = function() {
