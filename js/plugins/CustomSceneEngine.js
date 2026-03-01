@@ -1492,9 +1492,7 @@
     this._align = def.align || 'left';
     this._vAlign = def.verticalAlign || 'middle';
     this._fontSize = def.fontSize || 28;
-    var colorVal = def.color || '#ffffff';
-    this._colorTemplate = (colorVal && colorVal.charAt(0) === '{') ? colorVal : null;
-    this._color = this._colorTemplate ? '#ffffff' : colorVal;
+    this._color = def.color || '#ffffff';
     this._useTextEx = def.useTextEx === true;
     if (this._useTextEx) {
       // Window_Base 기반: drawTextEx로 \c[N] 색상 코드 지원
@@ -1538,15 +1536,13 @@
     }
     if (!this._bitmap) return;
     var text = resolveTemplate(this._template);
-    var color = this._colorTemplate ? (resolveTemplate(this._colorTemplate) || '#ffffff') : this._color;
-    if (text === this._lastText && color === this._lastColor && this._align === this._lastAlign && this._vAlign === this._lastVAlign) return;
+    if (text === this._lastText && this._align === this._lastAlign && this._vAlign === this._lastVAlign) return;
     this._lastText = text;
-    this._lastColor = color;
     this._lastAlign = this._align;
     this._lastVAlign = this._vAlign;
     this._bitmap.clear();
     this._drawDecoBg(this._bitmap, this._width, this._height, this._def);
-    this._bitmap.textColor = color;
+    this._bitmap.textColor = this._color;
     var textH = this._fontSize + 8;
     var ty;
     if (this._vAlign === 'top') {
@@ -1716,6 +1712,8 @@
       } else { // stretch
         bmp.blt(bitmap, sx, sy, sw, sh, 0, 0, w, h);
       }
+      if (self._bitmap && self._bitmap !== bmp) self._bitmap.destroy();
+      self._bitmap = bmp;
       sprite.bitmap = bmp;
     });
   };
@@ -1746,6 +1744,8 @@
       self._drawDecoBg(bmp, drawW, drawH, def);
       bmp.blt(bitmap, 0, 0, bitmap.width, bitmap.height, 0, 0, drawW, drawH);
       self._drawDecoBorder(bmp, drawW, drawH, def);
+      if (self._bitmap && self._bitmap !== bmp) self._bitmap.destroy();
+      self._bitmap = bmp;
       sprite.bitmap = bmp;
     });
   };
@@ -3030,6 +3030,14 @@
     } else {
       this._createLegacyWindows(sceneDef);
     }
+
+    // GPU 누수 디버그 — 씬 열릴 때 스냅샷
+    var _r = typeof Graphics !== 'undefined' ? Graphics._renderer : null;
+    this._dbgOpenTex = _r ? _r.info.memory.textures : -1;
+    this._dbgOpenGeo = _r ? _r.info.memory.geometries : -1;
+    this._dbgOpenBitmapCount = typeof Bitmap !== 'undefined' ? Bitmap._gpuTexCount : -1;
+    console.log('[CSE:' + this._sceneId + '] OPEN  GPU tex=' + this._dbgOpenTex
+      + ' geo=' + this._dbgOpenGeo + ' bitmapCount=' + this._dbgOpenBitmapCount);
   };
 
   Scene_CustomUI.prototype._createLegacyWindows = function(sceneDef) {
@@ -3692,6 +3700,11 @@
   };
 
   Scene_CustomUI.prototype.terminate = function() {
+    var _r = typeof Graphics !== 'undefined' ? Graphics._renderer : null;
+    var _texBefore = _r ? _r.info.memory.textures : -1;
+    var _geoBefore = _r ? _r.info.memory.geometries : -1;
+    var _bmBefore  = typeof Bitmap !== 'undefined' ? Bitmap._gpuTexCount : -1;
+
     Scene_Base.prototype.terminate.call(this);
     if (this._navManager && this._navManager.dispose) this._navManager.dispose();
     // 위젯 트리 전체 destroy → GPU tex/geo 해제
@@ -3717,6 +3730,18 @@
         ConfigManager.save();
       }
     }
+
+    // GPU 누수 디버그 — 씬 닫힐 때 비교
+    var _texAfter = _r ? _r.info.memory.textures : -1;
+    var _geoAfter = _r ? _r.info.memory.geometries : -1;
+    var _bmAfter  = typeof Bitmap !== 'undefined' ? Bitmap._gpuTexCount : -1;
+    console.log('[CSE:' + this._sceneId + '] CLOSE GPU tex=' + _texAfter
+      + ' geo=' + _geoAfter + ' bitmapCount=' + _bmAfter
+      + ' | freed tex=' + (_texBefore - _texAfter) + ' geo=' + (_geoBefore - _geoAfter)
+      + ' bitmaps=' + (_bmBefore - _bmAfter)
+      + ' | net since open: tex+' + (_texAfter - this._dbgOpenTex)
+      + ' geo+' + (_geoAfter - this._dbgOpenGeo)
+      + ' bitmaps+' + (_bmAfter - this._dbgOpenBitmapCount));
   };
 
   Scene_CustomUI.prototype._onOptionsCancel = function(widget) {
