@@ -207,9 +207,10 @@
         "x": 0,
         "y": 108,
         "width": 816,
-        "height": 480,
+        "height": 516,
         "itemScene": "actor_row_item",
         "rowHeight": 120,
+        "padding": 0,
         "visible": false,
         "dataScript": "$gameParty.members().map(function(a, i) { return { actorIndex: i }; })"
       },
