@@ -157,15 +157,15 @@
     // 선택 항목 없음 (커서 없음)
     Window_ItemDetail.prototype.maxItems = function () { return 0; };
 
-    // ── 디버그용 processTouch 오버라이드 ──
+    // ── 디버그용 processTouch 오버라이드 (visible=true일 때만 로그) ──
     Window_ItemDetail.prototype.processTouch = function () {
         var ti = TouchInput.isTriggered();
         var tc = TouchInput.isCancelled();
-        if (ti || tc) {
+        if ((ti || tc) && this.visible) {
             var inside = this.isTouchedInsideFrame ? this.isTouchedInsideFrame() : '?';
             console.log('[ItemDetail] processTouch | triggered=' + ti +
                 ' cancelled=' + tc + ' insideFrame=' + inside +
-                ' active=' + this.active + ' isOpen=' + this.isOpen());
+                ' active=' + this.active);
         }
         Window_Selectable.prototype.processTouch.call(this);
     };
@@ -522,12 +522,23 @@
         // (updateChildren()이 실행되지 않으므로 직접 호출 필요)
         if (dw && dw.visible) {
             this.updateFade();
+            dw.activate();
             dw.update();
+            // update 후 dw가 닫혔으면(cancel/ok handler 실행됨) → input clear + 쿨다운
+            if (!dw.visible) {
+                Input.clear(); TouchInput.clear();
+                this._popupInputCooldown = 3;
+            }
             return;
         }
         if (aw && aw.visible) {
             this.updateFade();
+            aw.activate();
             aw.update();
+            if (!aw.visible) {
+                Input.clear(); TouchInput.clear();
+                this._popupInputCooldown = 3;
+            }
             return;
         }
 
@@ -654,18 +665,24 @@
             // NavManager 등이 dw를 deactivate할 수 있으므로 매 프레임 activate() 보장
             if (dw && dw.visible) {
                 if (this.updateFade) this.updateFade();
-                var prevActive = dw.active;
                 dw.activate();
-                if (!prevActive) {
-                    console.log('[ItemDetail] DW was inactive → forced activate');
-                }
                 dw.update();
+                // update 후 dw가 닫혔으면(cancel/ok handler 실행됨) → input clear + 쿨다운
+                if (!dw.visible) {
+                    console.log('[ItemDetail] DW closed by handler → input clear');
+                    Input.clear(); TouchInput.clear();
+                    this._popupInputCooldown = 3;
+                }
                 return;
             }
             if (aw && aw.visible) {
                 if (this.updateFade) this.updateFade();
                 aw.activate();
                 aw.update();
+                if (!aw.visible) {
+                    Input.clear(); TouchInput.clear();
+                    this._popupInputCooldown = 3;
+                }
                 return;
             }
 
