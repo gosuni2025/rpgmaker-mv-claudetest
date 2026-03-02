@@ -4471,22 +4471,24 @@
       this._helpWindow.show();
     };
 
-    // selectEnemySelection: actorCommand 비활성화 + 하단 패널 dim + enemyWindow 최상단으로
+    // selectEnemySelection: actorCommand 비활성화 + rowOverlay dim + enemyWindow를 Scene 최상단으로
     var origSES = SCB.selectEnemySelection || function() {};
     Klass.prototype.selectEnemySelection = function() {
       var wmap = this._widgetMap || {};
       if (wmap.actorCommand && wmap.actorCommand.deactivate) wmap.actorCommand.deactivate();
-      // actorWindow / statusWindow dim
-      ['actorWindow', 'statusWindow'].forEach(function(id) {
+      // statusWindow _rowOverlay(서브씬 스프라이트) + actorWindow _rowOverlay(커서) dim
+      ['statusWindow', 'actorWindow'].forEach(function(id) {
         var w = wmap[id];
+        if (w && w._rowOverlay) w._rowOverlay.alpha = 0.35;
         if (w && w._window) w._window.alpha = 0.35;
       });
-      // enemyWindow를 windowLayer 맨 앞으로 (z-order)
+      // enemyWindow를 WindowLayer에서 꺼내 Scene 최상단에 addChild
+      // → statusWindow _rowOverlay보다 위에 그려짐
       var enemyWidget = wmap['enemyWindow'];
-      if (enemyWidget && enemyWidget._window && enemyWidget._window.parent) {
-        var layer = enemyWidget._window.parent;
-        layer.removeChild(enemyWidget._window);
-        layer.addChild(enemyWidget._window);
+      if (enemyWidget && enemyWidget._window && !enemyWidget._window._csBattleLifted) {
+        if (enemyWidget._window.parent) enemyWidget._window.parent.removeChild(enemyWidget._window);
+        SceneManager._scene.addChild(enemyWidget._window);
+        enemyWidget._window._csBattleLifted = true;
       }
       origSES.call(this);
     };
@@ -4550,12 +4552,20 @@
 
     Klass.prototype.onEnemyCancel = function() {
       this._enemyWindow.hide();
-      // dim 복구
       var wmap = this._widgetMap || {};
-      ['actorWindow', 'statusWindow'].forEach(function(id) {
+      // rowOverlay dim 복구
+      ['statusWindow', 'actorWindow'].forEach(function(id) {
         var w = wmap[id];
+        if (w && w._rowOverlay) w._rowOverlay.alpha = 1;
         if (w && w._window) w._window.alpha = 1;
       });
+      // enemyWindow를 WindowLayer로 복귀
+      var enemyWidget = wmap['enemyWindow'];
+      if (enemyWidget && enemyWidget._window && enemyWidget._window._csBattleLifted) {
+        if (enemyWidget._window.parent) enemyWidget._window.parent.removeChild(enemyWidget._window);
+        if (this._windowLayer) this._windowLayer.addChild(enemyWidget._window);
+        enemyWidget._window._csBattleLifted = false;
+      }
       var last = this._ctx.lastActorCommand || 'attack';
       if (last === 'attack') { this._actorCommandWindow.activate(); }
       else if (last === 'skill') { this._skillWindow.show(); this._skillWindow.activate(); }
