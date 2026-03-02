@@ -16,10 +16,27 @@
     "selectedPrice": "0",
     "shopMode": "'command'",
     "helpText": "''",
-    "statusText": "''"
+    "statusText": "''",
+    "shopNum": "1",
+    "shopMax": "1",
+    "shopPrice": "0",
+    "numInput": "false"
   },
   "navigation": {
     "defaultFocus": "cmd_win"
+  },
+  "onUpdate": "if ($ctx.numInput) { var changed = false; if (Input.isRepeated('up')) { $ctx.shopNum = Math.min($ctx.shopNum + 10, $ctx.shopMax); changed = true; } if (Input.isRepeated('down')) { $ctx.shopNum = Math.max($ctx.shopNum - 10, 1); changed = true; } if (Input.isRepeated('right')) { $ctx.shopNum = Math.min($ctx.shopNum + 1, $ctx.shopMax); changed = true; } if (Input.isRepeated('left')) { $ctx.shopNum = Math.max($ctx.shopNum - 1, 1); changed = true; } if (changed && typeof SoundManager !== 'undefined') SoundManager.playCursor(); }",
+  "keyHandlers": {
+    "ok": {
+      "action": "script",
+      "code": "if ($ctx.numInput) { SoundManager.playShop(); $ctx.numInput = false; this._widgetMap['number_win']._displayObject.visible = false; if ($ctx.shopMode === 'buy') { $gameParty.loseGold($ctx.shopNum * $ctx.shopPrice); $gameParty.gainItem($ctx.selectedItem, $ctx.shopNum); this._widgetMap['buy_list']._window.visible = true; this._navManager.focusWidget('buy_list'); } else { $gameParty.gainGold($ctx.shopNum * $ctx.shopPrice); $gameParty.loseItem($ctx.selectedItem, $ctx.shopNum); this._widgetMap['status_win']._displayObject.visible = false; this._widgetMap['sell_list']._window.visible = true; this._widgetMap['category_win']._window.visible = true; this._navManager.focusWidget('sell_list'); } }",
+      "thenAction": { "action": "noop" }
+    },
+    "cancel": {
+      "action": "script",
+      "code": "if ($ctx.numInput) { SoundManager.playCancel(); $ctx.numInput = false; this._widgetMap['number_win']._displayObject.visible = false; if ($ctx.shopMode === 'buy') { this._widgetMap['buy_list']._window.visible = true; this._navManager.focusWidget('buy_list'); } else { this._widgetMap['status_win']._displayObject.visible = false; this._widgetMap['sell_list']._window.visible = true; this._widgetMap['category_win']._window.visible = true; this._navManager.focusWidget('sell_list'); } }",
+      "thenAction": { "action": "noop" }
+    }
   },
   "root": {
     "id": "root",
@@ -154,7 +171,7 @@
         "handlers": {
           "ok": {
             "action": "script",
-            "code": "var idx=this._widgetMap['buy_list']._window.index(); var info=$ctx.buyItems&&$ctx.buyItems[idx]; if(info){ $ctx.selectedItem=info.item; $ctx.selectedPrice=info.price; var maxBuy=Math.min($gameParty.maxItems(info.item)-$gameParty.numItems(info.item), info.price>0?Math.floor($gameParty.gold()/info.price):99); maxBuy=Math.max(1,maxBuy); var nw=this._widgetMap['number_win']; nw.setup(info.item,maxBuy,info.price); nw._window.visible=true; this._widgetMap['buy_list']._window.visible=false; this._navManager.focusWidget('number_win'); }",
+            "code": "var idx=this._widgetMap['buy_list']._window.index(); var info=$ctx.buyItems&&$ctx.buyItems[idx]; if(info){ $ctx.selectedItem=info.item; $ctx.selectedPrice=info.price; var maxBuy=Math.min($gameParty.maxItems(info.item)-$gameParty.numItems(info.item), info.price>0?Math.floor($gameParty.gold()/info.price):99); maxBuy=Math.max(1,maxBuy); $ctx.shopNum=1; $ctx.shopMax=maxBuy; $ctx.shopPrice=info.price; $ctx.numInput=true; this._widgetMap['buy_list']._window.visible=false; this._widgetMap['number_win']._displayObject.visible=true; this._navManager.clearFocus(); }",
             "thenAction": {
               "action": "noop"
             }
@@ -170,28 +187,106 @@
       },
       {
         "id": "number_win",
-        "type": "shopNumber",
+        "type": "panel",
         "x": 0,
         "y": 144,
         "width": 456,
         "height": 480,
         "visible": false,
-        "handlers": {
-          "ok": {
-            "action": "script",
-            "code": "var n=this._widgetMap['number_win'].number(); SoundManager.playShop(); this._widgetMap['number_win']._window.visible=false; if($ctx.shopMode==='buy'){ $gameParty.loseGold(n*$ctx.selectedPrice); $gameParty.gainItem($ctx.selectedItem,n); this._widgetMap['buy_list']._window.visible=true; this._navManager.focusWidget('buy_list'); }else{ $gameParty.gainGold(n*$ctx.selectedPrice); $gameParty.loseItem($ctx.selectedItem,n); this._widgetMap['status_win']._displayObject.visible=false; this._widgetMap['sell_list']._window.visible=true; this._widgetMap['category_win']._window.visible=true; this._navManager.focusWidget('sell_list'); }",
-            "thenAction": {
-              "action": "noop"
-            }
+        "windowed": true,
+        "children": [
+          {
+            "id": "num_item_name",
+            "type": "label",
+            "x": 8,
+            "y": 8,
+            "width": 440,
+            "height": 36,
+            "text": "{$ctx.selectedItem?$ctx.selectedItem.name:'-'}",
+            "fontSize": 22,
+            "align": "left",
+            "color": "#dddddd",
+            "windowed": false
           },
-          "cancel": {
-            "action": "script",
-            "code": "SoundManager.playCancel(); this._widgetMap['number_win']._window.visible=false; if($ctx.shopMode==='buy'){ this._widgetMap['buy_list']._window.visible=true; this._navManager.focusWidget('buy_list'); }else{ this._widgetMap['sell_list']._window.visible=true; this._widgetMap['category_win']._window.visible=true; this._navManager.focusWidget('sell_list'); }",
-            "thenAction": {
-              "action": "noop"
-            }
+          {
+            "id": "num_count",
+            "type": "label",
+            "x": 8,
+            "y": 56,
+            "width": 440,
+            "height": 72,
+            "text": "× {$ctx.shopNum}",
+            "fontSize": 52,
+            "align": "center",
+            "color": "#ffffff",
+            "windowed": false
+          },
+          {
+            "id": "num_max_info",
+            "type": "label",
+            "x": 8,
+            "y": 136,
+            "width": 440,
+            "height": 28,
+            "text": "(최대 {$ctx.shopMax}개)",
+            "fontSize": 18,
+            "align": "center",
+            "color": "#aaaaaa",
+            "windowed": false
+          },
+          {
+            "id": "num_total_title",
+            "type": "label",
+            "x": 8,
+            "y": 178,
+            "width": 220,
+            "height": 36,
+            "text": "소계",
+            "fontSize": 22,
+            "align": "left",
+            "color": "#aaaaaa",
+            "windowed": false
+          },
+          {
+            "id": "num_total_amount",
+            "type": "label",
+            "x": 8,
+            "y": 178,
+            "width": 440,
+            "height": 36,
+            "text": "{(function(){var cu=typeof TextManager!=='undefined'?TextManager.currencyUnit:'G';return String(($ctx.shopNum||0)*($ctx.shopPrice||0))+' '+cu;})()}",
+            "fontSize": 22,
+            "align": "right",
+            "color": "#dddddd",
+            "windowed": false
+          },
+          {
+            "id": "num_key_hint",
+            "type": "label",
+            "x": 8,
+            "y": 230,
+            "width": 440,
+            "height": 30,
+            "text": "↑↓: ±10개   ←→: ±1개",
+            "fontSize": 18,
+            "align": "center",
+            "color": "#888888",
+            "windowed": false
+          },
+          {
+            "id": "num_confirm_hint",
+            "type": "label",
+            "x": 8,
+            "y": 266,
+            "width": 440,
+            "height": 30,
+            "text": "결정: 확인   취소: 돌아가기",
+            "fontSize": 18,
+            "align": "center",
+            "color": "#888888",
+            "windowed": false
           }
-        }
+        ]
       },
       {
         "id": "status_win",
@@ -281,7 +376,7 @@
         "handlers": {
           "ok": {
             "action": "script",
-            "code": "var idx=this._widgetMap['sell_list']._window.index(); var items=$ctx.sellItems; var item=items&&items[idx]; if(item){ $ctx.selectedItem=item; $ctx.selectedPrice=Math.floor(item.price/2); var maxSell=$gameParty.numItems(item); var nw=this._widgetMap['number_win']; nw.setup(item,maxSell,$ctx.selectedPrice); nw._window.visible=true; this._widgetMap['status_win']._displayObject.visible=true; this._widgetMap['sell_list']._window.visible=false; this._widgetMap['category_win']._window.visible=false; this._navManager.focusWidget('number_win'); }",
+            "code": "var idx=this._widgetMap['sell_list']._window.index(); var items=$ctx.sellItems; var item=items&&items[idx]; if(item){ $ctx.selectedItem=item; $ctx.selectedPrice=Math.floor(item.price/2); var maxSell=$gameParty.numItems(item); $ctx.shopNum=1; $ctx.shopMax=maxSell; $ctx.shopPrice=$ctx.selectedPrice; $ctx.numInput=true; this._widgetMap['status_win']._displayObject.visible=true; this._widgetMap['sell_list']._window.visible=false; this._widgetMap['category_win']._window.visible=false; this._widgetMap['number_win']._displayObject.visible=true; this._navManager.clearFocus(); }",
             "thenAction": {
               "action": "noop"
             }
@@ -294,15 +389,6 @@
             }
           }
         }
-      },
-      {
-        "id": "label_1772414271697",
-        "type": "label",
-        "x": 357,
-        "y": 546,
-        "width": 200,
-        "height": 36,
-        "text": "custom scene"
       }
     ]
   }
