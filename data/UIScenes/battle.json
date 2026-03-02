@@ -43,11 +43,11 @@
       {
         "id": "textArea_17722651096544",
         "type": "textArea",
-        "x": 504,
-        "y": 361,
+        "x": 505,
+        "y": 418,
         "width": 300,
         "height": 80,
-        "text": "커스텀씬",
+        "text": "커스텀씬111111",
         "align": "center",
         "verticalAlign": "middle"
       }
