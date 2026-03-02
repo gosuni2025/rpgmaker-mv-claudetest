@@ -125,5 +125,6 @@
       }
     ]
   },
-  "overlay": true
+  "overlay": true,
+  "navigation": {}
 }
