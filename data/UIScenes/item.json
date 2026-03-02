@@ -169,6 +169,7 @@
       },
       {
         "id": "id_action",
+        "displayName": "사용/살펴보기 선택",
         "type": "textList",
         "visible": false,
         "x": 288,
@@ -203,6 +204,7 @@
       },
       {
         "id": "id_popup",
+        "displayName": "상세 팝업",
         "type": "panel",
         "visible": false,
         "x": 33,
@@ -234,6 +236,7 @@
       },
       {
         "id": "id_popup_ctrl",
+        "displayName": "상세 팝업 컨트롤",
         "type": "textList",
         "visible": false,
         "x": 33,
@@ -268,6 +271,7 @@
       },
       {
         "id": "id_fullscreen",
+        "displayName": "전체화면 이미지",
         "type": "panel",
         "visible": false,
         "x": 0,
@@ -291,6 +295,7 @@
       },
       {
         "id": "id_full_ctrl",
+        "displayName": "전체화면 컨트롤",
         "type": "textList",
         "visible": false,
         "x": 0,
