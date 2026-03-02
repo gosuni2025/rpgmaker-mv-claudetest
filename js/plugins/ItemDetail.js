@@ -628,32 +628,20 @@
             var dw = this._itemDetailWindow;
             var aw = this._itemActionWindow;
 
+            var fsOpen = !!(fs && fs.visible);  // _isOpen 대신 visible로 체크 (더 신뢰성 높음)
             if (this._detailOverlay) {
-                this._detailOverlay.visible = !!(fs && fs.isOpen()) || !!(dw && dw.visible);
+                this._detailOverlay.visible = fsOpen || !!(dw && dw.visible);
             }
 
-            // 전체화면: DOM 이벤트로 닫기 감지 후 상세 팝업으로 복귀
-            if (fs && fs.isOpen()) {
-                if (fs._closeRequested) {
-                    fs.close();
-                    if (dw && dw.visible) dw.activate();
-                }
-                Input.clear(); TouchInput.clear();
-                return;
-            }
-
-            // 팝업 닫힘 직후 input 쿨다운 (repeat keydown 방지)
+            // 팝업 닫힘 직후 input 쿨다운 (repeat 방지)
             if (this._popupInputCooldown > 0) {
                 this._popupInputCooldown--;
-                Input.clear();
+                Input.clear(); TouchInput.clear();
                 if (this.updateFade) this.updateFade();
-                // 쿨다운 마지막 프레임에 item_list window 복원
                 if (this._popupInputCooldown === 0 && this._pendingActivateId) {
                     var ilId = this._pendingActivateId;
                     this._pendingActivateId = null;
                     var ilW = this._widgetMap && this._widgetMap[ilId];
-                    // Widget_TextList.activate()는 _rebuildFromScript()를 실행하여
-                    // 씬 전환을 트리거할 수 있으므로, 내부 Window만 activate
                     if (ilW && ilW._window && ilW._window.activate) {
                         ilW._window.activate();
                     }
@@ -661,33 +649,32 @@
                 return;
             }
 
-            // NavManager가 입력을 가로채기 전에 직접 처리
-            var cancelNow = TouchInput.isCancelled() || Input.isTriggered('cancel');
-            var okNow     = (TouchInput.isTriggered() && dw && dw.isTouchedInsideFrame && dw.isTouchedInsideFrame()) ||
-                            Input.isTriggered('ok');
-            if (cancelNow || okNow) {
-                console.log('[ID] input cancel=' + cancelNow + ' ok=' + okNow +
-                    ' | dw=' + (dw ? 'exist' : 'NULL') +
-                    ' visible=' + (dw ? dw.visible : '-'));
-            }
-            if (dw && dw.visible) {
+            // fullscreen 또는 팝업이 열려있으면 NavManager 이전에 직접 처리
+            if (fsOpen || (dw && dw.visible)) {
+                var cancelNow = TouchInput.isCancelled() || Input.isTriggered('cancel');
+                var okNow     = !fsOpen && dw && dw.visible &&
+                                ((TouchInput.isTriggered() && dw.isTouchedInsideFrame && dw.isTouchedInsideFrame()) ||
+                                 Input.isTriggered('ok'));
                 if (cancelNow) {
-                    SoundManager.playCancel();
-                    dw.hide();
-                    console.log('[ID] popup 닫힘 → dw.visible=' + dw.visible);
-                    Input.clear(); TouchInput.clear();
-                    this._pendingActivateId = (this._pendingHandler && this._pendingHandler.itemListWidget) || 'item_list';
-                    this._popupInputCooldown = 3;
+                    if (fsOpen) {
+                        // fullscreen 닫기 → 팝업으로 복귀
+                        fs.close();
+                    } else {
+                        // 팝업 닫기
+                        SoundManager.playCancel();
+                        dw.hide();
+                        this._pendingActivateId = (this._pendingHandler && this._pendingHandler.itemListWidget) || 'item_list';
+                        this._popupInputCooldown = 3;
+                    }
                 } else if (okNow) {
                     if (dw._detail && dw._detail.image) {
                         SoundManager.playOk();
-                        this._itemDetailFullscreen.open(dw._item, dw._detail);
-                        console.log('[ID] fullscreen 열림');
+                        fs.open(dw._item, dw._detail);
                     } else {
                         SoundManager.playBuzzer();
                     }
-                    Input.clear(); TouchInput.clear();
                 }
+                Input.clear(); TouchInput.clear();
                 if (this.updateFade) this.updateFade();
                 return;
             }
@@ -709,7 +696,7 @@
         if (_exec) {
             Scene_CustomUI.prototype._executeWidgetHandler = function (handler, widget) {
                 if (this._sceneId === 'item') {
-                    if ((this._itemDetailFullscreen && this._itemDetailFullscreen.isOpen()) ||
+                    if ((this._itemDetailFullscreen && this._itemDetailFullscreen.visible) ||
                         (this._itemDetailWindow    && this._itemDetailWindow.visible)      ||
                         (this._itemActionWindow    && this._itemActionWindow.visible)) {
                         return;
@@ -729,8 +716,11 @@
                                 this._itemActionWindow.show();
                                 this._itemActionWindow.activate();
                                 this._itemActionWindow.select(0);
+                                Input.clear(); TouchInput.clear();
                             } else {
                                 this._itemDetailWindow.open(item);
+                                Input.clear(); TouchInput.clear();
+                                this._popupInputCooldown = 3;
                             }
                             return;
                         }
