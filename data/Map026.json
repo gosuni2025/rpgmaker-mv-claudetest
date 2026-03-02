@@ -1,8 +1,8 @@
 {
   "autoplayBgm": false,
   "autoplayBgs": false,
-  "battleback1Name": "SF_Concrete",
-  "battleback2Name": "SF_City",
+  "battleback1Name": "Castle1",
+  "battleback2Name": "Brick",
   "bgm": {
     "name": "",
     "pan": 0,
@@ -12804,36 +12804,6 @@
           },
           "list": [
             {
-              "code": 101,
-              "indent": 0,
-              "parameters": [
-                "People1",
-                6,
-                0,
-                2,
-                "아이템 상인"
-              ]
-            },
-            {
-              "code": 401,
-              "indent": 0,
-              "parameters": [
-                "어서오세요~ 테스트용 아이템을 드릴게요!"
-              ]
-            },
-            {
-              "code": 401,
-              "indent": 0,
-              "parameters": [
-                "마음껏 써보세요! 특별히 신비한 수정구도 드릴게요."
-              ]
-            },
-            {
-              "code": 0,
-              "indent": 0,
-              "parameters": []
-            },
-            {
               "code": 126,
               "indent": 0,
               "parameters": [
@@ -12934,6 +12904,23 @@
               ]
             },
             {
+              "code": 101,
+              "indent": 0,
+              "parameters": [
+                "",
+                0,
+                0,
+                2
+              ]
+            },
+            {
+              "code": 401,
+              "indent": 0,
+              "parameters": [
+                "123123123132"
+              ]
+            },
+            {
               "code": 0,
               "indent": 0,
               "parameters": []
@@ -12956,12 +12943,12 @@
           "priorityType": 1,
           "stepAnime": false,
           "through": false,
-          "trigger": 0,
+          "trigger": 3,
           "walkAnime": true
         }
       ],
-      "x": 24,
-      "y": 18
+      "x": 14,
+      "y": 11
     },
     {
       "id": 60,
