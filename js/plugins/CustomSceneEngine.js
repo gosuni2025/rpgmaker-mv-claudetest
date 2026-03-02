@@ -4456,6 +4456,7 @@
       if (wmap.actorCommand) {
         if (wmap.actorCommand.deactivate) wmap.actorCommand.deactivate();
         if (wmap.actorCommand.hide) wmap.actorCommand.hide();
+        if (wmap.actorCommand._window && wmap.actorCommand._window.deselect) wmap.actorCommand._window.deselect();
       }
       // statusWindow _rowOverlay(서브씬 스프라이트) + actorWindow _rowOverlay(커서) dim
       ['statusWindow', 'actorWindow'].forEach(function(id) {
