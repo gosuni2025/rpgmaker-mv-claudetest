@@ -285,6 +285,50 @@
             "align": "center",
             "color": "#888888",
             "windowed": false
+          },
+          {
+            "id": "btn_down2",
+            "type": "spriteButton",
+            "buttonSetIndex": 0,
+            "x": 108,
+            "y": 330,
+            "onClick": {
+              "action": "script",
+              "code": "$ctx.shopNum=Math.max($ctx.shopNum-10,1); SoundManager.playCursor();"
+            }
+          },
+          {
+            "id": "btn_down",
+            "type": "spriteButton",
+            "buttonSetIndex": 1,
+            "x": 172,
+            "y": 330,
+            "onClick": {
+              "action": "script",
+              "code": "$ctx.shopNum=Math.max($ctx.shopNum-1,1); SoundManager.playCursor();"
+            }
+          },
+          {
+            "id": "btn_up",
+            "type": "spriteButton",
+            "buttonSetIndex": 2,
+            "x": 236,
+            "y": 330,
+            "onClick": {
+              "action": "script",
+              "code": "$ctx.shopNum=Math.min($ctx.shopNum+1,$ctx.shopMax); SoundManager.playCursor();"
+            }
+          },
+          {
+            "id": "btn_up2",
+            "type": "spriteButton",
+            "buttonSetIndex": 3,
+            "x": 300,
+            "y": 330,
+            "onClick": {
+              "action": "script",
+              "code": "$ctx.shopNum=Math.min($ctx.shopNum+10,$ctx.shopMax); SoundManager.playCursor();"
+            }
           }
         ]
       },
