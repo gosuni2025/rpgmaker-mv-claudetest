@@ -323,6 +323,9 @@
             if (node._threeObj.isMesh) {
                 if (forceOrder !== undefined) {
                     node._threeObj.renderOrder = forceOrder;
+                } else if (node._hudRenderOrder !== undefined) {
+                    // HUD 오버레이 (NPC 이름 등): 타일맵 모든 레이어 위에 고정 renderOrder
+                    node._threeObj.renderOrder = node._hudRenderOrder;
                 } else {
                     // 오브젝트 물 메시는 container보다 먼저 렌더링 (물 → 일반 타일 순서)
                     var meshChildren = node._threeObj.children;
@@ -360,8 +363,7 @@
                     return (a.userData.maxDrawZ || 0) - (b.userData.maxDrawZ || 0);
                 });
                 for (var t = 0; t < normalMeshes.length; t++) {
-                    normalMeshes[t].renderOrder = forceOrder !== undefined
-                        ? forceOrder : rendererObj._drawOrderCounter++;
+                    normalMeshes[t].renderOrder = rendererObj._drawOrderCounter++;
                 }
             }
         }
@@ -382,8 +384,27 @@
                     this._syncHierarchy(rendererObj, child, worldAlpha, childForceOrder);
                 } else if (child._threeObj) {
                     child._threeObj.visible = false;
+                } else {
+                    // invisible이지만 _threeObj가 없는 노드 (예: Window_Base, ThreeContainer)
+                    // → 자손의 Three.js 객체도 강제로 숨겨야 함
+                    // (예: id_popup.visible=false 시 id_popup_img의 Mesh가 ghost로 남는 문제)
+                    ThreeRendererStrategy._syncHierarchyHide(child);
                 }
             }
+        }
+    };
+
+    /**
+     * invisible 부모 아래의 모든 Three.js 객체를 재귀적으로 숨김.
+     * Window_Base 등 _threeObj가 없는 노드가 invisible일 때 자손 ThreeSprite를 정리.
+     */
+    ThreeRendererStrategy._syncHierarchyHide = function(node) {
+        var children = node.children;
+        if (!children) return;
+        for (var i = 0; i < children.length; i++) {
+            var child = children[i];
+            if (child._threeObj) child._threeObj.visible = false;
+            ThreeRendererStrategy._syncHierarchyHide(child);
         }
     };
 
