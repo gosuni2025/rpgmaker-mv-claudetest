@@ -647,20 +647,46 @@
             }
 
             // 팝업이 열린 동안: isPressed+prev 추적 + TouchInput으로 input 처리
-            // (Input.update()가 processHandling보다 먼저 실행되어 _pressedTime이 항상 >=1이므로
-            //  isTriggered는 사용 불가 — isPressed로 첫 pressed 프레임을 직접 감지)
-            // (마우스 클릭은 Input이 아닌 TouchInput으로 들어오므로 TouchInput도 체크)
             if (dw && dw.visible) {
                 if (this.updateFade) this.updateFade();
                 var cancelNow   = Input.isPressed('cancel');
                 var okNow       = Input.isPressed('ok');
                 var touchCancel = TouchInput.isCancelled();
                 var touchOk     = TouchInput.isTriggered() && !TouchInput.isCancelled();
+
+                // 매 30프레임마다 상태 로그
+                this._dwLogTick = (this._dwLogTick || 0) + 1;
+                if (this._dwLogTick % 30 === 1) {
+                    console.log('[ItemDetail] DW tick | active=' + dw.active +
+                        ' | key cancel=' + cancelNow + ' ok=' + okNow +
+                        ' | touch triggered=' + TouchInput.isTriggered() +
+                        ' cancelled=' + TouchInput.isCancelled() +
+                        ' | Input._currentState=' + JSON.stringify(Input._currentState) +
+                        ' | TouchInput._triggered=' + TouchInput._triggered +
+                        ' _cancelled=' + TouchInput._cancelled +
+                        ' _pressed=' + TouchInput._pressed);
+                }
+
+                // 입력 감지 시 즉시 로그
+                if (cancelNow || okNow || touchCancel || touchOk ||
+                    TouchInput.isTriggered() || TouchInput.isCancelled()) {
+                    console.log('[ItemDetail] DW INPUT DETECTED | cancelNow=' + cancelNow +
+                        ' prevC=' + this._dwPrevCancel +
+                        ' okNow=' + okNow +
+                        ' prevOk=' + this._dwPrevOk +
+                        ' touchCancel=' + touchCancel +
+                        ' touchOk=' + touchOk +
+                        ' TouchInput.isTriggered()=' + TouchInput.isTriggered() +
+                        ' TouchInput.isCancelled()=' + TouchInput.isCancelled());
+                }
+
                 if ((cancelNow && !this._dwPrevCancel) || touchCancel) {
+                    console.log('[ItemDetail] DW → callHandler(cancel)');
                     Input.clear(); TouchInput.clear();
                     this._popupInputCooldown = 3;
                     dw.callHandler('cancel');
                 } else if ((okNow && !this._dwPrevOk) || touchOk) {
+                    console.log('[ItemDetail] DW → callHandler(ok)');
                     Input.clear(); TouchInput.clear();
                     this._popupInputCooldown = 3;
                     dw.callHandler('ok');
