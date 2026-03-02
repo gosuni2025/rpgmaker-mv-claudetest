@@ -1414,10 +1414,15 @@
         if (_dch._baseDimAlpha === undefined) _dch._baseDimAlpha = _dobj.alpha !== undefined ? _dobj.alpha : 1;
         var _before = _dobj.alpha;
         _dobj.alpha = _dch._baseDimAlpha * dimAlpha;
-        console.log('[DIM2] panel=' + this._id + ' child=' + _dch._id +
+        // _threeObj: Three.js 메시, _material: 재질 직접 접근
+        var _tobj = _dobj._threeObj;
+        var _mat  = _dobj._material || (_tobj && _tobj.material);
+        console.log('[DIM2] child=' + _dch._id +
           ' alpha: ' + _before + ' → ' + _dobj.alpha +
-          ' (base=' + _dch._baseDimAlpha + ' dim=' + dimAlpha + ')' +
-          ' _dobj.constructor=' + (_dobj.constructor && _dobj.constructor.name));
+          ' | _threeObj=' + (_tobj ? _tobj.type || 'YES' : 'NO') +
+          ' | _material=' + (_mat ? 'YES opacity=' + _mat.opacity : 'NO') +
+          ' | worldAlpha=' + (_dobj.worldAlpha !== undefined ? _dobj.worldAlpha : '?') +
+          ' | syncTransform=' + (typeof _dobj.syncTransform));
       }
     }
   };
