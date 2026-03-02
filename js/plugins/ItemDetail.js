@@ -662,18 +662,27 @@
             }
 
             // NavManager가 입력을 가로채기 전에 직접 처리
+            var cancelNow = TouchInput.isCancelled() || Input.isTriggered('cancel');
+            var okNow     = (TouchInput.isTriggered() && dw && dw.isTouchedInsideFrame && dw.isTouchedInsideFrame()) ||
+                            Input.isTriggered('ok');
+            if (cancelNow || okNow) {
+                console.log('[ID] input cancel=' + cancelNow + ' ok=' + okNow +
+                    ' | dw=' + (dw ? 'exist' : 'NULL') +
+                    ' visible=' + (dw ? dw.visible : '-'));
+            }
             if (dw && dw.visible) {
-                if (TouchInput.isCancelled() || Input.isTriggered('cancel')) {
+                if (cancelNow) {
                     SoundManager.playCancel();
                     dw.hide();
+                    console.log('[ID] popup 닫힘 → dw.visible=' + dw.visible);
                     Input.clear(); TouchInput.clear();
                     this._pendingActivateId = (this._pendingHandler && this._pendingHandler.itemListWidget) || 'item_list';
                     this._popupInputCooldown = 3;
-                } else if ((TouchInput.isTriggered() && dw.isTouchedInsideFrame && dw.isTouchedInsideFrame()) ||
-                           Input.isTriggered('ok')) {
+                } else if (okNow) {
                     if (dw._detail && dw._detail.image) {
                         SoundManager.playOk();
                         this._itemDetailFullscreen.open(dw._item, dw._detail);
+                        console.log('[ID] fullscreen 열림');
                     } else {
                         SoundManager.playBuzzer();
                     }
