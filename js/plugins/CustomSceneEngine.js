@@ -1405,42 +1405,18 @@
     var aid = aw ? aw._id : null;
     var isLinked = aid && linked.indexOf(aid) >= 0;
     var dimAlpha = isLinked ? 1.0 : 0.63;
-    var prevAlpha = this._displayObject.alpha;
-    if (Math.abs((prevAlpha || 1) - dimAlpha) > 0.005) {
+    if (Math.abs((this._displayObject.alpha || 1) - dimAlpha) > 0.005) {
       this._displayObject.alpha = dimAlpha;
-      // --- DEBUG ---
-      var wsc = this._displayObject._windowSpriteContainer;
-      console.log('[DIM] panel=' + this._id +
-        ' isLinked=' + isLinked +
-        ' alpha: ' + prevAlpha + ' → ' + this._displayObject.alpha +
-        ' | wsc.alpha=' + (wsc ? wsc.alpha : 'N/A') +
-        ' | wsc.children=' + (wsc ? wsc.children.length : 'N/A'));
-      if (wsc) {
-        for (var _di = 0; _di < wsc.children.length; _di++) {
-          var _dc = wsc.children[_di];
-          console.log('  wsc.children[' + _di + '] alpha=' + _dc.alpha +
-            ' worldAlpha=' + (_dc.worldAlpha !== undefined ? _dc.worldAlpha : '?') +
-            ' visible=' + _dc.visible +
-            ' class=' + (_dc.constructor && _dc.constructor.name || '?'));
-        }
+      // Three.js 런타임에서 _windowSpriteContainer가 ThreeContainer이므로
+      // PIXI Sprite 자식에게 alpha cascade가 전달되지 않음.
+      // 자식 위젯 displayObject에 직접 alpha를 전파한다.
+      for (var _di = 0; _di < this._children.length; _di++) {
+        var _dch = this._children[_di];
+        var _dobj = _dch && _dch.displayObject && _dch.displayObject();
+        if (!_dobj) continue;
+        if (_dch._baseDimAlpha === undefined) _dch._baseDimAlpha = _dobj.alpha !== undefined ? _dobj.alpha : 1;
+        _dobj.alpha = _dch._baseDimAlpha * dimAlpha;
       }
-      // 패널 자식 위젯 중 Widget_Image 찾아서 그 Sprite의 실제 parent 경로 출력
-      for (var _ci = 0; _ci < this._children.length; _ci++) {
-        var _cw = this._children[_ci];
-        var _co = _cw && _cw.displayObject && _cw.displayObject();
-        if (_co) {
-          var _path = [];
-          var _p = _co;
-          for (var _pi = 0; _pi < 6 && _p; _pi++) {
-            _path.unshift(_p.constructor && _p.constructor.name || '?');
-            _p = _p.parent;
-          }
-          console.log('  child[' + _cw._id + '] displayObj.alpha=' + _co.alpha +
-            ' worldAlpha=' + (_co.worldAlpha !== undefined ? _co.worldAlpha : '?') +
-            ' parent chain: ' + _path.join(' → '));
-        }
-      }
-      // --- END DEBUG ---
     }
   };
   Widget_Panel.prototype.destroy = function() {
