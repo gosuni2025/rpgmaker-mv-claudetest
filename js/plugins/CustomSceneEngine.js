@@ -42,22 +42,13 @@
   var _scenesData = {};
   var _configData = {};
 
-  function loadJSON(url) {
-    try {
-      var xhr = new XMLHttpRequest();
-      xhr.open('GET', url + '?_=' + Date.now(), false);
-      xhr.send();
-      if (xhr.status === 200 || xhr.status === 0) {
-        return JSON.parse(xhr.responseText);
-      }
-    } catch (e) {
-      // 파일 없음 → 기본값
-    }
-    return {};
-  }
-
-  /** 404/오류 시 null 반환 (loadJSON과 달리 {} 반환 안 함) */
-  function loadJSONSafe(url) {
+  /**
+   * JSON 파일을 동기 XHR로 로드합니다.
+   * @param {string} url
+   * @param {*} [fallback={}] - 로드 실패 시 반환값 (null 전달 시 null 반환)
+   */
+  function loadJSON(url, fallback) {
+    if (fallback === undefined) fallback = {};
     try {
       var xhr = new XMLHttpRequest();
       xhr.open('GET', url + '?_=' + Date.now(), false);
@@ -66,8 +57,10 @@
         return JSON.parse(xhr.responseText);
       }
     } catch (e) {}
-    return null;
+    return fallback;
   }
+
+  function loadJSONSafe(url) { return loadJSON(url, null); }
 
   /**
    * 씬 데이터 로드: UIScenes/_index.json → 씬별 파일 로드
@@ -92,7 +85,6 @@
   //===========================================================================
   function resolveTemplate(text) {
     if (!text || typeof text !== 'string') return text || '';
-    // 중첩 중괄호 지원: {(function(){...})()} 패턴 처리
     var result = '';
     var i = 0;
     while (i < text.length) {
@@ -111,80 +103,64 @@
     return result;
   }
   function _evalTemplateExpr(expr) {
+    var actorMatch = expr.match(/^actor\[([^\]]+)\]\.(\w+)$/);
+    if (actorMatch && typeof $gameParty !== 'undefined') {
       try {
-        // actor[N].field (N은 숫자 리터럴 또는 $ctx.actorIndex 등 JS 식)
-        var actorMatch = expr.match(/^actor\[([^\]]+)\]\.(\w+)$/);
-        if (actorMatch && typeof $gameParty !== 'undefined') {
-          var members = $gameParty.members();
-          var idxExpr = actorMatch[1];
-          var idx = /^\d+$/.test(idxExpr) ? parseInt(idxExpr) : (function() {
-            try { var c = (SceneManager._scene && SceneManager._scene._ctx) || {};
-                  return Number(new Function('$ctx', 'return (' + idxExpr + ')')(c)) || 0;
-            } catch(e) { return 0; }
-          })();
-          var field = actorMatch[2];
-          var actor = members[idx];
-          if (!actor) return '';
-          switch (field) {
-            case 'name':  return actor.name();
-            case 'class': return actor.currentClass() ? actor.currentClass().name : '';
-            case 'level': return String(actor.level);
-            case 'hp':    return String(actor.hp);
-            case 'mhp':   return String(actor.mhp);
-            case 'mp':    return String(actor.mp);
-            case 'mmp':   return String(actor.mmp);
-            case 'tp':    return String(actor.tp);
-            default:      return String(actor[field] !== undefined ? actor[field] : '');
-          }
+        var members = $gameParty.members();
+        var idxExpr = actorMatch[1];
+        var idx = /^\d+$/.test(idxExpr) ? parseInt(idxExpr) : (function() {
+          try { var c = (SceneManager._scene && SceneManager._scene._ctx) || {};
+                return Number(new Function('$ctx', 'return (' + idxExpr + ')')(c)) || 0;
+          } catch(e) { return 0; }
+        })();
+        var field = actorMatch[2];
+        var actor = members[idx];
+        if (!actor) return '';
+        switch (field) {
+          case 'name':  return actor.name();
+          case 'class': return actor.currentClass() ? actor.currentClass().name : '';
+          case 'level': return String(actor.level);
+          case 'hp':    return String(actor.hp);
+          case 'mhp':   return String(actor.mhp);
+          case 'mp':    return String(actor.mp);
+          case 'mmp':   return String(actor.mmp);
+          case 'tp':    return String(actor.tp);
+          default:      return String(actor[field] !== undefined ? actor[field] : '');
         }
-        // var:ID
-        var varMatch = expr.match(/^var:(\d+)$/);
-        if (varMatch && typeof $gameVariables !== 'undefined') {
-          return String($gameVariables.value(parseInt(varMatch[1])));
-        }
-        // switch:ID
-        var swMatch = expr.match(/^switch:(\d+)$/);
-        if (swMatch && typeof $gameSwitches !== 'undefined') {
-          return $gameSwitches.value(parseInt(swMatch[1])) ? 'ON' : 'OFF';
-        }
-        // gold
-        if (expr === 'gold' && typeof $gameParty !== 'undefined') {
-          return String($gameParty.gold());
-        }
-        // mapName
-        if (expr === 'mapName') {
-          if (typeof MinimapManager !== 'undefined' && typeof MinimapManager.getMapName === 'function') {
-            return MinimapManager.getMapName();
-          }
-          if (typeof $dataMapInfos !== 'undefined' && typeof $gameMap !== 'undefined') {
-            var info = $dataMapInfos[$gameMap.mapId()];
-            return info ? (info.name || '') : '';
-          }
-          return '';
-        }
-        // config.KEY
-        var cfgMatch = expr.match(/^config\.(\w+)$/);
-        if (cfgMatch && typeof ConfigManager !== 'undefined') {
-          var v = ConfigManager[cfgMatch[1]];
-          return typeof v === 'boolean' ? (v ? 'ON' : 'OFF') : String(v !== undefined ? v : '');
-        }
-        // $ctx — 씬 컨텍스트 단축어 (안전한 처리)
-        if (/^\$ctx\b/.test(expr)) {
-          try {
-            var ctx = (SceneManager._scene && SceneManager._scene._ctx) || {};
-            var result = new Function('$ctx', 'return (' + expr + ')')(ctx);
-            return result === null || result === undefined ? '' : String(result);
-          } catch(e) { return ''; }
-        }
-        // 임의 JS 표현식 폴백 — $ctx 주입
-        try {
-          var $ctx = (SceneManager._scene && SceneManager._scene._ctx) || {};
-          var val = new Function('$ctx', 'return (' + expr + ')')($ctx);
-          return val === null || val === undefined ? '' : String(val);
-        } catch (e) {}
-        return '';
-      } catch (e) {}
+      } catch(e) { return ''; }
+    }
+    var varMatch = expr.match(/^var:(\d+)$/);
+    if (varMatch && typeof $gameVariables !== 'undefined') {
+      return String($gameVariables.value(parseInt(varMatch[1])));
+    }
+    var swMatch = expr.match(/^switch:(\d+)$/);
+    if (swMatch && typeof $gameSwitches !== 'undefined') {
+      return $gameSwitches.value(parseInt(swMatch[1])) ? 'ON' : 'OFF';
+    }
+    if (expr === 'gold' && typeof $gameParty !== 'undefined') {
+      return String($gameParty.gold());
+    }
+    if (expr === 'mapName') {
+      if (typeof MinimapManager !== 'undefined' && typeof MinimapManager.getMapName === 'function') {
+        return MinimapManager.getMapName();
+      }
+      if (typeof $dataMapInfos !== 'undefined' && typeof $gameMap !== 'undefined') {
+        var info = $dataMapInfos[$gameMap.mapId()];
+        return info ? (info.name || '') : '';
+      }
       return '';
+    }
+    var cfgMatch = expr.match(/^config\.(\w+)$/);
+    if (cfgMatch && typeof ConfigManager !== 'undefined') {
+      var v = ConfigManager[cfgMatch[1]];
+      return typeof v === 'boolean' ? (v ? 'ON' : 'OFF') : String(v !== undefined ? v : '');
+    }
+    try {
+      var $ctx = (SceneManager._scene && SceneManager._scene._ctx) || {};
+      var val = new Function('$ctx', 'return (' + expr + ')')($ctx);
+      return val === null || val === undefined ? '' : String(val);
+    } catch (e) {}
+    return '';
   }
 
   //===========================================================================
@@ -252,7 +228,6 @@
     bitmap: function(folder, name) {
       return ImageManager.loadBitmap(folder, name);
     },
-    // ── 세이브파일 헬퍼 ────────────────────────────────────────────────────────
     /** 최대 세이브 슬롯 수 */
     savefileCount: function() {
       return (typeof DataManager !== 'undefined') ? DataManager.maxSavefiles() : 0;
@@ -337,7 +312,6 @@
   Window_CustomCommand.prototype.itemHeight = function() {
     return this._winDef.rowHeight || this.lineHeight();
   };
-  // maxPageRows가 0이 되면 maxTopRow()=1이 되어 불필요한 스크롤 화살표가 표시되므로 최소 1 보장
   Window_CustomCommand.prototype.maxPageRows = function() {
     return Math.max(1, Window_Selectable.prototype.maxPageRows.call(this));
   };
@@ -348,14 +322,12 @@
     var rh   = this._winDef.rowHeight || this.lineHeight();
     var lh   = this.lineHeight();
     var hasSub = cmd && cmd.subText;
-    // 세로 중앙 정렬: 서브텍스트 있으면 2줄, 없으면 1줄 (rect.y 미만 방지)
     var nameY = Math.max(rect.y, rect.y + Math.floor((rh - lh * (hasSub ? 2 : 1)) / 2));
 
     this.resetTextColor();
     if (cmd && cmd.textColor) this.changeTextColor(cmd.textColor);
     this.changePaintOpacity(this.isCommandEnabled(index));
 
-    // cols 배열 모드 — 슬롯명/아이템명처럼 한 줄 다중 컬럼 렌더링
     if (cmd && cmd.cols && cmd.cols.length > 0) {
       var cx = rect.x;
       var colIw = Window_Base._iconWidth || 32;
@@ -373,14 +345,13 @@
         if (col.width !== undefined) {
           cx += col.width;
         } else {
-          break; // 마지막 컬럼: 남은 너비 사용 후 종료
+          break;
         }
       }
       this.resetTextColor();
       return;
     }
 
-    // 아이콘 렌더링
     var x = rect.x;
     var iconIdx = cmd && cmd.iconIndex;
     if (iconIdx) {
@@ -389,7 +360,6 @@
       x += iw + 4;
     }
 
-    // numberText (우측, 아이템 수량 등) — rightText와 달리 이름과 같은 줄에 표시
     var numStr = (cmd && cmd.numberText !== undefined && cmd.numberText !== null)
       ? String(cmd.numberText) : null;
     var nameWidth = rect.width - (x - rect.x);
@@ -399,37 +369,31 @@
       nameWidth -= numW;
     }
 
-    // 이름 (numberText 있으면 width 제한 drawText, 없으면 drawTextEx로 \C[N] 지원)
     if (numStr !== null) {
       this.drawText(this.commandName(index), x, nameY, nameWidth, 'left');
     } else {
       this.drawTextEx(this.commandName(index), x, nameY);
     }
 
-    // 서브텍스트 (두 번째 줄, 회색)
     if (hasSub) {
       if (!cmd.textColor) this.changeTextColor(this.textColor(8));
       this.drawTextEx(cmd.subText, x, nameY + lh);
       this.resetTextColor();
     }
 
-    // 우측 정렬 텍스트 (rightTextColorIndex 있으면 nameY에, 없으면 행 하단에)
     if (cmd && cmd.rightText) {
       this.resetTextColor();
       if (cmd.rightTextColorIndex !== undefined) {
-        // 스킬 MP/TP 코스트 등 — 이름과 같은 줄에 색상 표시
         this.changeTextColor(this.textColor(cmd.rightTextColorIndex));
         this.changePaintOpacity(this.isCommandEnabled(index));
         this.drawText(cmd.rightText, rect.x, nameY, rect.width, 'right');
         this.resetTextColor();
       } else {
-        // 기존 동작: 행 하단에 표시 (세이브/로드 플레이타임 등)
         this.changePaintOpacity(this.isCommandEnabled(index));
         this.drawText(cmd.rightText, rect.x, rect.y + rect.height - lh, rect.width, 'right');
       }
     }
 
-    // 캐릭터 스프라이트 배열 [[charName, charIndex, x, y], ...]  (x,y는 rect 기준 상대좌표)
     if (cmd && cmd.characters && cmd.characters.length > 0) {
       this.changePaintOpacity(this.isCommandEnabled(index));
       for (var ci = 0; ci < cmd.characters.length; ci++) {
@@ -440,7 +404,6 @@
       }
     }
 
-    // 임의 Bitmap 이미지 배열 [{ bitmapExpr, srcRect, x, y, w, h }, ...]  (x,y는 rect 기준 상대좌표)
     if (cmd && cmd.images && cmd.images.length > 0) {
       this.changePaintOpacity(this.isCommandEnabled(index));
       for (var ii = 0; ii < cmd.images.length; ii++) {
@@ -601,7 +564,6 @@
     var subSceneDef = (_scenesData.scenes || _scenesData)[this._sceneId];
     if (!subSceneDef || !subSceneDef.root) return;
 
-    // 루트 def 복제 후 위치/크기 오버라이드
     var rootDef = JSON.parse(JSON.stringify(subSceneDef.root));
     rootDef.x = 0;
     rootDef.y = 0;
@@ -622,7 +584,6 @@
     });
   };
 
-  // instanceCtx를 씬 _ctx에 임시 주입 (JS 단일 스레드이므로 동기 실행 시 안전)
   Widget_Scene.prototype._withCtx = function(fn) {
     var scene = SceneManager._scene;
     if (!scene || !scene._ctx) { fn(); return; }
@@ -641,7 +602,6 @@
     this._withCtx(function() { self._subRoot.refresh(); });
   };
 
-  // Widget_Scene은 _children 대신 _subRoot를 통해 Window_Base 자손을 수집합니다.
   Widget_Scene.prototype._collectWindowDescendants = function(out) {
     if (!this._subRoot) return;
     if (this._subRoot.displayObject() instanceof Window_Base) out.push(this._subRoot);
@@ -649,7 +609,7 @@
   };
 
   Widget_Scene.prototype.update = function() {
-    this._syncWindowDescendants(); // container Sprite 이동 → 내부 Window_Base 자손 위치 동기화
+    this._syncWindowDescendants();
     if (!this._subRoot) return;
     var self = this;
     this._withCtx(function() { self._subRoot.update(); });
@@ -759,7 +719,6 @@
     return 20;
   };
 
-  // processOk 완전 오버라이드 — 창 닫지 않고 값만 변경
   Window_CustomOptions.prototype.processOk = function() {
     var symbol = this.commandSymbol(this.index());
     var value = this.getConfigValue(symbol);
@@ -808,14 +767,13 @@
     Window_Selectable.prototype.initialize.call(this, x, y, w, h);
     this._leftHandler = null;
     this._rightHandler = null;
-    // 창 테두리/배경 제거 — 커서 하이라이트만 표시
     this.opacity = 0;
     this.backOpacity = 0;
   };
   Window_ButtonRow.prototype.standardPadding = function() { return 0; };
   Window_ButtonRow.prototype.maxItems = function() { return 1; };
   Window_ButtonRow.prototype.itemHeight = function() { return this.height; };
-  Window_ButtonRow.prototype.drawItem = function(index) { /* 자식 위젯이 렌더링 */ };
+  Window_ButtonRow.prototype.drawItem = function(index) {};
   Window_ButtonRow.prototype.setLeftHandler = function(fn) { this._leftHandler = fn; };
   Window_ButtonRow.prototype.setRightHandler = function(fn) { this._rightHandler = fn; };
   Window_ButtonRow.prototype.processHandling = function() {
@@ -825,7 +783,6 @@
       if (Input.isRepeated('right') && this._rightHandler) this._rightHandler();
     }
   };
-  // inactive 시 커서를 즉시 숨김 (매 프레임 보장)
   Window_ButtonRow.prototype._updateCursor = function() {
     if (!this.active) {
       if (this._windowCursorSprite) this._windowCursorSprite.alpha = 0;
@@ -833,16 +790,14 @@
     }
     Window_Selectable.prototype._updateCursor.call(this);
   };
-  // OK 소리 억제 — config 액션 핸들러에서 값 적용 후 playCursor로 대체
-  Window_ButtonRow.prototype.playOkSound = function() { /* suppressed */ };
+  Window_ButtonRow.prototype.playOkSound = function() {};
   window.Window_ButtonRow = Window_ButtonRow;
 
-  //===========================================================================
   //===========================================================================
   // WidgetAnimator — 위젯 등장/퇴장 애니메이션 공유 모듈
   //===========================================================================
   var WidgetAnimator = (function() {
-    var _tasks = []; // [{obj, props, frame, duration, delay, easing, onComplete}, ...]
+    var _tasks = [];
 
     function easeFunc(name, t) {
       t = Math.min(Math.max(t, 0), 1);
@@ -856,7 +811,7 @@
           else if (t < 2.5/2.75){ t -= 2.25/2.75; return 7.5625*t*t+0.9375; }
           else                  { t -= 2.625/2.75; return 7.5625*t*t+0.984375; }
         }
-        default: return 1-(1-t)*(1-t); // easeOut
+        default: return 1-(1-t)*(1-t);
       }
     }
 
@@ -977,7 +932,6 @@
         var valid = effects.filter(function(e) { return e && e.type && e.type !== 'none'; });
         if (valid.length === 0) { if (onComplete) onComplete(); return; }
 
-        // onComplete는 가장 늦게 끝나는 task에 연결
         var maxEnd = -1, maxIdx = 0;
         for (var i = 0; i < valid.length; i++) {
           var dur0 = valid[i].duration !== undefined ? valid[i].duration : (isNew ? 300 : 15);
@@ -1047,13 +1001,11 @@
     this._children = [];
     this._parent = parentWidget || null;
     this._displayObject = null;
-    // 방향키 네비게이션 타겟 파싱
     var nt = def.navUp || def.navDown || def.navLeft || def.navRight;
     this._navTargets = nt ? {
       up: def.navUp || null, down: def.navDown || null,
       left: def.navLeft || null, right: def.navRight || null,
     } : null;
-    // 라이프사이클 스크립트 파싱
     var rawScripts = def.scripts;
     if (rawScripts) {
       var compiled = {};
@@ -1091,7 +1043,6 @@
     }
   };
 
-  // ── 배경/테두리 장식 헬퍼 ─────────────────────────────────────────────────
   function _decoRoundRect(ctx, x, y, w, h, r) {
     ctx.beginPath();
     ctx.moveTo(x + r, y);
@@ -1139,8 +1090,6 @@
     ctx.restore();
     bmp._setDirty();
   };
-  // Window 기반 위젯(Panel/Button 등)용: 별도 장식 스프라이트 생성
-  // Window 스타일 적용 헬퍼 — windowed=false면 투명(프레임 없음), 아니면 windowStyle/frame/image 적용
   Widget_Base.prototype._applyWindowStyle = function(win, def) {
     if (def.windowed === false) {
       win.setBackgroundType(2);
@@ -1192,7 +1141,6 @@
     var obj = this.displayObject();
     if (!obj) return;
     WidgetAnimator.play(obj, animDef, true, null);
-    // Window_Base 자손들은 PIXI 계층 밖이므로 opacity/position이 자동 전파되지 않음 → 직접 적용
     var wins = [];
     this._collectWindowDescendants(wins);
     for (var i = 0; i < wins.length; i++) {
@@ -1218,7 +1166,6 @@
     var obj = this.displayObject();
     if (!obj) { if (onComplete) onComplete(); return false; }
     WidgetAnimator.play(obj, animDef, false, onComplete);
-    // Window_Base 자손들에게도 퇴장 애니메이션 적용 (씬 전환 콜백은 첫 obj에 연결됨)
     var wins = [];
     this._collectWindowDescendants(wins);
     for (var i = 0; i < wins.length; i++) {
@@ -1282,17 +1229,13 @@
     return null;
   };
   Widget_Base.prototype.collectFocusable = function(out) {
-    // 명시적으로 focusable=true 설정된 비인터랙티브 위젯 지원
     if (this._def && this._def.focusable === true) out.push(this);
     for (var i = 0; i < this._children.length; i++) {
       this._children[i].collectFocusable(out);
     }
   };
-  // 기본 activate/deactivate — 인터랙티브 위젯이 override. 비인터랙티브 위젯이 focusable=true일 때 crash 방지
   Widget_Base.prototype.activate = function() {};
   Widget_Base.prototype.deactivate = function() {};
-  // hide/show/close/open — displayObject 가시성 제어
-  // installBattleWindowProxy의 DELEGATE 배열을 통해 win.hide() → widget.hide() 전달받음
   Widget_Base.prototype.hide = function() {
     var dObj = this._displayObject;
     if (dObj) dObj.visible = false;
@@ -1312,27 +1255,22 @@
       this._children[i].destroy();
     }
     this._children = [];
-    // _decoSprite: 위젯이 소유한 배경/테두리 스프라이트 (GPU tex+geo 해제)
     if (this._decoSprite) {
       if (this._decoSprite._bitmap) this._decoSprite._bitmap.destroy();
       this._decoSprite.destroy();
       this._decoSprite = null;
     }
-    // _labelSprite: RowSelector 등이 소유한 텍스트 라벨 스프라이트
     if (this._labelSprite) {
       if (this._labelSprite._bitmap) this._labelSprite._bitmap.destroy();
       this._labelSprite.destroy();
       this._labelSprite = null;
     }
-    // _displayObject: 스프라이트 또는 Window_Base의 geometry/material 해제
     if (this._displayObject && this._displayObject.destroy) {
       this._displayObject.destroy();
       this._displayObject = null;
     }
   };
-  window.Widget_Base   = Widget_Base;
-  window.Widget_Panel  = Widget_Panel;
-  window.Widget_Label  = Widget_Label;
+  window.Widget_Base = Widget_Base;
 
   //===========================================================================
   // Widget_Panel — 패널 (windowed 또는 투명 컨테이너)
@@ -1360,7 +1298,6 @@
       if (def.bgAlpha !== undefined) container.opacity = Math.round(def.bgAlpha * 255);
       this._displayObject = container;
       this._padding = 0;
-      // 비-windowed: 장식 스프라이트를 컨테이너의 첫 자식으로 추가 (배경층)
       this._createDecoSprite(def, this._width, this._height || 400);
       if (this._decoSprite) {
         this._decoSprite.x = 0; this._decoSprite.y = 0;
@@ -1374,8 +1311,6 @@
     child._parent = this;
     if (child.displayObject()) {
       var childObj = child.displayObject();
-      // Window_Base 자식은 씬에서 addWindow로 별도 추가 — 부모 패널의 화면 절대 위치만 반영
-      // (windowed 여부에 상관없이 padding 오프셋을 추가하지 않아야 위치가 일정함)
       if (childObj instanceof Window_Base) {
         childObj.x += this._x;
         childObj.y += this._y;
@@ -1383,8 +1318,6 @@
         if (child._labelSprite) { child._labelSprite.x += this._x; child._labelSprite.y += this._y; }
         if (child._rowOverlay)  { child._rowOverlay.x  += this._x; child._rowOverlay.y  += this._y; }
       } else if (this._displayObject) {
-        // windowed 패널: Sprite 자식을 _windowSpriteContainer에 추가
-        // → window.opacity dim이 PIXI alpha cascade로 자식 Sprite에도 자동 전파됨
         var target = (this._windowed && this._displayObject._windowSpriteContainer)
           ? this._displayObject._windowSpriteContainer : this._displayObject;
         if (child._decoSprite) target.addChild(child._decoSprite);
@@ -1392,8 +1325,6 @@
       }
     }
   };
-  // linkedFocus: 연결된 포커스 위젯 중 하나가 active일 때 bright, 아닐 때 dim.
-  // item.json 등에서 패널과 컨트롤 위젯의 dim 상태를 동기화하는 데 사용.
   Widget_Panel.prototype.update = function() {
     Widget_Base.prototype.update.call(this);
     if (!this._windowed || !this._displayObject) return;
@@ -1405,25 +1336,6 @@
     var aid = aw ? aw._id : null;
     var isLinked = aid && linked.indexOf(aid) >= 0;
     var dimAlpha = isLinked ? 1.0 : 0.63;
-    // DEBUG: 매 프레임 상태 로그 (id_popup에만)
-    if (this._id === 'id_popup' && !this.__dbgTick) this.__dbgTick = 0;
-    if (this._id === 'id_popup') {
-      this.__dbgTick++;
-      if (this.__dbgTick % 60 === 1) {
-        var ch0 = this._children[0] && this._children[0].displayObject && this._children[0].displayObject();
-        console.log('[DimDBG] id_popup tick', this.__dbgTick,
-          'dispAlpha=', this._displayObject.alpha, '|', this._displayObject._alpha,
-          'dimAlpha=', dimAlpha, 'aid=', aid,
-          'ch0 type=', ch0 && ch0.constructor && ch0.constructor.name,
-          'ch0._alpha=', ch0 && ch0._alpha,
-          'ch0.worldAlpha=', ch0 && ch0.worldAlpha,
-          'ch0._material.opacity=', ch0 && ch0._material && ch0._material.opacity,
-          'ch0._material.transparent=', ch0 && ch0._material && ch0._material.transparent,
-          'ch0._forcedOpacity=', ch0 && ch0._forcedOpacity,
-          'dispVisible=', this._displayObject._visible,
-          'disp3Dvis=', this._displayObject._threeObj && this._displayObject._threeObj.visible);
-      }
-    }
     if (Math.abs((this._displayObject.alpha || 1) - dimAlpha) > 0.005) {
       this._displayObject.alpha = dimAlpha;
       for (var _di = 0; _di < this._children.length; _di++) {
@@ -1431,19 +1343,13 @@
         var _dobj = _dch && _dch.displayObject && _dch.displayObject();
         if (!_dobj) continue;
         if (typeof _dobj.syncTransform === 'function') {
-          // ThreeSprite: _forcedOpacity로 worldAlpha cascade 우회하여 직접 opacity 제어
           _dobj._forcedOpacity = (dimAlpha < 1.0) ? dimAlpha : undefined;
         } else {
-          // PIXI Sprite
           if (_dch._baseDimAlpha === undefined) _dch._baseDimAlpha = _dobj.alpha || 1;
           _dobj.alpha = _dch._baseDimAlpha * dimAlpha;
         }
       }
     }
-  };
-  Widget_Panel.prototype.destroy = function() {
-    // Window.prototype.destroy가 내부 bitmap + geometry 모두 처리하므로 별도 처리 불필요
-    Widget_Base.prototype.destroy.call(this);
   };
   window.Widget_Panel = Widget_Panel;
 
@@ -1464,7 +1370,6 @@
     this._color = this._colorTemplate ? '#ffffff' : colorVal;
     this._useTextEx = def.useTextEx === true;
     if (this._useTextEx) {
-      // Window_Base 기반: drawTextEx로 \c[N] 색상 코드 지원
       var win = new Window_Base(this._x, this._y, this._width, this._height);
       win._padding = 0;
       win.standardPadding = function() { return 0; };
@@ -1515,14 +1420,9 @@
     this._drawDecoBg(this._bitmap, this._width, this._height, this._def);
     this._bitmap.textColor = color;
     var textH = this._fontSize + 8;
-    var ty;
-    if (this._vAlign === 'top') {
-      ty = 0;
-    } else if (this._vAlign === 'bottom') {
-      ty = this._height - textH;
-    } else {
-      ty = Math.floor((this._height - textH) / 2);
-    }
+    var ty = this._vAlign === 'top' ? 0
+           : this._vAlign === 'bottom' ? this._height - textH
+           : Math.floor((this._height - textH) / 2);
     this._bitmap.drawText(text, 0, ty, this._width, textH, this._align);
     this._drawDecoBorder(this._bitmap, this._width, this._height, this._def);
     Widget_Base.prototype.refresh.call(this);
@@ -1549,7 +1449,6 @@
     this._lineHeight = def.lineHeight || (this._fontSize + 8);
     this._useTextEx = def.useTextEx === true;
     if (this._useTextEx) {
-      // Widget_Label.useTextEx と同様: Window_Base で drawTextEx を使用
       var win = new Window_Base(this._x, this._y, this._width, this._height);
       win._padding = 0;
       win.standardPadding = function() { return 0; };
@@ -1586,14 +1485,8 @@
       var lh = this._win.lineHeight();
       var lines = text ? text.split('\n') : [];
       var totalH = lines.length * lh;
-      var startY;
-      if (this._vAlign === 'middle') {
-        startY = Math.floor((this._height - totalH) / 2);
-      } else if (this._vAlign === 'bottom') {
-        startY = this._height - totalH;
-      } else {
-        startY = 0;
-      }
+      var startY = this._vAlign === 'middle' ? Math.floor((this._height - totalH) / 2)
+                 : this._vAlign === 'bottom'  ? this._height - totalH : 0;
       for (var j = 0; j < lines.length; j++) {
         var ty = startY + j * lh;
         if (ty + lh > this._height) break;
@@ -1614,14 +1507,8 @@
     var lh = this._lineHeight;
     var lines = text ? text.split('\n') : [];
     var totalH = Math.min(lines.length, Math.floor(this._height / lh)) * lh;
-    var startY;
-    if (this._vAlign === 'middle') {
-      startY = Math.floor((this._height - totalH) / 2);
-    } else if (this._vAlign === 'bottom') {
-      startY = this._height - totalH;
-    } else {
-      startY = 0;
-    }
+    var startY = this._vAlign === 'middle' ? Math.floor((this._height - totalH) / 2)
+               : this._vAlign === 'bottom'  ? this._height - totalH : 0;
     for (var i = 0; i < lines.length; i++) {
       var y = startY + i * lh;
       if (y + lh > this._height) break;
@@ -1637,17 +1524,6 @@
 
   //===========================================================================
   // Widget_Image — 이미지 표시
-  //
-  //  신규: bitmapExpr / srcRectExpr / fitMode
-  //    bitmapExpr  {string} — Bitmap을 반환하는 JS 표현식
-  //                예) "CSHelper.actorFace(0)"
-  //                    "CSHelper.enemyBattler($ctx.enemy)"
-  //                    "ImageManager.loadBitmap('img/system/','Arrow')"
-  //    srcRectExpr {string} — {x,y,w,h} 를 반환하는 JS 표현식 (생략 시 전체)
-  //                예) "CSHelper.actorFaceSrcRect(0)"
-  //    fitMode     {string} — 'stretch'(기본) | 'contain' | 'none'
-  //
-  //  하위호환: imageSource:'actorFace'|'actorCharacter'|'file' 도 계속 동작.
   //===========================================================================
   function Widget_Image() {}
   Widget_Image.prototype = Object.create(Widget_Base.prototype);
@@ -1667,7 +1543,6 @@
     sprite.x = this._x;
     sprite.y = this._y;
     if (def.bgAlpha !== undefined) sprite.opacity = Math.round(def.bgAlpha * 255);
-    // 하위호환 타입 (actorFace/actorCharacter): 빈 bitmap 미리 할당
     if (!this._bitmapExpr && this._imageSource !== 'file' && this._imageSource !== 'icon') {
       var bmp = new Bitmap(this._width || 144, this._height || 144);
       sprite.bitmap = bmp;
@@ -1693,13 +1568,12 @@
     Widget_Base.prototype.refresh.call(this);
   };
 
-  // bitmapExpr 기반 렌더링
   Widget_Image.prototype._refreshFromExpr = function(sprite) {
     var bitmap;
     try { bitmap = new Function('return (' + this._bitmapExpr + ')')(); }
     catch(e) { console.error('[Widget_Image] bitmapExpr error:', e); return; }
     if (!bitmap) { sprite.bitmap = null; this._lastBitmap = null; return; }
-    if (bitmap === this._lastBitmap) return; // 동일 bitmap이면 재렌더 불필요
+    if (bitmap === this._lastBitmap) return;
     this._lastBitmap = bitmap;
     var self     = this;
     var w        = this._width  || 100;
@@ -1723,7 +1597,7 @@
           Math.floor((w - dw) / 2), Math.floor((h - dh) / 2), dw, dh);
       } else if (fitMode === 'none') {
         bmp.blt(bitmap, sx, sy, Math.min(sw, w), Math.min(sh, h), 0, 0);
-      } else { // stretch
+      } else {
         bmp.blt(bitmap, sx, sy, sw, sh, 0, 0, w, h);
       }
       if (self._bitmap && self._bitmap !== bmp) self._bitmap.destroy();
@@ -1732,7 +1606,6 @@
     });
   };
 
-  // 하위호환: file 모드
   Widget_Image.prototype._refreshFile = function(sprite) {
     var def = this._def;
     var w = this._width;
@@ -1772,7 +1645,6 @@
     }
     return this._actorIndex;
   };
-  // 하위호환: actorFace — 내부적으로 CSHelper 위임
   Widget_Image.prototype._refreshActorFace = function(sprite) {
     var aidx = this._resolveActorIndex();
     var bitmap = CSHelper.actorFace(aidx);
@@ -1793,7 +1665,6 @@
     });
   };
 
-  // 하위호환: actorCharacter — 내부적으로 CSHelper 위임
   Widget_Image.prototype._refreshActorCharacter = function(sprite) {
     var aidx = this._resolveActorIndex();
     var bitmap = CSHelper.actorCharacter(aidx);
@@ -1814,7 +1685,6 @@
     });
   };
 
-  // icon 모드: IconSet에서 아이콘 1개를 렌더링
   Widget_Image.prototype._refreshIcon = function(sprite) {
     var iconIdx = 0;
     if (this._iconIndexExpr) {
@@ -1846,14 +1716,10 @@
 
   Widget_Image.prototype.update = function() {
     if (this._updateCount === undefined) this._updateCount = 0;
-    ++this._updateCount;
-    var needRefresh = this._bitmapExpr
-      ? (this._updateCount % 10 === 0)   // expr 모드: 10프레임마다 체크 (빠른 반응)
-      : (this._iconIndexExpr             // icon 모드: 10프레임마다 (아이콘 변경 반응)
-          ? (this._updateCount % 10 === 0)
-          : (this._actorIndexExpr        // actorIndexExpr: 30프레임마다 (actor 전환 반응)
-              ? (this._updateCount % 30 === 0)
-              : (this._imageSource !== 'file' && this._updateCount % 60 === 0)));
+    var n = ++this._updateCount;
+    var needRefresh = (this._bitmapExpr || this._iconIndexExpr) ? (n % 10 === 0)
+                    : this._actorIndexExpr ? (n % 30 === 0)
+                    : (this._imageSource !== 'file' && n % 60 === 0);
     if (needRefresh) this.refresh();
     Widget_Base.prototype.update.call(this);
   };
@@ -1876,7 +1742,6 @@
     this._actorIndexExpr = def.actorIndexExpr || null;
     this._gaugeRenderMode = def.gaugeRenderMode || 'palette';
     this._gaugeSkinId = def.gaugeSkinId || null;
-    // children이 있으면 자식 label 위젯이 텍스트를 담당 → 내장 렌더링 비활성
     var hasChildren = def.children && def.children.length > 0;
     this._showLabel = !hasChildren && def.showLabel !== false;
     this._showValue = !hasChildren && def.showValue !== false;
@@ -1892,16 +1757,13 @@
     this._sprite = sprite;
     this._bitmap = bitmap;
     this._displayObject = sprite;
-    // 스킨 ID가 있으면 (이미지/팔레트 공통) 스킨 이미지 로드
     if (this._gaugeSkinId && typeof UIEditorSkins !== 'undefined') {
       var skinEntry = UIEditorSkins.find(function(s) { return s.name === this._gaugeSkinId; }.bind(this));
       if (skinEntry) {
         this._skinData = skinEntry;
-        // gaugeFile 우선, 없으면 스킨 file, 없으면 스킨 name
         this._skinBitmap = ImageManager.loadSystem(skinEntry.gaugeFile || skinEntry.file || skinEntry.name);
       }
     }
-    // 스킨 없는 팔레트 모드 폴백: Window.png
     if (!this._skinData) {
       this._windowSkin = ImageManager.loadSystem('Window');
     }
@@ -1942,7 +1804,6 @@
     }
     if (hasValue) {
       var rate = max > 0 ? cur / max : 0;
-      // 이미지 기반 게이지 렌더링
       if (this._gaugeRenderMode === 'image' && this._skinData && this._skinBitmap && this._skinBitmap.isReady()) {
         var sd = this._skinData;
         var bgX = sd.gaugeBgX || 0, bgY = sd.gaugeBgY || 0;
@@ -1950,11 +1811,9 @@
         var fX = sd.gaugeFillX || 0, fY = sd.gaugeFillY || 0;
         var fW = sd.gaugeFillW || 0, fH = sd.gaugeFillH || 0;
         var fillDir = sd.gaugeFillDir || 'horizontal';
-        // 배경 (bar 영역)
         if (bgW > 0 && bgH > 0) {
           this._bitmap.blt(this._skinBitmap, bgX, bgY, bgW, bgH, 0, barY, w, barH);
         }
-        // 채움 (rate에 따라 클리핑)
         if (fW > 0 && fH > 0) {
           if (fillDir === 'horizontal') {
             var fillW = Math.floor(w * rate);
@@ -1967,45 +1826,38 @@
           }
         }
       } else if (this._gaugeRenderMode === 'palette' && this._skinData && this._skinBitmap && this._skinBitmap.isReady()) {
-        // 팔레트 모드 — 스킨 이미지에서 색상 샘플링 → gradientFillRect
-        var sd2 = this._skinData;
-        var bgX2 = sd2.gaugeBgX || 0, bgY2 = sd2.gaugeBgY || 0;
-        var bgW2 = sd2.gaugeBgW || 0, bgH2 = sd2.gaugeBgH || 0;
-        var fX2 = sd2.gaugeFillX || 0, fY2 = sd2.gaugeFillY || 0;
-        var fW2 = sd2.gaugeFillW || 0, fH2 = sd2.gaugeFillH || 0;
-        var fillDir2 = sd2.gaugeFillDir || 'horizontal';
-        // 배경 blt (bar 영역)
-        if (bgW2 > 0 && bgH2 > 0) {
-          this._bitmap.blt(this._skinBitmap, bgX2, bgY2, bgW2, bgH2, 0, barY, w, barH);
-        }
-        // fill 영역에서 색상 샘플링 (horizontal: 좌/우 픽셀, vertical: 상/하 픽셀)
+        var sdp = this._skinData;
+        var bgXp = sdp.gaugeBgX || 0, bgYp = sdp.gaugeBgY || 0;
+        var bgWp = sdp.gaugeBgW || 0, bgHp = sdp.gaugeBgH || 0;
+        var fXp = sdp.gaugeFillX || 0, fYp = sdp.gaugeFillY || 0;
+        var fWp = sdp.gaugeFillW || 0, fHp = sdp.gaugeFillH || 0;
+        var fillDirP = sdp.gaugeFillDir || 'horizontal';
+        if (bgWp > 0 && bgHp > 0) this._bitmap.blt(this._skinBitmap, bgXp, bgYp, bgWp, bgHp, 0, barY, w, barH);
         var color1P, color2P;
-        if (fW2 > 0 && fH2 > 0) {
-          var midY2 = fY2 + Math.floor(fH2 / 2);
-          var midX2 = fX2 + Math.floor(fW2 / 2);
-          if (fillDir2 === 'vertical') {
-            color1P = this._skinBitmap.getPixel(midX2, fY2);
-            color2P = this._skinBitmap.getPixel(midX2, fY2 + fH2 - 1);
+        if (fWp > 0 && fHp > 0) {
+          var midYp = fYp + Math.floor(fHp / 2);
+          var midXp = fXp + Math.floor(fWp / 2);
+          if (fillDirP === 'vertical') {
+            color1P = this._skinBitmap.getPixel(midXp, fYp);
+            color2P = this._skinBitmap.getPixel(midXp, fYp + fHp - 1);
           } else {
-            color1P = this._skinBitmap.getPixel(fX2, midY2);
-            color2P = this._skinBitmap.getPixel(fX2 + fW2 - 1, midY2);
+            color1P = this._skinBitmap.getPixel(fXp, midYp);
+            color2P = this._skinBitmap.getPixel(fXp + fWp - 1, midYp);
           }
         }
         if (!color1P) color1P = '#20c020';
         if (!color2P) color2P = '#60e060';
-        if (fillDir2 === 'vertical') {
-          var fillH3 = Math.floor(barH * rate);
-          if (fillH3 > 0) this._bitmap.gradientFillRect(0, barY + barH - fillH3, w, fillH3, color1P, color2P, true);
+        if (fillDirP === 'vertical') {
+          var fillHp = Math.floor(barH * rate);
+          if (fillHp > 0) this._bitmap.gradientFillRect(0, barY + barH - fillHp, w, fillHp, color1P, color2P, true);
         } else {
-          var fillW3 = Math.floor(w * rate);
-          if (fillW3 > 0) this._bitmap.gradientFillRect(0, barY, fillW3, barH, color1P, color2P);
+          var fillWp = Math.floor(w * rate);
+          if (fillWp > 0) this._bitmap.gradientFillRect(0, barY, fillWp, barH, color1P, color2P);
         }
       } else {
-        // 팔레트 폴백 — 스킨 없을 때 Window.png textColor 기반 그라디언트
         var color1, color2, bgColor;
         if (this._windowSkin && this._windowSkin.isReady()) {
           var ws = this._windowSkin;
-          // textColor(n): px = 96+(n%8)*12+6, py = 144+floor(n/8)*12+6
           bgColor = ws.getPixel(96 + (19 % 8) * 12 + 6, 144 + Math.floor(19 / 8) * 12 + 6);
           switch (this._gaugeType) {
             case 'hp':
@@ -2033,13 +1885,10 @@
           }
         }
         this._bitmap.fillRect(0, barY, w, barH, bgColor || '#202020');
-        var fillW2 = Math.floor(w * rate);
-        if (fillW2 > 0) {
-          this._bitmap.gradientFillRect(0, barY, fillW2, barH, color1, color2);
-        }
+        var fillWf = Math.floor(w * rate);
+        if (fillWf > 0) this._bitmap.gradientFillRect(0, barY, fillWf, barH, color1, color2);
       }
     }
-    // label / value 텍스트 표시
     if (hasValue) {
       var textColor = (this._windowSkin && this._windowSkin.isReady())
         ? this._windowSkin.getPixel(96 + (0 % 8) * 12 + 6, 144 + Math.floor(0 / 8) * 12 + 6)
@@ -2110,11 +1959,6 @@
 
   //===========================================================================
   // Widget_Icons — 범용 아이콘 배열 표시 위젯
-  //   iconsExpr {string} — JS 식, 아이콘 ID(숫자) 배열 반환
-  //                        예) "$gameParty.members()[$ctx.actorIndex].allIcons()"
-  //   maxCols   {number} — 행당 최대 아이콘 수 (기본 10)
-  //   iconSize  {number} — 아이콘 1개 크기 px (기본 Window_Base._iconWidth 또는 32)
-  //   iconGap   {number} — 아이콘 간격 px (기본 2)
   //===========================================================================
   function Widget_Icons() {}
   Widget_Icons.prototype = Object.create(Widget_Base.prototype);
@@ -2157,7 +2001,7 @@
     var maxCols = this._maxCols;
     var iconW = typeof Window_Base !== 'undefined' ? Window_Base._iconWidth  : 32;
     var iconH = typeof Window_Base !== 'undefined' ? Window_Base._iconHeight : 32;
-    var cols = 16; // IconSet.png 열 수
+    var cols = 16;
     var bmp = this._bitmap;
     var def = this._def;
     iconSet.addLoadListener(function() {
@@ -2233,7 +2077,6 @@
     this._handlerDef = def.action || null;
     this._leftHandlerDef = def.leftAction || null;
     this._rightHandlerDef = def.rightAction || null;
-    // Transition
     this._focusable = def.focusable !== false;
     this._hideOnKeyboard = !!def.hideOnKeyboard;
     this._btnTouching = false;
@@ -2245,12 +2088,9 @@
     this._labelSprite = null;
     this._labelBitmap = null;
     var hasChildren = !!(def.children && def.children.length > 0);
-    // 항상 Window_ButtonRow (커서/하이라이트) + _labelSprite (텍스트)
-    // windowed 플래그는 창 프레임 표시 여부만 결정하며, 텍스트 렌더링 방식은 무관
     var win = new Window_ButtonRow(this._x, this._y, this._width, this._height || 52);
     win._customClassName = 'Widget_CS_' + this._id;
     win.deactivate();
-    // button 기본값: windowed=false (창 프레임 없음). JSON에 명시된 경우만 windowed=true 허용
     var btnDef = def.windowed !== undefined ? def : Object.assign({}, def, { windowed: false });
     this._applyWindowStyle(win, btnDef);
     if (btnDef.windowed !== false && def.bgAlpha !== undefined) win.opacity = Math.round(def.bgAlpha * 255);
@@ -2278,7 +2118,6 @@
   Widget_Button.prototype.setDisabled = function(disabled) {
     this._transitionDisabled = !!disabled;
   };
-  // windowed=false 텍스트 버튼용 Label 스프라이트 생성 (Widget_Label 방식)
   Widget_Button.prototype._createButtonLabel = function(def) {
     if (!this._label) return;
     var w = this._width || 120;
@@ -2310,12 +2149,10 @@
     var ty = Math.max(0, Math.floor((h - textH) / 2));
     bmp.drawText(resolveTemplate(this._label), 0, ty, w, textH, align);
   };
-  // Transition 스프라이트 생성 (colorTint: 오버레이, spriteSwap: 이미지 스프라이트)
   Widget_Button.prototype._createTransitionSprite = function(def) {
     if (this._transition === 'system') return;
     var w = this._width || 120;
     var h = this._height || 52;
-    // _decoSprite가 없으면 컨테이너 역할의 투명 스프라이트 생성 (scene에 자동 등록됨)
     if (!this._decoSprite) {
       var base = new Sprite(new Bitmap(1, 1));
       base.x = def.x || 0;
@@ -2333,7 +2170,6 @@
     }
     this._applyTransition('normal');
   };
-  // 상태에 맞는 효과 적용
   Widget_Button.prototype._applyTransition = function(state) {
     if (!this._transitionOverlay) return;
     var cfg = this._transitionConfig;
@@ -2371,27 +2207,12 @@
       });
     }
   };
-  // 외부 스프라이트(_decoSprite/_labelSprite) 가시성을 부모 체인에 동기화
-  // Scene.update 에서 keyHandlers 실행 후 다시 호출되어 same-frame 동기화
   Widget_Button.prototype._syncExternalVisibility = function() {
     var parentVisible = true;
-    var firstHiddenParent = null;
     var p = this._parent;
     while (p) {
-      if (p._displayObject && !p._displayObject.visible) {
-        parentVisible = false;
-        firstHiddenParent = p._id || p._def && p._def.id || '(unknown)';
-        break;
-      }
+      if (p._displayObject && !p._displayObject.visible) { parentVisible = false; break; }
       p = p._parent;
-    }
-    var myId = this._id || this._def && this._def.id || '?';
-    var prevVisible = this._transitionOverlay ? this._transitionOverlay.visible
-      : (this._decoSprite ? this._decoSprite.visible : (this._labelSprite ? this._labelSprite.visible : null));
-    if (prevVisible !== null && prevVisible !== parentVisible) {
-      console.log('[BTN_VIS] id=' + myId +
-        ' ' + prevVisible + ' → ' + parentVisible +
-        (firstHiddenParent ? ' (hiddenBy=' + firstHiddenParent + ')' : ''));
     }
     if (this._hideOnKeyboard) {
       var showBtn = parentVisible && typeof TouchInput !== 'undefined' && typeof Input !== 'undefined'
@@ -2406,7 +2227,6 @@
       if (this._labelSprite)       this._labelSprite.visible       = parentVisible;
     }
   };
-  // 매 프레임 hover/pressed 상태 감지 및 효과 갱신
   Widget_Button.prototype._updateTransitionState = function() {
     var win = this._window;
     if (!win) return;
@@ -2432,15 +2252,10 @@
   };
   Widget_Button.prototype.update = function() {
     Widget_Base.prototype.update.call(this);
-    // _decoSprite/_labelSprite 가시성을 부모 체인에 동기화
     this._syncExternalVisibility();
     if (this._transition !== 'system') {
       this._updateTransitionState();
     }
-    // 버튼 터치 처리
-    // - focusable + 미포커스: 클릭 시 포커스만 이동
-    // - focusable + 포커스 중: 클릭 시 ok 실행
-    // - non-focusable: 클릭 시 바로 ok 실행
     if (!this._transitionDisabled && this._window && this._window.isOpen() && this._window.visible) {
       if (TouchInput.isTriggered()) {
         var tx = TouchInput.x, ty = TouchInput.y;
@@ -2468,7 +2283,6 @@
         }
       }
     }
-    // _labelSprite disabled dimming
     if (this._labelSprite) {
       this._labelSprite.opacity = this._transitionDisabled ? 128 : 255;
     }
@@ -2521,8 +2335,6 @@
 
   //===========================================================================
   // Widget_TextList — Window_CustomCommand 기반 텍스트 커맨드 리스트 (focusable)
-  //   itemScene 없는 순수 텍스트/아이콘 텍스트 메뉴. sugar syntax.
-  //   Widget_List를 상속.
   //===========================================================================
   function Widget_TextList() {}
   Widget_TextList.prototype = Object.create(Widget_Base.prototype);
@@ -2534,11 +2346,11 @@
     this._dataScript = def.dataScript || null;
     this._onCursorDef = def.onCursor || null;
     this._autoHeight = def.autoHeight || false;
-    this._autoRefresh = (def.autoRefresh !== false); // false로 명시하면 6프레임 자동 rebuild 비활성화
-    this._focusable = (def.focusable !== false); // false로 명시하면 NavigationManager 포커스 제외
-    this._itemSceneId = def.itemScene || null;  // itemScene 모드
-    this._rowWidgets = [];  // itemScene 모드 행 Widget_Scene 목록
-    this._rowOverlay = null; // itemScene 모드 오버레이 컨테이너 Sprite
+    this._autoRefresh = (def.autoRefresh !== false);
+    this._focusable = (def.focusable !== false);
+    this._itemSceneId = def.itemScene || null;
+    this._rowWidgets = [];
+    this._rowOverlay = null;
     var listDef = {
       id: def.id, width: def.width,
       commands: this._items,
@@ -2549,28 +2361,23 @@
     if (def.padding !== undefined) listDef.padding = def.padding;
     var win = new Window_CustomCommand(this._x, this._y, listDef);
     win._customClassName = 'Widget_CS_' + this._id;
-    // itemScene 모드: 윈도우 배경/프레임 숨김, 텍스트 렌더링 비활성 (커서/스크롤만 활용)
     if (this._itemSceneId) {
       win.setBackgroundType(2);
-      win.drawItem = function() {}; // 스프라이트 오버레이가 그리므로 window 텍스트 렌더링 스킵
+      win.drawItem = function() {};
     }
     win.deactivate();
-    win.deselect(); // Window_Command.initialize가 select(0)을 호출하므로 명시적으로 해제
+    win.deselect();
     if (this._autoHeight) {
       if (this._dataScript) {
-        win.height = 0; // dataScript 결과가 나오기 전 빈 윈도우 flash 방지
+        win.height = 0;
       } else {
-        // 정적 items인 경우 초기화 즉시 높이 계산
         var itemCount = this._items.length;
         win.height = itemCount > 0 ? win.fittingHeight(itemCount) : 0;
       }
     }
     if (!this._focusable) {
-      // updateCursor: RPG Maker MV 레벨 커서 rect 0으로 설정
       win.updateCursor = function() { this.setCursorRect(0, 0, 0, 0); };
-      // _updateCursor: rpg_core.js 저수준 — 매 프레임 _windowCursorSprite.visible = isOpen() 강제 설정하므로 반드시 override
       win._updateCursor = function() { if (this._windowCursorSprite) this._windowCursorSprite.visible = false; };
-      console.log('[CSE] Widget_List focusable=false, updateCursor override, id=' + def.id);
     }
     this._applyWindowStyle(win, def);
     if (def.windowed !== false && def.bgAlpha !== undefined) win.opacity = Math.round(def.bgAlpha * 255);
@@ -2578,7 +2385,6 @@
     this._window = win;
     this._displayObject = win;
     this._createDecoSprite(def, this._width, def.height || 400);
-    // onCursor — 커서 이동 시 코드 실행
     if (this._onCursorDef && this._onCursorDef.code) {
       var onCursorCode = this._onCursorDef.code;
       win.callUpdateHelp = function() {
@@ -2590,7 +2396,6 @@
         }
       };
     }
-    // itemScene 모드: 오버레이 Sprite 생성
     if (this._itemSceneId) {
       var overlay = new Sprite();
       var _overlayPad = win._padding != null ? win._padding : win.standardPadding();
@@ -2610,15 +2415,11 @@
         this._window.height = items.length > 0 ? this._window.fittingHeight(items.length) : 0;
       }
       if (this._window.refresh) this._window.refresh();
-      // itemScene 모드: 행 Sprite 재구성
       if (this._itemSceneId) this._rebuildRows();
       if (items.length === 0) {
-        // 빈 목록: 커서 숨김
         this._window.deselect();
         if (this._window._windowCursorSprite) this._window._windowCursorSprite.visible = false;
       } else if (!this._window.active) {
-        // 비활성이면 커서를 현재 위치에 정지(freeze). callUpdateHelp 없이 직접 처리
-        // 우선순위: 현재 인덱스(외부에서 select()로 설정된 값) > lastIndex > 0
         var curIdx = this._window._index;
         var clampedIdx = (curIdx >= 0 && curIdx < items.length) ? curIdx
           : (this._lastIndex !== undefined && this._lastIndex >= 0 && this._lastIndex < items.length)
@@ -2644,13 +2445,18 @@
     if (!scene || !scene._buildWidget) return;
     var subSceneDef = (_scenesData.scenes || {})[this._itemSceneId];
     if (!subSceneDef || !subSceneDef.root) return;
+    function patchFillWidth(node, w) {
+      var children = node.children || [];
+      for (var ci = 0; ci < children.length; ci++) {
+        if (children[ci].fillWidth) children[ci].width = w;
+        patchFillWidth(children[ci], w);
+      }
+    }
 
-    // 기존 행 위젯 destroy
     for (var di = 0; di < this._rowWidgets.length; di++) {
       if (this._rowWidgets[di]) this._rowWidgets[di].destroy();
     }
     this._rowWidgets = [];
-    // 오버레이의 기존 자식 제거
     while (this._rowOverlay.children.length > 0) {
       this._rowOverlay.removeChildAt(0);
     }
@@ -2662,28 +2468,16 @@
 
     for (var i = 0; i < commands.length; i++) {
       var rowData = commands[i] || {};
-      // instanceCtx: rowData의 모든 key를 flat하게 주입 ($ctx.name, $ctx.iconIndex 등으로 접근)
       var instanceCtx = {};
       for (var k in rowData) {
         if (Object.prototype.hasOwnProperty.call(rowData, k)) instanceCtx[k] = rowData[k];
       }
 
-      // 행 씬 루트 def 복제 후 width/height 동적 설정
       var rootDef = JSON.parse(JSON.stringify(subSceneDef.root));
-      rootDef.x = 0;
-      rootDef.y = 0;
-      rootDef.width = itemW;
-      rootDef.height = itemH;
-      // fillWidth: true인 자식의 width를 itemW로 설정
-      (function patchFillWidth(node, w) {
-        var children = node.children || [];
-        for (var ci = 0; ci < children.length; ci++) {
-          if (children[ci].fillWidth) children[ci].width = w;
-          patchFillWidth(children[ci], w);
-        }
-      })(rootDef, itemW);
+      rootDef.x = 0; rootDef.y = 0;
+      rootDef.width = itemW; rootDef.height = itemH;
+      patchFillWidth(rootDef, itemW);
 
-      // Widget_Scene 방식으로 행 위젯 생성
       var rowWidget = {
         _subRoot: null,
         _container: null,
@@ -2705,24 +2499,19 @@
       var rowContainer = new Sprite();
       rowWidget._container = rowContainer;
 
-      // _ctx에 instanceCtx 주입한 상태로 위젯 빌드
       rowWidget._withCtx(function() {
         var built = scene._buildWidget(rootDef, null);
         if (built) {
           rowWidget._subRoot = built;
           var dobj = built.displayObject();
-          if (dobj && !(dobj instanceof Window_Base)) {
-            rowContainer.addChild(dobj);
-          }
+          if (dobj && !(dobj instanceof Window_Base)) rowContainer.addChild(dobj);
           if (scene._setupWidgetHandlers) scene._setupWidgetHandlers(built);
         }
       });
 
-      // 행 위치: padding은 오버레이 자체가 offset하므로 itemRect 기준 (padding 미포함)
       var rect = win.itemRect(i);
       rowContainer.x = rect.x;
       rowContainer.y = rect.y;
-      // disabled 표시
       rowContainer.opacity = (rowData.enabled === false) ? 160 : 255;
 
       this._rowOverlay.addChild(rowContainer);
@@ -2741,7 +2530,6 @@
       var rect = win.itemRect(i);
       rw._container.x = rect.x;
       rw._container.y = rect.y;
-      // enabled 상태도 반영
       var rowData = commands[i] || {};
       rw._container.opacity = (rowData.enabled === false) ? 160 : 255;
     }
@@ -2757,7 +2545,6 @@
       if (maxItems > 0) {
         var restore = (this._lastIndex !== undefined && this._lastIndex >= 0 && this._lastIndex < maxItems)
           ? this._lastIndex : 0;
-        // 첫 활성화 시 initialIndexExpr 평가하여 초기 선택 위치 설정
         if (!this._hasActivated && this._def && this._def.initialIndexExpr) {
           try {
             var initIdx = Number(new Function('return (' + this._def.initialIndexExpr + ')')());
@@ -2775,7 +2562,6 @@
     if (this._window) {
       this._lastIndex = this._window.index();
       this._window.deactivate();
-      // deselect() 제거 — 비활성 시 커서를 현재 위치에 정지(freeze)
     }
   };
   Widget_TextList.prototype.refresh = function() {
@@ -2793,34 +2579,22 @@
     if (this._updateCount === undefined) this._updateCount = 0;
     ++this._updateCount;
     if (this._dataScript && this._autoRefresh !== false) {
-      if (this._updateCount % 6 === 0) {
-        this._rebuildFromScript();
-      }
+      if (this._updateCount % 6 === 0) this._rebuildFromScript();
     } else if (!this._dataScript) {
       var items = this._items;
       var hasCondition = items && items.some(function(item) {
         return typeof item.enabledCondition === 'string' && item.enabledCondition;
       });
-      if (hasCondition && this._updateCount % 60 === 0) {
-        if (this._window) this._window.refresh();
-      }
+      if (hasCondition && this._updateCount % 60 === 0 && this._window) this._window.refresh();
     }
-    // itemScene 모드: _rowOverlay visibility를 윈도우에 동기화
-    if (this._rowOverlay && this._window) {
-      this._rowOverlay.visible = this._window.visible;
-    }
-    // itemScene 모드: 매 프레임 행 위치 갱신 (스크롤 반영)
+    if (this._rowOverlay && this._window) this._rowOverlay.visible = this._window.visible;
     if (this._itemSceneId && this._rowWidgets.length > 0) {
       this._updateRowPositions();
-      // 행 위젯들의 update 호출 (라벨 텍스트 갱신 등) — rowData ctx 주입 상태에서 실행
       for (var ri = 0; ri < this._rowWidgets.length; ri++) {
-        (function(rw) {
-          if (!rw || !rw._subRoot) return;
-          rw._withCtx(function() { rw._subRoot.update(); });
-        })(this._rowWidgets[ri]);
+        var rw = this._rowWidgets[ri];
+        if (rw && rw._subRoot) rw._withCtx(function() { rw._subRoot.update(); });
       }
     }
-    // 비활성 창 auto-dim: _window.active 기반으로 투명도 조절
     if (this._window && this._def && this._def.dimOnInactive !== false && !this._itemSceneId) {
       var baseOp = this._baseOpacity !== undefined ? this._baseOpacity : 255;
       var targetOp = this._window.active ? baseOp : Math.round(baseOp * 0.63);
@@ -2836,7 +2610,6 @@
       }
       this._rowWidgets = [];
     }
-    // _rowOverlay: itemScene 모드의 행 컨테이너 스프라이트 (scene에 직접 addChild됨)
     if (this._rowOverlay && this._rowOverlay.destroy) {
       this._rowOverlay.destroy();
       this._rowOverlay = null;
@@ -2847,12 +2620,6 @@
 
   //===========================================================================
   // Widget_List — Sprite 기반 씬 렌더링 리스트 (itemScene 사용, focusable)
-  //   Widget_TextList를 상속. itemScene 없이 사용하면 Widget_TextList와 동일 동작.
-  //
-  //   cursorOnly 옵션: 배경·프레임·텍스트 없이 커서만 표시하는 가로 선택 위젯
-  //     - maxCols: N → 가로 커서 이동
-  //     - up/down 입력 차단 (가로 이동 전용)
-  //     - 커서 비주얼은 _rowOverlay 스프라이트로 렌더링 (statusWindow rowOverlay 위에 그려짐)
   //===========================================================================
   function Widget_List() {}
   Widget_List.prototype = Object.create(Widget_TextList.prototype);
@@ -2864,18 +2631,12 @@
       var win = this._window;
       win.setBackgroundType(2);
       win.drawItem = function() {};
-      // padding/spacing=0: itemRect 좌표가 슬롯 경계와 정확히 일치하도록 (커서 클리핑 방지)
       win._padding = 0;
       win.standardPadding = function() { return 0; };
       win.spacing = function() { return 0; };
-
-      // up/down 차단
       win.cursorDown = function() {};
       win.cursorUp   = function() {};
       this.handlesUpDown = function() { return false; };
-
-      // _updateCursor: 인디케이터 모드 지원 (active=false 시 반투명 0.5)
-      // 내장 메커니즘(_refreshCursor, setCursorRect)을 그대로 사용하므로 수동 blt 불필요
       win._updateCursor = function() {
         var spr = this._windowCursorSprite;
         if (!spr) return;
@@ -2888,25 +2649,20 @@
           else                 opacity -= (40 - blinkCount) * 8;
           spr.alpha = Math.max(0, opacity) / 255;
         } else {
-          spr.alpha = 0.5; // 인디케이터 모드: 반투명 고정
+          spr.alpha = 0.5;
         }
       };
 
-      // 커서 오버레이: windowLayer 위에 그려지도록 _rowOverlay로 등록
-      // Window의 _windowCursorSprite를 이 overlay로 reparent → statusWindow _rowOverlay에 가리지 않음
       var cursorOverlay = new Sprite();
       cursorOverlay.x = this._x;
       cursorOverlay.y = this._y;
       this._rowOverlay = cursorOverlay;
       this._csCursorReparented = false;
-      this._autoRefresh = false; // cursorOnly는 drawItem이 없으므로 autoRefresh 불필요
-      // _window.visible은 항상 false로 고정 — 커서는 _rowOverlay에서만 렌더링
-      // (visible 토글 시 UITheme 스킨 프레임이 깜빡이는 문제 방지)
+      this._autoRefresh = false;
       win.visible = false;
     }
   };
 
-  // show/hide: cursorOnly 모드에서는 _window.visible 건드리지 않고 _rowOverlay.visible만 제어
   Widget_List.prototype.show = function() {
     if (this._def && this._def.cursorOnly) {
       this._csCursorOverlayVisible = true;
@@ -2921,22 +2677,15 @@
   };
 
   Widget_List.prototype.hide = function() {
-    if (this._def && this._def.cursorOnly) {
-      this._csCursorOverlayVisible = false;
-      if (this._rowOverlay) this._rowOverlay.visible = false;
-    } else {
-      Widget_Base.prototype.hide.call(this);
-      this._csCursorOverlayVisible = false;
-      if (this._rowOverlay) this._rowOverlay.visible = false;
-    }
+    if (!(this._def && this._def.cursorOnly)) Widget_Base.prototype.hide.call(this);
+    this._csCursorOverlayVisible = false;
+    if (this._rowOverlay) this._rowOverlay.visible = false;
   };
 
   Widget_List.prototype.update = function() {
     Widget_TextList.prototype.update.call(this);
     if (this._def && this._def.cursorOnly) {
       this._updateCursorOverlay();
-      // Widget_TextList.update()가 _rowOverlay.visible을 _window.visible로 매 프레임 덮어씀
-      // _window.visible은 항상 false이므로 덮어쓰기 결과도 false → _csCursorOverlayVisible로 복원
       if (this._rowOverlay && this._csCursorOverlayVisible !== undefined) {
         this._rowOverlay.visible = this._csCursorOverlayVisible;
       }
@@ -2946,9 +2695,6 @@
   Widget_List.prototype._updateCursorOverlay = function() {
     var win = this._window;
     if (!win || !win._windowCursorSprite) return;
-    // 첫 프레임: Window의 _windowCursorSprite를 cursorOverlay로 reparent
-    // → windowLayer 위에서 렌더링하여 statusWindow의 _rowOverlay에 가려지지 않음
-    // 커서 비주얼은 Window 내장 _refreshCursor/_updateCursor가 자동으로 관리함
     if (!this._csCursorReparented) {
       var spr = win._windowCursorSprite;
       if (spr.parent) spr.parent.removeChild(spr);
@@ -2957,7 +2703,6 @@
     }
   };
 
-  // DELEGATE 호환: select/deselect 를 _window에 위임
   Widget_List.prototype.select   = function(i) { if (this._window) this._window.select(i); };
   Widget_List.prototype.deselect = function()  { if (this._window) this._window.deselect(); };
 
@@ -2971,14 +2716,12 @@
     config = config || {};
     this._defaultFocusId = config.defaultFocus || null;
     this._cancelWidgetId = config.cancelWidget || null;
-
     this._focusables = [];
     this._activeIndex = -1;
     this._scene = null;
     this._pendingNavDir = null;
     this._navPrevDir = null;
     this._navRepeatTimer = 0;
-    // keydown 직접 감지 — Input.isPressed 실패 대비
     var self = this;
     var keyDirMap = { 38:'up', 40:'down', 37:'left', 39:'right',
                       87:'up', 83:'down', 65:'left', 68:'right' };
@@ -3029,7 +2772,6 @@
     this._focusables[idx]._runScript('onFocus');
   };
   NavigationManager.prototype.focusWidget = function(id) {
-    // 풀 경로 또는 단순 id 모두 지원 ("navTest/root/main_panel/btn_close" 또는 "btn_close")
     var simpleId = id.indexOf('/') >= 0 ? id.split('/').pop() : id;
     for (var i = 0; i < this._focusables.length; i++) {
       var w = this._focusables[i];
@@ -3059,14 +2801,11 @@
     if (this._focusables.length === 0) return;
     var activeWidget = this._activeIndex >= 0 ? this._focusables[this._activeIndex] : null;
 
-    // ── 방향키 명시적 네비게이션 (navUp/navDown/navLeft/navRight) ──
-    // Input.isPressed 기반 자체 repeat: isRepeated의 pressedTime 타이밍 문제를 우회
     var DIRS = ['up', 'down', 'left', 'right'];
     var dirPressed = null;
     for (var di = 0; di < DIRS.length; di++) {
       if (Input.isPressed(DIRS[di])) { dirPressed = DIRS[di]; break; }
     }
-    // _pendingNavDir: keydown 이벤트로 즉시 감지한 방향 (isPressed 실패 대비)
     if (!dirPressed && this._pendingNavDir) {
       dirPressed = this._pendingNavDir;
     }
@@ -3155,7 +2894,6 @@
     var sceneDef = this._getSceneDef();
     if (!sceneDef) { console.warn('[CSE] sceneDef not found for:', this._sceneId); return; }
 
-    // _ctx 초기화: initCtx (씬 정의) → prepareData (prepare() 인자) 순서로 덮어쓰기
     var initCtx = sceneDef.initCtx || {};
     for (var ick in initCtx) {
       var ickExpr = initCtx[ick];
@@ -3170,21 +2908,12 @@
       this._ctx[pk] = this._prepareData[pk];
     }
 
-    // 포맷 감지: root 키 또는 formatVersion >= 2이면 위젯 트리 경로
     if (sceneDef.root || (sceneDef.formatVersion && sceneDef.formatVersion >= 2)) {
       this._createWidgetTree(sceneDef);
     } else {
       this._createLegacyWindows(sceneDef);
     }
 
-    // GPU 누수 디버그 — 씬 열릴 때 스냅샷
-    var _r = typeof Graphics !== 'undefined' ? Graphics._renderer : null;
-    var _mem = (_r && _r.info && _r.info.memory) ? _r.info.memory : null;
-    this._dbgOpenTex = _mem ? _mem.textures : -1;
-    this._dbgOpenGeo = _mem ? _mem.geometries : -1;
-    this._dbgOpenBitmapCount = typeof Bitmap !== 'undefined' ? Bitmap._gpuTexCount : -1;
-    console.log('[CSE:' + this._sceneId + '] OPEN  GPU tex=' + this._dbgOpenTex
-      + ' geo=' + this._dbgOpenGeo + ' bitmapCount=' + this._dbgOpenBitmapCount);
   };
 
   Scene_CustomUI.prototype._createLegacyWindows = function(sceneDef) {
@@ -3232,9 +2961,6 @@
     this._rootWidget = this._buildWidget(sceneDef.root, null);
     if (!this._rootWidget) return;
 
-    // 위젯 맵 구축 (id → 위젯)
-    // _fullPath는 위젯 객체에 저장 (예: "navTest/root/main_panel/btn_close")
-    // _widgetMap에는 단순 id만 등록 — fullPath 키를 넣으면 루프에서 중복 처리됨
     var self = this;
     var scenePrefix = (sceneDef.id || '') + '/';
     function buildMap(widget, parentPath) {
@@ -3249,62 +2975,39 @@
     }
     buildMap(this._rootWidget, scenePrefix);
 
-    // 비-Window 루트(배경 스프라이트 등)는 windowLayer보다 먼저(뒤에) 렌더링되어야 함
-    // → addChildAt(rootObj, 0) 으로 index 0에 삽입하여 windowLayer 아래에 그려지게 함
     var rootObj = this._rootWidget.displayObject();
     if (rootObj && !(rootObj instanceof Window_Base)) {
       this.addChildAt(rootObj, 0);
     }
-    // Window_Base 타입 위젯의 decoSprite를 먼저 추가 (window layer 아래)
     for (var id in this._widgetMap) {
       var w = this._widgetMap[id];
-      if (w._decoSprite && w.displayObject() instanceof Window_Base) {
-        this.addChild(w._decoSprite);
-      }
+      if (w._decoSprite && w.displayObject() instanceof Window_Base) this.addChild(w._decoSprite);
     }
-    // Window_Base 타입 위젯은 addWindow (topLayer 위젯 제외 — 나중에 별도 처리)
     for (var id2 in this._widgetMap) {
       var w2 = this._widgetMap[id2];
       var obj = w2.displayObject();
-      if (obj && obj instanceof Window_Base && !w2._topLayer) {
-        this.addWindow(obj);
-      }
+      if (obj && obj instanceof Window_Base && !w2._topLayer) this.addWindow(obj);
     }
-
-    // Widget_Button의 _labelSprite를 windowLayer 위에 addChild (커서 하이라이트 위에 텍스트)
     for (var idL in this._widgetMap) {
-      var wL = this._widgetMap[idL];
-      if (wL._labelSprite) {
-        this.addChild(wL._labelSprite);
-      }
+      if (this._widgetMap[idL]._labelSprite) this.addChild(this._widgetMap[idL]._labelSprite);
     }
-
-    // itemScene 모드 Widget_List의 _rowOverlay를 windowLayer 위에 addChild
     for (var id3 in this._widgetMap) {
       var w3 = this._widgetMap[id3];
       if (w3 instanceof Widget_List && w3._rowOverlay) {
         this.addChild(w3._rowOverlay);
-        // 초기 행 생성 (dataScript가 있으면 _rebuildFromScript에서 처리)
         if (!w3._dataScript) w3._rebuildRows();
       }
     }
-
-    // topLayer 위젯들을 rowOverlay 이후에 Scene에 직접 addChild (팝업, 전체화면 등)
-    // — addWindow (windowLayer)보다 위, rowOverlay보다도 위에 렌더링됨
     for (var idT in this._widgetMap) {
       var wT = this._widgetMap[idT];
       if (!wT._topLayer) continue;
       var tObj = wT.displayObject();
       if (!tObj) continue;
-      // 기존 부모(root panel 등)에서 분리 후 씬에 직접 추가
       if (tObj.parent) tObj.parent.removeChild(tObj);
       this.addChild(tObj);
     }
 
-    // 핸들러 설정
     this._setupWidgetHandlers(this._rootWidget);
-
-    // NavigationManager
     if (sceneDef.navigation) {
       this._navManager = new NavigationManager();
       this._navManager.initialize(sceneDef.navigation);
@@ -3312,7 +3015,6 @@
       this._navManager.buildFocusList(this._rootWidget);
     }
 
-    // 씬 레벨 onUpdate 스크립트 컴파일
     this._sceneOnUpdateFn = null;
     if (sceneDef.onUpdate) {
       try {
@@ -3322,7 +3024,6 @@
       }
     }
 
-    // onCreate 스크립트 실행 (위젯 트리 구축 + 핸들러 설정 완료 후)
     for (var oid in this._widgetMap) {
       this._widgetMap[oid]._runScript('onCreate');
     }
@@ -3331,7 +3032,6 @@
   Scene_CustomUI.prototype._buildWidget = function(def, parentWidget) {
     if (!def || !def.type) return null;
     var widget = null;
-    // 외부 플러그인이 registerWidget으로 등록한 타입 먼저 확인
     if (_widgetRegistry[def.type]) {
       widget = new _widgetRegistry[def.type]();
     } else {
@@ -3355,16 +3055,11 @@
     }
     widget.initialize(def, parentWidget);
 
-    // topLayer: true — 씬에 직접 addChild하여 rowOverlay 위에 표시
     if (def.topLayer) widget._topLayer = true;
-
-    // visible: false 처리 — 초기 숨김 위젯
     if (def.visible === false) {
       var dObj = widget.displayObject();
       if (dObj) dObj.visible = false;
     }
-
-    // 자식 위젯 재귀 빌드
     if (def.children && def.children.length) {
       for (var i = 0; i < def.children.length; i++) {
         var child = this._buildWidget(def.children[i], widget);
@@ -3376,12 +3071,15 @@
 
   Scene_CustomUI.prototype._setupWidgetHandlers = function(rootWidget) {
     var self = this;
+    function bindExec(handler, w) {
+      return function() { self._executeWidgetHandler(handler, w); };
+    }
     function traverse(widget) {
       if (widget instanceof Widget_TextList) {
         var handlersDef = widget._handlersDef || {};
-        // ok 핸들러: formation/selectActor 모드 처리를 위해 항상 등록
-        (function(okHandler, w) {
-          w.setHandler('ok', function() {
+        var okHandler = handlersDef['ok'] || null;
+        widget.setHandler('ok', (function(okH, w) {
+          return function() {
             // formation 모드 (list 기반)
             if (self._ctx && self._ctx._formationMode) {
               var idx = w._window ? w._window.index() : -1;
@@ -3399,7 +3097,6 @@
               }
               return;
             }
-            // selectActor 모드 (_pendingPersonalAction)
             if (self._pendingPersonalAction) {
               var actorIdx = w._window ? w._window.index() : 0;
               var actor = typeof $gameParty !== 'undefined' ? $gameParty.members()[actorIdx] : null;
@@ -3413,24 +3110,16 @@
               self._executeWidgetHandler(pendingAction, w);
               return;
             }
-            // 일반 ok 핸들러
-            if (okHandler) self._executeWidgetHandler(okHandler, w);
-          });
-        })(handlersDef['ok'] || null, widget);
-        // ok 제외 나머지 핸들러
+            if (okH) self._executeWidgetHandler(okH, w);
+          };
+        })(okHandler, widget));
         for (var symbol in handlersDef) {
           if (symbol === 'ok') continue;
-          (function(sym, handler, w) {
-            w.setHandler(sym, function() {
-              self._executeWidgetHandler(handler, w);
-            });
-          })(symbol, handlersDef[symbol], widget);
+          widget.setHandler(symbol, bindExec(handlersDef[symbol], widget));
         }
-        // cancel이 handlersDef에 없을 때만 기본 핸들러 설정
         if (!handlersDef['cancel']) {
-          (function(w) {
-            w.setCancelHandler(function() {
-              // formation 모드 취소
+          widget.setCancelHandler((function(w) {
+            return function() {
               if (self._ctx && self._ctx._formationMode) {
                 if (self._ctx._formationPending >= 0) {
                   self._ctx._formationPending = -1;
@@ -3447,7 +3136,6 @@
                 if (formOrigin && self._navManager) self._navManager.focusWidget(formOrigin._id);
                 return;
               }
-              // selectActor 모드 취소
               if (self._pendingPersonalAction) {
                 self._pendingPersonalAction = null;
                 if (w.deactivate) w.deactivate();
@@ -3459,50 +3147,30 @@
                 return;
               }
               self._executeWidgetHandler({ action: 'cancel' }, w);
-            });
-          })(widget);
+            };
+          })(widget));
         }
       } else if (widget instanceof Widget_Options) {
-        (function(w) {
-          w.setCancelHandler(function() { self._onOptionsCancel(w); });
-        })(widget);
+        widget.setCancelHandler((function(w) {
+          return function() { self._onOptionsCancel(w); };
+        })(widget));
       } else if (widget instanceof Widget_Button) {
-        var handlerDef = widget._handlerDef;
-        if (handlerDef) {
-          (function(handler, w) {
-            w.setOkHandler(function() {
-              self._executeWidgetHandler(handler, w);
-            });
-          })(handlerDef, widget);
+        if (widget._handlerDef) {
+          widget.setOkHandler(bindExec(widget._handlerDef, widget));
         }
-        var leftDef = widget._leftHandlerDef;
-        if (leftDef && widget._window && widget._window.setLeftHandler) {
-          (function(handler, w) {
-            w._window.setLeftHandler(function() {
-              self._executeWidgetHandler(handler, w);
-            });
-          })(leftDef, widget);
+        if (widget._leftHandlerDef && widget._window && widget._window.setLeftHandler) {
+          widget._window.setLeftHandler(bindExec(widget._leftHandlerDef, widget));
         }
-        var rightDef = widget._rightHandlerDef;
-        if (rightDef && widget._window && widget._window.setRightHandler) {
-          (function(handler, w) {
-            w._window.setRightHandler(function() {
-              self._executeWidgetHandler(handler, w);
-            });
-          })(rightDef, widget);
+        if (widget._rightHandlerDef && widget._window && widget._window.setRightHandler) {
+          widget._window.setRightHandler(bindExec(widget._rightHandlerDef, widget));
         }
-        widget.setCancelHandler(function() {
-          self._executeWidgetHandler({ action: 'cancel' }, widget);
-        });
+        widget.setCancelHandler(bindExec({ action: 'cancel' }, widget));
       } else if (widget instanceof Widget_ShopNumber) {
         var snHandlers = widget._handlersDef || {};
-        (function(w, handlers) {
-          if (handlers['ok']) {
-            w.setHandler('ok', function() { self._executeWidgetHandler(handlers['ok'], w); });
-          }
-          var cancelH = handlers['cancel'] || { action: 'cancel' };
-          w.setCancelHandler(function() { self._executeWidgetHandler(cancelH, w); });
-        })(widget, snHandlers);
+        if (snHandlers['ok']) {
+          widget.setHandler('ok', bindExec(snHandlers['ok'], widget));
+        }
+        widget.setCancelHandler(bindExec(snHandlers['cancel'] || { action: 'cancel' }, widget));
       }
       for (var i = 0; i < widget._children.length; i++) {
         traverse(widget._children[i]);
@@ -3549,7 +3217,6 @@
         break;
       }
       case 'focusWidget': {
-        // 현재 위젯을 명시적으로 deactivate — _navManager._activeIndex 불일치 시에도 커서가 남지 않도록
         if (widget && widget.deactivate) widget.deactivate();
         if (this._navManager && handler.target) {
           this._navManager.focusWidget(handler.target);
@@ -3604,11 +3271,9 @@
         var actorWidget2 = this._widgetMap && this._widgetMap[handler.widget];
         if (actorWidget2) {
           if (typeof actorWidget2.setFormationMode === 'function') {
-            // rowSelector 방식
             actorWidget2.setFormationMode(true);
             actorWidget2.setPendingIndex(-1);
           } else {
-            // list 방식: $ctx에 formation 상태 저장
             this._ctx._formationMode = true;
             this._ctx._formationPending = -1;
             this._personalOriginWidget = widget;
@@ -3630,14 +3295,13 @@
         break;
       }
       case 'incrementConfig': {
-        var cfgKey2 = handler.configKey;
-        if (cfgKey2 !== undefined && typeof ConfigManager !== 'undefined') {
-          var cur = ConfigManager[cfgKey2] !== undefined ? ConfigManager[cfgKey2] : 100;
-          var step = handler.step || 20;
-          var next = cur + step > 100 ? 0 : cur + step;
-          if (cur !== next) {
-            ConfigManager[cfgKey2] = next;
-  
+        var cfgKeyI = handler.configKey;
+        if (cfgKeyI !== undefined && typeof ConfigManager !== 'undefined') {
+          var curI = ConfigManager[cfgKeyI] !== undefined ? ConfigManager[cfgKeyI] : 100;
+          var stepI = handler.step || 20;
+          var nextI = curI + stepI > 100 ? 0 : curI + stepI;
+          if (curI !== nextI) {
+            ConfigManager[cfgKeyI] = nextI;
             if (typeof SoundManager !== 'undefined') SoundManager.playCursor();
           }
         }
@@ -3645,14 +3309,13 @@
         break;
       }
       case 'decrementConfig': {
-        var cfgKey3 = handler.configKey;
-        if (cfgKey3 !== undefined && typeof ConfigManager !== 'undefined') {
-          var cur2 = ConfigManager[cfgKey3] !== undefined ? ConfigManager[cfgKey3] : 100;
-          var step2 = handler.step || 20;
-          var next2 = Math.max(0, cur2 - step2);
-          if (cur2 !== next2) {
-            ConfigManager[cfgKey3] = next2;
-  
+        var cfgKeyD = handler.configKey;
+        if (cfgKeyD !== undefined && typeof ConfigManager !== 'undefined') {
+          var curD = ConfigManager[cfgKeyD] !== undefined ? ConfigManager[cfgKeyD] : 100;
+          var stepD = handler.step || 20;
+          var nextD = Math.max(0, curD - stepD);
+          if (curD !== nextD) {
+            ConfigManager[cfgKeyD] = nextD;
             if (typeof SoundManager !== 'undefined') SoundManager.playCursor();
           }
         }
@@ -3669,7 +3332,6 @@
         break;
       }
       case 'useItem': {
-        // itemExpr/userExpr 기반 (스킬 씬 등) — 선결 처리
         if (handler.itemExpr) {
           var useSkill = null, useUser = null;
           try { useSkill = new Function('$ctx', 'return (' + handler.itemExpr + ')')(this._ctx); } catch(e) {}
@@ -3686,17 +3348,14 @@
           var skillAction = new Game_Action(useUser);
           skillAction.setItemObject(useSkill);
           if (skillAction.isForFriend() && handler.actorWidget) {
-            // 아군 대상 → 파티원 선택
             this._ctx._pendingUseItem = useSkill;
             this._ctx._pendingUseItemUser = useUser;
             this._pendingPersonalAction = { action: 'applyItemToActor', itemListWidget: null };
             this._personalOriginWidget = widget;
-            // skill_list 숨기기 + actor_select/actor_panels 표시를 위한 상태 저장
             this._pendingItemListWidgetId = widget ? widget._id : null;
             this._pendingActorWidgetId = handler.actorWidget || null;
             if (widget && widget.displayObject()) widget.displayObject().visible = false;
             if (widget && widget._rowOverlay) widget._rowOverlay.visible = false;
-            // actorPanelsWidget 표시 (menu_v2 party_panel 패턴)
             if (handler.actorPanelsWidget) {
               this._pendingActorPanelsWidgetId = handler.actorPanelsWidget;
               var apwShowNew = this._widgetMap[handler.actorPanelsWidget];
@@ -3709,7 +3368,6 @@
               if (this._navManager) this._navManager.focusWidget(handler.actorWidget);
             }
           } else {
-            // 즉시 사용 (전체/자신/비대상)
             if (typeof SoundManager !== 'undefined') {
               DataManager.isSkill(useSkill) ? SoundManager.playUseSkill() : SoundManager.playUseItem();
             }
@@ -3728,7 +3386,6 @@
           }
           break;
         }
-        // 기존 방식 (itemListWidget)
         var ilId = handler.itemListWidget;
         var ilWidget = this._widgetMap && this._widgetMap[ilId];
         if (!ilWidget || !ilWidget._window) break;
@@ -3743,15 +3400,12 @@
         var useAction = new Game_Action($gameParty.leader());
         useAction.setItemObject(useItem);
         if (useAction.isForFriend() && handler.actorWidget) {
-          // 아군 대상 → 파티원 선택
           this._ctx._pendingUseItem = useItem;
           this._pendingPersonalAction = { action: 'applyItemToActor', itemListWidget: ilId, actorPanelsWidget: handler.actorPanelsWidget };
           this._personalOriginWidget = ilWidget;
-          // itemListWidget 숨기기 (아군 대상 선택 중에는 목록 비표시)
           if (ilWidget.displayObject()) ilWidget.displayObject().visible = false;
           if (ilWidget._rowOverlay) ilWidget._rowOverlay.visible = false;
           this._pendingItemListWidgetId = ilId;
-          // actorPanelsWidget 표시
           if (handler.actorPanelsWidget) {
             this._pendingActorPanelsWidgetId = handler.actorPanelsWidget;
             var apwShow = this._widgetMap[handler.actorPanelsWidget];
@@ -3760,13 +3414,11 @@
           this._pendingActorWidgetId = handler.actorWidget || null;
           var awUI = this._widgetMap[handler.actorWidget];
           if (awUI) {
-            // 윈도우 표시 (이전에 숨겼을 수 있으므로 명시적으로 복원)
             if (awUI.displayObject()) awUI.displayObject().visible = true;
             if (typeof awUI.setFormationMode === 'function') awUI.setFormationMode(false);
             if (this._navManager) this._navManager.focusWidget(handler.actorWidget);
           }
         } else {
-          // 즉시 사용 (전체/자신/비대상)
           this._applyItemToAll(useItem);
           if (this._rootWidget) this._rootWidget.refresh();
           if (ilWidget.activate) ilWidget.activate();
@@ -3783,7 +3435,6 @@
         this._applyItemTo(pendingItem, targetActor, pendingUser);
         delete this._ctx._pendingUseItem;
         delete this._ctx._pendingUseItemUser;
-        // actorWidget 윈도우 숨기기 (deactivate만으로는 _updateCursor가 매 프레임 커서를 복원함)
         var awDoneId = this._pendingActorWidgetId;
         if (awDoneId) {
           var awDone = this._widgetMap[awDoneId];
@@ -3793,7 +3444,6 @@
           }
           this._pendingActorWidgetId = null;
         }
-        // actorPanelsWidget 숨기기 + itemListWidget 복원
         var apwHideId = handler.actorPanelsWidget || this._pendingActorPanelsWidgetId;
         if (apwHideId) {
           var apwHide = this._widgetMap[apwHideId];
@@ -3831,13 +3481,12 @@
     }
   };
 
-  // 아이템을 특정 파티원 1명에게 적용 (user: 사용자 actor, 기본=leader)
   Scene_CustomUI.prototype._applyItemTo = function(item, actor, user) {
     var effectUser = user || $gameParty.leader();
     if (typeof SoundManager !== 'undefined') {
       DataManager.isSkill(item) ? SoundManager.playUseSkill() : SoundManager.playUseItem();
     }
-    effectUser.useItem(item); // 아이템 소비 (수량 감소, MP 소비 등)
+    effectUser.useItem(item);
     var action = new Game_Action(effectUser);
     action.setItemObject(item);
     action.apply(actor);
@@ -3847,7 +3496,6 @@
     }
   };
 
-  // 아이템을 전체/자신/비대상에게 적용
   Scene_CustomUI.prototype._applyItemToAll = function(item) {
     if (typeof SoundManager !== 'undefined') {
       DataManager.isSkill(item) ? SoundManager.playUseSkill() : SoundManager.playUseItem();
@@ -3868,15 +3516,13 @@
    * enterAnimation 없이 exitAnimation만 있어도 동작합니다.
    */
   Scene_CustomUI.prototype.popScene = function() {
-    if (this._exitAnimating) return; // 이미 진행 중
+    if (this._exitAnimating) return;
 
     var self = this;
     var sceneDef = this._getSceneDef();
     var sceneExitAnim = sceneDef && sceneDef.exitAnimation;
     var widgetMap = this._widgetMap || {};
     var ids = Object.keys(widgetMap);
-
-    // exitAnimation이 있는 위젯 수집 (위젯 개별 설정 우선, 없으면 씬 레벨 fallback)
     var animTargets = [];
     for (var i = 0; i < ids.length; i++) {
       var w = widgetMap[ids[i]];
@@ -3907,21 +3553,13 @@
   };
 
   Scene_CustomUI.prototype.terminate = function() {
-    var _r = typeof Graphics !== 'undefined' ? Graphics._renderer : null;
-    var _mem0 = (_r && _r.info && _r.info.memory) ? _r.info.memory : null;
-    var _texBefore = _mem0 ? _mem0.textures : -1;
-    var _geoBefore = _mem0 ? _mem0.geometries : -1;
-    var _bmBefore  = typeof Bitmap !== 'undefined' ? Bitmap._gpuTexCount : -1;
-
     Scene_Base.prototype.terminate.call(this);
     if (this._navManager && this._navManager.dispose) this._navManager.dispose();
-    // 위젯 트리 전체 destroy → GPU tex/geo 해제
     if (this._rootWidget) {
       this._rootWidget.destroy();
       this._rootWidget = null;
     }
     this._widgetMap = {};
-    // 레거시 Window 모드 정리
     if (this._customWindows) {
       for (var wid in this._customWindows) {
         var cw = this._customWindows[wid];
@@ -3938,19 +3576,6 @@
         ConfigManager.save();
       }
     }
-
-    // GPU 누수 디버그 — 씬 닫힐 때 비교
-    var _mem1 = (_r && _r.info && _r.info.memory) ? _r.info.memory : null;
-    var _texAfter = _mem1 ? _mem1.textures : -1;
-    var _geoAfter = _mem1 ? _mem1.geometries : -1;
-    var _bmAfter  = typeof Bitmap !== 'undefined' ? Bitmap._gpuTexCount : -1;
-    console.log('[CSE:' + this._sceneId + '] CLOSE GPU tex=' + _texAfter
-      + ' geo=' + _geoAfter + ' bitmapCount=' + _bmAfter
-      + ' | freed tex=' + (_texBefore - _texAfter) + ' geo=' + (_geoBefore - _geoAfter)
-      + ' bitmaps=' + (_bmBefore - _bmAfter)
-      + ' | net since open: tex+' + (_texAfter - this._dbgOpenTex)
-      + ' geo+' + (_geoAfter - this._dbgOpenGeo)
-      + ' bitmaps+' + (_bmAfter - this._dbgOpenBitmapCount));
   };
 
   Scene_CustomUI.prototype._onOptionsCancel = function(widget) {
@@ -3965,20 +3590,16 @@
     var sceneDef = this._getSceneDef();
     if (!sceneDef) return;
 
-    // 등장 애니메이션 — 씬 레벨 fallback으로 widgetMap 전체 위젯에 적용
     var sceneEnterAnim = sceneDef.enterAnimation || null;
     var widgetMap = this._widgetMap || {};
     for (var wid in widgetMap) {
       widgetMap[wid].playEnterAnim(sceneEnterAnim);
     }
 
-    // 위젯 트리 경로
     if (this._navManager) {
       this._navManager.start();
       return;
     }
-
-    // 레거시 경로
     var links = sceneDef.windowLinks || {};
     for (var winId in links) {
       if (links[winId].activateDefault && this._customWindows[winId]) {
@@ -3997,12 +3618,10 @@
     }
     if (this._navManager) this._navManager.update();
     if (this._rootWidget) this._rootWidget.update();
-    // 씬 레벨 onUpdate 스크립트
     if (this._sceneOnUpdateFn) {
       try { this._sceneOnUpdateFn.call(this, this._ctx || {}); }
       catch(e) { console.error('[CSE] scene onUpdate error:', e); }
     }
-    // 씬 레벨 keyHandlers: pageup/pagedown/cancel 등 임의 키 처리
     var sceneDef = this._getSceneDef();
     var keyHandlers = sceneDef && sceneDef.keyHandlers;
     if (keyHandlers) {
@@ -4015,14 +3634,10 @@
         }
       }
     }
-    // keyHandlers 실행 후 버튼 외부 스프라이트 가시성 재동기화 (same-frame)
-    // rootWidget.update() 이후 keyHandlers가 패널을 숨길 수 있으므로 1-frame delay 방지용
     if (this._widgetMap) {
       for (var vid in this._widgetMap) {
         var vw = this._widgetMap[vid];
-        if (typeof vw._syncExternalVisibility === 'function') {
-          vw._syncExternalVisibility();
-        }
+        if (typeof vw._syncExternalVisibility === 'function') vw._syncExternalVisibility();
       }
     }
   };
@@ -4051,42 +3666,7 @@
 
   Scene_CustomUI.prototype._executeHandler = function (handler, cmdWin) {
     if (!handler || !handler.action) return;
-
     switch (handler.action) {
-      case 'gotoScene': {
-        var gotoTarget2 = handler.target || '';
-        var gotoCsId2 = gotoTarget2.startsWith('Scene_CS_') ? gotoTarget2.replace('Scene_CS_', '') : '';
-        if (gotoCsId2 && OverlayManager._isOverlaySce(gotoCsId2)) {
-          OverlayManager.show(gotoCsId2);
-        } else {
-          var SceneCtor2 = window[gotoTarget2];
-          if (SceneCtor2) SceneManager.push(SceneCtor2);
-        }
-        break;
-      }
-      case 'popScene':
-        this.popScene();
-        break;
-      case 'callCommonEvent': {
-        var eventId = parseInt(handler.eventId || handler.target, 10);
-        if (eventId && typeof $gameTemp !== 'undefined') {
-          $gameTemp.reserveCommonEvent(eventId);
-          SceneManager.goto(Scene_Map);
-        }
-        break;
-      }
-      case 'customScene': {
-        var target = handler.target || '';
-        var csCsId2 = target.startsWith('Scene_CS_') ? target.replace('Scene_CS_', '') : target;
-        if (OverlayManager._isOverlaySce(csCsId2)) {
-          OverlayManager.show(csCsId2);
-        } else {
-          var csName2 = target.startsWith('Scene_CS_') ? target : 'Scene_CS_' + target;
-          var CSCtor2 = window[csName2];
-          if (CSCtor2) SceneManager.push(CSCtor2);
-        }
-        break;
-      }
       case 'activateWindow': {
         var targetWinId = handler.target;
         if (this._customWindows[targetWinId]) {
@@ -4105,12 +3685,14 @@
           } catch (e) {
             console.error('[CustomScene] script error:', e);
           }
-          // display 창 갱신 후 커맨드 창 재활성화
           this._refreshDisplayWindows();
           if (cmdWin) cmdWin.activate();
         }
         break;
       }
+      default:
+        this._executeWidgetHandler(handler, null);
+        break;
     }
   };
 
@@ -4130,8 +3712,6 @@
 
   //===========================================================================
   // BattleWindowProxy — 배틀 원본 창 ↔ 커스텀 위젯 스위칭
-  //   battle.json에 widgetId가 정의되어 있으면 → 원본 창을 화면 밖으로, 위젯으로 위임
-  //   정의되어 있지 않으면 → 원본 창 그대로 표시
   //===========================================================================
 
   /** 위젯 트리에서 id로 위젯 def를 재귀 탐색 */
@@ -4174,10 +3754,9 @@
         };
       }
       xhr.send(JSON.stringify(sceneDef));
-    } catch (e) { /* 비에디터 환경에선 무시 */ }
+    } catch (e) {}
   }
 
-  // widgetId(battle.json) → Scene 멤버 변수명 매핑
   var BATTLE_WIN_PROXY_MAP = [
     { widgetId: 'logWindow',    winProp: '_logWindow'    },
     { widgetId: 'statusWindow', winProp: '_statusWindow' },
@@ -4191,12 +3770,10 @@
   function installBattleWindowProxy(win, widget, widgetId) {
     if (!win) return;
 
-    // 원본 창은 항상 화면 밖으로 (위젯 유무와 무관)
     win._csProxied = true;
     if (win.move) win.move(-9999, win.y); else win.x = -9999;
 
     if (!widget) {
-      // 위젯 없음 → 에러 출력 + show/activate 차단
       console.error('[CSE:battle] 위젯 누락: id="' + widgetId + '" — battle.json에 해당 id의 위젯을 추가하세요.');
       ['show', 'open', 'activate'].forEach(function(m) {
         if (!win[m]) return;
@@ -4207,21 +3784,19 @@
       return;
     }
 
-    // 위젯 있음: 원본 내부 상태 업데이트 후 커스텀 위젯에 위임
     var DELEGATE = ['show', 'hide', 'open', 'close', 'activate', 'deactivate',
                     'refresh', 'select', 'deselect', 'setActor', 'setStypeId', 'setItem'];
     DELEGATE.forEach(function(method) {
       if (!win[method]) return;
       var orig = win[method].bind(win);
       win[method] = function() {
-          try { orig.apply(win, arguments); } catch(e) { /* 원본 창 에러 무시 — widget 메서드는 계속 호출 */ }
-        if (method === 'activate') win.active = false;  // 원본 입력 차단
+          try { orig.apply(win, arguments); } catch(e) {}
+        if (method === 'activate') win.active = false;
         win.x = -9999;
         if (widget[method]) widget[method].apply(widget, arguments);
       };
     });
 
-    // setHandler: 원본 + 위젯 양쪽에 등록
     if (win.setHandler) {
       var origSH = win.setHandler.bind(win);
       win.setHandler = function(symbol, fn) {
@@ -4230,7 +3805,6 @@
       };
     }
 
-    // widgetId별 getter 위임
     if (widgetId === 'helpWindow' && win.setItem) {
       var _prevSetItem = win.setItem.bind(win);
       win.setItem = function(item) {
@@ -4238,7 +3812,6 @@
         var scene = SceneManager._scene;
         if (scene && scene._ctx) {
           var text = (item && item.description) ? item.description : '';
-          // 스킬인 경우 MP/TP 소비량 추가 표시
           if (item && item.stypeId !== undefined) {
             var actor = BattleManager.actor();
             if (actor) {
@@ -4272,8 +3845,6 @@
       win.enemyIndex = function() { return widget._window ? widget._window.index() : -1; };
     }
 
-    // 핸들러 소급 복사: proxy 설치 전에 win에 등록된 'ok'/'cancel' 등을 widget window로 복사
-    // (createSkillWindow 등이 origCreateAllWindows에서 실행되어 proxy 설치 이전에 핸들러가 등록됨)
     if (widget._window && widget._window !== win && win._handlers) {
       for (var _sym in win._handlers) {
         if (Object.prototype.hasOwnProperty.call(win._handlers, _sym)) {
@@ -4287,7 +3858,6 @@
   // applyBattleOverrides — extends: "Scene_Battle" 씬에 배틀 UI 위젯 override 주입
   //===========================================================================
   function applyBattleOverrides(Klass, sceneId) {
-    // Scene_CustomUI의 위젯 관련 메서드들을 주입 (Scene_Battle에 없는 것만)
     var SCU = Scene_CustomUI.prototype;
     var SCB = Scene_Battle.prototype;
     for (var key in SCU) {
@@ -4296,7 +3866,6 @@
       }
     }
 
-    // initialize: 위젯 트리 상태 초기화
     var origInit = Klass.prototype.initialize;
     Klass.prototype.initialize = function() {
       origInit.call(this);
@@ -4305,15 +3874,10 @@
       this._rootWidget = null;
     };
 
-    // _getSceneDef: sceneId 고정
     Klass.prototype._getSceneDef = function() {
       return (_scenesData.scenes || {})[sceneId] || null;
     };
 
-    // createAllWindows:
-    //   1) 위젯 트리 생성 (battle.json root)
-    //   2) 원본 createAllWindows (모든 배틀 창 생성)
-    //   3) BATTLE_WIN_PROXY_MAP 기반 프록시 설치 (위젯이 있는 창만)
     var origCreateAllWindows = Klass.prototype.createAllWindows;
     Klass.prototype.createAllWindows = function() {
       var sceneDef = this._getSceneDef();
@@ -4322,7 +3886,6 @@
       }
       origCreateAllWindows.call(this);
 
-      // 1. 원본 창 위치 캡처 (proxy 설치 전 — proxy가 win.x를 -9999로 이동시키므로 반드시 먼저 캡처)
       var nativePositions = {};
       for (var pi = 0; pi < BATTLE_WIN_PROXY_MAP.length; pi++) {
         var pentry = BATTLE_WIN_PROXY_MAP[pi];
@@ -4334,7 +3897,6 @@
         }
       }
 
-      // 2. 프록시 설치: 위젯 정의된 창 → 원본 숨김 + 위젯으로 위임
       var wmap = this._widgetMap || {};
       for (var i = 0; i < BATTLE_WIN_PROXY_MAP.length; i++) {
         var entry = BATTLE_WIN_PROXY_MAP[i];
@@ -4343,12 +3905,10 @@
         installBattleWindowProxy(win, widget, entry.widgetId);
       }
 
-      // Window_BattleMessage(메시지 창)은 커스텀 씬이 UI 전체를 대체하므로 화면 밖으로 이동
       if (this._messageWindow) {
         this._messageWindow.x = -9999;
       }
 
-      // 3. nativeDefault 위젯: 원본 위치를 위젯에 적용하고 JSON에 저장
       if (sceneDef && sceneDef.root) {
         var needsSave = false;
         for (var widgetId in nativePositions) {
@@ -4366,7 +3926,6 @@
         }
         if (needsSave) {
           _saveSceneDef(sceneDef, function() {
-            // 에디터에 씬 정의 변경 알림 (nativeDefault 위치가 저장됨)
             if (window.parent && window.parent !== window) {
               window.parent.postMessage({ type: 'sceneDefUpdated', sceneId: sceneDef.id }, '*');
             }
@@ -4374,23 +3933,16 @@
         }
       }
 
-      // 4. 초기 숨김 위젯 처리
-      // - helpWindow: 스킬/아이템 선택 시에만 보임
-      // - actorCommand: fight 선택 후 액터 입력 단계에서만 보임 (startPartyCommandSelection→close로 숨겨짐)
       var _hiddenAtStart = ['skillWindow', 'itemWindow', 'actorWindow', 'enemyWindow', 'helpWindow', 'actorCommand'];
       for (var hi = 0; hi < _hiddenAtStart.length; hi++) {
         var hw = wmap[_hiddenAtStart[hi]];
         if (hw && hw.hide) hw.hide();
       }
 
-      // 비-Window root 위젯(Panel 등)을 windowLayer 위로 재배치
       var rootObj = this._rootWidget && this._rootWidget.displayObject();
-      if (rootObj && !(rootObj instanceof Window_Base)) {
-        this.addChild(rootObj);
-      }
+      if (rootObj && !(rootObj instanceof Window_Base)) this.addChild(rootObj);
     };
 
-    // createPartyCommandWindow: _widgetMap['partyCommand'] 재사용 (없으면 원본 폴백)
     Klass.prototype.createPartyCommandWindow = function() {
       var widget = this._widgetMap && this._widgetMap['partyCommand'];
       if (widget && widget._window) {
@@ -4406,7 +3958,6 @@
       this._partyCommandWindow.deselect();
     };
 
-    // createActorCommandWindow: _widgetMap['actorCommand'] 재사용 (없으면 원본 폴백)
     Klass.prototype.createActorCommandWindow = function() {
       var widget = this._widgetMap && this._widgetMap['actorCommand'];
       if (widget && widget._window) {
@@ -4465,21 +4016,16 @@
       this._helpWindow.show();
     };
 
-    // selectEnemySelection: actorCommand 비활성화 + rowOverlay dim + enemyWindow를 Scene 최상단으로
     var origSES = SCB.selectEnemySelection || function() {};
     Klass.prototype.selectEnemySelection = function() {
       this._csInSubSelection = true;
       var wmap = this._widgetMap || {};
-      // actorCommand는 deactivate만 — 커서가 선택된 항목에 고정된 상태로 표시됨
       if (wmap.actorCommand && wmap.actorCommand.deactivate) wmap.actorCommand.deactivate();
-      // statusWindow _rowOverlay(서브씬 스프라이트) + actorWindow _rowOverlay(커서) dim
       ['statusWindow', 'actorWindow'].forEach(function(id) {
         var w = wmap[id];
         if (w && w._rowOverlay) w._rowOverlay.alpha = 0.35;
         if (w && w._window) w._window.alpha = 0.35;
       });
-      // enemyWindow를 WindowLayer에서 꺼내 Scene 최상단에 addChild
-      // → statusWindow _rowOverlay보다 위에 그려짐
       var enemyWidget = wmap['enemyWindow'];
       if (enemyWidget && enemyWidget._window) {
         if (!enemyWidget._window._csBattleLifted) {
@@ -4487,8 +4033,6 @@
           SceneManager._scene.addChild(enemyWidget._window);
           enemyWidget._window._csBattleLifted = true;
         }
-        // 위젯 창 select()를 proxy Window_BattleEnemy.select()와 동기화
-        // → Window_BattleEnemy.select(i)가 $gameTroop.members()[i].select()를 호출 → Sprite_Enemy 반짝임
         if (!enemyWidget._window._csBattleBlinkHooked) {
           enemyWidget._window._csBattleBlinkHooked = true;
           var self = this;
@@ -4504,7 +4048,6 @@
       origSES.call(this);
     };
 
-    // selectActorSelection: actorCommand 비활성화 + actorWindow activate
     var origSAS = SCB.selectActorSelection || function() {};
     Klass.prototype.selectActorSelection = function() {
       this._csInSubSelection = true;
@@ -4537,10 +4080,9 @@
       else { this._actorCommandWindow.activate(); }
     };
 
-    // startPartyCommandSelection: 파티 커맨드 단계 → actorCommand/actorWindow 비활성화 + 숨김
     var origSPCS = SCB.startPartyCommandSelection || function() {};
     Klass.prototype.startPartyCommandSelection = function() {
-      this._csInSubSelection = false; // 파티 커맨드로 돌아가면 서브 선택 상태 해제
+      this._csInSubSelection = false;
       this._csActorCursorActive = false;
       var wmap = this._widgetMap || {};
       if (wmap.actorCommand) {
@@ -4548,58 +4090,49 @@
         if (wmap.actorCommand.hide) wmap.actorCommand.hide();
       }
       if (wmap.actorWindow) {
-        if (wmap.actorWindow.hide) wmap.actorWindow.hide(); // _rowOverlay.visible=false 포함
+        if (wmap.actorWindow.hide) wmap.actorWindow.hide();
       }
       origSPCS.call(this);
     };
 
-    // changeInputWindow: 서브 선택 중에는 완전히 차단 (매 프레임 호출로 재활성화 방지)
     var origCIW = SCB.changeInputWindow || function() {};
     Klass.prototype.changeInputWindow = function() {
       if (this._csInSubSelection) return;
       origCIW.call(this);
     };
 
-    // startActorCommandSelection: 액터 커맨드 단계 → partyCommand 비활성화 + actorWindow 인디케이터 표시
     var origSACS = SCB.startActorCommandSelection || function() {};
     Klass.prototype.startActorCommandSelection = function() {
       var wmap = this._widgetMap || {};
-      // partyCommand 비활성화 — actorCommand와 동시에 키 입력 받지 않도록
       if (wmap.partyCommand && wmap.partyCommand.deactivate) wmap.partyCommand.deactivate();
       origSACS.call(this);
       var actorWidget = wmap['actorWindow'];
       var actor = BattleManager.actor();
       if (actorWidget) {
         actorWidget.show();
-        // open()을 명시적으로 호출 — openness=255가 돼야 _updateCursor에서 isOpen()=true → 커서 visible
         if (actorWidget._window && actorWidget._window.open) actorWidget._window.open();
         if (actor) actorWidget.select(actor.index());
-        // activate하지 않음 — 인터랙티브 아닌 인디케이터 전용
       }
     };
 
     Klass.prototype.onEnemyCancel = function() {
       this._csInSubSelection = false;
-      // 적 선택 해제 → Sprite_Enemy 반짝임 중단
       if (this._enemyWindow && typeof this._enemyWindow.select === 'function') {
         this._enemyWindow.select(-1);
       }
       this._enemyWindow.hide();
       var wmap = this._widgetMap || {};
-      // rowOverlay dim 복구
       ['statusWindow', 'actorWindow'].forEach(function(id) {
         var w = wmap[id];
         if (w && w._rowOverlay) w._rowOverlay.alpha = 1;
         if (w && w._window) w._window.alpha = 1;
       });
-      // enemyWindow를 WindowLayer로 복귀
       var enemyWidget = wmap['enemyWindow'];
       if (enemyWidget && enemyWidget._window && enemyWidget._window._csBattleLifted) {
         if (enemyWidget._window.parent) enemyWidget._window.parent.removeChild(enemyWidget._window);
         if (this._windowLayer) this._windowLayer.addChild(enemyWidget._window);
         enemyWidget._window._csBattleLifted = false;
       }
-      // actorCommand 복구 (show + activate)
       if (wmap.actorCommand && wmap.actorCommand.show) wmap.actorCommand.show();
       var last = this._ctx.lastActorCommand || 'attack';
       if (last === 'attack') { this._actorCommandWindow.activate(); }
@@ -4611,13 +4144,11 @@
     Klass.prototype.onEnemyOk = function() {
       this._csInSubSelection = false;
       var wmap = this._widgetMap || {};
-      // rowOverlay dim 복구
       ['statusWindow', 'actorWindow'].forEach(function(id) {
         var w = wmap[id];
         if (w && w._rowOverlay) w._rowOverlay.alpha = 1;
         if (w && w._window) w._window.alpha = 1;
       });
-      // enemyWindow를 WindowLayer로 복귀
       var enemyWidget = wmap['enemyWindow'];
       if (enemyWidget && enemyWidget._window && enemyWidget._window._csBattleLifted) {
         if (enemyWidget._window.parent) enemyWidget._window.parent.removeChild(enemyWidget._window);
@@ -4634,8 +4165,6 @@
       origOAO.call(this);
     };
 
-    // start: 에디터 미리보기 모드에서 배틀 초기화 건너뜀
-    // (배틀 데이터 없이 씬이 시작되면 gameTroop._enemies=[] → 즉시 전투 종료 → 씬 이탈)
     var origStart = SCB.start;
     Klass.prototype.start = function() {
       if (window._uiEditorPreview) {
@@ -4647,19 +4176,15 @@
       }
     };
 
-    // update: _widgetMap의 모든 위젯 업데이트
-    // 에디터 미리보기 모드에서 배틀 로직 건너뜀 (씬 종료/전환 방지)
     var origUpdate = Klass.prototype.update;
     Klass.prototype.update = function() {
       if (this._isEditorPreview) {
         Scene_Base.prototype.update.call(this);
       } else {
         origUpdate.call(this);
-        // battleLog 동기화 (Window_BattleLog._lines → _ctx.battleLog)
         if (this._logWindow && this._logWindow._lines) {
           this._ctx.battleLog = this._logWindow._lines.join('\n');
         }
-        // 전투 진행 중(입력 단계 외) 현재 행동하는 액터에 actorWindow 커서 표시
         this._csUpdateActorCursor();
       }
       if (this._widgetMap) {
@@ -4669,17 +4194,12 @@
       }
     };
 
-    // _csUpdateActorCursor: 매 프레임 actorWindow 커서 가시성 제어
-    // - 파티 커맨드 단계(isInputting && !actor): 커서 강제 숨김
-    // - actorCommand 입력 단계(isInputting && actor): startActorCommandSelection이 제어
-    // - 전투 진행 중(!isInputting): subject가 액터이면 커서 표시+깜빡임, 아니면 숨김
     Klass.prototype._csUpdateActorCursor = function() {
       var wmap = this._widgetMap || {};
       var actorWidget = wmap['actorWindow'];
       if (!actorWidget) return;
 
       if (BattleManager.isInputting()) {
-        // 파티 커맨드 단계: 커서 강제 숨김 (매 프레임 강제 적용)
         if (!BattleManager.actor()) {
           if (actorWidget._csCursorOverlayVisible !== false) {
             actorWidget.hide();
@@ -4689,7 +4209,6 @@
         return;
       }
 
-      // 전투 진행 중
       var subject = BattleManager._subject;
       if (subject && subject.isActor && subject.isActor()) {
         var idx = subject.index();
@@ -4698,7 +4217,7 @@
           this._csActorCursorIdx = -1;
           actorWidget.show();
           if (actorWidget._window && actorWidget._window.open) actorWidget._window.open();
-          if (actorWidget._window) actorWidget._window.activate(); // 깜빡임 ON
+          if (actorWidget._window) actorWidget._window.activate();
         }
         if (this._csActorCursorIdx !== idx) {
           this._csActorCursorIdx = idx;
@@ -4724,11 +4243,8 @@
       var sceneDef = scenes[sceneId];
       var className = 'Scene_CS_' + sceneId;
 
-      // extends: 지정 클래스를 Base로 상속 (없으면 Scene_CustomUI)
       var extendsName = sceneDef.extends;
       var Base = (extendsName && window[extendsName]) || Scene_CustomUI;
-
-      // 이미 등록된 경우 스킵하지 않음 (재로드 시 갱신을 위해 덮어씀)
       var SceneCtor = (function (sid, BaseClass) {
         function CustomScene() {
           BaseClass.call(this);
@@ -4739,19 +4255,12 @@
           BaseClass.prototype.initialize.call(this);
           this._sceneId = sid;
         };
-        // constructor.name을 설정 (디버깅 + UI에디터 식별용)
         try {
-          Object.defineProperty(CustomScene, 'name', {
-            value: 'Scene_CS_' + sid,
-            configurable: true,
-          });
-        } catch (e) {
-          // IE 등 일부 환경에서 실패할 수 있음
-        }
+          Object.defineProperty(CustomScene, 'name', { value: 'Scene_CS_' + sid, configurable: true });
+        } catch (e) {}
         return CustomScene;
       })(sceneId, Base);
 
-      // extends: Scene_Battle이면 배틀 UI 위젯 override 주입
       if (extendsName === 'Scene_Battle') {
         applyBattleOverrides(SceneCtor, sceneId);
       }
@@ -4763,11 +4272,10 @@
   //===========================================================================
   // 씬 리다이렉트 — SceneManager.goto/push 후킹
   //===========================================================================
-  var _activeRedirects = {}; // 현재 활성화된 redirects (reloadCustomScenes가 덮어쓰지 않도록 별도 보관)
+  var _activeRedirects = {};
 
   function installSceneRedirects(redirects) {
     _activeRedirects = redirects || {};
-    // 기존 패치 제거
     if (SceneManager._csOrigGoto) {
       SceneManager.goto = SceneManager._csOrigGoto;
       delete SceneManager._csOrigGoto;
@@ -4805,12 +4313,10 @@
     _scenesData = loadScenesData();
     _configData = loadJSON('data/UIEditorConfig.json');
     registerCustomScenes();
-    // noRedirect URL 파라미터가 있으면 씬 리다이렉트 비활성화
     if (_noSceneRedirect) {
       installSceneRedirects({});
       return;
     }
-    // 파일에 저장된 sceneRedirects가 있으면 그것을 사용, 없으면 메모리의 _activeRedirects 유지
     var fileRedirects = _configData.sceneRedirects;
     if (fileRedirects && Object.keys(fileRedirects).length > 0) {
       installSceneRedirects(fileRedirects);
@@ -4829,7 +4335,6 @@
   Scene_OverlayUI.prototype = Object.create(Scene_CustomUI.prototype);
   Scene_OverlayUI.prototype.constructor = Scene_OverlayUI;
 
-  // 오버레이에서 popScene → OverlayManager.hide (SceneManager 스택과 무관)
   Scene_OverlayUI.prototype.popScene = function () {
     OverlayManager.hide(this._sceneId);
   };
@@ -4838,7 +4343,7 @@
   // OverlayManager — 씬 스택과 독립적인 오버레이 레이어 관리
   //===========================================================================
   var OverlayManager = {
-    _instances: {}, // sceneId -> { container, scene }
+    _instances: {},
 
     show: function (sceneId, args) {
       var inst = this._instances[sceneId];
@@ -4875,7 +4380,6 @@
     },
 
     update: function () {
-      // 씬 전환 감지 — overlay를 항상 현재 씬에 부착
       var currentScene = SceneManager._scene;
       for (var id in this._instances) {
         var inst = this._instances[id];
@@ -4904,7 +4408,6 @@
       scene._sceneId = sceneId;
       if (args && scene.prepare) scene.prepare.apply(scene, args);
       scene.create();
-      // Scene_OverlayUI(Stage)는 _threeObj를 가지므로 직접 addChild
       currentScene.addChild(scene);
       if (scene.start) scene.start();
 
@@ -4990,7 +4493,6 @@
     return true;
   }
 
-  // 외부 인터페이스
   window.__customSceneEngine = {
     reloadCustomScenes: reloadCustomScenes,
     updateSceneRedirects: function (redirects) {
@@ -5016,8 +4518,6 @@
     addMenuCommand: addMenuCommand,
   };
 
-  // ── UI 씬 테스트 모드: ?uiTestScene=Scene_CS_xxx 파라미터로 자동 진입 ──
-  // 에디터의 "현재 UI를 테스트" 버튼이 /game/index_3d.html?uiTestScene=... 로 열 때 사용
   (function() {
     var params = new URLSearchParams(window.location.search);
     var testScene = params.get('uiTestScene');
