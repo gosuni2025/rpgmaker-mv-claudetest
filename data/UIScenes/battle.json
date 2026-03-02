@@ -28,9 +28,9 @@
       {
         "id": "statusWindow",
         "type": "partyStatus",
-        "x": 0,
+        "x": 192,
         "y": 444,
-        "width": 816,
+        "width": 624,
         "height": 180,
         "focusable": false,
         "showTp": true
@@ -99,9 +99,9 @@
       {
         "id": "actorWindow",
         "type": "partyStatus",
-        "x": 0,
+        "x": 192,
         "y": 444,
-        "width": 816,
+        "width": 624,
         "height": 180,
         "focusable": true,
         "transparent": true
