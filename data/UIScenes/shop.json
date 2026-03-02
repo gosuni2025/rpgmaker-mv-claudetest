@@ -30,12 +30,16 @@
     "ok": {
       "action": "script",
       "code": "if ($ctx.numInput) { SoundManager.playShop(); $ctx.numInput = false; this._widgetMap['number_win']._displayObject.visible = false; if ($ctx.shopMode === 'buy') { $gameParty.loseGold($ctx.shopNum * $ctx.shopPrice); $gameParty.gainItem($ctx.selectedItem, $ctx.shopNum); this._widgetMap['buy_list']._window.visible = true; this._navManager.focusWidget('buy_list'); } else { $gameParty.gainGold($ctx.shopNum * $ctx.shopPrice); $gameParty.loseItem($ctx.selectedItem, $ctx.shopNum); this._widgetMap['status_win']._displayObject.visible = false; this._widgetMap['sell_list']._window.visible = true; this._widgetMap['category_win']._window.visible = true; this._navManager.focusWidget('sell_list'); } }",
-      "thenAction": { "action": "noop" }
+      "thenAction": {
+        "action": "noop"
+      }
     },
     "cancel": {
       "action": "script",
       "code": "if ($ctx.numInput) { SoundManager.playCancel(); $ctx.numInput = false; this._widgetMap['number_win']._displayObject.visible = false; if ($ctx.shopMode === 'buy') { this._widgetMap['buy_list']._window.visible = true; this._navManager.focusWidget('buy_list'); } else { this._widgetMap['status_win']._displayObject.visible = false; this._widgetMap['sell_list']._window.visible = true; this._widgetMap['category_win']._window.visible = true; this._navManager.focusWidget('sell_list'); } }",
-      "thenAction": { "action": "noop" }
+      "thenAction": {
+        "action": "noop"
+      }
     }
   },
   "root": {
@@ -295,7 +299,8 @@
             "onClick": {
               "action": "script",
               "code": "$ctx.shopNum=Math.max($ctx.shopNum-10,1); SoundManager.playCursor();"
-            }
+            },
+            "children": []
           },
           {
             "id": "btn_down",
