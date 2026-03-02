@@ -27,15 +27,13 @@
       },
       {
         "id": "statusWindow",
-        "type": "textList",
-        "nativeDefault": true,
-        "x": 192,
+        "type": "partyStatus",
+        "x": 0,
         "y": 444,
-        "width": 624,
+        "width": 816,
         "height": 180,
-        "dataScript": "(function(){\n  if(typeof $gameParty==='undefined')return[];\n  return $gameParty.battleMembers().map(function(actor){\n    return{\n      name:actor.name(),\n      symbol:'actor_status',\n      enabled:actor.isAlive(),\n      ext:actor,\n      cols:[\n        {text:actor.name(),width:120},\n        {text:'HP',color:17,width:28},\n        {text:actor.hp+'/'+actor.mhp,width:110},\n        {text:'MP',color:23,width:28},\n        {text:actor.mp+'/'+actor.mmp,width:100}\n      ]\n    };\n  });\n})()",
         "focusable": false,
-        "maxCols": 4
+        "showTp": true
       },
       {
         "id": "helpWindow",
@@ -100,14 +98,13 @@
       },
       {
         "id": "actorWindow",
-        "type": "textList",
-        "nativeDefault": true,
+        "type": "partyStatus",
         "x": 0,
         "y": 444,
-        "width": 624,
+        "width": 816,
         "height": 180,
-        "dataScript": "(function(){\n  if(typeof $gameParty==='undefined')return[];\n  return $gameParty.battleMembers().map(function(actor){\n    return{\n      name:actor.name()+' HP:'+actor.hp+'/'+actor.mhp,\n      symbol:'actor',enabled:actor.isAlive(),ext:actor\n    };\n  });\n})()",
-        "maxCols": 4
+        "focusable": true,
+        "transparent": true
       },
       {
         "id": "enemyWindow",

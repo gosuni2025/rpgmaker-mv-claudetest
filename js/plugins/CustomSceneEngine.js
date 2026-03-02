@@ -1987,9 +1987,10 @@
 
   Widget_PartyStatus.prototype.initialize = function(def, parentWidget) {
     Widget_Base.prototype.initialize.call(this, def, parentWidget);
-    this._focusable = !!def.focusable;
-    this._showTp    = def.showTp !== false;
-    this._maxSlots  = def.maxSlots || 4;
+    this._focusable    = !!def.focusable;
+    this._transparent  = !!def.transparent; // true면 커서만 표시 (슬롯 배경/얼굴/게이지 없음)
+    this._showTp       = def.showTp !== false;
+    this._maxSlots     = def.maxSlots || 4;
     this._active    = false;
     this._index     = 0;
     this._handlers  = {};
@@ -2036,30 +2037,34 @@
       slotSpr.y = 0;
       slotSpr.visible = false;
 
-      // ── 얼굴 이미지 (Bitmap blt로 잘라냄)
-      var faceBmp = new Bitmap(faceW, faceH);
-      var faceSpr = new Sprite(faceBmp);
-      faceSpr.x = faceX;
-      faceSpr.y = 0;
-      slotSpr.addChild(faceSpr);
+      var faceBmp = null, faceSpr = null, infoBmp = null, infoSpr = null;
 
-      // ── 게이지 오버레이 배경 (반투명 검정)
-      var bgBmp = new Bitmap(slotW, overlayH);
-      var bgCtx = bgBmp._context;
-      bgCtx.fillStyle = 'rgba(0,0,0,0.62)';
-      bgCtx.fillRect(0, 0, slotW, overlayH);
-      bgBmp._setDirty();
-      var bgSpr = new Sprite(bgBmp);
-      bgSpr.x = 0;
-      bgSpr.y = overlayY;
-      slotSpr.addChild(bgSpr);
+      if (!this._transparent) {
+        // ── 얼굴 이미지 (Bitmap blt로 잘라냄)
+        faceBmp = new Bitmap(faceW, faceH);
+        faceSpr = new Sprite(faceBmp);
+        faceSpr.x = faceX;
+        faceSpr.y = 0;
+        slotSpr.addChild(faceSpr);
 
-      // ── 이름 + 게이지 텍스트 레이어 (매 프레임 갱신)
-      var infoBmp = new Bitmap(slotW, overlayH);
-      var infoSpr = new Sprite(infoBmp);
-      infoSpr.x = 0;
-      infoSpr.y = overlayY;
-      slotSpr.addChild(infoSpr);
+        // ── 게이지 오버레이 배경 (반투명 검정)
+        var bgBmp = new Bitmap(slotW, overlayH);
+        var bgCtx = bgBmp._context;
+        bgCtx.fillStyle = 'rgba(0,0,0,0.62)';
+        bgCtx.fillRect(0, 0, slotW, overlayH);
+        bgBmp._setDirty();
+        var bgSpr = new Sprite(bgBmp);
+        bgSpr.x = 0;
+        bgSpr.y = overlayY;
+        slotSpr.addChild(bgSpr);
+
+        // ── 이름 + 게이지 텍스트 레이어 (매 프레임 갱신)
+        infoBmp = new Bitmap(slotW, overlayH);
+        infoSpr = new Sprite(infoBmp);
+        infoSpr.x = 0;
+        infoSpr.y = overlayY;
+        slotSpr.addChild(infoSpr);
+      }
 
       this._displayObject.addChild(slotSpr);
       this._slots.push({
@@ -2193,13 +2198,15 @@
       var actor = members[i];
       if (!actor) { slot.container.visible = false; continue; }
       slot.container.visible = true;
-      // 얼굴 (faceName/faceIndex 바뀐 경우만 재렌더)
-      if (actor.faceName() !== slot.lastFaceName || actor.faceIndex() !== slot.lastFaceIdx) {
-        this._refreshFace(slot, actor);
-        slot.lastFaceName = actor.faceName();
-        slot.lastFaceIdx  = actor.faceIndex();
+      if (!this._transparent) {
+        // 얼굴 (faceName/faceIndex 바뀐 경우만 재렌더)
+        if (actor.faceName() !== slot.lastFaceName || actor.faceIndex() !== slot.lastFaceIdx) {
+          this._refreshFace(slot, actor);
+          slot.lastFaceName = actor.faceName();
+          slot.lastFaceIdx  = actor.faceIndex();
+        }
+        this._refreshInfo(slot, actor);
       }
-      this._refreshInfo(slot, actor);
     }
     this._updateCursor();
     Widget_Base.prototype.refresh.call(this);
