@@ -157,31 +157,14 @@
     // 선택 항목 없음 (커서 없음)
     Window_ItemDetail.prototype.maxItems = function () { return 0; };
 
-    // ── 디버그용 processHandling/processTouch 오버라이드 ──
-    Window_ItemDetail.prototype.processHandling = function () {
-        var open   = this.isOpen();
-        var active = this.active;
-        var okEn   = this.isOkEnabled ? this.isOkEnabled() : '?';
-        var okTr   = this.isOkTriggered ? this.isOkTriggered() : '?';
-        var cnEn   = this.isCancelEnabled ? this.isCancelEnabled() : '?';
-        var cnTr   = this.isCancelTriggered ? this.isCancelTriggered() : '?';
-        console.log('[ItemDetail] processHandling | openness=' + this.openness +
-            ' isOpen=' + open + ' active=' + active +
-            ' | okEnabled=' + okEn + ' okTriggered=' + okTr +
-            ' | cancelEnabled=' + cnEn + ' cancelTriggered=' + cnTr +
-            ' | Input._currentState=' + JSON.stringify(Input._currentState));
-        Window_Selectable.prototype.processHandling.call(this);
-    };
-
+    // ── 디버그용 processTouch 오버라이드 ──
     Window_ItemDetail.prototype.processTouch = function () {
         var ti = TouchInput.isTriggered();
         var tc = TouchInput.isCancelled();
-        var tp = TouchInput.isPressed();
-        if (ti || tc || tp) {
+        if (ti || tc) {
             var inside = this.isTouchedInsideFrame ? this.isTouchedInsideFrame() : '?';
             console.log('[ItemDetail] processTouch | triggered=' + ti +
-                ' cancelled=' + tc + ' pressed=' + tp +
-                ' insideFrame=' + inside +
+                ' cancelled=' + tc + ' insideFrame=' + inside +
                 ' active=' + this.active + ' isOpen=' + this.isOpen());
         }
         Window_Selectable.prototype.processTouch.call(this);
@@ -593,12 +576,15 @@
 
             // ── 상세 팝업 핸들러 ──
             this._itemDetailWindow.setHandler('ok', function () {
+                console.log('[ItemDetail] ok handler 실행');
                 var dw = self._itemDetailWindow;
                 self._itemDetailFullscreen.open(dw._item, dw._detail);
             });
 
             this._itemDetailWindow.setHandler('cancel', function () {
+                console.log('[ItemDetail] cancel handler 실행 | dw.visible before=', self._itemDetailWindow.visible);
                 self._itemDetailWindow.hide();
+                console.log('[ItemDetail] cancel handler 실행 | dw.visible after=', self._itemDetailWindow.visible);
                 var ilId = (self._pendingHandler && self._pendingHandler.itemListWidget) || 'item_list';
                 var ilW  = self._widgetMap && self._widgetMap[ilId];
                 if (ilW && ilW.activate) ilW.activate();
@@ -665,20 +651,20 @@
 
             // MV 표준 방식: window.update()를 직접 호출하여 processHandling()/processTouch() 실행
             // (updateChildren()이 실행되지 않으므로 직접 호출 필요)
+            // NavManager 등이 dw를 deactivate할 수 있으므로 매 프레임 activate() 보장
             if (dw && dw.visible) {
                 if (this.updateFade) this.updateFade();
-                // 매 30프레임마다 상태 로그
-                this._dwTick = (this._dwTick || 0) + 1;
-                if (this._dwTick % 30 === 1) {
-                    console.log('[ItemDetail] SCU dw tick | visible=' + dw.visible +
-                        ' active=' + dw.active + ' openness=' + dw.openness +
-                        ' isOpen=' + dw.isOpen() + ' isOpenAndActive=' + dw.isOpenAndActive());
+                var prevActive = dw.active;
+                dw.activate();
+                if (!prevActive) {
+                    console.log('[ItemDetail] DW was inactive → forced activate');
                 }
                 dw.update();
                 return;
             }
             if (aw && aw.visible) {
                 if (this.updateFade) this.updateFade();
+                aw.activate();
                 aw.update();
                 return;
             }
