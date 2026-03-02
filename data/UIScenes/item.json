@@ -177,8 +177,14 @@
         "height": 108,
         "maxCols": 2,
         "items": [
-          { "text": "사용",     "symbol": "use"     },
-          { "text": "살펴보기",  "symbol": "inspect" }
+          {
+            "text": "사용",
+            "symbol": "use"
+          },
+          {
+            "text": "살펴보기",
+            "symbol": "inspect"
+          }
         ],
         "handlers": {
           "ok": {
@@ -188,7 +194,10 @@
           "cancel": {
             "action": "script",
             "code": "this._widgetMap['id_action'].displayObject().visible=false;",
-            "thenAction": { "action": "focusWidget", "target": "item_list" }
+            "thenAction": {
+              "action": "focusWidget",
+              "target": "item_list"
+            }
           }
         }
       },
@@ -233,8 +242,14 @@
         "height": 72,
         "maxCols": 2,
         "items": [
-          { "text": "자세히 보기", "symbol": "view"  },
-          { "text": "닫기",        "symbol": "close" }
+          {
+            "text": "자세히 보기",
+            "symbol": "view"
+          },
+          {
+            "text": "닫기",
+            "symbol": "close"
+          }
         ],
         "handlers": {
           "ok": {
@@ -244,7 +259,10 @@
           "cancel": {
             "action": "script",
             "code": "var pp=this._widgetMap['id_popup'];var pc=this._widgetMap['id_popup_ctrl'];if(pp)pp.displayObject().visible=false;if(pc)pc.displayObject().visible=false;",
-            "thenAction": { "action": "focusWidget", "target": "item_list" }
+            "thenAction": {
+              "action": "focusWidget",
+              "target": "item_list"
+            }
           }
         }
       },
@@ -285,7 +303,10 @@
           "cancel": {
             "action": "script",
             "code": "SoundManager.playCancel();var fp=this._widgetMap['id_fullscreen'];var fc=this._widgetMap['id_full_ctrl'];if(fp)fp.displayObject().visible=false;if(fc)fc.displayObject().visible=false;",
-            "thenAction": { "action": "focusWidget", "target": "id_popup_ctrl" }
+            "thenAction": {
+              "action": "focusWidget",
+              "target": "id_popup_ctrl"
+            }
           }
         }
       }
