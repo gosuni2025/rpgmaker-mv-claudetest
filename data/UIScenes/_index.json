@@ -2,6 +2,7 @@
   "actor_row",
   "actor_row_item",
   "battle",
+  "battleStatusSlot",
   "enemy_book",
   "equip",
   "fj_classChange",

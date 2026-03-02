@@ -1,0 +1,80 @@
+{
+  "id": "battleStatusSlot",
+  "root": {
+    "id": "bss_root",
+    "type": "panel",
+    "x": 0,
+    "y": 0,
+    "width": 156,
+    "height": 180,
+    "windowed": false,
+    "children": [
+      {
+        "id": "bss_face",
+        "type": "image",
+        "imageSource": "actorFace",
+        "actorIndexExpr": "$ctx.actorIndex",
+        "x": 2,
+        "y": 0,
+        "width": 143,
+        "height": 144
+      },
+      {
+        "id": "bss_overlay_bg",
+        "type": "panel",
+        "windowed": false,
+        "bgColor": "rgba(0,0,0,0.62)",
+        "fillWidth": true,
+        "x": 0,
+        "y": 104,
+        "width": 156,
+        "height": 76
+      },
+      {
+        "id": "bss_name",
+        "type": "textArea",
+        "fillWidth": true,
+        "x": 0,
+        "y": 104,
+        "width": 156,
+        "height": 22,
+        "text": "{actor[$ctx.actorIndex].name}",
+        "align": "center",
+        "fontSize": 16
+      },
+      {
+        "id": "bss_hp",
+        "type": "gauge",
+        "gaugeType": "hp",
+        "actorIndexExpr": "$ctx.actorIndex",
+        "fillWidth": true,
+        "x": 0,
+        "y": 126,
+        "width": 156,
+        "height": 16
+      },
+      {
+        "id": "bss_mp",
+        "type": "gauge",
+        "gaugeType": "mp",
+        "actorIndexExpr": "$ctx.actorIndex",
+        "fillWidth": true,
+        "x": 0,
+        "y": 144,
+        "width": 156,
+        "height": 16
+      },
+      {
+        "id": "bss_tp",
+        "type": "gauge",
+        "gaugeType": "tp",
+        "actorIndexExpr": "$ctx.actorIndex",
+        "fillWidth": true,
+        "x": 0,
+        "y": 162,
+        "width": 156,
+        "height": 16
+      }
+    ]
+  }
+}
