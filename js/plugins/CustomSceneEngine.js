@@ -4151,6 +4151,7 @@
   ];
 
   function installBattleWindowProxy(win, widget, widgetId) {
+    console.log('[DBG-actor] installBattleWindowProxy:', widgetId, '| win=', win ? win.constructor.name : 'NULL', '| widget=', widget ? widget._id : 'NULL');
     if (!win) return;
 
     // 원본 창은 항상 화면 밖으로 (위젯 유무와 무관)
@@ -4555,6 +4556,7 @@
 
       // extends: Scene_Battle이면 배틀 UI 위젯 override 주입
       if (extendsName === 'Scene_Battle') {
+        console.log('[DBG-actor] applyBattleOverrides 호출: sceneId=' + sceneId);
         applyBattleOverrides(SceneCtor, sceneId);
       }
 
