@@ -12914,13 +12914,6 @@
               ]
             },
             {
-              "code": 401,
-              "indent": 0,
-              "parameters": [
-                "123123123132"
-              ]
-            },
-            {
               "code": 123,
               "indent": 0,
               "parameters": [
@@ -12951,7 +12944,7 @@
           "priorityType": 1,
           "stepAnime": false,
           "through": false,
-          "trigger": 0,
+          "trigger": 3,
           "walkAnime": true
         },
         {
