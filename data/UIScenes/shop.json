@@ -224,7 +224,7 @@
         "x": 0,
         "y": 144,
         "width": 816,
-        "height": 56,
+        "height": 72,
         "maxCols": 4,
         "visible": false,
         "items": [
@@ -270,9 +270,9 @@
         "id": "sell_list",
         "type": "textList",
         "x": 0,
-        "y": 200,
+        "y": 216,
         "width": 816,
-        "height": 424,
+        "height": 408,
         "visible": false,
         "dataScript": "(function() {\n  var cat = $ctx.sellCategory || 'all';\n  var all = $gameParty.allItems();\n  var filtered = all.filter(function(item) {\n    if (!item || item.price <= 0) return false;\n    if (cat === 'item') return DataManager.isItem(item) && item.itypeId === 1;\n    if (cat === 'weapon') return DataManager.isWeapon(item);\n    if (cat === 'armor') return DataManager.isArmor(item);\n    if (cat === 'keyItem') return DataManager.isItem(item) && item.itypeId === 2;\n    return true;\n  });\n  $ctx.sellItems = filtered;\n  return filtered.map(function(item) {\n    return {\n      name: item.name,\n      symbol: 'sell',\n      iconIndex: item.iconIndex,\n      enabled: true,\n      numberText: String($gameParty.numItems(item))\n    };\n  });\n})()",
         "onCursor": {
@@ -294,6 +294,15 @@
             }
           }
         }
+      },
+      {
+        "id": "label_1772414271697",
+        "type": "label",
+        "x": 357,
+        "y": 546,
+        "width": 200,
+        "height": 36,
+        "text": "custom scene"
       }
     ]
   }
