@@ -171,6 +171,7 @@
         "id": "id_action",
         "displayName": "사용/살펴보기 선택",
         "type": "textList",
+        "topLayer": true,
         "visible": false,
         "x": 288,
         "y": 258,
@@ -206,6 +207,7 @@
         "id": "id_popup",
         "displayName": "상세 팝업",
         "type": "panel",
+        "topLayer": true,
         "visible": false,
         "x": 33,
         "y": 25,
@@ -230,6 +232,7 @@
             "y": 18,
             "width": 353,
             "height": 466,
+            "useTextEx": true,
             "text": "{$ctx._detailD&&$ctx._detailD.text||\"\"}"
           }
         ]
@@ -238,6 +241,7 @@
         "id": "id_popup_ctrl",
         "displayName": "상세 팝업 컨트롤",
         "type": "textList",
+        "topLayer": true,
         "visible": false,
         "x": 33,
         "y": 527,
@@ -273,6 +277,7 @@
         "id": "id_fullscreen",
         "displayName": "전체화면 이미지",
         "type": "panel",
+        "topLayer": true,
         "visible": false,
         "x": 0,
         "y": 0,
@@ -297,6 +302,7 @@
         "id": "id_full_ctrl",
         "displayName": "전체화면 컨트롤",
         "type": "textList",
+        "topLayer": true,
         "visible": false,
         "x": 0,
         "y": -100,
