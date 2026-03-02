@@ -12,7 +12,7 @@
     "Scene_Save": "Scene_CS_save",
     "Scene_Load": "Scene_CS_load",
     "Scene_Item": "Scene_CS_item",
-    "Scene_Battle": "Scene_CSBattle",
+    "Scene_Battle": "Scene_CS_battle",
     "Scene_Shop": "Scene_CS_shop",
     "Scene_Equip": "Scene_CS_equip",
     "Scene_Skill": "Scene_CS_fj_skillLearn",
