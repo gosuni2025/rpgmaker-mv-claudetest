@@ -1404,9 +1404,13 @@
     var aw = navMgr._activeIndex >= 0 ? navMgr._focusables[navMgr._activeIndex] : null;
     var aid = aw ? aw._id : null;
     var isLinked = aid && linked.indexOf(aid) >= 0;
-    var base = (this._def.bgAlpha !== undefined ? Math.round(this._def.bgAlpha * 255) : 255);
-    var tgt = isLinked ? base : Math.round(base * 0.63);
-    if (this._displayObject.opacity !== tgt) this._displayObject.opacity = tgt;
+    // Window.opacity setter는 _windowSpriteContainer.alpha만 변경하므로
+    // 자식 Sprite(이미지 등)에 cascade가 전달되지 않음.
+    // Window 자체의 alpha를 설정해야 모든 자식이 함께 dim됨.
+    var dimAlpha = isLinked ? 1.0 : 0.63;
+    if (Math.abs((this._displayObject.alpha || 1) - dimAlpha) > 0.005) {
+      this._displayObject.alpha = dimAlpha;
+    }
   };
   Widget_Panel.prototype.destroy = function() {
     // Window.prototype.destroy가 내부 bitmap + geometry 모두 처리하므로 별도 처리 불필요
