@@ -29,7 +29,7 @@
         "height": 624,
         "bitmapExpr": "ImageManager.loadTitle1($dataSystem.title1Name)",
         "fitMode": "stretch",
-        "visible": true
+        "visible": false
       },
       {
         "id": "title_bg2",
@@ -73,8 +73,8 @@
       {
         "id": "btn_newGame",
         "type": "button",
-        "x": 143,
-        "y": 295,
+        "x": 51,
+        "y": 264,
         "width": 240,
         "height": 52,
         "label": "{typeof TextManager!=='undefined'?TextManager.newGame:'새 게임'}",
@@ -88,8 +88,8 @@
       {
         "id": "btn_continue",
         "type": "button",
-        "x": 392,
-        "y": 370,
+        "x": 431,
+        "y": 332,
         "width": 240,
         "height": 52,
         "label": "{typeof TextManager!=='undefined'?TextManager.continue_:'이어하기'}",
@@ -105,8 +105,8 @@
       {
         "id": "btn_options",
         "type": "button",
-        "x": 519,
-        "y": 475,
+        "x": 417,
+        "y": 485,
         "width": 240,
         "height": 52,
         "label": "{typeof TextManager!=='undefined'?TextManager.options:'옵션'}",
@@ -116,13 +116,24 @@
         "action": {
           "action": "gotoScene",
           "target": "Scene_Options"
-        }
+        },
+        "children": [
+          {
+            "id": "label_1772460574533",
+            "type": "label",
+            "x": 77,
+            "y": -264,
+            "width": 200,
+            "height": 36,
+            "text": "123123123132"
+          }
+        ]
       },
       {
         "id": "btn_credit",
         "type": "button",
-        "x": 141,
-        "y": 533,
+        "x": 110,
+        "y": 450,
         "width": 240,
         "height": 52,
         "label": "크레딧",
