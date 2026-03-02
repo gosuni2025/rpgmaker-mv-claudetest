@@ -10,7 +10,12 @@
   },
   "navigation": {
     "defaultFocus": "btn_newGame",
-    "focusOrder": ["btn_newGame", "btn_continue", "btn_options", "btn_credit"],
+    "focusOrder": [
+      "btn_newGame",
+      "btn_continue",
+      "btn_options",
+      "btn_credit"
+    ],
     "upDownNavigation": true
   },
   "root": {
@@ -30,7 +35,8 @@
         "width": 816,
         "height": 624,
         "bitmapExpr": "ImageManager.loadTitle1($dataSystem.title1Name)",
-        "fitMode": "stretch"
+        "fitMode": "stretch",
+        "visible": true
       },
       {
         "id": "title_bg2",
@@ -40,7 +46,8 @@
         "width": 816,
         "height": 624,
         "bitmapExpr": "ImageManager.loadTitle2($dataSystem.title2Name)",
-        "fitMode": "stretch"
+        "fitMode": "stretch",
+        "visible": true
       },
       {
         "id": "init",
