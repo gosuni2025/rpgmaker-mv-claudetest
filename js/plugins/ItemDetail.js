@@ -478,6 +478,7 @@
     Scene_Item.prototype.update = function () {
         var fs = this._itemDetailFullscreen;
         var dw = this._detailWindow;
+        var aw = this._itemActionWindow;
 
         if (this._detailOverlay) {
             this._detailOverlay.visible = !!(fs && fs.isOpen()) || !!(dw && dw.visible);
@@ -490,6 +491,18 @@
                 if (dw && dw.visible) dw.activate();
             }
             Input.clear(); TouchInput.clear();
+            return;
+        }
+
+        // 팝업이 열린 동안 해당 창만 update — 다른 창들이 cancel을 가로채지 못하게 함
+        if (dw && dw.visible) {
+            this.updateFade();
+            dw.update();
+            return;
+        }
+        if (aw && aw.visible) {
+            this.updateFade();
+            aw.update();
             return;
         }
 
@@ -581,6 +594,7 @@
 
             var fs = this._itemDetailFullscreen;
             var dw = this._itemDetailWindow;
+            var aw = this._itemActionWindow;
 
             if (this._detailOverlay) {
                 this._detailOverlay.visible = !!(fs && fs.isOpen()) || !!(dw && dw.visible);
@@ -593,6 +607,18 @@
                     if (dw && dw.visible) dw.activate();
                 }
                 Input.clear(); TouchInput.clear();
+                return;
+            }
+
+            // 팝업이 열린 동안 해당 창만 update — 다른 창들이 cancel을 가로채지 못하게 함
+            if (dw && dw.visible) {
+                if (this.updateFade) this.updateFade();
+                dw.update();
+                return;
+            }
+            if (aw && aw.visible) {
+                if (this.updateFade) this.updateFade();
+                aw.update();
                 return;
             }
 

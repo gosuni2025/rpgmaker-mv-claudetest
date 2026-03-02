@@ -5213,6 +5213,14 @@
     "59": {
       "name": "아이템 상인",
       "showName": true
+    },
+    "60": {
+      "name": "상점 주인",
+      "showName": true
+    },
+    "61": {
+      "name": "텍스트 표시",
+      "showName": true
     }
   },
   "minimapData": {
