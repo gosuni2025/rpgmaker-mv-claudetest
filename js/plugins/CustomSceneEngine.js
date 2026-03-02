@@ -4104,12 +4104,18 @@
     var origCreateAllWindows = Klass.prototype.createAllWindows;
     Klass.prototype.createAllWindows = function() {
       var sceneDef = this._getSceneDef();
-      console.log('[CSE:battle] createAllWindows — sceneDef=' + !!sceneDef + ' hasRoot=' + !!(sceneDef && sceneDef.root));
       if (sceneDef && sceneDef.root) {
         this._createWidgetTree(sceneDef);
-        console.log('[CSE:battle] _createWidgetTree done — widgetMap:', Object.keys(this._widgetMap || {}));
+        console.log('[CSE:battle] widgetMap:', Object.keys(this._widgetMap || {}));
       }
       origCreateAllWindows.call(this);
+      // 비-Window root 위젯(Panel 등)이 addChildAt(0)으로 Spriteset_Battle 아래에 추가됨
+      // → 원본 창 생성 완료 후 맨 위로 재배치 (windowLayer 위에 표시되도록)
+      var rootObj = this._rootWidget && this._rootWidget.displayObject();
+      if (rootObj && !(rootObj instanceof Window_Base)) {
+        this.addChild(rootObj);
+        console.log('[CSE:battle] root widget moved to top');
+      }
     };
 
     // createPartyCommandWindow: _widgetMap['partyCommand'] 재사용 (없으면 원본 폴백)
