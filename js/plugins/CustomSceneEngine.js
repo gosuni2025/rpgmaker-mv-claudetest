@@ -4457,26 +4457,12 @@
     // selectEnemySelection: actorCommand 비활성화 + rowOverlay dim + enemyWindow를 Scene 최상단으로
     var origSES = SCB.selectEnemySelection || function() {};
     Klass.prototype.selectEnemySelection = function() {
+      this._csSelectingEnemy = true; // startActorCommandSelection 재진입 방지
       var wmap = this._widgetMap || {};
-      var acw = wmap.actorCommand;
-      console.log('[DBG-SES] actorCommand widget:', acw,
-        '_window:', acw && acw._window,
-        '_actorCommandWindow:', this._actorCommandWindow,
-        'same?', acw && acw._window === this._actorCommandWindow);
-      if (acw) {
-        if (acw.deactivate) acw.deactivate();
-        if (acw.hide) acw.hide();
-        var acwin = acw._window;
-        console.log('[DBG-SES] acwin:', acwin, 'deselect fn:', acwin && acwin.deselect,
-          'cursor before:', acwin && acwin._windowCursorSprite && acwin._windowCursorSprite.visible);
-        if (acwin && acwin.deselect) acwin.deselect();
-        console.log('[DBG-SES] cursor after deselect:', acwin && acwin._windowCursorSprite && acwin._windowCursorSprite.visible,
-          'cursorRect:', acwin && acwin._cursorRect);
-      }
-      // _actorCommandWindow도 직접 deselect (혹시 다른 객체일 경우 대비)
-      if (this._actorCommandWindow && this._actorCommandWindow.deselect) {
-        this._actorCommandWindow.deselect();
-        console.log('[DBG-SES] _actorCommandWindow.deselect() called directly');
+      if (wmap.actorCommand) {
+        if (wmap.actorCommand.deactivate) wmap.actorCommand.deactivate();
+        if (wmap.actorCommand.hide) wmap.actorCommand.hide();
+        if (wmap.actorCommand._window) wmap.actorCommand._window.deselect();
       }
       // statusWindow _rowOverlay(서브씬 스프라이트) + actorWindow _rowOverlay(커서) dim
       ['statusWindow', 'actorWindow'].forEach(function(id) {
@@ -4539,6 +4525,8 @@
     // startActorCommandSelection: 액터 커맨드 단계 → partyCommand 비활성화 + actorWindow 인디케이터 표시
     var origSACS = SCB.startActorCommandSelection || function() {};
     Klass.prototype.startActorCommandSelection = function() {
+      // 적 선택 중에는 changeInputWindow가 매 프레임 호출하므로 재진입 차단
+      if (this._csSelectingEnemy) return;
       var wmap = this._widgetMap || {};
       // partyCommand 비활성화 — actorCommand와 동시에 키 입력 받지 않도록
       if (wmap.partyCommand && wmap.partyCommand.deactivate) wmap.partyCommand.deactivate();
@@ -4553,6 +4541,7 @@
     };
 
     Klass.prototype.onEnemyCancel = function() {
+      this._csSelectingEnemy = false;
       this._enemyWindow.hide();
       var wmap = this._widgetMap || {};
       // rowOverlay dim 복구
@@ -4574,6 +4563,12 @@
       if (last === 'attack') { this._actorCommandWindow.activate(); }
       else if (last === 'skill') { this._skillWindow.show(); this._skillWindow.activate(); }
       else if (last === 'item') { this._itemWindow.show(); this._itemWindow.activate(); }
+    };
+
+    var origOEO = SCB.onEnemyOk || function() {};
+    Klass.prototype.onEnemyOk = function() {
+      this._csSelectingEnemy = false;
+      origOEO.call(this);
     };
 
     // start: 에디터 미리보기 모드에서 배틀 초기화 건너뜀
