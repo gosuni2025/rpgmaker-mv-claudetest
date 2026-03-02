@@ -293,7 +293,7 @@
           {
             "id": "btn_down2",
             "type": "button",
-            "x": 108, "y": 330, "width": 48, "height": 48,
+            "x": 52, "y": 330, "width": 48, "height": 48,
             "label": "",
             "focusable": false,
             "hideOnKeyboard": true,
@@ -312,7 +312,7 @@
           {
             "id": "btn_down",
             "type": "button",
-            "x": 172, "y": 330, "width": 48, "height": 48,
+            "x": 116, "y": 330, "width": 48, "height": 48,
             "label": "",
             "focusable": false,
             "hideOnKeyboard": true,
@@ -331,7 +331,7 @@
           {
             "id": "btn_up",
             "type": "button",
-            "x": 236, "y": 330, "width": 48, "height": 48,
+            "x": 180, "y": 330, "width": 48, "height": 48,
             "label": "",
             "focusable": false,
             "hideOnKeyboard": true,
@@ -350,7 +350,7 @@
           {
             "id": "btn_up2",
             "type": "button",
-            "x": 300, "y": 330, "width": 48, "height": 48,
+            "x": 244, "y": 330, "width": 48, "height": 48,
             "label": "",
             "focusable": false,
             "hideOnKeyboard": true,
@@ -364,6 +364,25 @@
             "action": {
               "action": "script",
               "code": "$ctx.shopNum=Math.min($ctx.shopNum+10,$ctx.shopMax); SoundManager.playCursor();"
+            }
+          },
+          {
+            "id": "btn_ok",
+            "type": "button",
+            "x": 308, "y": 330, "width": 96, "height": 48,
+            "label": "",
+            "focusable": false,
+            "hideOnKeyboard": true,
+            "windowed": false,
+            "transition": "spriteSwap",
+            "transitionConfig": {
+              "normalImage": "ButtonSet",    "normalFrame":      [192, 0, 96, 48],
+              "highlightedImage": "ButtonSet","highlightedFrame": [192, 0, 96, 48],
+              "pressedImage": "ButtonSet",   "pressedFrame":     [192, 48, 96, 48]
+            },
+            "action": {
+              "action": "script",
+              "code": "SoundManager.playShop(); $ctx.numInput=false; this._widgetMap['number_win']._displayObject.visible=false; if($ctx.shopMode==='buy'){ $gameParty.loseGold($ctx.shopNum*$ctx.shopPrice); $gameParty.gainItem($ctx.selectedItem,$ctx.shopNum); this._widgetMap['buy_list']._window.visible=true; this._navManager.focusWidget('buy_list'); }else{ $gameParty.gainGold($ctx.shopNum*$ctx.shopPrice); $gameParty.loseItem($ctx.selectedItem,$ctx.shopNum); this._widgetMap['status_win']._displayObject.visible=false; this._widgetMap['sell_list']._window.visible=true; this._widgetMap['category_win']._window.visible=true; this._navManager.focusWidget('sell_list'); }"
             }
           }
         ]
