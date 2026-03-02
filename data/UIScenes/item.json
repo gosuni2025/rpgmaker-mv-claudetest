@@ -214,7 +214,9 @@
         "width": 750,
         "height": 502,
         "windowed": true,
-        "linkedFocus": ["id_popup_ctrl"],
+        "linkedFocus": [
+          "id_popup_ctrl"
+        ],
         "children": [
           {
             "id": "id_popup_img",
