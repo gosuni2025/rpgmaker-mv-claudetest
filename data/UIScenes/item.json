@@ -13,7 +13,10 @@
     "focusOrder": [
       "category_list",
       "item_list",
-      "actor_list"
+      "actor_list",
+      "id_action",
+      "id_popup_ctrl",
+      "id_full_ctrl"
     ]
   },
   "root": {
@@ -163,6 +166,128 @@
         "padding": 0,
         "visible": false,
         "dataScript": "$gameParty.members().map(function(a, i) { return { actorIndex: i }; })"
+      },
+      {
+        "id": "id_action",
+        "type": "textList",
+        "visible": false,
+        "x": 288,
+        "y": 258,
+        "width": 240,
+        "height": 108,
+        "maxCols": 2,
+        "items": [
+          { "text": "사용",     "symbol": "use"     },
+          { "text": "살펴보기",  "symbol": "inspect" }
+        ],
+        "handlers": {
+          "ok": {
+            "action": "script",
+            "code": "var aw=this._widgetMap['id_action'];var sym=aw&&aw._window?aw._window.currentSymbol():null;aw.displayObject().visible=false;if(sym==='use'){if(this._execPendingUse)this._execPendingUse();}else{var pp=this._widgetMap['id_popup'];var pc=this._widgetMap['id_popup_ctrl'];if(pp)pp.displayObject().visible=true;if(pc)pc.displayObject().visible=true;var img=this._widgetMap['id_popup_img'];if(img&&img.refresh)img.refresh();if(this._navManager)this._navManager.focusWidget('id_popup_ctrl');}"
+          },
+          "cancel": {
+            "action": "script",
+            "code": "this._widgetMap['id_action'].displayObject().visible=false;",
+            "thenAction": { "action": "focusWidget", "target": "item_list" }
+          }
+        }
+      },
+      {
+        "id": "id_popup",
+        "type": "panel",
+        "visible": false,
+        "x": 33,
+        "y": 25,
+        "width": 750,
+        "height": 502,
+        "windowed": true,
+        "children": [
+          {
+            "id": "id_popup_img",
+            "type": "image",
+            "x": 18,
+            "y": 18,
+            "width": 357,
+            "height": 466,
+            "bitmapExpr": "$ctx._detailD&&$ctx._detailD.image?ImageManager.loadPicture($ctx._detailD.image):null",
+            "fitMode": "contain"
+          },
+          {
+            "id": "id_popup_text",
+            "type": "textArea",
+            "x": 379,
+            "y": 18,
+            "width": 353,
+            "height": 466,
+            "text": "{$ctx._detailD&&$ctx._detailD.text||\"\"}"
+          }
+        ]
+      },
+      {
+        "id": "id_popup_ctrl",
+        "type": "textList",
+        "visible": false,
+        "x": 33,
+        "y": 527,
+        "width": 750,
+        "height": 72,
+        "maxCols": 2,
+        "items": [
+          { "text": "자세히 보기", "symbol": "view"  },
+          { "text": "닫기",        "symbol": "close" }
+        ],
+        "handlers": {
+          "ok": {
+            "action": "script",
+            "code": "var w=this._widgetMap['id_popup_ctrl'];var sym=w&&w._window?w._window.currentSymbol():null;if(sym==='view'){var d=this._ctx._detailD;if(d&&d.image){SoundManager.playOk();var fp=this._widgetMap['id_fullscreen'];var fc=this._widgetMap['id_full_ctrl'];if(fp)fp.displayObject().visible=true;if(fc)fc.displayObject().visible=true;var img=this._widgetMap['id_full_img'];if(img&&img.refresh)img.refresh();if(this._navManager)this._navManager.focusWidget('id_full_ctrl');}else SoundManager.playBuzzer();}else{var pp=this._widgetMap['id_popup'];var pc=this._widgetMap['id_popup_ctrl'];if(pp)pp.displayObject().visible=false;if(pc)pc.displayObject().visible=false;if(this._navManager)this._navManager.focusWidget('item_list');}"
+          },
+          "cancel": {
+            "action": "script",
+            "code": "var pp=this._widgetMap['id_popup'];var pc=this._widgetMap['id_popup_ctrl'];if(pp)pp.displayObject().visible=false;if(pc)pc.displayObject().visible=false;",
+            "thenAction": { "action": "focusWidget", "target": "item_list" }
+          }
+        }
+      },
+      {
+        "id": "id_fullscreen",
+        "type": "panel",
+        "visible": false,
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 624,
+        "windowed": false,
+        "bgAlpha": 0.9,
+        "children": [
+          {
+            "id": "id_full_img",
+            "type": "image",
+            "x": 0,
+            "y": 0,
+            "width": 816,
+            "height": 624,
+            "bitmapExpr": "$ctx._detailD&&$ctx._detailD.image?ImageManager.loadPicture($ctx._detailD.image):null",
+            "fitMode": "contain"
+          }
+        ]
+      },
+      {
+        "id": "id_full_ctrl",
+        "type": "textList",
+        "visible": false,
+        "x": 0,
+        "y": -100,
+        "width": 816,
+        "height": 1,
+        "items": [],
+        "bgAlpha": 0,
+        "handlers": {
+          "cancel": {
+            "action": "script",
+            "code": "SoundManager.playCancel();var fp=this._widgetMap['id_fullscreen'];var fc=this._widgetMap['id_full_ctrl'];if(fp)fp.displayObject().visible=false;if(fc)fc.displayObject().visible=false;",
+            "thenAction": { "action": "focusWidget", "target": "id_popup_ctrl" }
+          }
+        }
       }
     ],
     "enterAnimation": {
