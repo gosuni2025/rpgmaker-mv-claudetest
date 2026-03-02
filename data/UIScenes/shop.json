@@ -252,7 +252,7 @@
         "handlers": {
           "ok": {
             "action": "script",
-            "code": "var win=this._widgetMap['category_win']._window; $ctx.sellCategory=win.currentSymbol(); this._widgetMap['sell_list'].refresh(); this._navManager.focusWidget('sell_list');",
+            "code": "var win=this._widgetMap['category_win']._window; $ctx.sellCategory=win.currentSymbol(); this._widgetMap['sell_list']._window.visible=true; this._widgetMap['sell_list'].refresh(); this._navManager.focusWidget('sell_list');",
             "thenAction": {
               "action": "noop"
             }
