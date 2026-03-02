@@ -2,16 +2,12 @@
   "id": "battleStatusSlot",
   "root": {
     "id": "bss_root",
-    "type": "button",
+    "type": "panel",
     "x": 0,
     "y": 0,
     "width": 156,
     "height": 180,
     "windowed": false,
-    "action": {
-      "action": "script",
-      "code": "var aw = this._widgetMap && this._widgetMap['actorWindow']; if (!aw || !aw._window) return; aw._window.select($ctx.actorIndex); if (this._actorWindow && this._actorWindow.callHandler) this._actorWindow.callHandler('ok');"
-    },
     "children": [
       {
         "id": "bss_face",
