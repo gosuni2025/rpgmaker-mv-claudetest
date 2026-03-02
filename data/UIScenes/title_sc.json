@@ -2,9 +2,15 @@
   "id": "title_sc",
   "displayName": "타이틀 화면 (커스텀)",
   "formatVersion": 2,
+  "keyHandlers": {
+    "cancel": {
+      "action": "script",
+      "code": "if(typeof SoundManager!=='undefined') SoundManager.playBuzzer();"
+    }
+  },
   "navigation": {
-    "defaultFocus": "cmd_title",
-    "cancelWidget": "cmd_title"
+    "defaultFocus": "btn_newGame",
+    "focusOrder": ["btn_newGame", "btn_continue", "btn_options", "btn_credit"]
   },
   "root": {
     "id": "root",
@@ -41,7 +47,7 @@
         "id": "title_text",
         "type": "textArea",
         "x": 58,
-        "y": 160,
+        "y": 120,
         "width": 700,
         "height": 120,
         "text": "{$dataSystem.gameTitle}",
@@ -52,48 +58,59 @@
         "outlineWidth": 6
       },
       {
-        "id": "cmd_title",
-        "type": "textList",
+        "id": "btn_newGame",
+        "type": "button",
         "x": 288,
-        "y": 380,
+        "y": 340,
         "width": 240,
-        "height": 162,
-        "items": [
-          {
-            "name": "{typeof TextManager!=='undefined'?TextManager.newGame:'새 게임'}",
-            "symbol": "newGame"
-          },
-          {
-            "name": "{typeof TextManager!=='undefined'?TextManager.continue_:'이어하기'}",
-            "symbol": "continue",
-            "enabledCondition": "DataManager.isAnySavefileExists()"
-          },
-          {
-            "name": "{typeof TextManager!=='undefined'?TextManager.options:'옵션'}",
-            "symbol": "options"
-          },
-          {
-            "name": "크레딧",
-            "symbol": "credit"
-          }
-        ],
-        "handlers": {
-          "newGame": {
-            "action": "script",
-            "code": "DataManager.setupNewGame(); this.fadeOutAll(); SceneManager.goto(Scene_Map);"
-          },
-          "continue": {
-            "action": "gotoScene",
-            "target": "Scene_Load"
-          },
-          "options": {
-            "action": "gotoScene",
-            "target": "Scene_Options"
-          },
-          "credit": {
-            "action": "gotoScene",
-            "target": "Scene_Credit"
-          }
+        "height": 52,
+        "label": "{typeof TextManager!=='undefined'?TextManager.newGame:'새 게임'}",
+        "windowed": true,
+        "action": {
+          "action": "script",
+          "code": "DataManager.setupNewGame(); this.fadeOutAll(); SceneManager.goto(Scene_Map);"
+        }
+      },
+      {
+        "id": "btn_continue",
+        "type": "button",
+        "x": 288,
+        "y": 404,
+        "width": 240,
+        "height": 52,
+        "label": "{typeof TextManager!=='undefined'?TextManager.continue_:'이어하기'}",
+        "windowed": true,
+        "action": {
+          "action": "script",
+          "code": "if(DataManager.isAnySavefileExists()){SceneManager.push(Scene_Load);}else{if(typeof SoundManager!=='undefined')SoundManager.playBuzzer();}"
+        }
+      },
+      {
+        "id": "btn_options",
+        "type": "button",
+        "x": 288,
+        "y": 468,
+        "width": 240,
+        "height": 52,
+        "label": "{typeof TextManager!=='undefined'?TextManager.options:'옵션'}",
+        "windowed": true,
+        "action": {
+          "action": "gotoScene",
+          "target": "Scene_Options"
+        }
+      },
+      {
+        "id": "btn_credit",
+        "type": "button",
+        "x": 288,
+        "y": 532,
+        "width": 240,
+        "height": 52,
+        "label": "크레딧",
+        "windowed": true,
+        "action": {
+          "action": "gotoScene",
+          "target": "Scene_Credit"
         }
       }
     ]
