@@ -2424,10 +2424,22 @@
   // Scene.update 에서 keyHandlers 실행 후 다시 호출되어 same-frame 동기화
   Widget_Button.prototype._syncExternalVisibility = function() {
     var parentVisible = true;
+    var firstHiddenParent = null;
     var p = this._parent;
     while (p) {
-      if (p._displayObject && !p._displayObject.visible) { parentVisible = false; break; }
+      if (p._displayObject && !p._displayObject.visible) {
+        parentVisible = false;
+        firstHiddenParent = p._id || p._def && p._def.id || '(unknown)';
+        break;
+      }
       p = p._parent;
+    }
+    var myId = this._id || this._def && this._def.id || '?';
+    var prevVisible = this._decoSprite ? this._decoSprite.visible : (this._labelSprite ? this._labelSprite.visible : null);
+    if (prevVisible !== null && prevVisible !== parentVisible) {
+      console.log('[BTN_VIS] id=' + myId +
+        ' ' + prevVisible + ' → ' + parentVisible +
+        (firstHiddenParent ? ' (hiddenBy=' + firstHiddenParent + ')' : ''));
     }
     if (this._hideOnKeyboard) {
       var showBtn = parentVisible && typeof TouchInput !== 'undefined' && typeof Input !== 'undefined'
@@ -2706,9 +2718,13 @@
       // Widget_Scene 방식으로 행 위젯 생성
       var rowWidget = {
         _subRoot: null,
+        _container: null,
         _instanceCtx: instanceCtx,
         _scene: scene,
-        destroy: function() { if (this._subRoot) { this._subRoot.destroy(); this._subRoot = null; } },
+        destroy: function() {
+          if (this._subRoot) { this._subRoot.destroy(); this._subRoot = null; }
+          if (this._container) { this._container.destroy(); this._container = null; }
+        },
         _withCtx: function(fn) {
           var c = this._scene && this._scene._ctx;
           if (!c) { fn(); return; }
