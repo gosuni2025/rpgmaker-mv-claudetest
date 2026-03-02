@@ -8,7 +8,7 @@
     "cancelWidget": "cmd_main",
     "focusOrder": [
       "cmd_main",
-      "actor_select"
+      "actor_list"
     ]
   },
   "root": {
@@ -94,7 +94,7 @@
           },
           "skill": {
             "action": "selectActor",
-            "widget": "actor_select",
+            "widget": "actor_list",
             "thenAction": {
               "action": "gotoScene",
               "target": "Scene_CS_skill"
@@ -102,7 +102,7 @@
           },
           "equip": {
             "action": "selectActor",
-            "widget": "actor_select",
+            "widget": "actor_list",
             "thenAction": {
               "action": "gotoScene",
               "target": "Scene_CS_equip"
@@ -110,7 +110,7 @@
           },
           "status": {
             "action": "selectActor",
-            "widget": "actor_select",
+            "widget": "actor_list",
             "thenAction": {
               "action": "gotoScene",
               "target": "Scene_CS_status"
@@ -118,7 +118,7 @@
           },
           "formation": {
             "action": "formation",
-            "widget": "actor_select"
+            "widget": "actor_list"
           },
           "options": {
             "action": "gotoScene",
@@ -176,64 +176,14 @@
         "windowed": true,
         "children": [
           {
-            "id": "actor_row_0",
-            "type": "scene",
-            "sceneId": "actor_row",
-            "instanceCtx": {
-              "actorIndex": 0
-            },
-            "x": 0,
-            "y": 0,
-            "width": 576,
-            "height": 156
-          },
-          {
-            "id": "actor_row_1",
-            "type": "scene",
-            "sceneId": "actor_row",
-            "instanceCtx": {
-              "actorIndex": 1
-            },
-            "x": 0,
-            "y": 156,
-            "width": 576,
-            "height": 156
-          },
-          {
-            "id": "actor_row_2",
-            "type": "scene",
-            "sceneId": "actor_row",
-            "instanceCtx": {
-              "actorIndex": 2
-            },
-            "x": 0,
-            "y": 312,
-            "width": 576,
-            "height": 156
-          },
-          {
-            "id": "actor_row_3",
-            "type": "scene",
-            "sceneId": "actor_row",
-            "instanceCtx": {
-              "actorIndex": 3
-            },
-            "x": 0,
-            "y": 468,
-            "width": 576,
-            "height": 156
-          },
-          {
-            "id": "actor_select",
-            "type": "rowSelector",
+            "id": "actor_list",
+            "type": "list",
             "x": 0,
             "y": 0,
             "width": 576,
             "height": 624,
-            "numRows": "party",
-            "transparent": true,
-            "padding": 0,
-            "previewSelectable": false
+            "itemScene": "actor_row",
+            "dataScript": "$gameParty.members().map(function(a, i) { return { actorIndex: i }; })"
           }
         ]
       },

@@ -13,7 +13,7 @@
     "focusOrder": [
       "category_list",
       "item_list",
-      "actor_select"
+      "actor_list"
     ]
   },
   "root": {
@@ -143,8 +143,7 @@
           "ok": {
             "action": "useItem",
             "itemListWidget": "item_list",
-            "actorWidget": "actor_select",
-            "actorPanelsWidget": "actor_panels"
+            "actorWidget": "actor_list"
           },
           "cancel": {
             "action": "focusWidget",
@@ -153,74 +152,15 @@
         }
       },
       {
-        "id": "actor_panels",
-        "type": "panel",
+        "id": "actor_list",
+        "type": "list",
         "x": 0,
         "y": 144,
         "width": 816,
         "height": 480,
+        "itemScene": "actor_row_item",
         "visible": false,
-        "children": [
-          {
-            "id": "actor_row_0",
-            "type": "scene",
-            "sceneId": "actor_row_item",
-            "instanceCtx": {
-              "actorIndex": 0
-            },
-            "x": 0,
-            "y": 0,
-            "width": 816,
-            "height": 120
-          },
-          {
-            "id": "actor_row_1",
-            "type": "scene",
-            "sceneId": "actor_row_item",
-            "instanceCtx": {
-              "actorIndex": 1
-            },
-            "x": 0,
-            "y": 120,
-            "width": 816,
-            "height": 120
-          },
-          {
-            "id": "actor_row_2",
-            "type": "scene",
-            "sceneId": "actor_row_item",
-            "instanceCtx": {
-              "actorIndex": 2
-            },
-            "x": 0,
-            "y": 240,
-            "width": 816,
-            "height": 120
-          },
-          {
-            "id": "actor_row_3",
-            "type": "scene",
-            "sceneId": "actor_row_item",
-            "instanceCtx": {
-              "actorIndex": 3
-            },
-            "x": 0,
-            "y": 360,
-            "width": 816,
-            "height": 120
-          }
-        ]
-      },
-      {
-        "id": "actor_select",
-        "type": "rowSelector",
-        "x": 0,
-        "y": 144,
-        "width": 816,
-        "height": 480,
-        "numRows": "party",
-        "transparent": true,
-        "padding": 0
+        "dataScript": "$gameParty.members().map(function(a, i) { return { actorIndex: i }; })"
       }
     ],
     "enterAnimation": {
