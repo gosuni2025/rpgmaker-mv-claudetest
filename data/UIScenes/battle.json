@@ -109,7 +109,6 @@
       {
         "id": "enemyWindow",
         "type": "textList",
-        "nativeDefault": true,
         "x": 192,
         "y": 444,
         "width": 624,
