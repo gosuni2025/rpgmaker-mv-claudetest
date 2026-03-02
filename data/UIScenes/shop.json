@@ -293,15 +293,36 @@
           {
             "id": "btn_down2",
             "type": "button",
-            "x": 52, "y": 330, "width": 48, "height": 48,
+            "x": 52,
+            "y": 330,
+            "width": 48,
+            "height": 48,
             "label": "",
             "focusable": false,
             "windowed": false,
             "transition": "spriteSwap",
             "transitionConfig": {
-              "normalImage": "ButtonSet",    "normalFrame":      [0, 0, 48, 48],
-              "highlightedImage": "ButtonSet","highlightedFrame": [0, 0, 48, 48],
-              "pressedImage": "ButtonSet",   "pressedFrame":     [0, 48, 48, 48]
+              "normalImage": "ButtonSet",
+              "normalFrame": [
+                0,
+                0,
+                48,
+                48
+              ],
+              "highlightedImage": "ButtonSet",
+              "highlightedFrame": [
+                0,
+                0,
+                48,
+                48
+              ],
+              "pressedImage": "ButtonSet",
+              "pressedFrame": [
+                0,
+                48,
+                48,
+                48
+              ]
             },
             "action": {
               "action": "script",
@@ -311,15 +332,36 @@
           {
             "id": "btn_down",
             "type": "button",
-            "x": 116, "y": 330, "width": 48, "height": 48,
+            "x": 116,
+            "y": 330,
+            "width": 48,
+            "height": 48,
             "label": "",
             "focusable": false,
             "windowed": false,
             "transition": "spriteSwap",
             "transitionConfig": {
-              "normalImage": "ButtonSet",    "normalFrame":      [48, 0, 48, 48],
-              "highlightedImage": "ButtonSet","highlightedFrame": [48, 0, 48, 48],
-              "pressedImage": "ButtonSet",   "pressedFrame":     [48, 48, 48, 48]
+              "normalImage": "ButtonSet",
+              "normalFrame": [
+                48,
+                0,
+                48,
+                48
+              ],
+              "highlightedImage": "ButtonSet",
+              "highlightedFrame": [
+                48,
+                0,
+                48,
+                48
+              ],
+              "pressedImage": "ButtonSet",
+              "pressedFrame": [
+                48,
+                48,
+                48,
+                48
+              ]
             },
             "action": {
               "action": "script",
@@ -329,15 +371,36 @@
           {
             "id": "btn_up",
             "type": "button",
-            "x": 180, "y": 330, "width": 48, "height": 48,
+            "x": 180,
+            "y": 330,
+            "width": 48,
+            "height": 48,
             "label": "",
             "focusable": false,
             "windowed": false,
             "transition": "spriteSwap",
             "transitionConfig": {
-              "normalImage": "ButtonSet",    "normalFrame":      [96, 0, 48, 48],
-              "highlightedImage": "ButtonSet","highlightedFrame": [96, 0, 48, 48],
-              "pressedImage": "ButtonSet",   "pressedFrame":     [96, 48, 48, 48]
+              "normalImage": "ButtonSet",
+              "normalFrame": [
+                96,
+                0,
+                48,
+                48
+              ],
+              "highlightedImage": "ButtonSet",
+              "highlightedFrame": [
+                96,
+                0,
+                48,
+                48
+              ],
+              "pressedImage": "ButtonSet",
+              "pressedFrame": [
+                96,
+                48,
+                48,
+                48
+              ]
             },
             "action": {
               "action": "script",
@@ -347,15 +410,36 @@
           {
             "id": "btn_up2",
             "type": "button",
-            "x": 244, "y": 330, "width": 48, "height": 48,
+            "x": 244,
+            "y": 330,
+            "width": 48,
+            "height": 48,
             "label": "",
             "focusable": false,
             "windowed": false,
             "transition": "spriteSwap",
             "transitionConfig": {
-              "normalImage": "ButtonSet",    "normalFrame":      [144, 0, 48, 48],
-              "highlightedImage": "ButtonSet","highlightedFrame": [144, 0, 48, 48],
-              "pressedImage": "ButtonSet",   "pressedFrame":     [144, 48, 48, 48]
+              "normalImage": "ButtonSet",
+              "normalFrame": [
+                144,
+                0,
+                48,
+                48
+              ],
+              "highlightedImage": "ButtonSet",
+              "highlightedFrame": [
+                144,
+                0,
+                48,
+                48
+              ],
+              "pressedImage": "ButtonSet",
+              "pressedFrame": [
+                144,
+                48,
+                48,
+                48
+              ]
             },
             "action": {
               "action": "script",
@@ -365,15 +449,36 @@
           {
             "id": "btn_ok",
             "type": "button",
-            "x": 308, "y": 330, "width": 96, "height": 48,
+            "x": 308,
+            "y": 330,
+            "width": 96,
+            "height": 48,
             "label": "",
             "focusable": false,
             "windowed": false,
             "transition": "spriteSwap",
             "transitionConfig": {
-              "normalImage": "ButtonSet",    "normalFrame":      [192, 0, 96, 48],
-              "highlightedImage": "ButtonSet","highlightedFrame": [192, 0, 96, 48],
-              "pressedImage": "ButtonSet",   "pressedFrame":     [192, 48, 96, 48]
+              "normalImage": "ButtonSet",
+              "normalFrame": [
+                192,
+                0,
+                96,
+                48
+              ],
+              "highlightedImage": "ButtonSet",
+              "highlightedFrame": [
+                192,
+                0,
+                96,
+                48
+              ],
+              "pressedImage": "ButtonSet",
+              "pressedFrame": [
+                192,
+                48,
+                96,
+                48
+              ]
             },
             "action": {
               "action": "script",
