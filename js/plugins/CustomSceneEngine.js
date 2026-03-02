@@ -4388,6 +4388,7 @@
         var actorWidget = widget;
         win.setup = function(actor) {
           if (actorWidget._rebuildFromScript) actorWidget._rebuildFromScript();
+          if (actorWidget.show) actorWidget.show();
           this.select(0); this.activate(); this.open();
         };
         this._actorCommandWindow = win;
@@ -4454,12 +4455,13 @@
       else { this._actorCommandWindow.activate(); }
     };
 
-    // startPartyCommandSelection: 파티 커맨드 단계 → actorWindow 인디케이터 숨김
+    // startPartyCommandSelection: 파티 커맨드 단계 → actorWindow/actorCommand 숨김
     var origSPCS = SCB.startPartyCommandSelection || function() {};
     Klass.prototype.startPartyCommandSelection = function() {
       origSPCS.call(this);
-      var actorWidget = this._widgetMap && this._widgetMap['actorWindow'];
-      if (actorWidget && actorWidget.hide) actorWidget.hide();
+      var wmap = this._widgetMap || {};
+      if (wmap.actorWindow && wmap.actorWindow.hide) wmap.actorWindow.hide();
+      if (wmap.actorCommand && wmap.actorCommand.hide) wmap.actorCommand.hide();
     };
 
     // startActorCommandSelection: 액터 커맨드 단계 → actorWindow 인디케이터 표시 (비활성)
