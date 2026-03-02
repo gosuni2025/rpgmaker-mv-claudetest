@@ -292,45 +292,76 @@
           },
           {
             "id": "btn_down2",
-            "type": "spriteButton",
-            "buttonSetIndex": 0,
-            "x": 108,
-            "y": 330,
-            "onClick": {
+            "type": "button",
+            "x": 108, "y": 330, "width": 48, "height": 48,
+            "label": "",
+            "focusable": false,
+            "hideOnKeyboard": true,
+            "windowed": false,
+            "transition": "spriteSwap",
+            "transitionConfig": {
+              "normalImage": "ButtonSet",    "normalFrame":      [0, 0, 48, 48],
+              "highlightedImage": "ButtonSet","highlightedFrame": [0, 0, 48, 48],
+              "pressedImage": "ButtonSet",   "pressedFrame":     [0, 48, 48, 48]
+            },
+            "action": {
               "action": "script",
               "code": "$ctx.shopNum=Math.max($ctx.shopNum-10,1); SoundManager.playCursor();"
-            },
-            "children": []
+            }
           },
           {
             "id": "btn_down",
-            "type": "spriteButton",
-            "buttonSetIndex": 1,
-            "x": 172,
-            "y": 330,
-            "onClick": {
+            "type": "button",
+            "x": 172, "y": 330, "width": 48, "height": 48,
+            "label": "",
+            "focusable": false,
+            "hideOnKeyboard": true,
+            "windowed": false,
+            "transition": "spriteSwap",
+            "transitionConfig": {
+              "normalImage": "ButtonSet",    "normalFrame":      [48, 0, 48, 48],
+              "highlightedImage": "ButtonSet","highlightedFrame": [48, 0, 48, 48],
+              "pressedImage": "ButtonSet",   "pressedFrame":     [48, 48, 48, 48]
+            },
+            "action": {
               "action": "script",
               "code": "$ctx.shopNum=Math.max($ctx.shopNum-1,1); SoundManager.playCursor();"
             }
           },
           {
             "id": "btn_up",
-            "type": "spriteButton",
-            "buttonSetIndex": 2,
-            "x": 236,
-            "y": 330,
-            "onClick": {
+            "type": "button",
+            "x": 236, "y": 330, "width": 48, "height": 48,
+            "label": "",
+            "focusable": false,
+            "hideOnKeyboard": true,
+            "windowed": false,
+            "transition": "spriteSwap",
+            "transitionConfig": {
+              "normalImage": "ButtonSet",    "normalFrame":      [96, 0, 48, 48],
+              "highlightedImage": "ButtonSet","highlightedFrame": [96, 0, 48, 48],
+              "pressedImage": "ButtonSet",   "pressedFrame":     [96, 48, 48, 48]
+            },
+            "action": {
               "action": "script",
               "code": "$ctx.shopNum=Math.min($ctx.shopNum+1,$ctx.shopMax); SoundManager.playCursor();"
             }
           },
           {
             "id": "btn_up2",
-            "type": "spriteButton",
-            "buttonSetIndex": 3,
-            "x": 300,
-            "y": 330,
-            "onClick": {
+            "type": "button",
+            "x": 300, "y": 330, "width": 48, "height": 48,
+            "label": "",
+            "focusable": false,
+            "hideOnKeyboard": true,
+            "windowed": false,
+            "transition": "spriteSwap",
+            "transitionConfig": {
+              "normalImage": "ButtonSet",    "normalFrame":      [144, 0, 48, 48],
+              "highlightedImage": "ButtonSet","highlightedFrame": [144, 0, 48, 48],
+              "pressedImage": "ButtonSet",   "pressedFrame":     [144, 48, 48, 48]
+            },
+            "action": {
               "action": "script",
               "code": "$ctx.shopNum=Math.min($ctx.shopNum+10,$ctx.shopMax); SoundManager.playCursor();"
             }
