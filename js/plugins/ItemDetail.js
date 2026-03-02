@@ -480,6 +480,15 @@
         var dw = this._detailWindow;
         var aw = this._itemActionWindow;
 
+        // [DBG] 60프레임마다 현재 팝업 상태 출력
+        this._dbgFrame = (this._dbgFrame || 0) + 1;
+        if (this._dbgFrame % 60 === 1) {
+            console.log('[ItemDetail] SceneItem update tick | dw.visible=' + !!(dw && dw.visible) +
+                ' aw.visible=' + !!(aw && aw.visible) +
+                ' cooldown=' + (this._popupInputCooldown || 0) +
+                ' currentState=' + JSON.stringify(Input._currentState));
+        }
+
         if (this._detailOverlay) {
             this._detailOverlay.visible = !!(fs && fs.isOpen()) || !!(dw && dw.visible);
         }
@@ -507,11 +516,19 @@
             this.updateFade();
             var cancelNow = Input.isPressed('cancel');
             var okNow     = Input.isPressed('ok');
+            if (cancelNow !== this._dwPrevCancel || okNow !== this._dwPrevOk) {
+                console.log('[ItemDetail] SceneItem dw input | cancelNow=' + cancelNow +
+                    ' prev=' + this._dwPrevCancel +
+                    ' okNow=' + okNow + ' prev=' + this._dwPrevOk +
+                    ' _currentState=' + JSON.stringify(Input._currentState));
+            }
             if (cancelNow && !this._dwPrevCancel) {
+                console.log('[ItemDetail] SceneItem dw => callHandler(cancel)');
                 Input.clear();
                 this._popupInputCooldown = 3;
                 dw.callHandler('cancel');
             } else if (okNow && !this._dwPrevOk) {
+                console.log('[ItemDetail] SceneItem dw => callHandler(ok)');
                 Input.clear();
                 this._popupInputCooldown = 3;
                 dw.callHandler('ok');
@@ -523,8 +540,12 @@
         if (aw && aw.visible) {
             this.updateFade();
             var c2 = Input.isPressed('cancel'), o2 = Input.isPressed('ok');
-            if (c2 && !this._awPrevCancel) { Input.clear(); this._popupInputCooldown = 3; aw.callHandler('cancel'); }
-            else if (o2 && !this._awPrevOk) { Input.clear(); this._popupInputCooldown = 3; aw.callHandler('ok'); }
+            if (c2 !== this._awPrevCancel || o2 !== this._awPrevOk) {
+                console.log('[ItemDetail] SceneItem aw input | c2=' + c2 + ' prev=' + this._awPrevCancel +
+                    ' o2=' + o2 + ' prev=' + this._awPrevOk);
+            }
+            if (c2 && !this._awPrevCancel) { console.log('[ItemDetail] SceneItem aw => callHandler(cancel)'); Input.clear(); this._popupInputCooldown = 3; aw.callHandler('cancel'); }
+            else if (o2 && !this._awPrevOk) { console.log('[ItemDetail] SceneItem aw => callHandler(ok)'); Input.clear(); this._popupInputCooldown = 3; aw.callHandler('ok'); }
             this._awPrevCancel = c2;
             this._awPrevOk     = o2;
             return;
@@ -620,6 +641,15 @@
             var dw = this._itemDetailWindow;
             var aw = this._itemActionWindow;
 
+            // [DBG] 60프레임마다 현재 팝업 상태 출력
+            this._dbgFrame = (this._dbgFrame || 0) + 1;
+            if (this._dbgFrame % 60 === 1) {
+                console.log('[ItemDetail] SCU update tick | dw.visible=' + !!(dw && dw.visible) +
+                    ' aw.visible=' + !!(aw && aw.visible) +
+                    ' cooldown=' + (this._popupInputCooldown || 0) +
+                    ' currentState=' + JSON.stringify(Input._currentState));
+            }
+
             if (this._detailOverlay) {
                 this._detailOverlay.visible = !!(fs && fs.isOpen()) || !!(dw && dw.visible);
             }
@@ -643,17 +673,24 @@
             }
 
             // 팝업이 열린 동안: isPressed+prev 추적으로 input 처리
-            // (Input.update()가 processHandling보다 먼저 실행되어 _pressedTime이 항상 >=1이므로
-            //  isTriggered는 사용 불가 — isPressed로 첫 pressed 프레임을 직접 감지)
             if (dw && dw.visible) {
                 if (this.updateFade) this.updateFade();
                 var cancelNow = Input.isPressed('cancel');
                 var okNow     = Input.isPressed('ok');
+                // [DBG] pressed 상태가 변할 때 출력
+                if (cancelNow !== this._dwPrevCancel || okNow !== this._dwPrevOk) {
+                    console.log('[ItemDetail] SCU dw input | cancelNow=' + cancelNow +
+                        ' prev=' + this._dwPrevCancel +
+                        ' okNow=' + okNow + ' prev=' + this._dwPrevOk +
+                        ' _currentState=' + JSON.stringify(Input._currentState));
+                }
                 if (cancelNow && !this._dwPrevCancel) {
+                    console.log('[ItemDetail] SCU dw => callHandler(cancel)');
                     Input.clear();
                     this._popupInputCooldown = 3;
                     dw.callHandler('cancel');
                 } else if (okNow && !this._dwPrevOk) {
+                    console.log('[ItemDetail] SCU dw => callHandler(ok)');
                     Input.clear();
                     this._popupInputCooldown = 3;
                     dw.callHandler('ok');
@@ -665,8 +702,12 @@
             if (aw && aw.visible) {
                 if (this.updateFade) this.updateFade();
                 var c2 = Input.isPressed('cancel'), o2 = Input.isPressed('ok');
-                if (c2 && !this._awPrevCancel) { Input.clear(); this._popupInputCooldown = 3; aw.callHandler('cancel'); }
-                else if (o2 && !this._awPrevOk) { Input.clear(); this._popupInputCooldown = 3; aw.callHandler('ok'); }
+                if (c2 !== this._awPrevCancel || o2 !== this._awPrevOk) {
+                    console.log('[ItemDetail] SCU aw input | c2=' + c2 + ' prev=' + this._awPrevCancel +
+                        ' o2=' + o2 + ' prev=' + this._awPrevOk);
+                }
+                if (c2 && !this._awPrevCancel) { console.log('[ItemDetail] SCU aw => callHandler(cancel)'); Input.clear(); this._popupInputCooldown = 3; aw.callHandler('cancel'); }
+                else if (o2 && !this._awPrevOk) { console.log('[ItemDetail] SCU aw => callHandler(ok)'); Input.clear(); this._popupInputCooldown = 3; aw.callHandler('ok'); }
                 this._awPrevCancel = c2;
                 this._awPrevOk     = o2;
                 return;
