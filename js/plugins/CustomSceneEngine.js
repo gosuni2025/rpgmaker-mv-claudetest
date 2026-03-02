@@ -2661,14 +2661,22 @@
       // _ctx에 instanceCtx 주입한 상태로 위젯 빌드
       rowWidget._withCtx(function() {
         var built = scene._buildWidget(rootDef, null);
+        console.log('[_rebuildRows] i=' + i + ' built=' + (built ? built.constructor.name : 'null')
+          + ' id=' + (built ? built._id : '-'));
         if (built) {
           rowWidget._subRoot = built;
           var dobj = built.displayObject();
-          if (dobj && !(dobj instanceof Window_Base)) {
+          var isWin = dobj instanceof Window_Base;
+          console.log('[_rebuildRows] dobj=' + (dobj ? dobj.constructor.name : 'null')
+            + ' isWindowBase=' + isWin
+            + ' children#=' + built._children.length);
+          if (dobj && !isWin) {
             rowContainer.addChild(dobj);
+            console.log('[_rebuildRows] rowContainer.addChild OK, rowContainer.children#=' + rowContainer.children.length);
+          } else if (isWin) {
+            console.warn('[_rebuildRows] dobj is Window_Base → rowContainer에 추가 안됨! 자식들:', built._children.map(function(c){return c._id+':'+c.constructor.name;}).join(', '));
           }
           if (scene._setupWidgetHandlers) scene._setupWidgetHandlers(built);
-          // focusable Widget_Button 루트는 slot navigation 대상으로 등록
           if (built instanceof Widget_Button && built._focusable) self._slotRoots.push(built);
         }
       });
