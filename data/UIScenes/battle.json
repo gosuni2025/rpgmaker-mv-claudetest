@@ -27,13 +27,18 @@
       },
       {
         "id": "statusWindow",
-        "type": "partyStatus",
+        "type": "list",
         "x": 192,
         "y": 444,
         "width": 624,
         "height": 180,
+        "maxCols": 4,
+        "rowHeight": 180,
+        "padding": 0,
         "focusable": false,
-        "showTp": true
+        "autoRefresh": false,
+        "itemScene": "battleStatusSlot",
+        "dataScript": "(function(){ return $gameParty.battleMembers().map(function(a){ return {ext:a, actorIndex:$gameParty.members().indexOf(a), enabled:true}; }); })()"
       },
       {
         "id": "helpWindow",
