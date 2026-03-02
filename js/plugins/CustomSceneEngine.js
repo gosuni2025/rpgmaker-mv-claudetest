@@ -4627,6 +4627,7 @@
 
     var origOAO = SCB.onActorOk || function() {};
     Klass.prototype.onActorOk = function() {
+      if (!BattleManager.inputtingAction()) return;
       this._csInSubSelection = false;
       origOAO.call(this);
     };
