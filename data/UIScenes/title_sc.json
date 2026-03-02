@@ -73,8 +73,8 @@
       {
         "id": "btn_newGame",
         "type": "button",
-        "x": 143,
-        "y": 295,
+        "x": 127,
+        "y": 222,
         "width": 240,
         "height": 52,
         "label": "{typeof TextManager!=='undefined'?TextManager.newGame:'새 게임'}",
@@ -88,8 +88,8 @@
       {
         "id": "btn_continue",
         "type": "button",
-        "x": 392,
-        "y": 370,
+        "x": 373,
+        "y": 335,
         "width": 240,
         "height": 52,
         "label": "{typeof TextManager!=='undefined'?TextManager.continue_:'이어하기'}",
@@ -99,7 +99,8 @@
         "action": {
           "action": "script",
           "code": "if(DataManager.isAnySavefileExists()){SceneManager.push(Scene_Load);}else{if(typeof SoundManager!=='undefined')SoundManager.playBuzzer();}"
-        }
+        },
+        "navRight": "btn_credit"
       },
       {
         "id": "btn_options",
