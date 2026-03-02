@@ -107,6 +107,15 @@
             "target": "Scene_Credit"
           }
         }
+      },
+      {
+        "id": "label_1772447661235",
+        "type": "label",
+        "x": 580,
+        "y": 348,
+        "width": 200,
+        "height": 36,
+        "text": "텍스트"
       }
     ]
   }

@@ -1,6 +1,4 @@
 [
-  "title",
-  "title_sc",
   "actor_row",
   "actor_row_item",
   "battle",
@@ -24,5 +22,7 @@
   "scriptTest",
   "shop",
   "skill",
-  "status"
+  "status",
+  "title",
+  "title_sc"
 ]
