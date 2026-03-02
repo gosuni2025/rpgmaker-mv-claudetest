@@ -1,7 +1,7 @@
 {
   "id": "battle",
   "displayName": "배틀",
-  "nativeClass": "Scene_CSBattle",
+  "extends": "Scene_Battle",
   "root": {
     "id": "battle_root",
     "type": "panel",
