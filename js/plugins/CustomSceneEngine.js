@@ -2717,6 +2717,11 @@
     if (this._focusable !== false) out.push(this);
   };
   Widget_TextList.prototype.activate = function() {
+    // [DBG-actor] actorWindow 위젯 activate 추적
+    if (this._id === 'actorWindow') {
+      console.log('[DBG-actor] Widget_TextList.activate() called, _window.active(before)=',
+        this._window ? this._window.active : 'N/A');
+    }
     if (this._dataScript) this._rebuildFromScript();
     if (this._window) {
       this._window.activate();
@@ -2760,7 +2765,13 @@
     if (this._updateCount === undefined) this._updateCount = 0;
     ++this._updateCount;
     if (this._dataScript && this._autoRefresh !== false) {
-      if (this._updateCount % 6 === 0) this._rebuildFromScript();
+      if (this._updateCount % 6 === 0) {
+        // [DBG-actor] actorWindow autoRefresh 시 active 상태 추적
+        if (this._id === 'actorWindow' && this._window && this._window.active) {
+          console.log('[DBG-actor] autoRefresh _rebuildFromScript while ACTIVE, index=', this._window.index());
+        }
+        this._rebuildFromScript();
+      }
     } else if (!this._dataScript) {
       var items = this._items;
       var hasCondition = items && items.some(function(item) {
@@ -2941,6 +2952,12 @@
     var all = [];
     rootWidget.collectFocusable(all);
     this._focusables = all;
+    // [DBG-actor] focusList에 actorWindow 포함 여부 확인
+    var ids = all.map(function(w) { return w._id; });
+    console.log('[DBG-actor] NavMgr focusList:', ids);
+    if (ids.indexOf('actorWindow') >= 0) {
+      console.log('[DBG-actor] ⚠ actorWindow이 NavMgr focusList에 포함됨 — 충돌 가능');
+    }
   };
   NavigationManager.prototype.start = function() {
     if (this._focusables.length === 0) return;
@@ -2960,8 +2977,14 @@
   NavigationManager.prototype._activateAt = function(idx) {
     if (idx < 0 || idx >= this._focusables.length) return;
     if (this._activeIndex >= 0 && this._focusables[this._activeIndex]) {
-      this._focusables[this._activeIndex].deactivate();
-      this._focusables[this._activeIndex]._runScript('onBlur');
+      var prevW = this._focusables[this._activeIndex];
+      // [DBG-actor] NavMgr가 actorWindow를 deactivate하는 순간 포착
+      if (prevW._id === 'actorWindow') {
+        console.warn('[DBG-actor] ⚠ NavMgr._activateAt deactivating actorWindow → new focus:', this._focusables[idx]._id);
+        console.trace('[DBG-actor] deactivate trace');
+      }
+      prevW.deactivate();
+      prevW._runScript('onBlur');
     }
     this._activeIndex = idx;
     this._focusables[idx].activate();
@@ -4156,7 +4179,18 @@
           try { orig.apply(win, arguments); } catch(e) { /* 원본 창 에러 무시 — widget 메서드는 계속 호출 */ }
         if (method === 'activate') win.active = false;  // 원본 입력 차단
         win.x = -9999;
+        // [DBG-actor] activate/deactivate 위임 추적
+        if (widgetId === 'actorWindow') {
+          console.log('[DBG-actor] proxy.' + method + '() → widget.' + method,
+            'widget._window.active=', widget._window ? widget._window.active : 'N/A',
+            'widget._window.index=', widget._window ? widget._window.index() : 'N/A');
+        }
         if (widget[method]) widget[method].apply(widget, arguments);
+        if (widgetId === 'actorWindow' && method === 'activate') {
+          console.log('[DBG-actor] after widget.activate() → widget._window.active=',
+            widget._window ? widget._window.active : 'N/A',
+            'index=', widget._window ? widget._window.index() : 'N/A');
+        }
       };
     });
 
