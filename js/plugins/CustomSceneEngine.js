@@ -4458,10 +4458,25 @@
     var origSES = SCB.selectEnemySelection || function() {};
     Klass.prototype.selectEnemySelection = function() {
       var wmap = this._widgetMap || {};
-      if (wmap.actorCommand) {
-        if (wmap.actorCommand.deactivate) wmap.actorCommand.deactivate();
-        if (wmap.actorCommand.hide) wmap.actorCommand.hide();
-        if (wmap.actorCommand._window && wmap.actorCommand._window.deselect) wmap.actorCommand._window.deselect();
+      var acw = wmap.actorCommand;
+      console.log('[DBG-SES] actorCommand widget:', acw,
+        '_window:', acw && acw._window,
+        '_actorCommandWindow:', this._actorCommandWindow,
+        'same?', acw && acw._window === this._actorCommandWindow);
+      if (acw) {
+        if (acw.deactivate) acw.deactivate();
+        if (acw.hide) acw.hide();
+        var acwin = acw._window;
+        console.log('[DBG-SES] acwin:', acwin, 'deselect fn:', acwin && acwin.deselect,
+          'cursor before:', acwin && acwin._windowCursorSprite && acwin._windowCursorSprite.visible);
+        if (acwin && acwin.deselect) acwin.deselect();
+        console.log('[DBG-SES] cursor after deselect:', acwin && acwin._windowCursorSprite && acwin._windowCursorSprite.visible,
+          'cursorRect:', acwin && acwin._cursorRect);
+      }
+      // _actorCommandWindow도 직접 deselect (혹시 다른 객체일 경우 대비)
+      if (this._actorCommandWindow && this._actorCommandWindow.deselect) {
+        this._actorCommandWindow.deselect();
+        console.log('[DBG-SES] _actorCommandWindow.deselect() called directly');
       }
       // statusWindow _rowOverlay(서브씬 스프라이트) + actorWindow _rowOverlay(커서) dim
       ['statusWindow', 'actorWindow'].forEach(function(id) {
