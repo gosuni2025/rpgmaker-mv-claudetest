@@ -12951,7 +12951,7 @@
           "priorityType": 1,
           "stepAnime": false,
           "through": false,
-          "trigger": 3,
+          "trigger": 0,
           "walkAnime": true
         },
         {
