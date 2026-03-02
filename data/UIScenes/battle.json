@@ -12,6 +12,41 @@
     "windowed": false,
     "children": [
       {
+        "id": "logWindow",
+        "type": "textArea",
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 72,
+        "text": "{$ctx.battleLog||\"\"}",
+        "align": "left",
+        "verticalAlign": "top",
+        "fontSize": 18,
+        "lineHeight": 24
+      },
+      {
+        "id": "statusWindow",
+        "type": "textList",
+        "x": 0,
+        "y": 488,
+        "width": 816,
+        "height": 136,
+        "dataScript": "(function(){\n  if(typeof $gameParty==='undefined')return[];\n  return $gameParty.battleMembers().map(function(actor){\n    return{\n      name:actor.name(),\n      symbol:'actor_status',\n      enabled:actor.isAlive(),\n      ext:actor,\n      cols:[\n        {text:actor.name(),width:120},\n        {text:'HP',color:17,width:28},\n        {text:actor.hp+'/'+actor.mhp,width:110},\n        {text:'MP',color:23,width:28},\n        {text:actor.mp+'/'+actor.mmp,width:100}\n      ]\n    };\n  });\n})()",
+        "focusable": false,
+        "maxCols": 4
+      },
+      {
+        "id": "helpWindow",
+        "type": "textArea",
+        "x": 0,
+        "y": 428,
+        "width": 816,
+        "height": 60,
+        "text": "{$ctx.helpText||\"\"}",
+        "align": "left",
+        "verticalAlign": "middle"
+      },
+      {
         "id": "partyCommand",
         "type": "textList",
         "x": 0,
@@ -41,15 +76,41 @@
         "dataScript": "(function() {\n  var actor = BattleManager.actor();\n  if (!actor) return [];\n  var cmds = [{\n    name: TextManager.attack,\n    symbol: \"attack\",\n    enabled: actor.canAttack(),\n    iconIndex: 76\n  }];\n  actor.addedSkillTypes().sort(function(a, b) {\n    return a - b;\n  }).forEach(function(id) {\n    cmds.push({\n      name: $dataSystem.skillTypes[id] || '',\n      symbol: \"skill\",\n      enabled: true,\n      ext: id,\n      iconIndex: 79\n    });\n  });\n  cmds.push({\n    name: TextManager.guard,\n    symbol: \"guard\",\n    enabled: actor.canGuard(),\n    iconIndex: 81\n  }, {\n    name: TextManager.item,\n    symbol: \"item\",\n    enabled: true,\n    iconIndex: 83\n  });\n  return cmds;\n})()"
       },
       {
-        "id": "textArea_17722651096544",
-        "type": "textArea",
-        "x": 505,
-        "y": 418,
-        "width": 300,
-        "height": 80,
-        "text": "커스텀씬111111",
-        "align": "center",
-        "verticalAlign": "middle"
+        "id": "skillWindow",
+        "type": "textList",
+        "x": 0,
+        "y": 288,
+        "width": 816,
+        "height": 200,
+        "dataScript": "(function(){\n  var actor=BattleManager.actor();\n  if(!actor)return[];\n  var sid=($ctx&&$ctx.currentSkillStypeId)||1;\n  return actor.skills().filter(function(s){return s.stypeId===sid;}).map(function(s){\n    var mpCost=actor.skillMpCost(s);\n    var tpCost=actor.skillTpCost(s);\n    var cost=mpCost>0?'MP:'+mpCost:tpCost>0?'TP:'+tpCost:'';\n    return{\n      name:s.name,symbol:'skill',enabled:actor.canUse(s),ext:s,\n      iconIndex:s.iconIndex,rightText:cost,\n      rightTextColorIndex:mpCost>0?23:29\n    };\n  });\n})()"
+      },
+      {
+        "id": "itemWindow",
+        "type": "textList",
+        "x": 0,
+        "y": 288,
+        "width": 816,
+        "height": 200,
+        "dataScript": "(function(){\n  if(typeof $gameParty==='undefined')return[];\n  return $gameParty.battleItems().map(function(item){\n    return{\n      name:item.name,symbol:'item',\n      enabled:$gameParty.canUse(item),\n      ext:item,iconIndex:item.iconIndex,\n      numberText:$gameParty.numItems(item)\n    };\n  });\n})()"
+      },
+      {
+        "id": "actorWindow",
+        "type": "textList",
+        "x": 0,
+        "y": 428,
+        "width": 816,
+        "height": 60,
+        "dataScript": "(function(){\n  if(typeof $gameParty==='undefined')return[];\n  return $gameParty.battleMembers().map(function(actor){\n    return{\n      name:actor.name()+' HP:'+actor.hp+'/'+actor.mhp,\n      symbol:'actor',enabled:actor.isAlive(),ext:actor\n    };\n  });\n})()",
+        "maxCols": 4
+      },
+      {
+        "id": "enemyWindow",
+        "type": "textList",
+        "x": 0,
+        "y": 72,
+        "width": 816,
+        "height": 200,
+        "dataScript": "(function(){\n  if(typeof $gameTroop==='undefined')return[];\n  return $gameTroop.aliveMembers().map(function(enemy){\n    return{\n      name:enemy.name(),symbol:'enemy',\n      enabled:true,ext:enemy\n    };\n  });\n})()"
       }
     ]
   },
