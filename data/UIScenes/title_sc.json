@@ -10,7 +10,8 @@
   },
   "navigation": {
     "defaultFocus": "btn_newGame",
-    "focusOrder": ["btn_newGame", "btn_continue", "btn_options", "btn_credit"]
+    "focusOrder": ["btn_newGame", "btn_continue", "btn_options", "btn_credit"],
+    "upDownNavigation": true
   },
   "root": {
     "id": "root",
@@ -22,12 +23,24 @@
     "windowed": false,
     "children": [
       {
-        "id": "bg",
-        "type": "background",
+        "id": "title_bg1",
+        "type": "image",
         "x": 0,
         "y": 0,
         "width": 816,
-        "height": 624
+        "height": 624,
+        "bitmapExpr": "ImageManager.loadTitle1($dataSystem.title1Name)",
+        "fitMode": "stretch"
+      },
+      {
+        "id": "title_bg2",
+        "type": "image",
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 624,
+        "bitmapExpr": "ImageManager.loadTitle2($dataSystem.title2Name)",
+        "fitMode": "stretch"
       },
       {
         "id": "init",
