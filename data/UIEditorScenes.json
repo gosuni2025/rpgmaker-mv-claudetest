@@ -3504,7 +3504,6 @@
                 "height": 48,
                 "label": "",
                 "focusable": false,
-                "hideOnKeyboard": true,
                 "windowed": false,
                 "transition": "spriteSwap",
                 "transitionConfig": {
@@ -3544,7 +3543,6 @@
                 "height": 48,
                 "label": "",
                 "focusable": false,
-                "hideOnKeyboard": true,
                 "windowed": false,
                 "transition": "spriteSwap",
                 "transitionConfig": {
@@ -3584,7 +3582,6 @@
                 "height": 48,
                 "label": "",
                 "focusable": false,
-                "hideOnKeyboard": true,
                 "windowed": false,
                 "transition": "spriteSwap",
                 "transitionConfig": {
@@ -3624,7 +3621,6 @@
                 "height": 48,
                 "label": "",
                 "focusable": false,
-                "hideOnKeyboard": true,
                 "windowed": false,
                 "transition": "spriteSwap",
                 "transitionConfig": {
@@ -3664,7 +3660,6 @@
                 "height": 48,
                 "label": "",
                 "focusable": false,
-                "hideOnKeyboard": true,
                 "windowed": false,
                 "transition": "spriteSwap",
                 "transitionConfig": {
