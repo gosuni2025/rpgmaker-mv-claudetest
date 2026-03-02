@@ -14,11 +14,10 @@
       {
         "id": "logWindow",
         "type": "textArea",
-        "nativeDefault": true,
-        "x": 0,
-        "y": 0,
+        "x": -1,
+        "y": 108,
         "width": 816,
-        "height": 396,
+        "height": 335,
         "text": "{$ctx.battleLog||\"\"}",
         "align": "left",
         "verticalAlign": "top",
@@ -94,11 +93,10 @@
       {
         "id": "itemWindow",
         "type": "textList",
-        "nativeDefault": true,
         "x": 0,
-        "y": 108,
+        "y": 93,
         "width": 816,
-        "height": 336,
+        "height": 351,
         "dataScript": "(function(){\n  if(typeof $gameParty==='undefined')return[];\n  var items=$gameParty.items().filter(function(item){return item.itypeId===1;});\n  return items.map(function(item){\n    return{\n      name:item.name,symbol:'item',\n      enabled:$gameParty.canUse(item),\n      ext:item,iconIndex:item.iconIndex,\n      numberText:$gameParty.numItems(item)\n    };\n  });\n})()"
       },
       {
