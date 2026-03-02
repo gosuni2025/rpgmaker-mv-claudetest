@@ -4406,6 +4406,7 @@
     Klass.prototype.commandAttack = function() {
       this._ctx.lastActorCommand = 'attack';
       BattleManager.inputtingAction().setAttack();
+      this._actorCommandWindow.deactivate();
       this.selectEnemySelection();
     };
 
@@ -4417,6 +4418,7 @@
       }
       this._ctx.lastActorCommand = 'skill';
       this._ctx.currentSkillStypeId = stypeId;
+      this._actorCommandWindow.deactivate();
       this._skillWindow.setActor(BattleManager.actor());
       this._skillWindow.setStypeId(stypeId);
       this._skillWindow.refresh();
@@ -4427,10 +4429,29 @@
 
     Klass.prototype.commandItem = function() {
       this._ctx.lastActorCommand = 'item';
+      this._actorCommandWindow.deactivate();
       this._itemWindow.refresh();
       this._itemWindow.show();
       this._itemWindow.activate();
       this._helpWindow.show();
+    };
+
+    // selectEnemySelection: actorCommand 비활성화 + actorWindow dim 처리
+    var origSES = SCB.selectEnemySelection || function() {};
+    Klass.prototype.selectEnemySelection = function() {
+      var wmap = this._widgetMap || {};
+      if (wmap.actorCommand && wmap.actorCommand.deactivate) wmap.actorCommand.deactivate();
+      var actorWidget = wmap['actorWindow'];
+      if (actorWidget && actorWidget._window) actorWidget._window.contentsOpacity = 80;
+      origSES.call(this);
+    };
+
+    // selectActorSelection: actorCommand 비활성화 + actorWindow activate
+    var origSAS = SCB.selectActorSelection || function() {};
+    Klass.prototype.selectActorSelection = function() {
+      var wmap = this._widgetMap || {};
+      if (wmap.actorCommand && wmap.actorCommand.deactivate) wmap.actorCommand.deactivate();
+      origSAS.call(this);
     };
 
     Klass.prototype.onSkillCancel = function() {
@@ -4446,7 +4467,6 @@
     };
 
     Klass.prototype.onActorCancel = function() {
-      // hide 대신 deactivate만 — 인디케이터 커서는 계속 보이도록 유지
       var actorWidget = this._widgetMap && this._widgetMap['actorWindow'];
       if (actorWidget && actorWidget.deactivate) actorWidget.deactivate();
       var last = this._ctx.lastActorCommand;
@@ -4485,6 +4505,9 @@
 
     Klass.prototype.onEnemyCancel = function() {
       this._enemyWindow.hide();
+      // actorWindow dim 복구
+      var actorWidget = this._widgetMap && this._widgetMap['actorWindow'];
+      if (actorWidget && actorWidget._window) actorWidget._window.contentsOpacity = 255;
       var last = this._ctx.lastActorCommand || 'attack';
       if (last === 'attack') { this._actorCommandWindow.activate(); }
       else if (last === 'skill') { this._skillWindow.show(); this._skillWindow.activate(); }
