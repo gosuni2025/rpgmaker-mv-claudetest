@@ -9,14 +9,7 @@
     }
   },
   "navigation": {
-    "defaultFocus": "btn_newGame",
-    "focusOrder": [
-      "btn_newGame",
-      "btn_continue",
-      "btn_options",
-      "btn_credit"
-    ],
-    "upDownNavigation": true
+    "defaultFocus": "btn_newGame"
   },
   "root": {
     "id": "root",
@@ -86,6 +79,7 @@
         "height": 52,
         "label": "{typeof TextManager!=='undefined'?TextManager.newGame:'새 게임'}",
         "windowed": true,
+        "navDown": "btn_continue",
         "action": {
           "action": "script",
           "code": "DataManager.setupNewGame(); this.fadeOutAll(); SceneManager.goto(Scene_Map);"
@@ -100,6 +94,8 @@
         "height": 52,
         "label": "{typeof TextManager!=='undefined'?TextManager.continue_:'이어하기'}",
         "windowed": true,
+        "navUp": "btn_newGame",
+        "navDown": "btn_options",
         "action": {
           "action": "script",
           "code": "if(DataManager.isAnySavefileExists()){SceneManager.push(Scene_Load);}else{if(typeof SoundManager!=='undefined')SoundManager.playBuzzer();}"
@@ -114,6 +110,8 @@
         "height": 52,
         "label": "{typeof TextManager!=='undefined'?TextManager.options:'옵션'}",
         "windowed": true,
+        "navUp": "btn_continue",
+        "navDown": "btn_credit",
         "action": {
           "action": "gotoScene",
           "target": "Scene_Options"
@@ -128,6 +126,7 @@
         "height": 52,
         "label": "크레딧",
         "windowed": true,
+        "navUp": "btn_options",
         "action": {
           "action": "gotoScene",
           "target": "Scene_Credit"
