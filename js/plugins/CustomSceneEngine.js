@@ -4455,20 +4455,26 @@
       else { this._actorCommandWindow.activate(); }
     };
 
-    // startPartyCommandSelection: 파티 커맨드 단계 → actorWindow/actorCommand 숨김
+    // startPartyCommandSelection: 파티 커맨드 단계 → actorCommand/actorWindow 비활성화 + 숨김
     var origSPCS = SCB.startPartyCommandSelection || function() {};
     Klass.prototype.startPartyCommandSelection = function() {
-      origSPCS.call(this);
       var wmap = this._widgetMap || {};
+      if (wmap.actorCommand) {
+        if (wmap.actorCommand.deactivate) wmap.actorCommand.deactivate();
+        if (wmap.actorCommand.hide) wmap.actorCommand.hide();
+      }
       if (wmap.actorWindow && wmap.actorWindow.hide) wmap.actorWindow.hide();
-      if (wmap.actorCommand && wmap.actorCommand.hide) wmap.actorCommand.hide();
+      origSPCS.call(this);
     };
 
-    // startActorCommandSelection: 액터 커맨드 단계 → actorWindow 인디케이터 표시 (비활성)
+    // startActorCommandSelection: 액터 커맨드 단계 → partyCommand 비활성화 + actorWindow 인디케이터 표시
     var origSACS = SCB.startActorCommandSelection || function() {};
     Klass.prototype.startActorCommandSelection = function() {
+      var wmap = this._widgetMap || {};
+      // partyCommand 비활성화 — actorCommand와 동시에 키 입력 받지 않도록
+      if (wmap.partyCommand && wmap.partyCommand.deactivate) wmap.partyCommand.deactivate();
       origSACS.call(this);
-      var actorWidget = this._widgetMap && this._widgetMap['actorWindow'];
+      var actorWidget = wmap['actorWindow'];
       var actor = BattleManager.actor();
       if (actorWidget) {
         actorWidget.show();
