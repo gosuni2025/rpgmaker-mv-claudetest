@@ -1,0 +1,101 @@
+{
+  "id": "title_sc",
+  "displayName": "타이틀 화면 (커스텀)",
+  "formatVersion": 2,
+  "navigation": {
+    "defaultFocus": "cmd_title",
+    "cancelWidget": "cmd_title"
+  },
+  "root": {
+    "id": "root",
+    "type": "panel",
+    "x": 0,
+    "y": 0,
+    "width": 816,
+    "height": 624,
+    "windowed": false,
+    "children": [
+      {
+        "id": "bg",
+        "type": "background",
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 624
+      },
+      {
+        "id": "init",
+        "type": "panel",
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0,
+        "visible": false,
+        "windowed": false,
+        "scripts": {
+          "onCreate": "SceneManager.clearStack(); AudioManager.playBgm($dataSystem.titleBgm); AudioManager.stopBgs(); AudioManager.stopMe();"
+        },
+        "children": []
+      },
+      {
+        "id": "title_text",
+        "type": "textArea",
+        "x": 58,
+        "y": 160,
+        "width": 700,
+        "height": 120,
+        "text": "{$dataSystem.gameTitle}",
+        "fontSize": 64,
+        "align": "center",
+        "color": "#ffffff",
+        "outlineColor": "#000000",
+        "outlineWidth": 6
+      },
+      {
+        "id": "cmd_title",
+        "type": "textList",
+        "x": 288,
+        "y": 380,
+        "width": 240,
+        "height": 162,
+        "items": [
+          {
+            "name": "{typeof TextManager!=='undefined'?TextManager.newGame:'새 게임'}",
+            "symbol": "newGame"
+          },
+          {
+            "name": "{typeof TextManager!=='undefined'?TextManager.continue_:'이어하기'}",
+            "symbol": "continue",
+            "enabledCondition": "DataManager.isAnySavefileExists()"
+          },
+          {
+            "name": "{typeof TextManager!=='undefined'?TextManager.options:'옵션'}",
+            "symbol": "options"
+          },
+          {
+            "name": "크레딧",
+            "symbol": "credit"
+          }
+        ],
+        "handlers": {
+          "newGame": {
+            "action": "script",
+            "code": "DataManager.setupNewGame(); this.fadeOutAll(); SceneManager.goto(Scene_Map);"
+          },
+          "continue": {
+            "action": "gotoScene",
+            "target": "Scene_Load"
+          },
+          "options": {
+            "action": "gotoScene",
+            "target": "Scene_Options"
+          },
+          "credit": {
+            "action": "gotoScene",
+            "target": "Scene_Credit"
+          }
+        }
+      }
+    ]
+  }
+}

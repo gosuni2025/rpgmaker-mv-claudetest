@@ -7,6 +7,7 @@
     }
   },
   "sceneRedirects": {
+    "Scene_Title": "Scene_CS_title",
     "Scene_Status": "Scene_CS_status",
     "Scene_Menu": "Scene_CS_menu_v2",
     "Scene_Save": "Scene_CS_save",
