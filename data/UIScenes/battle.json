@@ -98,13 +98,16 @@
       },
       {
         "id": "actorWindow",
-        "type": "partyStatus",
+        "type": "list",
         "x": 192,
         "y": 444,
         "width": 624,
         "height": 180,
-        "focusable": true,
-        "transparent": true
+        "maxCols": 4,
+        "rowHeight": 180,
+        "padding": 0,
+        "cursorOnly": true,
+        "dataScript": "(function(){ return $gameParty.battleMembers().map(function(a){ return {name:'', symbol:'actor', enabled:a.isAlive(), ext:a}; }); })()"
       },
       {
         "id": "enemyWindow",
