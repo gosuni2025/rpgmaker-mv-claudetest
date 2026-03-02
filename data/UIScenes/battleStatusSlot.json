@@ -76,5 +76,7 @@
         "height": 16
       }
     ]
-  }
+  },
+  "displayName": "전투 캐릭터 상태",
+  "category": "sub"
 }
