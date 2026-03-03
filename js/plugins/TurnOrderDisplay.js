@@ -236,6 +236,7 @@
 
     var _BM_startTurn = BattleManager.startTurn;
     BattleManager.startTurn = function () {
+        console.log('[TOD] startTurn — _doneThisTurn 초기화');
         _doneThisTurn = [];
         _BM_startTurn.call(this);
     };
@@ -243,10 +244,15 @@
     var _BM_endAction = BattleManager.endAction;
     BattleManager.endAction = function () {
         var subj = this._subject;
+        console.log('[TOD] endAction — subject:', subj ? subj.name() : 'null',
+            ', phase:', this._phase,
+            ', _doneThisTurn before:', _doneThisTurn.map(function(b){return b.name();}));
         if (subj && _doneThisTurn.indexOf(subj) < 0) {
             _doneThisTurn.push(subj);
+            console.log('[TOD]   → pushed', subj.name(), ', _doneThisTurn:', _doneThisTurn.map(function(b){return b.name();}));
         }
         _BM_endAction.call(this);
+        console.log('[TOD]   → after original endAction, phase:', this._phase, ', subject:', this._subject ? this._subject.name() : 'null');
     };
 
     //=========================================================================
@@ -705,6 +711,9 @@
         var order = this._order;
         var key   = this._orderKeyOf(order);
         if (key === this._orderKey) return;
+        console.log('[TOD] _updateOrder — key changed!\n  old:', this._orderKey, '\n  new:', key,
+            '\n  curSubject:', order.curSubject ? order.curSubject.name() : 'null',
+            ', phase:', BattleManager._phase);
         this._orderKey = key;
         this._syncIcons(order);
     };
@@ -843,6 +852,19 @@
     //=========================================================================
     Sprite_TurnOrderBar.prototype._updateIconStatuses = function () {
         var subject = BattleManager._subject;
+        var self = this;
+
+        // 매 60프레임(1초)마다 상태 덤프
+        if (this._frame % 60 === 1) {
+            var dump = this._iconEntries.map(function (e) {
+                var inDone = _doneThisTurn.indexOf(e.b) >= 0;
+                return e.b.name() + '(' + e.role + '/' + e.ic._status + '/op' + e.ic.opacity + (inDone ? '/DONE' : '') + ')';
+            }).join(', ');
+            console.log('[TOD] statuses: phase=' + BattleManager._phase +
+                ', subject=' + (subject ? subject.name() : 'null') +
+                ', doneList=[' + _doneThisTurn.map(function(b){return b.name();}).join(',') + ']' +
+                '\n  entries: ' + dump);
+        }
 
         this._iconEntries.forEach(function (e) {
             if (e.role === 'next') {
@@ -855,8 +877,10 @@
                 if (e.ic._status !== 'active') e.ic.setStatus('active');
             } else if (_doneThisTurn.indexOf(b) >= 0) {
                 // 이번 턴에 행동 완료 → 반투명 유지 (phase 무관)
-                // inTurn 조건을 제거해야 input phase에서도 done이 유지됨
-                if (e.ic._status !== 'done') e.ic.setStatus('done');
+                if (e.ic._status !== 'done') {
+                    console.log('[TOD] → setStatus DONE:', b.name());
+                    e.ic.setStatus('done');
+                }
             } else {
                 if (e.ic._status !== 'pending') e.ic.setStatus('pending');
             }
