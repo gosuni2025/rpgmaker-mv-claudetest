@@ -346,6 +346,22 @@
         _BM_endAction.call(this);
     };
 
+    // [DEBUG] 데미지 계산 로그
+    var _GA_makeDamageValue = Game_Action.prototype.makeDamageValue;
+    Game_Action.prototype.makeDamageValue = function (target, critical) {
+        var result = _GA_makeDamageValue.call(this, target, critical);
+        var a = this.subject(), b = target, item = this.item();
+        if (a && b && item && item.damage) {
+            console.log('[DMG]', a.name ? a.name() : '?', '→', b.name ? b.name() : '?',
+                '| formula:', item.damage.formula,
+                '| a.atk:', a.atk, 'a.mat:', a.mat,
+                '| b.def:', b.def, 'b.mdf:', b.mdf,
+                '| eval:', (function(){ try { return eval(item.damage.formula); } catch(e) { return 'ERR:'+e.message; } })(),
+                '| final:', result);
+        }
+        return result;
+    };
+
     // 피격 알림 — 아군이 피해를 받으면 턴 순서 아이콘 + 하단 상태창에 흔들림/이펙트/데미지
     var _GA_performDamage = Game_Actor.prototype.performDamage;
     Game_Actor.prototype.performDamage = function () {
