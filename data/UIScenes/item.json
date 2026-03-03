@@ -191,11 +191,11 @@
         "handlers": {
           "ok": {
             "action": "script",
-            "code": "var aw=this._widgetMap['id_action'];var sym=aw&&aw._window?aw._window.currentSymbol():null;aw.displayObject().visible=false;if(sym==='use'){if(this._execPendingUse)this._execPendingUse();}else{var item=this._ctx.selectedItem;var detailD={image:null,text:''};if(item&&item.note){var pm=item.note.match(/<detailPic>([\\s\\S]*?)<\\/detailPic>/);if(pm){try{var pd=JSON.parse(pm[1]);detailD.image=pd.image||null;}catch(e){}}var tm=item.note.match(/<detailTxt>([\\s\\S]*?)<\\/detailTxt>/);if(tm){try{var td=JSON.parse(tm[1]);detailD.text=td.text||'';}catch(e){}}}this._ctx._detailD=detailD;if(this._showDimOverlay)this._showDimOverlay();var pp=this._widgetMap['id_popup'];var pc=this._widgetMap['id_popup_ctrl'];if(pp)pp.displayObject().visible=true;if(pc)pc.displayObject().visible=true;var img=this._widgetMap['id_popup_img'];if(img&&img.refresh)img.refresh();var txt=this._widgetMap['id_popup_text'];if(txt&&txt.refresh)txt.refresh();if(this._navManager)this._navManager.focusWidget('id_popup_ctrl');}"
+            "code": "var aw=this._widgetMap['id_action'];var sym=aw&&aw._window?aw._window.currentSymbol():null;aw.hide();if(sym==='use'){if(this._execPendingUse)this._execPendingUse();}else{var item=this._ctx.selectedItem;var detailD={image:null,text:''};if(item&&item.note){var pm=item.note.match(/<detailPic>([\\s\\S]*?)<\\/detailPic>/);if(pm){try{var pd=JSON.parse(pm[1]);detailD.image=pd.image||null;}catch(e){}}var tm=item.note.match(/<detailTxt>([\\s\\S]*?)<\\/detailTxt>/);if(tm){try{var td=JSON.parse(tm[1]);detailD.text=td.text||'';}catch(e){}}}this._ctx._detailD=detailD;if(this._showDimOverlay)this._showDimOverlay();var pp=this._widgetMap['id_popup'];var pc=this._widgetMap['id_popup_ctrl'];if(pp)pp.show();if(pc)pc.show();var img=this._widgetMap['id_popup_img'];if(img&&img.refresh)img.refresh();var txt=this._widgetMap['id_popup_text'];if(txt&&txt.refresh)txt.refresh();if(this._navManager)this._navManager.focusWidget('id_popup_ctrl');}"
           },
           "cancel": {
             "action": "script",
-            "code": "this._widgetMap['id_action'].displayObject().visible=false;",
+            "code": "this._widgetMap['id_action'].hide();",
             "thenAction": {
               "action": "focusWidget",
               "target": "item_list"
@@ -261,11 +261,11 @@
         "handlers": {
           "ok": {
             "action": "script",
-            "code": "var w=this._widgetMap['id_popup_ctrl'];var sym=w&&w._window?w._window.currentSymbol():null;if(sym==='view'){var d=this._ctx._detailD;if(d&&d.image){SoundManager.playOk();var fp=this._widgetMap['id_fullscreen'];var fc=this._widgetMap['id_full_ctrl'];if(fp)fp.show();if(fc)fc.show();var img=this._widgetMap['id_full_img'];if(img&&img.refresh)img.refresh();if(this._navManager)this._navManager.focusWidget('id_full_ctrl');}else SoundManager.playBuzzer();}else{if(this._hideDimOverlay)this._hideDimOverlay();var pp=this._widgetMap['id_popup'];var pc=this._widgetMap['id_popup_ctrl'];if(pp)pp.displayObject().visible=false;if(pc)pc.displayObject().visible=false;if(this._navManager)this._navManager.focusWidget('item_list');}"
+            "code": "var w=this._widgetMap['id_popup_ctrl'];var sym=w&&w._window?w._window.currentSymbol():null;if(sym==='view'){var d=this._ctx._detailD;if(d&&d.image){SoundManager.playOk();var fp=this._widgetMap['id_fullscreen'];var fc=this._widgetMap['id_full_ctrl'];if(fp)fp.show();if(fc)fc.show();var img=this._widgetMap['id_full_img'];if(img&&img.refresh)img.refresh();if(this._navManager)this._navManager.focusWidget('id_full_ctrl');}else SoundManager.playBuzzer();}else{if(this._hideDimOverlay)this._hideDimOverlay();var pp=this._widgetMap['id_popup'];var pc=this._widgetMap['id_popup_ctrl'];var fp=this._widgetMap['id_fullscreen'];var fc=this._widgetMap['id_full_ctrl'];if(pp)pp.hide();if(pc)pc.hide();if(fp)fp.hide();if(fc)fc.hide();if(this._navManager)this._navManager.focusWidget('item_list');}"
           },
           "cancel": {
             "action": "script",
-            "code": "if(this._hideDimOverlay)this._hideDimOverlay();var pp=this._widgetMap['id_popup'];var pc=this._widgetMap['id_popup_ctrl'];if(pp)pp.displayObject().visible=false;if(pc)pc.displayObject().visible=false;",
+            "code": "if(this._hideDimOverlay)this._hideDimOverlay();var pp=this._widgetMap['id_popup'];var pc=this._widgetMap['id_popup_ctrl'];var fp=this._widgetMap['id_fullscreen'];var fc=this._widgetMap['id_full_ctrl'];if(pp)pp.hide();if(pc)pc.hide();if(fp)fp.hide();if(fc)fc.hide();",
             "thenAction": {
               "action": "focusWidget",
               "target": "item_list"

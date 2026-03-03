@@ -141,7 +141,7 @@
     function ensureDimOverlay(scene) {
         if (!scene._dimOverlay) {
             var bmp = new Bitmap(Graphics.boxWidth, Graphics.boxHeight);
-            bmp.fillRect(0, 0, bmp.width, bmp.height, 'rgba(255,0,0,0.7)');
+            bmp.fillRect(0, 0, bmp.width, bmp.height, 'rgba(0,0,0,0.7)');
             scene._dimOverlay = new Sprite(bmp);
             scene._dimOverlay.visible = false;
             // topLayer 위젯들 바로 앞에 삽입
@@ -203,15 +203,15 @@
                             this._pendingUseWidget  = widget;
                             var aw = this._widgetMap['id_action'];
                             if (aw) {
-                                aw.displayObject().visible = true;
+                                aw.show();
                                 if (this._navManager) this._navManager.focusWidget('id_action');
                             }
                         } else {
                             showDimOverlay(this);
                             var pp = this._widgetMap['id_popup'];
                             var pc = this._widgetMap['id_popup_ctrl'];
-                            if (pp) pp.displayObject().visible = true;
-                            if (pc) pc.displayObject().visible = true;
+                            if (pp) pp.show();
+                            if (pc) pc.show();
                             var img = this._widgetMap['id_popup_img'];
                             if (img && img.refresh) img.refresh();
                             var txt = this._widgetMap['id_popup_text'];
