@@ -284,7 +284,7 @@
         "width": 816,
         "height": 624,
         "windowed": false,
-        "bgColor": "rgba(0,0,255,0.9)",
+        "bgColor": "rgba(0,0,0,0.9)",
         "children": [
           {
             "id": "id_full_img",
