@@ -666,8 +666,11 @@
                 var bi = actionBattlers.indexOf(b); if (bi < 0) bi = 9999;
                 return ai - bi;
             });
-            curOrder   = done.concat(subject ? [subject] : []).concat(pending);
-            curSubject = subject;
+            // subject가 이미 done에 포함되면 중복 추가하지 않음
+            // (endAction 직후 subject가 아직 남아있어 중복 발생 방지)
+            var subjectSlot = (subject && _doneThisTurn.indexOf(subject) < 0) ? [subject] : [];
+            curOrder   = done.concat(subjectSlot).concat(pending);
+            curSubject = (subject && _doneThisTurn.indexOf(subject) < 0) ? subject : null;
             curPending = pending;
         } else {
             // input / 기타: done 배틀러 유지 + AGI 기반 pending
@@ -871,16 +874,13 @@
                 if (e.ic._status !== 'next') e.ic.setStatus('next');
                 return;
             }
-            // cur role
+            // cur role — done이 active보다 우선
+            // (endAction 직후 subject가 아직 남아있어도 done으로 처리)
             var b = e.b;
-            if (b === subject) {
+            if (_doneThisTurn.indexOf(b) >= 0) {
+                if (e.ic._status !== 'done') e.ic.setStatus('done');
+            } else if (b === subject) {
                 if (e.ic._status !== 'active') e.ic.setStatus('active');
-            } else if (_doneThisTurn.indexOf(b) >= 0) {
-                // 이번 턴에 행동 완료 → 반투명 유지 (phase 무관)
-                if (e.ic._status !== 'done') {
-                    console.log('[TOD] → setStatus DONE:', b.name());
-                    e.ic.setStatus('done');
-                }
             } else {
                 if (e.ic._status !== 'pending') e.ic.setStatus('pending');
             }
