@@ -227,6 +227,7 @@
 
 (function () {
     'use strict';
+    console.log('[TOD] v3 loaded');
 
     //=========================================================================
     // 이번 턴에 행동 완료한 배틀러 직접 추적
@@ -237,6 +238,7 @@
 
     var _BM_startTurn = BattleManager.startTurn;
     BattleManager.startTurn = function () {
+        console.log('[TOD] startTurn, doneCount:', _doneThisTurn.length, 'transition:', _doneThisTurn.length > 0);
         // 첫 턴이 아니면 턴 전환 애니메이션 트리거
         // (이전 cur을 exit하고 next→cur 승격)
         if (_doneThisTurn.length > 0) {
@@ -251,6 +253,7 @@
         var subj = this._subject;
         if (subj && _doneThisTurn.indexOf(subj) < 0) {
             _doneThisTurn.push(subj);
+            console.log('[TOD] endAction, added:', subj.name(), 'doneCount:', _doneThisTurn.length);
         }
         _BM_endAction.call(this);
     };
@@ -421,6 +424,7 @@
 
     Sprite_TurnOrderIcon.prototype.startExit = function (isH) {
         if (this._exiting) return;
+        console.log('[TOD] startExit:', this._battler.name(), 'status:', this._status);
         this._exiting = true;
         var dist = Config.iconSize * 1.5;
         if (this._targetX !== null) {
@@ -595,6 +599,7 @@
             _turnTransitionPending = false;
             this._turnTransition = true;
             this._orderKey = ''; // 강제 _syncIcons 호출
+            console.log('[TOD] turnTransitionPending detected! Setting _turnTransition=true');
         }
 
         // 매 프레임 순서 계산 (캐시 — _updateOrder/_updateLayout 공유)
@@ -754,6 +759,7 @@
         // oldCur를 비워서 next→cur 승격이 발생하도록 함
         if (this._turnTransition) {
             this._turnTransition = false;
+            console.log('[TOD] _syncIcons TURN_TRANSITION, oldCur:', Object.keys(oldCur).length, 'oldNext:', Object.keys(oldNext).length);
             for (var tk in oldCur) {
                 oldCur[tk].ic.startExit(isH);
                 self._exitingIcons.push(oldCur[tk].ic);
@@ -833,15 +839,17 @@
         for (k in oldCur) {
             var oe = oldCur[k];
             if (oe.b.isAlive && oe.b.isAlive()) {
+                console.log('[TOD] remaining oldCur ALIVE:', oe.b.name(), '→ keeping as done');
                 oe.ic.setStatus('done');
                 oe.ic.scale.x = 1.0; oe.ic.scale.y = 1.0;
                 newEntries.push(oe);
             } else {
+                console.log('[TOD] remaining oldCur DEAD:', oe.b.name(), '→ exit');
                 oe.ic.startExit(isH);
                 self._exitingIcons.push(oe.ic);
             }
         }
-        for (k in oldNext) { oldNext[k].ic.startExit(isH); self._exitingIcons.push(oldNext[k].ic); }
+        for (k in oldNext) { console.log('[TOD] remaining oldNext exit:', oldNext[k].b.name()); oldNext[k].ic.startExit(isH); self._exitingIcons.push(oldNext[k].ic); }
 
         self._iconEntries = newEntries;
 
@@ -875,12 +883,22 @@
             // cur role — done이 active보다 우선
             // (endAction 직후 subject가 아직 남아있어도 done으로 처리)
             var b = e.b;
+            var oldStatus = e.ic._status;
             if (_doneThisTurn.indexOf(b) >= 0) {
-                if (e.ic._status !== 'done') e.ic.setStatus('done');
+                if (oldStatus !== 'done') {
+                    console.log('[TOD] status:', b.name(), oldStatus, '→ done');
+                    e.ic.setStatus('done');
+                }
             } else if (b === subject) {
-                if (e.ic._status !== 'active') e.ic.setStatus('active');
+                if (oldStatus !== 'active') {
+                    console.log('[TOD] status:', b.name(), oldStatus, '→ active');
+                    e.ic.setStatus('active');
+                }
             } else {
-                if (e.ic._status !== 'pending') e.ic.setStatus('pending');
+                if (oldStatus !== 'pending') {
+                    console.log('[TOD] status:', b.name(), oldStatus, '→ pending');
+                    e.ic.setStatus('pending');
+                }
             }
         });
     };
