@@ -238,13 +238,23 @@
     var _inputPreviewOrder = null;
     var _enemyTargetPreview = null; // { enemyIndex: [target battlers] }
 
-    // 커맨드 입력 중 속도 미리보기 계산
+    // 랜덤 없이 결정적 속도 계산 (agi + 스킬속도 + 공격속도)
+    function _calcSpeedDeterministic(battler) {
+        var action = battler.currentAction();
+        if (!action || !action.item()) return battler.agi;
+        var speed = battler.agi;
+        if (action.item()) speed += action.item().speed;
+        if (action.isAttack && action.isAttack()) speed += battler.attackSpeed();
+        return speed;
+    }
+
+    // 커맨드 입력 중 속도 미리보기 계산 (랜덤 없음 → 안정적 순서)
     function _recalcInputPreview() {
         var battlers = [];
         if (!BattleManager._surprise) battlers = battlers.concat($gameParty.members());
         if (!BattleManager._preemptive) battlers = battlers.concat($gameTroop.members());
-        battlers.forEach(function (b) { b.makeSpeed(); });
-        battlers.sort(function (a, b) { return b.speed() - a.speed(); });
+        battlers.forEach(function (b) { b._speed = _calcSpeedDeterministic(b); });
+        battlers.sort(function (a, b) { return b._speed - a._speed; });
         _inputPreviewOrder = battlers.filter(function (b) {
             return b.isBattleMember() && b.isAlive();
         });
