@@ -227,7 +227,7 @@
 
 (function () {
     'use strict';
-    console.log('[TOD] v6 loaded');
+    console.log('[TOD] v7 loaded');
 
     //=========================================================================
     // 이번 턴에 행동 완료한 배틀러 직접 추적
@@ -236,6 +236,7 @@
     var _doneThisTurn = [];
     var _turnTransitionPending = false;
     var _inputPreviewOrder = null;
+    var _enemyTargetPreview = null; // { enemyIndex: [target battlers] }
 
     // 커맨드 입력 중 속도 미리보기 계산
     function _recalcInputPreview() {
@@ -257,11 +258,30 @@
         }
         _doneThisTurn = [];
         _BM_startInput.call(this);
-        // makeActions() 이후 초기 속도 미리보기
+        // makeActions() 이후 초기 속도 미리보기 + 적 타겟 미리보기
         if (this._phase === 'input') {
             _recalcInputPreview();
+            _calcEnemyTargets();
         }
     };
+
+    function _calcEnemyTargets() {
+        _enemyTargetPreview = {};
+        $gameTroop.aliveMembers().forEach(function (enemy) {
+            var action = enemy.currentAction();
+            if (!action || !action.item()) return;
+            var targets = action.makeTargets();
+            // 중복 제거
+            var unique = [];
+            targets.forEach(function (t) {
+                if (unique.indexOf(t) < 0) unique.push(t);
+            });
+            _enemyTargetPreview[enemy.index()] = {
+                targets: unique,
+                action: action
+            };
+        });
+    }
 
     // selectNextCommand: 각 액터 커맨드 확정 시 속도 재계산
     var _BM_selectNextCommand = BattleManager.selectNextCommand;
@@ -283,8 +303,23 @@
 
     var _BM_startTurn = BattleManager.startTurn;
     BattleManager.startTurn = function () {
+        // input 미리보기 속도 저장
+        var savedSpeeds = [];
+        if (_inputPreviewOrder) {
+            _inputPreviewOrder.forEach(function (b) {
+                savedSpeeds.push({ b: b, s: b._speed });
+            });
+        }
         _inputPreviewOrder = null;
-        _BM_startTurn.call(this);
+        _enemyTargetPreview = null;
+        _BM_startTurn.call(this); // makeActionOrders → makeSpeed 재랜덤
+        // 미리보기 속도 복원 → 표시된 순서 = 실제 순서
+        if (savedSpeeds.length > 0) {
+            savedSpeeds.forEach(function (e) { e.b._speed = e.s; });
+            this._actionBattlers.sort(function (a, b) {
+                return b.speed() - a.speed();
+            });
+        }
     };
 
     var _BM_endAction = BattleManager.endAction;
@@ -1102,6 +1137,7 @@
 
         if (Config.showTentacle) this._drawTentacles(ctx);
         if (Config.showCurves)   this._drawActionCurves(ctx);
+        if (Config.showCurves)   this._drawEnemyTargetPreview(ctx);
 
         bmp._setDirty();
     };
@@ -1275,6 +1311,47 @@
                 ctx.restore();
             }
         }
+    };
+
+    Sprite_TurnOrderBar.prototype._drawEnemyTargetPreview = function (ctx) {
+        if (BattleManager._phase !== 'input' || !_enemyTargetPreview) return;
+        var self = this;
+        var isH  = Config.direction === 'horizontal';
+        var half = Math.round(Config.iconSize / 2);
+
+        $gameTroop.aliveMembers().forEach(function (enemy) {
+            var info = _enemyTargetPreview[enemy.index()];
+            if (!info || !info.targets.length) return;
+            var eEntry = self._findEntry(enemy, 'cur');
+            if (!eEntry || eEntry.ic._exiting) return;
+
+            var color     = withAlpha(self._curveColor(info.action), 0.6);
+            var iconIndex = info.action.item() ? info.action.item().iconIndex : -1;
+
+            info.targets.forEach(function (target) {
+                var tEntry = self._findEntry(target, 'cur');
+                if (!tEntry || tEntry.ic._exiting) return;
+
+                var sx = eEntry.ic.x, sy = eEntry.ic.y;
+                var tx = tEntry.ic.x, ty = tEntry.ic.y;
+
+                if (isH) {
+                    var p1y = sy + half + 4, p2y = ty + half + 4;
+                    var drop = Math.max(20, Math.abs(tx - sx) * 0.35);
+                    self._strokeBezier(ctx, sx, p1y,
+                        sx + (tx-sx)*0.25, p1y + drop,
+                        sx + (tx-sx)*0.75, p2y + drop,
+                        tx, p2y, color, iconIndex);
+                } else {
+                    var p1x = sx + half + 4, p2x = tx + half + 4;
+                    var drift = Math.max(20, Math.abs(ty - sy) * 0.35);
+                    self._strokeBezier(ctx, p1x, sy,
+                        p1x + drift, sy + (ty-sy)*0.25,
+                        p2x + drift, sy + (ty-sy)*0.75,
+                        p2x, ty, color, iconIndex);
+                }
+            });
+        });
     };
 
     Sprite_TurnOrderBar.prototype._curveColor = function (action) {
