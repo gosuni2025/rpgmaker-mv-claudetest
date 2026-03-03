@@ -191,7 +191,7 @@
         "handlers": {
           "ok": {
             "action": "script",
-            "code": "var aw=this._widgetMap['id_action'];var sym=aw&&aw._window?aw._window.currentSymbol():null;aw.displayObject().visible=false;if(sym==='use'){if(this._execPendingUse)this._execPendingUse();}else{var item=this._ctx.selectedItem;var detailD={image:null,text:''};if(item&&item.note){var pm=item.note.match(/<detailPic>([\\s\\S]*?)<\\/detailPic>/);if(pm){try{var pd=JSON.parse(pm[1]);detailD.image=pd.image||null;}catch(e){}}var tm=item.note.match(/<detailTxt>([\\s\\S]*?)<\\/detailTxt>/);if(tm){try{var td=JSON.parse(tm[1]);detailD.text=td.text||'';}catch(e){}}}this._ctx._detailD=detailD;var pp=this._widgetMap['id_popup'];var pc=this._widgetMap['id_popup_ctrl'];if(pp)pp.displayObject().visible=true;if(pc)pc.displayObject().visible=true;var img=this._widgetMap['id_popup_img'];if(img&&img.refresh)img.refresh();var txt=this._widgetMap['id_popup_text'];if(txt&&txt.refresh)txt.refresh();if(this._navManager)this._navManager.focusWidget('id_popup_ctrl');}"
+            "code": "var aw=this._widgetMap['id_action'];var sym=aw&&aw._window?aw._window.currentSymbol():null;aw.displayObject().visible=false;if(sym==='use'){if(this._execPendingUse)this._execPendingUse();}else{var item=this._ctx.selectedItem;var detailD={image:null,text:''};if(item&&item.note){var pm=item.note.match(/<detailPic>([\\s\\S]*?)<\\/detailPic>/);if(pm){try{var pd=JSON.parse(pm[1]);detailD.image=pd.image||null;}catch(e){}}var tm=item.note.match(/<detailTxt>([\\s\\S]*?)<\\/detailTxt>/);if(tm){try{var td=JSON.parse(tm[1]);detailD.text=td.text||'';}catch(e){}}}this._ctx._detailD=detailD;var dm=this._widgetMap['id_popup_dim'];if(dm)dm.displayObject().visible=true;var pp=this._widgetMap['id_popup'];var pc=this._widgetMap['id_popup_ctrl'];if(pp)pp.displayObject().visible=true;if(pc)pc.displayObject().visible=true;var img=this._widgetMap['id_popup_img'];if(img&&img.refresh)img.refresh();var txt=this._widgetMap['id_popup_text'];if(txt&&txt.refresh)txt.refresh();if(this._navManager)this._navManager.focusWidget('id_popup_ctrl');}"
           },
           "cancel": {
             "action": "script",
@@ -202,6 +202,19 @@
             }
           }
         }
+      },
+      {
+        "id": "id_popup_dim",
+        "displayName": "상세 팝업 배경",
+        "type": "panel",
+        "topLayer": true,
+        "visible": false,
+        "x": 0,
+        "y": 0,
+        "width": 816,
+        "height": 624,
+        "windowed": false,
+        "bgColor": "rgba(0,0,0,0.7)"
       },
       {
         "id": "id_popup",
@@ -261,11 +274,11 @@
         "handlers": {
           "ok": {
             "action": "script",
-            "code": "var w=this._widgetMap['id_popup_ctrl'];var sym=w&&w._window?w._window.currentSymbol():null;if(sym==='view'){var d=this._ctx._detailD;if(d&&d.image){SoundManager.playOk();var fp=this._widgetMap['id_fullscreen'];var fc=this._widgetMap['id_full_ctrl'];if(fp)fp.displayObject().visible=true;if(fc)fc.displayObject().visible=true;var img=this._widgetMap['id_full_img'];if(img&&img.refresh)img.refresh();if(this._navManager)this._navManager.focusWidget('id_full_ctrl');}else SoundManager.playBuzzer();}else{var pp=this._widgetMap['id_popup'];var pc=this._widgetMap['id_popup_ctrl'];if(pp)pp.displayObject().visible=false;if(pc)pc.displayObject().visible=false;if(this._navManager)this._navManager.focusWidget('item_list');}"
+            "code": "var w=this._widgetMap['id_popup_ctrl'];var sym=w&&w._window?w._window.currentSymbol():null;if(sym==='view'){var d=this._ctx._detailD;if(d&&d.image){SoundManager.playOk();var fp=this._widgetMap['id_fullscreen'];var fc=this._widgetMap['id_full_ctrl'];if(fp)fp.displayObject().visible=true;if(fc)fc.displayObject().visible=true;var img=this._widgetMap['id_full_img'];if(img&&img.refresh)img.refresh();if(this._navManager)this._navManager.focusWidget('id_full_ctrl');}else SoundManager.playBuzzer();}else{var dm=this._widgetMap['id_popup_dim'];if(dm)dm.displayObject().visible=false;var pp=this._widgetMap['id_popup'];var pc=this._widgetMap['id_popup_ctrl'];if(pp)pp.displayObject().visible=false;if(pc)pc.displayObject().visible=false;if(this._navManager)this._navManager.focusWidget('item_list');}"
           },
           "cancel": {
             "action": "script",
-            "code": "var pp=this._widgetMap['id_popup'];var pc=this._widgetMap['id_popup_ctrl'];if(pp)pp.displayObject().visible=false;if(pc)pc.displayObject().visible=false;",
+            "code": "var dm=this._widgetMap['id_popup_dim'];if(dm)dm.displayObject().visible=false;var pp=this._widgetMap['id_popup'];var pc=this._widgetMap['id_popup_ctrl'];if(pp)pp.displayObject().visible=false;if(pc)pc.displayObject().visible=false;",
             "thenAction": {
               "action": "focusWidget",
               "target": "item_list"
