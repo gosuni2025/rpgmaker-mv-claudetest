@@ -261,7 +261,7 @@
         "handlers": {
           "ok": {
             "action": "script",
-            "code": "var w=this._widgetMap['id_popup_ctrl'];var sym=w&&w._window?w._window.currentSymbol():null;if(sym==='view'){var d=this._ctx._detailD;if(d&&d.image){SoundManager.playOk();var fp=this._widgetMap['id_fullscreen'];var fc=this._widgetMap['id_full_ctrl'];if(fp)fp.displayObject().visible=true;if(fc)fc.displayObject().visible=true;var img=this._widgetMap['id_full_img'];if(img&&img.refresh)img.refresh();if(this._navManager)this._navManager.focusWidget('id_full_ctrl');}else SoundManager.playBuzzer();}else{if(this._hideDimOverlay)this._hideDimOverlay();var pp=this._widgetMap['id_popup'];var pc=this._widgetMap['id_popup_ctrl'];if(pp)pp.displayObject().visible=false;if(pc)pc.displayObject().visible=false;if(this._navManager)this._navManager.focusWidget('item_list');}"
+            "code": "var w=this._widgetMap['id_popup_ctrl'];var sym=w&&w._window?w._window.currentSymbol():null;if(sym==='view'){var d=this._ctx._detailD;if(d&&d.image){SoundManager.playOk();var fp=this._widgetMap['id_fullscreen'];var fc=this._widgetMap['id_full_ctrl'];if(fp)fp.show();if(fc)fc.show();var img=this._widgetMap['id_full_img'];if(img&&img.refresh)img.refresh();if(this._navManager)this._navManager.focusWidget('id_full_ctrl');}else SoundManager.playBuzzer();}else{if(this._hideDimOverlay)this._hideDimOverlay();var pp=this._widgetMap['id_popup'];var pc=this._widgetMap['id_popup_ctrl'];if(pp)pp.displayObject().visible=false;if(pc)pc.displayObject().visible=false;if(this._navManager)this._navManager.focusWidget('item_list');}"
           },
           "cancel": {
             "action": "script",
@@ -313,7 +313,7 @@
         "handlers": {
           "cancel": {
             "action": "script",
-            "code": "SoundManager.playCancel();var fp=this._widgetMap['id_fullscreen'];var fc=this._widgetMap['id_full_ctrl'];if(fp)fp.displayObject().visible=false;if(fc)fc.displayObject().visible=false;",
+            "code": "SoundManager.playCancel();var fp=this._widgetMap['id_fullscreen'];var fc=this._widgetMap['id_full_ctrl'];if(fp)fp.hide();if(fc)fc.hide();",
             "thenAction": {
               "action": "focusWidget",
               "target": "id_popup_ctrl"
