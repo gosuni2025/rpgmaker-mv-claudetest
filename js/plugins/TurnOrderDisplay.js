@@ -783,11 +783,20 @@
                 oe.ic.scale.x = 1.0; oe.ic.scale.y = 1.0;
                 newEntries.push(oe);
             } else {
+                console.warn('[TurnOrderDisplay] startExit(cur) phase=' + BattleManager._phase +
+                    ' activeTurn=' + activeTurn +
+                    ' battler=' + oe.b.name() +
+                    ' alive=' + (oe.b.isAlive ? oe.b.isAlive() : '?') +
+                    ' curOrderKeys=' + order.curOrder.map(function(b){return b.name();}).join(','));
                 oe.ic.startExit(isH);
                 self._exitingIcons.push(oe.ic);
             }
         }
-        for (k in oldNext) { oldNext[k].ic.startExit(isH); self._exitingIcons.push(oldNext[k].ic); }
+        for (k in oldNext) {
+            console.warn('[TurnOrderDisplay] startExit(next) phase=' + BattleManager._phase +
+                ' battler=' + oldNext[k].b.name());
+            oldNext[k].ic.startExit(isH); self._exitingIcons.push(oldNext[k].ic);
+        }
 
         self._iconEntries = newEntries;
 
