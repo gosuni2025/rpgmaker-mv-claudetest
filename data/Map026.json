@@ -12471,8 +12471,8 @@
     {
       "id": 54,
       "name": "슬라임 (전투 연습)",
-      "x": 26,
-      "y": 17,
+      "x": 20,
+      "y": 16,
       "note": "[외부 파일] data/Map026/054-슬라임-(전투-연습).json",
       "pages": [
         {
@@ -12519,7 +12519,7 @@
             "wait": false
           },
           "moveSpeed": 3,
-          "moveType": 1,
+          "moveType": 0,
           "priorityType": 1,
           "stepAnime": true,
           "through": false,
