@@ -365,8 +365,10 @@
     // 피격 알림 — 아군이 피해를 받으면 턴 순서 아이콘 + 하단 상태창에 흔들림/이펙트/데미지
     var _GA_performDamage = Game_Actor.prototype.performDamage;
     Game_Actor.prototype.performDamage = function () {
+        var r = this.result();
+        console.log('[DMG-NOTIFY] performDamage:', this.name(), '| hpDamage:', r.hpDamage, '| hpAffected:', r.hpAffected, '| missed:', r.missed, '| evaded:', r.evaded);
         _GA_performDamage.call(this);
-        _damageNotifications.push({ battler: this, damage: this.result().hpDamage, critical: this.result().critical });
+        _damageNotifications.push({ battler: this, damage: r.hpDamage, critical: r.critical });
     };
 
     // 아군에게 재생되는 배틀 애니메이션 캡처 → 하단 상태창 얼굴에도 재생
