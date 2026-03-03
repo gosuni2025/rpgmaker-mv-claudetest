@@ -1459,7 +1459,7 @@
     if (this._defaultFocusId) {
       var dfid = this._defaultFocusId; var dfSimple = dfid.indexOf('/') >= 0 ? dfid.split('/').pop() : dfid;
       for (var i = 0; i < this._focusables.length; i++) {
-        var w = this._focusables[i]; if (w._id === dfid || w._fullPath === dfid || (dfid.indexOf('/') >= 0 && w._id === dfSimple)) startIdx = i; break;
+        var w = this._focusables[i]; if (w._id === dfid || w._fullPath === dfid || (dfid.indexOf('/') >= 0 && w._id === dfSimple)) { startIdx = i; break; }
       }
     }
     this._activateAt(startIdx);
@@ -1474,7 +1474,7 @@
   NavigationManager.prototype.focusWidget = function(id) {
     var simpleId = id.indexOf('/') >= 0 ? id.split('/').pop() : id;
     for (var i = 0; i < this._focusables.length; i++) {
-      var w = this._focusables[i]; if (w._id === id || w._fullPath === id || (id.indexOf('/') >= 0 && w._id === simpleId)) this._activateAt(i); return;
+      var w = this._focusables[i]; if (w._id === id || w._fullPath === id || (id.indexOf('/') >= 0 && w._id === simpleId)) { this._activateAt(i); return; }
     }
   };
   NavigationManager.prototype.clearFocus = function() {
@@ -1814,7 +1814,7 @@
           break;
         }
         var ilId = handler.itemListWidget; var ilWidget = this._widgetMap && this._widgetMap[ilId];
-        if (!ilWidget || !ilWidget._window) break; var useItem = ilWidget._window.item(); if (!useItem) break;
+        if (!ilWidget || !ilWidget._window) break; var useItem = ilWidget._window.item(); if (!useItem) { if (ilWidget.activate) ilWidget.activate(); break; }
         if (!$gameParty.canUse(useItem)) {
           if (typeof SoundManager !== 'undefined') SoundManager.playBuzzer(); if (ilWidget.activate) ilWidget.activate(); break;
         }
