@@ -233,10 +233,15 @@
     // BattleManager 추론(_actionBattlers) 대신 hook으로 정확히 기록
     //=========================================================================
     var _doneThisTurn = [];
+    var _turnTransitionPending = false;
 
     var _BM_startTurn = BattleManager.startTurn;
     BattleManager.startTurn = function () {
-        console.log('[TOD] startTurn — _doneThisTurn 초기화');
+        // 첫 턴이 아니면 턴 전환 애니메이션 트리거
+        // (이전 cur을 exit하고 next→cur 승격)
+        if (_doneThisTurn.length > 0) {
+            _turnTransitionPending = true;
+        }
         _doneThisTurn = [];
         _BM_startTurn.call(this);
     };
@@ -244,15 +249,10 @@
     var _BM_endAction = BattleManager.endAction;
     BattleManager.endAction = function () {
         var subj = this._subject;
-        console.log('[TOD] endAction — subject:', subj ? subj.name() : 'null',
-            ', phase:', this._phase,
-            ', _doneThisTurn before:', _doneThisTurn.map(function(b){return b.name();}));
         if (subj && _doneThisTurn.indexOf(subj) < 0) {
             _doneThisTurn.push(subj);
-            console.log('[TOD]   → pushed', subj.name(), ', _doneThisTurn:', _doneThisTurn.map(function(b){return b.name();}));
         }
         _BM_endAction.call(this);
-        console.log('[TOD]   → after original endAction, phase:', this._phase, ', subject:', this._subject ? this._subject.name() : 'null');
     };
 
     //=========================================================================
@@ -590,6 +590,13 @@
             this._orderKey = '';
         }
 
+        // 턴 전환 감지
+        if (_turnTransitionPending) {
+            _turnTransitionPending = false;
+            this._turnTransition = true;
+            this._orderKey = ''; // 강제 _syncIcons 호출
+        }
+
         // 매 프레임 순서 계산 (캐시 — _updateOrder/_updateLayout 공유)
         this._order = this._calcTurnOrder();
         this._updateOrder();
@@ -686,15 +693,10 @@
             curPending = pending2;
         }
 
-        // 다음 턴 예측: turn/action/turnEnd에서만 표시
-        // input에서 next=[]로 하면 _syncIcons에서 next 아이콘들이 cur로 승격되어
-        // 크기가 작게→크게 자연스럽게 전환됨 (새 아이콘 생성 없음)
-        var next;
-        if (phase === 'turn' || phase === 'action' || phase === 'turnEnd') {
-            next = allAlive.slice().sort(function (a, b) { return b.agi - a.agi; });
-        } else {
-            next = [];
-        }
+        // 다음 턴 예측: 항상 표시
+        // startTurn 시 턴 전환 애니메이션으로 next→cur 승격이 필요하므로
+        // input phase에서도 next를 유지해야 함
+        var next = allAlive.slice().sort(function (a, b) { return b.agi - a.agi; });
 
         return { curOrder: curOrder, curSubject: curSubject, curPending: curPending, next: next };
     };
@@ -714,9 +716,6 @@
         var order = this._order;
         var key   = this._orderKeyOf(order);
         if (key === this._orderKey) return;
-        console.log('[TOD] _updateOrder — key changed!\n  old:', this._orderKey, '\n  new:', key,
-            '\n  curSubject:', order.curSubject ? order.curSubject.name() : 'null',
-            ', phase:', BattleManager._phase);
         this._orderKey = key;
         this._syncIcons(order);
     };
@@ -749,6 +748,18 @@
             if (e.role === 'cur')  oldCur[k]  = e;
             else                   oldNext[k] = e;
         });
+
+        // ── 턴 전환 애니메이션 ──
+        // startTurn 시: 이전 cur 아이콘을 모두 왼쪽으로 exit,
+        // oldCur를 비워서 next→cur 승격이 발생하도록 함
+        if (this._turnTransition) {
+            this._turnTransition = false;
+            for (var tk in oldCur) {
+                oldCur[tk].ic.startExit(isH);
+                self._exitingIcons.push(oldCur[tk].ic);
+            }
+            oldCur = {};
+        }
 
         var newEntries = [];
         var sc_next = Config.nextScale;
@@ -855,19 +866,6 @@
     //=========================================================================
     Sprite_TurnOrderBar.prototype._updateIconStatuses = function () {
         var subject = BattleManager._subject;
-        var self = this;
-
-        // 매 60프레임(1초)마다 상태 덤프
-        if (this._frame % 60 === 1) {
-            var dump = this._iconEntries.map(function (e) {
-                var inDone = _doneThisTurn.indexOf(e.b) >= 0;
-                return e.b.name() + '(' + e.role + '/' + e.ic._status + '/op' + e.ic.opacity + (inDone ? '/DONE' : '') + ')';
-            }).join(', ');
-            console.log('[TOD] statuses: phase=' + BattleManager._phase +
-                ', subject=' + (subject ? subject.name() : 'null') +
-                ', doneList=[' + _doneThisTurn.map(function(b){return b.name();}).join(',') + ']' +
-                '\n  entries: ' + dump);
-        }
 
         this._iconEntries.forEach(function (e) {
             if (e.role === 'next') {
@@ -1125,7 +1123,7 @@
         var half      = Math.round(Config.iconSize / 2);
 
         targets.forEach(function (target) {
-            var tEntry = this._findEntry(target, 'cur') || this._findEntry(target, 'next');
+            var tEntry = this._findEntry(target, 'cur');
             if (!tEntry || tEntry.ic._exiting) return;
 
             var sx = subEntry.ic.x, sy = subEntry.ic.y;
