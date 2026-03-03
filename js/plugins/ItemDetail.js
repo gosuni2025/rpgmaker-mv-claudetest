@@ -141,7 +141,7 @@
     function ensureDimOverlay(scene) {
         if (!scene._dimOverlay) {
             var bmp = new Bitmap(Graphics.boxWidth, Graphics.boxHeight);
-            bmp.fillRect(0, 0, bmp.width, bmp.height, 'rgba(0,0,0,0.7)');
+            bmp.fillRect(0, 0, bmp.width, bmp.height, 'rgba(255,0,0,0.7)');
             scene._dimOverlay = new Sprite(bmp);
             scene._dimOverlay.visible = false;
             // topLayer 위젯들 바로 앞에 삽입

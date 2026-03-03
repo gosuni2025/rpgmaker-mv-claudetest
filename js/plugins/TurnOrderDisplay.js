@@ -227,7 +227,7 @@
 
 (function () {
     'use strict';
-    console.log('[TOD] v5 loaded');
+    console.log('[TOD] v6 loaded');
 
     //=========================================================================
     // 이번 턴에 행동 완료한 배틀러 직접 추적
@@ -235,6 +235,19 @@
     //=========================================================================
     var _doneThisTurn = [];
     var _turnTransitionPending = false;
+    var _inputPreviewOrder = null;
+
+    // 커맨드 입력 중 속도 미리보기 계산
+    function _recalcInputPreview() {
+        var battlers = [];
+        if (!BattleManager._surprise) battlers = battlers.concat($gameParty.members());
+        if (!BattleManager._preemptive) battlers = battlers.concat($gameTroop.members());
+        battlers.forEach(function (b) { b.makeSpeed(); });
+        battlers.sort(function (a, b) { return b.speed() - a.speed(); });
+        _inputPreviewOrder = battlers.filter(function (b) {
+            return b.isBattleMember() && b.isAlive();
+        });
+    }
 
     // startInput: 턴 종료 후 커맨드 입력 진입 시 턴 전환 애니메이션 트리거
     var _BM_startInput = BattleManager.startInput;
@@ -244,10 +257,33 @@
         }
         _doneThisTurn = [];
         _BM_startInput.call(this);
+        // makeActions() 이후 초기 속도 미리보기
+        if (this._phase === 'input') {
+            _recalcInputPreview();
+        }
+    };
+
+    // selectNextCommand: 각 액터 커맨드 확정 시 속도 재계산
+    var _BM_selectNextCommand = BattleManager.selectNextCommand;
+    BattleManager.selectNextCommand = function () {
+        _BM_selectNextCommand.call(this);
+        if (this._phase === 'input') {
+            _recalcInputPreview();
+        }
+    };
+
+    // selectPreviousCommand: 커맨드 취소 시 속도 재계산
+    var _BM_selectPreviousCommand = BattleManager.selectPreviousCommand;
+    BattleManager.selectPreviousCommand = function () {
+        _BM_selectPreviousCommand.call(this);
+        if (this._phase === 'input') {
+            _recalcInputPreview();
+        }
     };
 
     var _BM_startTurn = BattleManager.startTurn;
     BattleManager.startTurn = function () {
+        _inputPreviewOrder = null;
         _BM_startTurn.call(this);
     };
 
@@ -695,13 +731,20 @@
             curSubject = (subject && _doneThisTurn.indexOf(subject) < 0) ? subject : null;
             curPending = pending;
         } else {
-            // input / 기타: done 배틀러 유지 (행동 완료 순서) + AGI 기반 pending
+            // input / 기타: 속도 미리보기 순서 사용 (없으면 AGI 순서)
             var done2 = _doneThisTurn.filter(function (b) {
                 return allAlive.indexOf(b) >= 0;
             });
-            var pending2 = allAlive.filter(function (b) {
-                return _doneThisTurn.indexOf(b) < 0;
-            }).sort(function (a, b) { return b.agi - a.agi; });
+            var pending2;
+            if (_inputPreviewOrder && _inputPreviewOrder.length > 0) {
+                pending2 = _inputPreviewOrder.filter(function (b) {
+                    return allAlive.indexOf(b) >= 0 && _doneThisTurn.indexOf(b) < 0;
+                });
+            } else {
+                pending2 = allAlive.filter(function (b) {
+                    return _doneThisTurn.indexOf(b) < 0;
+                }).sort(function (a, b) { return b.agi - a.agi; });
+            }
             curOrder   = done2.concat(pending2);
             curSubject = null;
             curPending = pending2;
