@@ -1,0 +1,23 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "RPG Maker MV — 게임 디버깅 (타이틀)",
+      "url": "http://localhost:5173/game/index.html?dev=true",
+      "pathMapping": {
+        "/game/": "${workspaceFolder}/"
+      }
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "RPG Maker MV — 게임 디버깅 (PIXI)",
+      "url": "http://localhost:5173/game/index_pixi.html",
+      "pathMapping": {
+        "/game/": "${workspaceFolder}/"
+      }
+    }
+  ]
+}
